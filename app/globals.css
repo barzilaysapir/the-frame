@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Inter", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0f0f11;
+  color: #f4f4f5;
+}
+
+/* Slim custom scrollbar for a more editorial feel */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f0f11;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2e;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a40;
+}
+
+/* Range input theming used by the video player's seek/volume sliders */
+input[type="range"].frame-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    #d4af6a var(--range-progress, 0%),
+    #3a3a40 var(--range-progress, 0%)
+  );
+  outline: none;
+}
+
+input[type="range"].frame-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 2px solid #d4af6a;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+input[type="range"].frame-range::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+input[type="range"].frame-range::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 2px solid #d4af6a;
+  cursor: pointer;
+}

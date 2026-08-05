@@ -1,0 +1,32 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#17171A" />
+      <stop offset="100%" stop-color="#0F0F11" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#D4AF6A" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#D4AF6A" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)" />
+  <rect width="1200" height="675" fill="url(#glow)" />
+
+  <!-- corner frame brackets -->
+  <g stroke="#C9C9CE" stroke-width="3" stroke-linecap="round" opacity="0.55">
+    <path d="M60 140V80a20 20 0 0 1 20-20h60" fill="none" />
+    <path d="M1140 140V80a20 20 0 0 0-20-20h-60" fill="none" />
+    <path d="M60 535v60a20 20 0 0 0 20 20h60" fill="none" />
+    <path d="M1140 535v60a20 20 0 0 1-20 20h-60" fill="none" />
+  </g>
+
+  <!-- dancer silhouette -->
+  <g stroke="#D4AF6A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.85">
+    <circle cx="600" cy="255" r="22" fill="#D4AF6A" stroke="none" />
+    <path d="M600 280v70l-55 65M600 350l55 65M600 315l-70 30M600 315l70-10" />
+  </g>
+
+  <text x="600" y="470" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" letter-spacing="6" fill="#8A8A90">
+    THE FRAME BY BARZILAY
+  </text>
+</svg>
