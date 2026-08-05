@@ -7,7 +7,7 @@ export default function HomePage() {
     <>
       <Header />
       <main className="mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
-        <h1 className="font-display text-4xl font-bold text-white sm:text-5xl">
+        <h1 className="text-balance font-display text-5xl font-bold leading-[1.1] text-white sm:text-6xl">
           למדו את הרוטינה, פריים אחרי פריים.
         </h1>
         <p className="mt-4 max-w-xl text-frame-silver">

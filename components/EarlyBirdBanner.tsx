@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles, Users } from "lucide-react";
 
 interface EarlyBirdBannerProps {
   /** ISO timestamp the early-bird pricing window closes. */
@@ -52,42 +51,42 @@ export function EarlyBirdBanner({
     : [];
 
   return (
-    <div className="border-b border-frame-gold/20 bg-gradient-to-r from-frame-gold/10 via-frame-panel to-frame-gold/10">
+    <div className="border-y border-frame-border bg-frame-panel">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 py-3 text-center sm:flex-row sm:justify-between sm:px-6 sm:text-start lg:px-8">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 shrink-0 text-frame-gold" />
-          <p className="text-sm font-semibold text-white">
-            השקה מוקדמת — <span className="text-frame-gold">50% הנחה</span>
-            <span className="ms-1 hidden font-normal text-frame-silver sm:inline">
-              ל-{totalSpots} הרקדנים הראשונים
-            </span>
-          </p>
-        </div>
+        <p className="text-sm font-semibold text-white">
+          השקה מוקדמת — <span className="text-frame-gold">50% הנחה</span>
+          <span className="ms-1 hidden font-normal text-frame-silver sm:inline">
+            ל-{totalSpots} הרקדנים הראשונים
+          </span>
+        </p>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           <div
             dir="ltr"
-            className="flex items-center gap-1.5"
+            className="flex items-baseline gap-1"
             aria-live="polite"
             aria-label="זמן שנותר למחיר ההשקה המוקדמת"
           >
-            {units.map((unit) => (
-              <div
-                key={unit.label}
-                className="flex min-w-[46px] flex-col items-center rounded-lg bg-black/30 px-2 py-1"
-              >
-                <span className="text-sm font-bold tabular-nums text-white">
-                  {unit.value.toString().padStart(2, "0")}
-                </span>
-                <span className="text-[9px] text-frame-muted">{unit.label}</span>
+            {units.map((unit, i) => (
+              <div key={unit.label} className="flex items-baseline gap-1">
+                {i > 0 && <span className="text-frame-border">:</span>}
+                <div className="flex flex-col items-center">
+                  <span className="font-display text-lg font-bold leading-none tabular-nums text-white">
+                    {unit.value.toString().padStart(2, "0")}
+                  </span>
+                  <span className="mt-1 text-[9px] text-frame-muted">
+                    {unit.label}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="hidden items-center gap-1.5 text-xs font-medium text-frame-silver md:flex">
-            <Users className="h-3.5 w-3.5 text-frame-gold" />
+          <span className="hidden h-7 w-px bg-frame-border md:block" />
+
+          <p className="hidden text-xs font-medium text-frame-silver md:block">
             {spotsRemaining} מתוך {totalSpots} מקומות נותרו
-          </div>
+          </p>
         </div>
       </div>
     </div>
