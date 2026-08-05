@@ -9,39 +9,39 @@ import { MobileStickyCta } from "@/components/MobileStickyCta";
 import { InstructorAvatar } from "@/components/InstructorAvatar";
 
 export const metadata: Metadata = {
-  title: "Neon Nights — Commercial Groove Routine | The Frame by Barzilay",
+  title: "לילות ניאון — רוטינת קומרשל | The Frame by Barzilay",
   description:
-    "Learn 'Neon Nights', a commercial groove routine taught by Jayden Cole. Full breakdown, mirrored practice mode, and slow-motion counts included.",
+    "למדו את 'לילות ניאון', רוטינת קומרשל בהנחיית מאיה אזולאי. פירוק מלא, מצב תרגול במראה וספירות בהאטה כלולים.",
 };
 
 const ROUTINE = {
-  title: "Neon Nights",
-  instructor: "Jayden Cole",
-  level: "Intermediate" as const,
-  style: "Commercial",
-  songName: "Neon Nights (Instrumental Edit)",
+  title: "לילות ניאון",
+  instructor: "מאיה אזולאי",
+  level: "בינוני",
+  style: "קומרשל",
+  songName: "לילות ניאון (גרסה אינסטרומנטלית)",
   bpm: "96 BPM",
-  length: "3:42 run time",
-  technique: "Isolations & grounded weight shifts",
+  length: "3:42 דקות",
+  technique: "איזולציות ומעברי משקל קרקעיים",
   checkoutHref: "/checkout/neon-nights",
   pricing: {
-    original: 59,
-    earlyBird: 29,
+    original: 198,
+    earlyBird: 99,
   },
 };
 
 const VIDEO_CHAPTERS: VideoChapter[] = [
-  { id: "full-performance", label: "Full Performance", time: 0 },
-  { id: "breakdown", label: "Routine Breakdown (Counts)", time: 22 },
-  { id: "slow-practice", label: "Slow Practice (50%)", time: 58 },
-  { id: "full-speed", label: "Full Speed Practice (100%)", time: 96 },
+  { id: "full-performance", label: "הופעה מלאה", time: 0 },
+  { id: "breakdown", label: "פירוק תנועות (ספירות)", time: 22 },
+  { id: "slow-practice", label: "תרגול איטי (50%)", time: 58 },
+  { id: "full-speed", label: "תרגול במהירות מלאה (100%)", time: 96 },
 ];
 
 const ROUTINE_DETAILS: RoutineDetail[] = [
-  { icon: "length", label: "Length", value: ROUTINE.length },
-  { icon: "bpm", label: "Tempo", value: ROUTINE.bpm },
-  { icon: "song", label: "Song", value: ROUTINE.songName },
-  { icon: "technique", label: "Key Technique Focus", value: ROUTINE.technique },
+  { icon: "length", label: "אורך", value: ROUTINE.length },
+  { icon: "bpm", label: "קצב", value: ROUTINE.bpm },
+  { icon: "song", label: "שיר", value: ROUTINE.songName },
+  { icon: "technique", label: "דגש טכני מרכזי", value: ROUTINE.technique },
 ];
 
 function Badge({ children }: { children: React.ReactNode }) {
@@ -66,21 +66,21 @@ export default function RoutinePage() {
             <section className="mb-6">
               <div className="mb-4 flex flex-wrap items-center gap-2">
                 <Badge>
-                  <Flame className="mr-1.5 h-3.5 w-3.5 text-frame-gold" />
+                  <Flame className="me-1.5 h-3.5 w-3.5 text-frame-gold" />
                   {ROUTINE.style}
                 </Badge>
                 <Badge>
-                  <Award className="mr-1.5 h-3.5 w-3.5 text-frame-gold" />
+                  <Award className="me-1.5 h-3.5 w-3.5 text-frame-gold" />
                   {ROUTINE.level}
                 </Badge>
               </div>
-              <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">
                 {ROUTINE.title}
               </h1>
               <div className="mt-3 flex items-center gap-3">
                 <InstructorAvatar name={ROUTINE.instructor} />
                 <p className="text-sm text-frame-silver">
-                  Taught by{" "}
+                  בהנחיית{" "}
                   <span className="font-medium text-white">{ROUTINE.instructor}</span>
                 </p>
               </div>
@@ -90,7 +90,7 @@ export default function RoutinePage() {
             <DanceVideoPlayer
               src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
               poster="/routine-poster.svg"
-              title={`${ROUTINE.title} — promo preview`}
+              title={`${ROUTINE.title} — תצוגה מקדימה`}
               chapters={VIDEO_CHAPTERS}
               className="mb-10"
             />

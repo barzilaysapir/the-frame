@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, ArrowRight } from "lucide-react";
-import { FrameMark } from "./FrameMark";
+import Image from "next/image";
+import { Menu, X, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { label: "Explore Routines", href: "/routines" },
-  { label: "Instructors", href: "/instructors" },
-  { label: "About", href: "/about" },
+  { label: "רוטינות", href: "/routines" },
+  { label: "מדריכים", href: "/instructors" },
+  { label: "אודות", href: "/about" },
 ];
 
 interface HeaderProps {
@@ -22,15 +22,23 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b border-frame-border/80 bg-frame-bg/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo / Brand */}
+        {/* Logo / Brand — kept in a fixed left-to-right lockup, matching the brand mark itself */}
         <Link
           href="/"
+          dir="ltr"
           className="group flex items-center gap-2.5"
-          aria-label="The Frame by Barzilay — home"
+          aria-label="The Frame by Barzilay — לדף הבית"
         >
-          <FrameMark className="h-8 w-8 text-white transition-colors group-hover:text-frame-gold" />
+          <Image
+            src="/logo-mark.png"
+            alt=""
+            width={36}
+            height={36}
+            className="h-9 w-9 shrink-0 opacity-90 transition-opacity group-hover:opacity-100"
+            priority
+          />
           <span className="flex flex-col leading-none">
-            <span className="font-display text-lg font-semibold tracking-tight text-white">
+            <span className="font-logo text-3xl leading-none text-white">
               The Frame
             </span>
             <span className="text-[10px] font-medium uppercase tracking-widest2 text-frame-muted">
@@ -59,7 +67,7 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
               href="/account"
               className="flex h-9 w-9 items-center justify-center rounded-full border border-frame-border bg-frame-panel text-sm font-semibold text-white transition-colors hover:border-frame-gold"
             >
-              B
+              ב
             </Link>
           ) : (
             <>
@@ -67,14 +75,14 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
                 href="/login"
                 className="text-sm font-medium text-frame-silver transition-colors hover:text-white"
               >
-                Sign In
+                התחברות
               </Link>
               <Link
                 href="/get-access"
                 className="group inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-frame-bg transition-colors hover:bg-frame-gold"
               >
-                Get Access
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                קבלו גישה
+                <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
               </Link>
             </>
           )}
@@ -85,7 +93,7 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
           type="button"
           onClick={() => setIsMenuOpen((open) => !open)}
           className="flex h-9 w-9 items-center justify-center rounded-full text-white md:hidden"
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          aria-label={isMenuOpen ? "סגור תפריט" : "פתח תפריט"}
           aria-expanded={isMenuOpen}
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -116,14 +124,14 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
               onClick={() => setIsMenuOpen(false)}
               className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
             >
-              Sign In
+              התחברות
             </Link>
             <Link
               href="/get-access"
               onClick={() => setIsMenuOpen(false)}
               className="rounded-full bg-white px-3 py-2.5 text-center text-sm font-semibold text-frame-bg hover:bg-frame-gold"
             >
-              Get Access
+              קבלו גישה
             </Link>
           </div>
         </nav>

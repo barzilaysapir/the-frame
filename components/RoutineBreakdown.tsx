@@ -24,7 +24,7 @@ export function RoutineBreakdown({ details }: RoutineBreakdownProps) {
         id="routine-breakdown-heading"
         className="mb-4 text-lg font-semibold text-white"
       >
-        What&rsquo;s Included
+        מה כלול
       </h2>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {details.map((detail) => {
@@ -38,9 +38,7 @@ export function RoutineBreakdown({ details }: RoutineBreakdownProps) {
                 <Icon className="h-[18px] w-[18px]" />
               </span>
               <div>
-                <p className="text-xs uppercase tracking-wide text-frame-muted">
-                  {detail.label}
-                </p>
+                <p className="text-xs text-frame-muted">{detail.label}</p>
                 <p className="text-sm font-medium text-white">{detail.value}</p>
               </div>
             </div>

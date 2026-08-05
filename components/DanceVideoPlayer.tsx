@@ -30,10 +30,10 @@ export interface VideoChapter {
 const PLAYBACK_SPEEDS = [0.5, 0.75, 1, 1.25] as const;
 
 const DEFAULT_CHAPTERS: VideoChapter[] = [
-  { id: "full-performance", label: "Full Performance", time: 0 },
-  { id: "breakdown", label: "Routine Breakdown (Counts)", time: 18 },
-  { id: "slow-practice", label: "Slow Practice (50%)", time: 52 },
-  { id: "full-speed", label: "Full Speed Practice (100%)", time: 90 },
+  { id: "full-performance", label: "הופעה מלאה", time: 0 },
+  { id: "breakdown", label: "פירוק תנועות (ספירות)", time: 18 },
+  { id: "slow-practice", label: "תרגול איטי (50%)", time: 52 },
+  { id: "full-speed", label: "תרגול במהירות מלאה (100%)", time: 90 },
 ];
 
 interface DanceVideoPlayerProps {
@@ -47,7 +47,7 @@ interface DanceVideoPlayerProps {
 export function DanceVideoPlayer({
   src,
   poster,
-  title = "Routine preview",
+  title = "תצוגה מקדימה של הרוטינה",
   chapters = DEFAULT_CHAPTERS,
   className,
 }: DanceVideoPlayerProps) {
@@ -194,6 +194,7 @@ export function DanceVideoPlayer({
   return (
     <div
       ref={containerRef}
+      dir="ltr"
       className={cn(
         "group relative w-full overflow-hidden rounded-2xl border border-frame-border bg-black",
         className
@@ -217,7 +218,7 @@ export function DanceVideoPlayer({
           <button
             type="button"
             onClick={togglePlay}
-            aria-label="Play video"
+            aria-label="הפעל וידאו"
             className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors hover:bg-black/40"
           >
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-frame-bg shadow-glow transition-transform hover:scale-105 sm:h-16 sm:w-16">
@@ -228,8 +229,11 @@ export function DanceVideoPlayer({
 
         {/* Mirrored indicator badge */}
         {isMirrored && (
-          <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
-            Mirrored
+          <span
+            dir="rtl"
+            className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm"
+          >
+            במראה
           </span>
         )}
 
@@ -250,6 +254,7 @@ export function DanceVideoPlayer({
               <button
                 key={chapter.id}
                 type="button"
+                dir="rtl"
                 onClick={() => jumpToChapter(chapter)}
                 className={cn(
                   "shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors sm:text-xs",
@@ -273,7 +278,7 @@ export function DanceVideoPlayer({
             step={0.01}
             value={currentTime}
             onChange={handleSeek}
-            aria-label="Seek"
+            aria-label="התקדמות בסרטון"
           />
 
           <div className="mt-2 flex items-center justify-between gap-2">
@@ -281,7 +286,7 @@ export function DanceVideoPlayer({
               <button
                 type="button"
                 onClick={togglePlay}
-                aria-label={isPlaying ? "Pause" : "Play"}
+                aria-label={isPlaying ? "השהה" : "נגן"}
                 className="flex h-8 w-8 items-center justify-center rounded-full text-white transition-colors hover:text-frame-gold"
               >
                 {isPlaying ? (
@@ -295,7 +300,7 @@ export function DanceVideoPlayer({
                 <button
                   type="button"
                   onClick={toggleMute}
-                  aria-label={isMuted ? "Unmute" : "Mute"}
+                  aria-label={isMuted ? "בטל השתקה" : "השתק"}
                   className="flex h-8 w-8 items-center justify-center text-white transition-colors hover:text-frame-gold"
                 >
                   <VolumeIcon className="h-4 w-4" />
@@ -309,7 +314,7 @@ export function DanceVideoPlayer({
                   step={0.05}
                   value={isMuted ? 0 : volume}
                   onChange={handleVolumeChange}
-                  aria-label="Volume"
+                  aria-label="עוצמת קול"
                 />
               </div>
 
@@ -324,7 +329,7 @@ export function DanceVideoPlayer({
                 <button
                   type="button"
                   onClick={() => setShowSpeedMenu((open) => !open)}
-                  aria-label="Playback speed"
+                  aria-label="מהירות ניגון"
                   aria-expanded={showSpeedMenu}
                   className={cn(
                     "flex h-8 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold transition-colors",
@@ -342,15 +347,16 @@ export function DanceVideoPlayer({
                       <button
                         key={speed}
                         type="button"
+                        dir="rtl"
                         onClick={() => setSpeed(speed)}
                         className={cn(
-                          "px-4 py-2 text-left text-xs font-medium whitespace-nowrap transition-colors hover:bg-white/5",
+                          "px-4 py-2 text-right text-xs font-medium whitespace-nowrap transition-colors hover:bg-white/5",
                           playbackRate === speed
                             ? "text-frame-gold"
                             : "text-white/80"
                         )}
                       >
-                        {speed}x{speed === 1 ? " · Normal" : ""}
+                        {speed}x{speed === 1 ? " · רגיל" : ""}
                       </button>
                     ))}
                   </div>
@@ -361,7 +367,7 @@ export function DanceVideoPlayer({
               <button
                 type="button"
                 onClick={toggleMirror}
-                aria-label="Toggle mirror mode"
+                aria-label="מצב מראה"
                 aria-pressed={isMirrored}
                 className={cn(
                   "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
@@ -377,7 +383,7 @@ export function DanceVideoPlayer({
               <button
                 type="button"
                 onClick={toggleFullscreen}
-                aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                aria-label={isFullscreen ? "צא ממסך מלא" : "מסך מלא"}
                 className="flex h-8 w-8 items-center justify-center rounded-full text-white transition-colors hover:text-frame-gold"
               >
                 {isFullscreen ? (
