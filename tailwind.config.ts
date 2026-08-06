@@ -14,21 +14,24 @@ const config: Config = {
           border: "#2A2A2E",
           silver: "#C9C9CE",
           muted: "#8A8A90",
-          // Signal amber — a recording tally light / viewfinder focus
-          // indicator, not a decorative "luxury" hue. Used sparingly.
-          accent: "#E8951E",
+          // Neon Studio duo — magenta/cyan stage-lighting energy.
+          magenta: "#E91E8C",
+          cyan: "#22D3EE",
         },
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
         logo: ["var(--font-logo)", "cursive"],
       },
       letterSpacing: {
         widest2: "0.25em",
       },
       boxShadow: {
-        glow: "0 20px 40px -12px rgba(0, 0, 0, 0.6)",
+        glow: "0 0 40px -8px rgba(233, 30, 140, 0.45)",
+      },
+      backgroundImage: {
+        "neon-cta": "linear-gradient(90deg, #E91E8C, #22D3EE)",
       },
     },
   },

@@ -28,24 +28,24 @@ export function PricingCard({
   return (
     <div
       className={cn(
-        "relative border border-frame-border/70 bg-frame-panel p-7",
+        "relative border border-frame-border/70 bg-gradient-to-br from-frame-magenta/10 via-frame-panel to-frame-cyan/10 p-7",
         className
       )}
     >
       {/* corner accents, echoing the brand mark's viewfinder frame */}
-      <span className="pointer-events-none absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-frame-accent" />
-      <span className="pointer-events-none absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-frame-accent" />
+      <span className="pointer-events-none absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-frame-magenta" />
+      <span className="pointer-events-none absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-frame-cyan" />
 
       <div dir="ltr" className="flex items-baseline justify-end gap-2.5">
         {discountPercent > 0 && (
-          <span className="text-sm font-semibold text-frame-accent">
+          <span className="text-sm font-bold text-frame-magenta">
             -{discountPercent}%
           </span>
         )}
         <span className="text-base font-medium text-frame-muted line-through">
           ₪{originalPrice}
         </span>
-        <span className="font-display text-4xl font-bold text-white">
+        <span className="font-display text-4xl font-black text-white">
           ₪{discountedPrice}
         </span>
       </div>
@@ -55,7 +55,7 @@ export function PricingCard({
 
       <Link
         href={checkoutHref}
-        className="mt-6 flex w-full items-center justify-center rounded-full bg-frame-accent px-5 py-3 text-sm font-semibold text-frame-bg transition-colors hover:brightness-110"
+        className="mt-6 flex w-full items-center justify-center rounded-full bg-neon-cta px-5 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
       >
         קבלו גישה מיידית
       </Link>

@@ -4,13 +4,18 @@
       <stop offset="0%" stop-color="#17171A" />
       <stop offset="100%" stop-color="#0F0F11" />
     </linearGradient>
-    <radialGradient id="glow" cx="50%" cy="45%" r="60%">
-      <stop offset="0%" stop-color="#C9C9CE" stop-opacity="0.14" />
-      <stop offset="100%" stop-color="#C9C9CE" stop-opacity="0" />
+    <radialGradient id="glowMagenta" cx="18%" cy="20%" r="55%">
+      <stop offset="0%" stop-color="#E91E8C" stop-opacity="0.32" />
+      <stop offset="100%" stop-color="#E91E8C" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowCyan" cx="85%" cy="65%" r="55%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.26" />
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0" />
     </radialGradient>
   </defs>
   <rect width="1200" height="675" fill="url(#bg)" />
-  <rect width="1200" height="675" fill="url(#glow)" />
+  <rect width="1200" height="675" fill="url(#glowMagenta)" />
+  <rect width="1200" height="675" fill="url(#glowCyan)" />
 
   <!-- corner frame brackets -->
   <g stroke="#C9C9CE" stroke-width="3" stroke-linecap="round" opacity="0.55">
@@ -21,7 +26,7 @@
   </g>
 
   <!-- dancer silhouette -->
-  <g stroke="#F4F4F5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.85">
+  <g stroke="#F4F4F5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9">
     <circle cx="600" cy="255" r="22" fill="#F4F4F5" stroke="none" />
     <path d="M600 280v70l-55 65M600 350l55 65M600 315l-70 30M600 315l70-10" />
   </g>

@@ -54,7 +54,7 @@ export function EarlyBirdBanner({
     <div className="border-y border-frame-border bg-frame-panel">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 py-3 text-center sm:flex-row sm:justify-between sm:px-6 sm:text-start lg:px-8">
         <p className="text-sm font-semibold text-white">
-          השקה מוקדמת — <span className="text-frame-accent">50% הנחה</span>
+          השקה מוקדמת — <span className="text-frame-magenta">50% הנחה</span>
           <span className="ms-1 hidden font-normal text-frame-silver sm:inline">
             ל-{totalSpots} הרקדנים הראשונים
           </span>

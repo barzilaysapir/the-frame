@@ -68,3 +68,22 @@ input[type="range"].frame-range::-moz-range-thumb {
   border: 2px solid #0f0f11;
   cursor: pointer;
 }
+
+/* Studio-lighting glow used behind hero sections. Absolutely positioned by
+   the caller (relative parent, z-0), content sits above it at z-10. */
+.neon-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: -15% -10%;
+  z-index: 0;
+  filter: blur(10px);
+  background:
+    radial-gradient(circle at 15% 15%, rgba(233, 30, 140, 0.28), transparent 45%),
+    radial-gradient(circle at 88% 55%, rgba(34, 211, 238, 0.22), transparent 50%);
+  /* Fully fade to transparent before ~88% down this box: the -15% inset
+     means overflow-hidden on the relative parent clips this element there,
+     so the fade must finish well ahead of that point or the clip still
+     shows as a hard-edged rectangle. */
+  mask-image: linear-gradient(to bottom, black 55%, transparent 82%);
+  -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 82%);
+}
