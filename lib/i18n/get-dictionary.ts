@@ -1,17 +1,23 @@
 import { notFound } from "next/navigation";
 import { isLocale, type Locale } from "@/lib/i18n/config";
-import type he from "@/dictionaries/he.json";
+import he from "@/dictionaries/he.json";
+import en from "@/dictionaries/en.json";
 
 export type Dictionary = typeof he;
 
-const dictionaries: Record<Locale, () => Promise<Dictionary>> = {
-  he: () => import("@/dictionaries/he.json").then((module) => module.default),
-  en: () => import("@/dictionaries/en.json").then((module) => module.default),
+const dictionaries: Record<Locale, Dictionary> = {
+  he,
+  en,
 };
 
 export async function getDictionary(locale: string): Promise<Dictionary> {
   if (!isLocale(locale)) notFound();
-  return dictionaries[locale]();
+  return dictionaries[locale];
+}
+
+/** Sync dictionary access for Client Components. */
+export function getDictionarySync(locale: Locale): Dictionary {
+  return dictionaries[locale];
 }
 
 /** Replace `{name}`-style placeholders in a dictionary string. */

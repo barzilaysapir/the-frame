@@ -4,12 +4,14 @@ interface MobileStickyCtaProps {
   originalPrice: number;
   discountedPrice: number;
   checkoutHref: string;
+  ctaLabel: string;
 }
 
 export function MobileStickyCta({
   originalPrice,
   discountedPrice,
   checkoutHref,
+  ctaLabel,
 }: MobileStickyCtaProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-frame-border bg-frame-bg/95 backdrop-blur-md lg:hidden">
@@ -26,7 +28,7 @@ export function MobileStickyCta({
           href={checkoutHref}
           className="max-w-[220px] flex-1 rounded-full bg-neon-cta px-5 py-2.5 text-center text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
         >
-          קבלו גישה מיידית
+          {ctaLabel}
         </Link>
       </div>
     </div>

@@ -6,35 +6,23 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 
-export const metadata: Metadata = {
-  title: "אודות",
-  description:
-    "The Frame by Barzilay היא פלטפורמת מורי ריקוד יוקרתית שמלמדת קומבינציה אחת לעומק — פריים אחרי פריים.",
-};
-
-const VALUES = [
-  {
-    title: "עומק, לא כמות",
-    description:
-      "במקום עשרות סרטונים שטחיים, אנחנו מלמדים קומבינציה אחת בכל פעם — עד שהיא נכנסת לגוף.",
-  },
-  {
-    title: "פירוק אמיתי",
-    description:
-      "כל קומבינציה מפורקת לספירות, עם מצב תרגול במראה ובהאטה, כך שאף תנועה לא נשארת סתומה.",
-  },
-  {
-    title: "מורים מהשטח",
-    description:
-      "המורים שלנו רקדו בהפקות, קליפים ותחרויות אמיתיות — ומביאים את הניסיון הזה ישירות לשיעור.",
-  },
-];
-
-export default async function AboutPage({
-  params,
-}: {
+interface AboutPageProps {
   params: Promise<{ locale: string }>;
-}) {
+}
+
+export async function generateMetadata({
+  params,
+}: AboutPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const dict = await getDictionary(locale);
+  return {
+    title: dict.about.metaTitle,
+    description: dict.about.metaDescription,
+  };
+}
+
+export default async function AboutPage({ params }: AboutPageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dict = await getDictionary(locale);
@@ -44,18 +32,14 @@ export default async function AboutPage({
       <div className="neon-glow" aria-hidden="true" />
       <div className="relative z-10 mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
         <h1 className="text-balance font-display text-5xl font-black leading-[0.98] text-white sm:text-6xl">
-          למדנו לרקוד בשטח. עכשיו אנחנו מלמדים אתכם.
+          {dict.about.title}
         </h1>
-        <p className="mt-5 text-frame-silver">
-          The Frame by Barzilay נולדה מתוך תסכול אחד: מורי ריקוד ברשת שמלמדים
-          שטחי, מהר מדי, בלי לתת לרקדן זמן להבין את התנועה. בנינו פלטפורמה
-          שהופכת את זה — קומבינציה אחת, בעומק מלא.
-        </p>
+        <p className="mt-5 text-frame-silver">{dict.about.body}</p>
       </div>
 
       <div className="relative z-10 mx-auto max-w-5xl px-4 pb-24 sm:px-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-          {VALUES.map((value) => (
+          {dict.about.values.map((value) => (
             <div
               key={value.title}
               className="rounded-2xl border border-frame-border bg-frame-panel p-6 text-start"
