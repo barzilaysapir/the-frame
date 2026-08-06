@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Award, Flame } from "lucide-react";
 import { Header } from "@/components/Header";
 import { EarlyBirdBanner } from "@/components/EarlyBirdBanner";
 import { DanceVideoPlayer, type VideoChapter } from "@/components/DanceVideoPlayer";
@@ -38,19 +37,11 @@ const VIDEO_CHAPTERS: VideoChapter[] = [
 ];
 
 const ROUTINE_DETAILS: RoutineDetail[] = [
-  { icon: "length", label: "אורך", value: ROUTINE.length },
-  { icon: "bpm", label: "קצב", value: ROUTINE.bpm },
-  { icon: "song", label: "שיר", value: ROUTINE.songName },
-  { icon: "technique", label: "דגש טכני מרכזי", value: ROUTINE.technique },
+  { label: "אורך", value: ROUTINE.length },
+  { label: "קצב", value: ROUTINE.bpm },
+  { label: "שיר", value: ROUTINE.songName },
+  { label: "דגש טכני מרכזי", value: ROUTINE.technique },
 ];
-
-function Badge({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex items-center rounded-full border border-frame-border bg-frame-panel px-3 py-1 text-xs font-medium text-frame-silver">
-      {children}
-    </span>
-  );
-}
 
 export default function RoutinePage() {
   return (
@@ -63,21 +54,16 @@ export default function RoutinePage() {
           {/* Main column */}
           <div className="lg:col-span-2">
             {/* Hero */}
-            <section className="mb-6">
-              <div className="mb-4 flex flex-wrap items-center gap-2">
-                <Badge>
-                  <Flame className="me-1.5 h-3.5 w-3.5 text-frame-gold" />
-                  {ROUTINE.style}
-                </Badge>
-                <Badge>
-                  <Award className="me-1.5 h-3.5 w-3.5 text-frame-gold" />
-                  {ROUTINE.level}
-                </Badge>
+            <section className="mb-8">
+              <div className="mb-3 flex items-center gap-2.5 text-sm font-medium">
+                <span className="text-white">{ROUTINE.style}</span>
+                <span className="text-frame-border">/</span>
+                <span className="text-frame-silver">{ROUTINE.level}</span>
               </div>
-              <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">
+              <h1 className="text-balance font-display text-5xl font-bold leading-[1.05] text-white sm:text-6xl">
                 {ROUTINE.title}
               </h1>
-              <div className="mt-3 flex items-center gap-3">
+              <div className="mt-4 flex items-center gap-3">
                 <InstructorAvatar name={ROUTINE.instructor} />
                 <p className="text-sm text-frame-silver">
                   בהנחיית{" "}

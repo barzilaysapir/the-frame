@@ -14,7 +14,9 @@ const config: Config = {
           border: "#2A2A2E",
           silver: "#C9C9CE",
           muted: "#8A8A90",
-          gold: "#D4AF6A",
+          // Signal amber — a recording tally light / viewfinder focus
+          // indicator, not a decorative "luxury" hue. Used sparingly.
+          accent: "#E8951E",
         },
       },
       fontFamily: {
@@ -26,7 +28,7 @@ const config: Config = {
         widest2: "0.25em",
       },
       boxShadow: {
-        glow: "0 0 40px -10px rgba(212, 175, 106, 0.25)",
+        glow: "0 20px 40px -12px rgba(0, 0, 0, 0.6)",
       },
     },
   },

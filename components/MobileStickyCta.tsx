@@ -24,7 +24,7 @@ export function MobileStickyCta({
         </div>
         <Link
           href={checkoutHref}
-          className="max-w-[220px] flex-1 rounded-full bg-white px-5 py-2.5 text-center text-sm font-semibold text-frame-bg transition-colors hover:bg-frame-gold"
+          className="max-w-[220px] flex-1 rounded-full bg-frame-accent px-5 py-2.5 text-center text-sm font-semibold text-frame-bg transition-colors hover:brightness-110"
         >
           קבלו גישה מיידית
         </Link>

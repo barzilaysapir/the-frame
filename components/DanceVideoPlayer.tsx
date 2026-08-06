@@ -259,7 +259,7 @@ export function DanceVideoPlayer({
                 className={cn(
                   "shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors sm:text-xs",
                   activeChapterId === chapter.id
-                    ? "border-frame-gold bg-frame-gold/15 text-frame-gold"
+                    ? "border-frame-accent bg-frame-accent/15 text-frame-accent"
                     : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
                 )}
               >
@@ -287,7 +287,7 @@ export function DanceVideoPlayer({
                 type="button"
                 onClick={togglePlay}
                 aria-label={isPlaying ? "השהה" : "נגן"}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-white transition-colors hover:text-frame-gold"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-frame-silver transition-colors hover:text-white"
               >
                 {isPlaying ? (
                   <Pause className="h-[18px] w-[18px]" />
@@ -301,7 +301,7 @@ export function DanceVideoPlayer({
                   type="button"
                   onClick={toggleMute}
                   aria-label={isMuted ? "בטל השתקה" : "השתק"}
-                  className="flex h-8 w-8 items-center justify-center text-white transition-colors hover:text-frame-gold"
+                  className="flex h-8 w-8 items-center justify-center text-frame-silver transition-colors hover:text-white"
                 >
                   <VolumeIcon className="h-4 w-4" />
                 </button>
@@ -334,7 +334,7 @@ export function DanceVideoPlayer({
                   className={cn(
                     "flex h-8 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold transition-colors",
                     showSpeedMenu
-                      ? "border-frame-gold text-frame-gold"
+                      ? "border-frame-accent text-frame-accent"
                       : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
                   )}
                 >
@@ -352,7 +352,7 @@ export function DanceVideoPlayer({
                         className={cn(
                           "px-4 py-2 text-right text-xs font-medium whitespace-nowrap transition-colors hover:bg-white/5",
                           playbackRate === speed
-                            ? "text-frame-gold"
+                            ? "text-frame-accent"
                             : "text-white/80"
                         )}
                       >
@@ -372,7 +372,7 @@ export function DanceVideoPlayer({
                 className={cn(
                   "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
                   isMirrored
-                    ? "border-frame-gold text-frame-gold"
+                    ? "border-frame-accent text-frame-accent"
                     : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
                 )}
               >
@@ -384,7 +384,7 @@ export function DanceVideoPlayer({
                 type="button"
                 onClick={toggleFullscreen}
                 aria-label={isFullscreen ? "צא ממסך מלא" : "מסך מלא"}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-white transition-colors hover:text-frame-gold"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-frame-silver transition-colors hover:text-white"
               >
                 {isFullscreen ? (
                   <Minimize className="h-4 w-4" />

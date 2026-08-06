@@ -65,7 +65,7 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
           {isAuthenticated ? (
             <Link
               href="/account"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-frame-border bg-frame-panel text-sm font-semibold text-white transition-colors hover:border-frame-gold"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-frame-border bg-frame-panel text-sm font-semibold text-white transition-colors hover:border-white"
             >
               ב
             </Link>
@@ -79,7 +79,7 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
               </Link>
               <Link
                 href="/get-access"
-                className="group inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-frame-bg transition-colors hover:bg-frame-gold"
+                className="group inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-frame-bg transition-colors hover:bg-frame-silver"
               >
                 קבלו גישה
                 <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
@@ -129,7 +129,7 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
             <Link
               href="/get-access"
               onClick={() => setIsMenuOpen(false)}
-              className="rounded-full bg-white px-3 py-2.5 text-center text-sm font-semibold text-frame-bg hover:bg-frame-gold"
+              className="rounded-full bg-white px-3 py-2.5 text-center text-sm font-semibold text-frame-bg hover:bg-frame-silver"
             >
               קבלו גישה
             </Link>
