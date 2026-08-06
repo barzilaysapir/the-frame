@@ -196,7 +196,7 @@ export function DanceVideoPlayer({
       ref={containerRef}
       dir="ltr"
       className={cn(
-        "group relative w-full overflow-hidden rounded-2xl border border-frame-border bg-black",
+        "neon-frame-glow group relative w-full overflow-hidden rounded-2xl border border-frame-border bg-black",
         className
       )}
       onMouseMove={scheduleHideControls}
@@ -259,7 +259,7 @@ export function DanceVideoPlayer({
                 className={cn(
                   "shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors sm:text-xs",
                   activeChapterId === chapter.id
-                    ? "border-frame-accent bg-frame-accent/15 text-frame-accent"
+                    ? "border-frame-magenta bg-frame-magenta/15 text-frame-magenta"
                     : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
                 )}
               >
@@ -334,7 +334,7 @@ export function DanceVideoPlayer({
                   className={cn(
                     "flex h-8 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold transition-colors",
                     showSpeedMenu
-                      ? "border-frame-accent text-frame-accent"
+                      ? "border-frame-magenta text-frame-magenta"
                       : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
                   )}
                 >
@@ -352,7 +352,7 @@ export function DanceVideoPlayer({
                         className={cn(
                           "px-4 py-2 text-right text-xs font-medium whitespace-nowrap transition-colors hover:bg-white/5",
                           playbackRate === speed
-                            ? "text-frame-accent"
+                            ? "text-frame-magenta"
                             : "text-white/80"
                         )}
                       >
@@ -372,7 +372,7 @@ export function DanceVideoPlayer({
                 className={cn(
                   "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
                   isMirrored
-                    ? "border-frame-accent text-frame-accent"
+                    ? "border-frame-magenta text-frame-magenta"
                     : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
                 )}
               >
