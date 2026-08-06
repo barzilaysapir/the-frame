@@ -2,42 +2,66 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import type { RoutineRecord } from "@/lib/routines";
+import { SongCredit } from "@/components/SongCredit";
+import { RoutineFilterTag } from "@/components/RoutineFilterTag";
+import type { Locale } from "@/lib/i18n/config";
+import { formatMessage } from "@/lib/i18n/get-dictionary";
+import { localePath } from "@/lib/i18n/path";
 
 interface RoutineCardProps {
   routine: RoutineRecord;
+  locale: Locale;
   instructorName?: string;
+  labels: {
+    viewRoutine: string;
+    taughtBy: string;
+  };
 }
 
-export function RoutineCard({ routine, instructorName }: RoutineCardProps) {
+export function RoutineCard({
+  routine,
+  locale,
+  instructorName,
+  labels,
+}: RoutineCardProps) {
+  const href = localePath(locale, `/routine/${routine.slug}`);
+
   return (
-    <Link
-      href={`/routine/${routine.slug}`}
-      className="group block overflow-hidden rounded-2xl border border-frame-border bg-frame-panel transition-colors hover:border-frame-cyan/60"
-    >
+    <article className="group overflow-hidden rounded-2xl border border-frame-border bg-frame-panel transition-colors hover:border-frame-cyan/60">
       <div className="relative aspect-video w-full overflow-hidden">
-        <Image
-          src={routine.poster}
-          alt=""
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        <div className="absolute inset-x-0 top-0 flex items-center gap-2 p-4">
-          <span className="rounded-full bg-frame-magenta px-2.5 py-1 text-[11px] font-bold text-frame-bg">
-            {routine.style}
-          </span>
-          <span className="rounded-full border border-white/30 bg-black/30 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
-            {routine.level}
-          </span>
+        <Link href={href} className="absolute inset-0 block">
+          <Image
+            src={routine.poster}
+            alt=""
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        </Link>
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center gap-2 p-4">
+          <RoutineFilterTag
+            value={routine.style}
+            variant="style"
+            size="sm"
+            locale={locale}
+            className="pointer-events-auto"
+          />
+          <RoutineFilterTag
+            value={routine.level}
+            variant="level"
+            size="sm"
+            locale={locale}
+            className="pointer-events-auto"
+          />
         </div>
       </div>
 
-      <div className="p-5">
-        <h3 className="font-display text-2xl font-black text-white">
-          {routine.title}
-        </h3>
-        {instructorName && (
-          <p className="mt-1 text-sm text-frame-silver">בהנחיית {instructorName}</p>
-        )}
+      <Link href={href} className="block p-5">
+        <SongCredit songName={routine.title} artist={routine.artist} />
+        {instructorName ? (
+          <p className="mt-2 text-sm text-frame-silver">
+            {formatMessage(labels.taughtBy, { name: instructorName })}
+          </p>
+        ) : null}
 
         <div className="mt-4 flex items-center justify-between border-t border-frame-border pt-4">
           <div dir="ltr" className="flex items-baseline gap-2">
@@ -49,12 +73,12 @@ export function RoutineCard({ routine, instructorName }: RoutineCardProps) {
             </span>
           </div>
           <span className="inline-flex items-center gap-1 text-sm font-semibold text-frame-cyan">
-            צפו ברוטינה
+            {labels.viewRoutine}
             <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
           </span>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </article>
   );
 }
 

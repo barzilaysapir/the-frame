@@ -12,6 +12,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Always reply in English unless the user explicitly asks for another language.
 
+# Mock content vs translations vs server
+
+- **`dictionaries/`** — UI translations only (nav, chrome, auth, player controls). Stays client-side.
+- **`mocks/`** (+ structural rows in `lib/routines.ts` / `lib/instructors.ts`) — **temporary** demo catalog until server/CMS APIs exist.
+
+Catalog that will come from the server later: routines, teachers, localized catalog copy (names, bios, descriptions, style/level labels), pricing/media, and user library/purchases. Do not treat mocks as permanent source of truth; keep UI chrome separate from catalog entities.
+
 # Task git workflow
 
 For every implementation task:
@@ -21,6 +28,6 @@ For every implementation task:
 3. Open a dedicated branch from `preview` (not `main`), e.g. `feat/12-short-slug`.
 4. Link the PR/commits to the issue (`Fixes #N` / `Refs #N`).
 5. Open PRs into `preview`. Promote to production only via `preview` → `main`.
-6. Move the board item to **Done** when the work is finished (merged/closed).
+6. When the PR merges into `preview`: close the linked issue and move the board item to **Done**.
 
-Details: `.cursor/rules/task-git-workflow.mdc`, `.cursor/rules/language.mdc`
+Details: `.cursor/rules/`

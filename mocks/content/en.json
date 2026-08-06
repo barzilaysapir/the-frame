@@ -1,0 +1,47 @@
+{
+  "minutes": "min",
+  "styles": {
+    "jazz-funk": "Jazz Funk",
+    "hip-hop": "Hip Hop",
+    "heels": "Heels"
+  },
+  "levels": {
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "all-levels": "All levels"
+  },
+  "chapters": {
+    "full-performance": "Full performance",
+    "breakdown": "Movement breakdown (counts)",
+    "slow-practice": "Slow practice (50%)",
+    "full-speed": "Full-speed practice (100%)"
+  },
+  "routines": {
+    "levitating": {
+      "technique": "Grounded weight shifts and performance",
+      "description": "An energetic jazz-funk combination focused on groove and performance — perfect for dancers who want to level up their stage expression."
+    },
+    "kill-bill": {
+      "technique": "Groove, polyrhythm, and floorwork",
+      "description": "A powerful hip-hop combination built on deep groove and sharp transitions, for dancers who want to go deeper with a strong technical focus."
+    },
+    "earned-it": {
+      "technique": "Line length, heel control, and performance",
+      "description": "A seductive, grounded heels combination that teaches heel control without sacrificing technique — with focus on posture, line, and performance."
+    }
+  },
+  "instructors": {
+    "maya-azulai": {
+      "name": "Maya Azulai",
+      "bio": "Teaches jazz funk — groove and performance."
+    },
+    "daniel-cohen": {
+      "name": "Daniel Cohen",
+      "bio": "Teaches hip hop — groove, musicality, and clear breakdowns."
+    },
+    "noa-sagi": {
+      "name": "Noa Sagi",
+      "bio": "Teaches heels — heel control, line length, and performance."
+    }
+  }
+}
