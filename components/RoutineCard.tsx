@@ -39,14 +39,14 @@ export function RoutineCard({
         </Link>
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center gap-2 p-4">
           <RoutineFilterTag
-            label={routine.style}
+            value={routine.style}
             variant="style"
             size="sm"
             locale={locale}
             className="pointer-events-auto"
           />
           <RoutineFilterTag
-            label={routine.level}
+            value={routine.level}
             variant="level"
             size="sm"
             locale={locale}

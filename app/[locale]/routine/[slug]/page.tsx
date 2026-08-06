@@ -12,6 +12,12 @@ import { getAllRoutines, getRoutineBySlug } from "@/lib/routines";
 import { getInstructorBySlug } from "@/lib/instructors";
 import { isLocale } from "@/lib/i18n/config";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
+import {
+  localizeInstructor,
+  localizeRoutine,
+  routineMetaDescription,
+  routineMetaTitle,
+} from "@/lib/i18n/localize";
 
 interface RoutinePageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -29,19 +35,19 @@ export async function generateMetadata({
   const routine = getRoutineBySlug(slug);
   if (!routine) return {};
 
-  const dict = await getDictionary(localeParam);
   const instructor = getInstructorBySlug(routine.instructorSlug);
+  const instructorName = instructor
+    ? localizeInstructor(localeParam, instructor).name
+    : "";
 
   return {
-    title: formatMessage(dict.routine.metaTitle, {
-      title: routine.title,
-      style: routine.style,
-    }),
-    description: formatMessage(dict.routine.metaDescription, {
-      title: routine.title,
-      style: routine.style,
-      instructor: instructor?.name ?? "",
-    }),
+    title: routineMetaTitle(localeParam, routine.title, routine.style),
+    description: routineMetaDescription(
+      localeParam,
+      routine.title,
+      routine.style,
+      instructorName,
+    ),
   };
 }
 
@@ -54,6 +60,10 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
   if (!routine) notFound();
 
   const instructor = getInstructorBySlug(routine.instructorSlug);
+  const localized = localizeRoutine(locale, routine);
+  const localizedInstructor = instructor
+    ? localizeInstructor(locale, instructor)
+    : null;
   const pricingLabels = {
     pricingNote: dict.routine.pricingNote,
     getAccessNow: dict.routine.getAccessNow,
@@ -62,9 +72,9 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
   };
 
   const routineDetails: RoutineDetail[] = [
-    { label: dict.routine.detailLength, value: routine.length },
+    { label: dict.routine.detailLength, value: localized.length },
     { label: dict.routine.detailBpm, value: routine.bpm },
-    { label: dict.routine.detailTechnique, value: routine.technique },
+    { label: dict.routine.detailTechnique, value: localized.technique },
   ];
 
   return (
@@ -92,12 +102,12 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
             <section className="mb-8">
               <div className="mb-4 flex items-center gap-2">
                 <RoutineFilterTag
-                  label={routine.style}
+                  value={routine.style}
                   variant="style"
                   locale={locale}
                 />
                 <RoutineFilterTag
-                  label={routine.level}
+                  value={routine.level}
                   variant="level"
                   locale={locale}
                 />
@@ -107,16 +117,16 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
                 artist={routine.artist}
                 size="hero"
               />
-              {instructor ? (
+              {localizedInstructor ? (
                 <div className="mt-5 flex items-center gap-3">
                   <InstructorAvatar
-                    name={instructor.name}
-                    src={instructor.avatar}
+                    name={localizedInstructor.name}
+                    src={instructor!.avatar}
                   />
                   <p className="text-sm text-frame-silver">
                     {dict.routine.taughtBy}{" "}
                     <span className="font-medium text-white">
-                      {instructor.name}
+                      {localizedInstructor.name}
                     </span>
                   </p>
                 </div>
@@ -129,7 +139,8 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
               title={formatMessage(dict.routine.previewTitle, {
                 title: routine.title,
               })}
-              chapters={routine.chapters}
+              chapters={localized.chapters}
+              labels={dict.player}
               className="mb-10"
             />
 

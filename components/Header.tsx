@@ -56,7 +56,9 @@ export function Header({ locale, labels }: HeaderProps) {
   };
 
   const accountInitial =
-    user?.displayName?.[0] ?? user?.phoneNumber?.slice(-2) ?? "ב";
+    user?.displayName?.[0] ??
+    user?.phoneNumber?.slice(-2) ??
+    (locale === "he" ? "ב" : "T");
 
   return (
     <header className="sticky top-0 z-50 border-b border-frame-border/80 bg-frame-bg/85 backdrop-blur-md">

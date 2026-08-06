@@ -14,6 +14,11 @@ import {
 import { getAllInstructors, getInstructorBySlug } from "@/lib/instructors";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
+import {
+  localizeInstructor,
+  localizeLevel,
+  localizeStyle,
+} from "@/lib/i18n/localize";
 import { localePath } from "@/lib/i18n/path";
 
 interface RoutinesPageProps {
@@ -120,7 +125,7 @@ export default async function RoutinesPage({
                 active: !filters.instructor,
               },
               ...instructors.map((instructor) => ({
-                label: instructor.name,
+                label: localizeInstructor(locale, instructor).name,
                 href: routinesFilterHref({
                   instructor: instructor.slug,
                   style: filters.style,
@@ -144,7 +149,7 @@ export default async function RoutinesPage({
                 active: !filters.style,
               },
               ...styles.map((item) => ({
-                label: item,
+                label: localizeStyle(locale, item),
                 href: routinesFilterHref({
                   instructor: filters.instructor,
                   style: item,
@@ -168,7 +173,7 @@ export default async function RoutinesPage({
                 active: !filters.level,
               },
               ...levels.map((item) => ({
-                label: item,
+                label: localizeLevel(locale, item),
                 href: routinesFilterHref({
                   instructor: filters.instructor,
                   style: filters.style,
@@ -184,18 +189,25 @@ export default async function RoutinesPage({
 
       {routines.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {routines.map((routine) => (
-            <RoutineCard
-              key={routine.slug}
-              routine={routine}
-              locale={locale}
-              instructorName={getInstructorBySlug(routine.instructorSlug)?.name}
-              labels={{
-                viewRoutine: dict.tutorials.viewRoutine,
-                taughtBy: dict.tutorials.taughtBy,
-              }}
-            />
-          ))}
+          {routines.map((routine) => {
+            const instructor = getInstructorBySlug(routine.instructorSlug);
+            return (
+              <RoutineCard
+                key={routine.slug}
+                routine={routine}
+                locale={locale}
+                instructorName={
+                  instructor
+                    ? localizeInstructor(locale, instructor).name
+                    : undefined
+                }
+                labels={{
+                  viewRoutine: dict.tutorials.viewRoutine,
+                  taughtBy: dict.tutorials.taughtBy,
+                }}
+              />
+            );
+          })}
         </div>
       ) : (
         <p className="text-frame-silver">{dict.tutorials.empty}</p>
