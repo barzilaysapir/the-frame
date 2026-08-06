@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Heebo, Rubik, Alex_Brush } from "next/font/google";
+import { AuthProvider } from "@/components/AuthProvider";
 import "./globals.css";
 
 const heebo = Heebo({
@@ -38,7 +39,7 @@ export default function RootLayout({
       className={`dark ${heebo.variable} ${rubik.variable} ${logoScript.variable}`}
     >
       <body className="min-h-screen bg-frame-bg font-sans antialiased">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

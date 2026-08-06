@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Menu, X, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/components/AuthProvider";
 
 const NAV_LINKS = [
   { label: "רוטינות", href: "/routines" },
@@ -12,12 +14,20 @@ const NAV_LINKS = [
   { label: "אודות", href: "/about" },
 ];
 
-interface HeaderProps {
-  isAuthenticated?: boolean;
-}
-
-export function Header({ isAuthenticated = false }: HeaderProps) {
+export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+  const { user, signOutUser } = useAuth();
+  const isAuthenticated = Boolean(user);
+
+  const handleSignOut = async () => {
+    await signOutUser();
+    setIsMenuOpen(false);
+    router.push("/");
+  };
+
+  const accountInitial =
+    user?.displayName?.[0] ?? user?.phoneNumber?.slice(-2) ?? "ב";
 
   return (
     <header className="sticky top-0 z-50 border-b border-frame-border/80 bg-frame-bg/85 backdrop-blur-md">
@@ -63,12 +73,21 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
         {/* Desktop CTA */}
         <div className="hidden items-center gap-4 md:flex">
           {isAuthenticated ? (
-            <Link
-              href="/account"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-frame-border bg-frame-panel text-sm font-semibold text-white transition-colors hover:border-white"
-            >
-              ב
-            </Link>
+            <>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="text-sm font-medium text-frame-silver transition-colors hover:text-white"
+              >
+                התנתקות
+              </button>
+              <Link
+                href="/account"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-frame-border bg-frame-panel text-sm font-semibold text-white transition-colors hover:border-white"
+              >
+                {accountInitial}
+              </Link>
+            </>
           ) : (
             <>
               <Link
@@ -78,7 +97,7 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
                 התחברות
               </Link>
               <Link
-                href="/get-access"
+                href="/routines"
                 className="group inline-flex items-center gap-1.5 rounded-full bg-neon-cta px-4 py-2 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
               >
                 קבלו גישה
@@ -119,20 +138,41 @@ export function Header({ isAuthenticated = false }: HeaderProps) {
             </Link>
           ))}
           <div className="mt-2 flex flex-col gap-2 border-t border-frame-border/80 pt-4">
-            <Link
-              href="/login"
-              onClick={() => setIsMenuOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
-            >
-              התחברות
-            </Link>
-            <Link
-              href="/get-access"
-              onClick={() => setIsMenuOpen(false)}
-              className="rounded-full bg-neon-cta px-3 py-2.5 text-center text-sm font-semibold text-frame-bg hover:brightness-110"
-            >
-              קבלו גישה
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href="/account"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
+                >
+                  האזור האישי
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="rounded-full bg-neon-cta px-3 py-2.5 text-center text-sm font-semibold text-frame-bg hover:brightness-110"
+                >
+                  התנתקות
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
+                >
+                  התחברות
+                </Link>
+                <Link
+                  href="/routines"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="rounded-full bg-neon-cta px-3 py-2.5 text-center text-sm font-semibold text-frame-bg hover:brightness-110"
+                >
+                  קבלו גישה
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       </div>
