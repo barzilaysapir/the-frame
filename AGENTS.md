@@ -7,3 +7,18 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+# Language
+
+Always reply in English unless the user explicitly asks for another language.
+
+# Task git workflow
+
+For every implementation task:
+
+1. Create a GitHub issue (`gh issue create`) for the task.
+2. Open a dedicated branch from `preview` (not `main`), e.g. `feat/12-short-slug`.
+3. Link the PR/commits to the issue (`Fixes #N` / `Refs #N`).
+4. Open PRs into `preview`. Promote to production only via `preview` → `main`.
+
+Details: `.cursor/rules/task-git-workflow.mdc`, `.cursor/rules/language.mdc`
