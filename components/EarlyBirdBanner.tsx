@@ -29,8 +29,33 @@ function msToTimeLeft(diff: number): TimeLeft {
   };
 }
 
-function subscribeToClockTick(callback: () => void) {
-  const interval = setInterval(callback, 1000);
+/** Snap to whole seconds so getSnapshot stays stable between interval ticks. */
+function getSecondsLeft(endsAt: string): number {
+  return Math.floor(getMsLeft(endsAt) / 1000);
+}
+
+const clientSnapshots = new Map<string, number>();
+
+function getClientSecondsLeft(endsAt: string): number {
+  const cached = clientSnapshots.get(endsAt);
+  if (cached !== undefined) return cached;
+  const next = getSecondsLeft(endsAt);
+  clientSnapshots.set(endsAt, next);
+  return next;
+}
+
+function subscribeToEndsAt(endsAt: string, onStoreChange: () => void) {
+  if (!clientSnapshots.has(endsAt)) {
+    clientSnapshots.set(endsAt, getSecondsLeft(endsAt));
+  }
+
+  const interval = setInterval(() => {
+    const next = getSecondsLeft(endsAt);
+    if (clientSnapshots.get(endsAt) === next) return;
+    clientSnapshots.set(endsAt, next);
+    onStoreChange();
+  }, 1000);
+
   return () => clearInterval(interval);
 }
 
@@ -39,18 +64,14 @@ export function EarlyBirdBanner({
   spotsRemaining = 12,
   totalSpots = 50,
 }: EarlyBirdBannerProps) {
-  // Ties the countdown to the real clock (an external system) via
-  // useSyncExternalStore instead of setState-in-effect. The server
-  // snapshot is null so SSR markup and the first client render match;
-  // the real countdown fills in once the client subscribes.
-  const msLeft = useSyncExternalStore(
-    subscribeToClockTick,
-    () => getMsLeft(endsAt),
+  const secondsLeft = useSyncExternalStore(
+    (onStoreChange) => subscribeToEndsAt(endsAt, onStoreChange),
+    () => getClientSecondsLeft(endsAt),
     () => null
   );
   const timeLeft = useMemo(
-    () => (msLeft === null ? null : msToTimeLeft(msLeft)),
-    [msLeft]
+    () => (secondsLeft === null ? null : msToTimeLeft(secondsLeft * 1000)),
+    [secondsLeft]
   );
 
   const units: { label: string; value: number }[] = timeLeft

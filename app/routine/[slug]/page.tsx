@@ -27,8 +27,8 @@ export async function generateMetadata({
   const instructor = getInstructorBySlug(routine.instructorSlug);
 
   return {
-    title: `${routine.title} — רוטינת ${routine.style}`,
-    description: `למדו את '${routine.title}', רוטינת ${routine.style} בהנחיית ${instructor?.name ?? ""}. פירוק מלא, מצב תרגול במראה וספירות בהאטה כלולים.`,
+    title: `${routine.title} — קומבינציית ${routine.style}`,
+    description: `בואו ללמוד את '${routine.title}', קומבינציית ${routine.style} בהנחיית ${instructor?.name ?? ""}. פירוק מלא, מצב תרגול במראה וספירות בהאטה כלולים.`,
   };
 }
 

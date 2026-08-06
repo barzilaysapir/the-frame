@@ -138,7 +138,7 @@ export default function LoginPage() {
           התחברות
         </h1>
         <p className="mt-3 text-center text-sm text-frame-silver">
-          התחברו כדי לגשת לרוטינות שרכשתם.
+          התחברו כדי לגשת לקומבינציות שרכשתם.
         </p>
 
         {!isConfigured ? (

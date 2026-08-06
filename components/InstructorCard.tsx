@@ -40,7 +40,7 @@ export function InstructorCard({ instructor, routineCount }: InstructorCardProps
           href={`/routines?instructor=${instructor.slug}`}
           className="mt-5 inline-flex items-center text-sm font-semibold text-frame-cyan transition-colors hover:text-white"
         >
-          {routineCount === 1 ? "רוטינה אחת" : `${routineCount} רוטינות`} עם{" "}
+          {routineCount === 1 ? "קומבינציה אחת" : `${routineCount} קומבינציות`} עם{" "}
           {instructor.name}
         </Link>
       )}

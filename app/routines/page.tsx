@@ -5,9 +5,9 @@ import { getAllRoutines } from "@/lib/routines";
 import { getAllInstructors, getInstructorBySlug } from "@/lib/instructors";
 
 export const metadata: Metadata = {
-  title: "רוטינות",
+  title: "קומבינציות",
   description:
-    "עיינו בכל רוטינות הריקוד — קומרשל, היפ הופ והילס — עם פירוק מלא, מצב תרגול במראה וספירות בהאטה.",
+    "עיינו בקומבינציות — קומרשל, היפ הופ והילס — עם פירוק מלא, מצב תרגול במראה וספירות בהאטה.",
 };
 
 interface RoutinesPageProps {
@@ -29,10 +29,12 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
     <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="mb-10 max-w-2xl">
         <h1 className="text-balance font-display text-5xl font-black leading-[0.98] text-white sm:text-6xl">
-          {activeInstructor ? `רוטינות עם ${activeInstructor.name}` : "כל הרוטינות"}
+          {activeInstructor
+            ? `קומבינציות עם ${activeInstructor.name}`
+            : "כל הקומבינציות"}
         </h1>
         <p className="mt-4 text-frame-silver">
-          כל רוטינה כוללת פירוק מלא לספירות, מצב תרגול במראה ובהאטה, וגישה לכל
+          כל קומבינציה כוללת פירוק מלא לספירות, מצב תרגול במראה ובהאטה, וגישה לכל
           החיים.
         </p>
       </div>
@@ -75,7 +77,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           ))}
         </div>
       ) : (
-        <p className="text-frame-silver">אין רוטינות להצגה כרגע.</p>
+        <p className="text-frame-silver">אין קומבינציות להצגה כרגע.</p>
       )}
     </main>
   );

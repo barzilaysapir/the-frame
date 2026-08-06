@@ -43,17 +43,17 @@ export default function AccountPage() {
         שלום, {displayName}
       </h1>
       <p className="mt-3 text-frame-silver">
-        כאן יופיעו כל הרוטינות שרכשתם, עם גישה לכל החיים לפירוקים, לתרגול
+        כאן יופיעו כל הקומבינציות שרכשתם, עם גישה לכל החיים לפירוקים, לתרגול
         במראה ולתרגול בהאטה.
       </p>
 
       <div className="mt-10 rounded-2xl border border-frame-border bg-frame-panel p-8 text-center">
-        <p className="text-frame-silver">עדיין לא רכשתם רוטינות.</p>
+        <p className="text-frame-silver">עדיין לא רכשתם קומבינציות.</p>
         <Link
           href="/routines"
           className="group mt-5 inline-flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
         >
-          עיינו ברוטינות
+          עיינו בקומבינציות
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
         </Link>
       </div>
