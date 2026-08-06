@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { Heebo, Frank_Ruhl_Libre, Alex_Brush } from "next/font/google";
+import { Heebo, Alex_Brush } from "next/font/google";
 import "./globals.css";
 
 const heebo = Heebo({
   subsets: ["hebrew", "latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   variable: "--font-sans",
-});
-
-const frankRuhlLibre = Frank_Ruhl_Libre({
-  subsets: ["hebrew", "latin"],
-  weight: ["500", "700", "900"],
-  variable: "--font-display",
 });
 
 const logoScript = Alex_Brush({
@@ -32,11 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="he"
-      dir="rtl"
-      className={`dark ${heebo.variable} ${frankRuhlLibre.variable} ${logoScript.variable}`}
-    >
+    <html lang="he" dir="rtl" className={`dark ${heebo.variable} ${logoScript.variable}`}>
       <body className="min-h-screen bg-frame-bg font-sans antialiased">
         {children}
       </body>

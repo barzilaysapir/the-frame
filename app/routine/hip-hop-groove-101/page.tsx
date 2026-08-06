@@ -56,7 +56,7 @@ export default function RoutinePage() {
             {/* Hero */}
             <section className="mb-8">
               <div className="mb-3 flex items-center gap-2.5 text-sm font-medium">
-                <span className="text-frame-gold">{ROUTINE.style}</span>
+                <span className="text-white">{ROUTINE.style}</span>
                 <span className="text-frame-border">/</span>
                 <span className="text-frame-silver">{ROUTINE.level}</span>
               </div>

@@ -38,7 +38,7 @@ input[type="range"].frame-range {
   border-radius: 9999px;
   background: linear-gradient(
     to right,
-    #d4af6a var(--range-progress, 0%),
+    #f4f4f5 var(--range-progress, 0%),
     #3a3a40 var(--range-progress, 0%)
   );
   outline: none;
@@ -51,7 +51,7 @@ input[type="range"].frame-range::-webkit-slider-thumb {
   height: 13px;
   border-radius: 9999px;
   background: #ffffff;
-  border: 2px solid #d4af6a;
+  border: 2px solid #0f0f11;
   cursor: pointer;
   transition: transform 0.15s ease;
 }
@@ -65,6 +65,6 @@ input[type="range"].frame-range::-moz-range-thumb {
   height: 13px;
   border-radius: 9999px;
   background: #ffffff;
-  border: 2px solid #d4af6a;
+  border: 2px solid #0f0f11;
   cursor: pointer;
 }

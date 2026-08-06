@@ -16,7 +16,7 @@ export default function HomePage() {
         </p>
         <Link
           href="/routine/hip-hop-groove-101"
-          className="group mt-8 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-frame-bg transition-colors hover:bg-frame-gold"
+          className="group mt-8 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-frame-bg transition-colors hover:bg-frame-silver"
         >
           צפו ברוטינת דוגמה
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />

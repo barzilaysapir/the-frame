@@ -33,12 +33,12 @@ export function PricingCard({
       )}
     >
       {/* corner accents, echoing the brand mark's viewfinder frame */}
-      <span className="pointer-events-none absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-frame-gold/70" />
-      <span className="pointer-events-none absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-frame-gold/70" />
+      <span className="pointer-events-none absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-white/70" />
+      <span className="pointer-events-none absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-white/70" />
 
       <div dir="ltr" className="flex items-baseline justify-end gap-2.5">
         {discountPercent > 0 && (
-          <span className="text-sm font-medium text-frame-gold">
+          <span className="text-sm font-medium text-frame-silver">
             -{discountPercent}%
           </span>
         )}
@@ -55,7 +55,7 @@ export function PricingCard({
 
       <Link
         href={checkoutHref}
-        className="mt-6 flex w-full items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-frame-bg transition-colors hover:bg-frame-gold"
+        className="mt-6 flex w-full items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-frame-bg transition-colors hover:bg-frame-silver"
       >
         קבלו גישה מיידית
       </Link>
@@ -66,7 +66,7 @@ export function PricingCard({
             key={item}
             className="flex items-baseline gap-2.5 text-sm text-frame-silver"
           >
-            <span className="text-frame-gold">—</span>
+            <span className="text-frame-silver">—</span>
             {item}
           </li>
         ))}
