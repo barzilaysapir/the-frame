@@ -67,10 +67,6 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
               <h1 className="text-balance font-display text-6xl font-black leading-[0.98] text-white sm:text-7xl">
                 {routine.title}
               </h1>
-              <p dir="ltr" className="mt-3 text-base text-frame-silver sm:text-lg">
-                {routine.songName}
-                <span className="text-frame-muted"> — {routine.artist}</span>
-              </p>
               {instructor && (
                 <div className="mt-5 flex items-center gap-3">
                   <InstructorAvatar name={instructor.name} />

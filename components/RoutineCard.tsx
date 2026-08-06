@@ -35,10 +35,6 @@ export function RoutineCard({ routine, instructorName }: RoutineCardProps) {
         <h3 className="font-display text-2xl font-black text-white">
           {routine.title}
         </h3>
-        <p dir="ltr" className="mt-1 text-sm text-frame-silver">
-          {routine.songName}
-          <span className="text-frame-muted"> — {routine.artist}</span>
-        </p>
         {instructorName && (
           <p className="mt-1 text-sm text-frame-silver">בהנחיית {instructorName}</p>
         )}
