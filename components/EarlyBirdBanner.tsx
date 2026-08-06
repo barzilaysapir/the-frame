@@ -29,30 +29,33 @@ function msToTimeLeft(diff: number): TimeLeft {
   };
 }
 
-function subscribeToClockTick(callback: () => void) {
-  const interval = setInterval(callback, 1000);
-  return () => clearInterval(interval);
+/** Snap to whole seconds so getSnapshot stays stable between interval ticks. */
+function getSecondsLeft(endsAt: string): number {
+  return Math.floor(getMsLeft(endsAt) / 1000);
 }
 
-// Cache the client snapshot so React's getSnapshot stays referentially stable
-// between ticks (returning a fresh number every call triggers an infinite loop).
 const clientSnapshots = new Map<string, number>();
 
-function getClientMsLeft(endsAt: string): number {
+function getClientSecondsLeft(endsAt: string): number {
   const cached = clientSnapshots.get(endsAt);
   if (cached !== undefined) return cached;
-  const next = getMsLeft(endsAt);
+  const next = getSecondsLeft(endsAt);
   clientSnapshots.set(endsAt, next);
   return next;
 }
 
-function subscribeToEndsAt(endsAt: string, callback: () => void) {
-  const tick = () => {
-    clientSnapshots.set(endsAt, getMsLeft(endsAt));
-    callback();
-  };
-  tick();
-  const interval = setInterval(tick, 1000);
+function subscribeToEndsAt(endsAt: string, onStoreChange: () => void) {
+  if (!clientSnapshots.has(endsAt)) {
+    clientSnapshots.set(endsAt, getSecondsLeft(endsAt));
+  }
+
+  const interval = setInterval(() => {
+    const next = getSecondsLeft(endsAt);
+    if (clientSnapshots.get(endsAt) === next) return;
+    clientSnapshots.set(endsAt, next);
+    onStoreChange();
+  }, 1000);
+
   return () => clearInterval(interval);
 }
 
@@ -61,14 +64,14 @@ export function EarlyBirdBanner({
   spotsRemaining = 12,
   totalSpots = 50,
 }: EarlyBirdBannerProps) {
-  const msLeft = useSyncExternalStore(
+  const secondsLeft = useSyncExternalStore(
     (onStoreChange) => subscribeToEndsAt(endsAt, onStoreChange),
-    () => getClientMsLeft(endsAt),
+    () => getClientSecondsLeft(endsAt),
     () => null
   );
   const timeLeft = useMemo(
-    () => (msLeft === null ? null : msToTimeLeft(msLeft)),
-    [msLeft]
+    () => (secondsLeft === null ? null : msToTimeLeft(secondsLeft * 1000)),
+    [secondsLeft]
   );
 
   const units: { label: string; value: number }[] = timeLeft
