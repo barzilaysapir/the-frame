@@ -14,7 +14,7 @@ export default function HomePage() {
           במראה, בהאטה, ומפורקת לספירות.
         </p>
         <Link
-          href="/routine/neon-nights"
+          href="/routine/levitating"
           className="group mt-9 inline-flex items-center gap-2 rounded-full bg-neon-cta px-6 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
         >
           צפו בקומבו לדוגמה
