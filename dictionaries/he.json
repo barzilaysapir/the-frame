@@ -98,7 +98,38 @@
     "empty": "עדיין לא רכשתם קומבינציות.",
     "unavailable": "האזור האישי עדיין לא זמין — האתר נמצא בבנייה.",
     "loading": "טוען...",
-    "fallbackName": "רקדן/ית"
+    "fallbackName": "רקדן/ית",
+    "nav": {
+      "library": "הספרייה",
+      "profile": "פרופיל",
+      "settings": "הגדרות"
+    },
+    "profile": {
+      "title": "פרופיל",
+      "subtitle": "פרטי החשבון שלכם ב-The Frame.",
+      "displayName": "שם לתצוגה",
+      "email": "אימייל",
+      "emailHint": "האימייל מגיע מספק ההתחברות ולא ניתן לעריכה כאן.",
+      "phone": "טלפון",
+      "noContact": "אין פרטי קשר",
+      "save": "שמירת שינויים",
+      "saving": "שומר...",
+      "saved": "הפרופיל עודכן.",
+      "saveFailed": "לא הצלחנו לשמור. נסו שוב.",
+      "nameRequired": "הזינו שם לתצוגה."
+    },
+    "settings": {
+      "title": "הגדרות",
+      "subtitle": "שפה, חשבון והתנתקות.",
+      "languageTitle": "שפה",
+      "languageBody": "בחרו את שפת הממשק של האתר.",
+      "sessionTitle": "חשבון",
+      "sessionBody": "פרטי ההתחברות הנוכחית.",
+      "signedInAs": "מחוברים כ־",
+      "email": "אימייל",
+      "uid": "מזהה משתמש",
+      "signOut": "התנתקות"
+    }
   },
   "checkout": {
     "metaTitle": "תשלום",

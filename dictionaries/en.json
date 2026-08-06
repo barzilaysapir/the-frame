@@ -98,7 +98,38 @@
     "empty": "You haven’t purchased any combinations yet.",
     "unavailable": "My account isn’t available yet — the site is still being built.",
     "loading": "Loading…",
-    "fallbackName": "dancer"
+    "fallbackName": "dancer",
+    "nav": {
+      "library": "Library",
+      "profile": "Profile",
+      "settings": "Settings"
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Your The Frame account details.",
+      "displayName": "Display name",
+      "email": "Email",
+      "emailHint": "Email comes from your sign-in provider and can’t be edited here.",
+      "phone": "Phone",
+      "noContact": "No contact details",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "Profile updated.",
+      "saveFailed": "Couldn’t save. Please try again.",
+      "nameRequired": "Enter a display name."
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Language, account, and sign out.",
+      "languageTitle": "Language",
+      "languageBody": "Choose the site interface language.",
+      "sessionTitle": "Account",
+      "sessionBody": "Details for your current session.",
+      "signedInAs": "Signed in as",
+      "email": "Email",
+      "uid": "User ID",
+      "signOut": "Sign out"
+    }
   },
   "checkout": {
     "metaTitle": "Checkout",

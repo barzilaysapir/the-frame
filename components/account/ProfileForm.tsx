@@ -1,0 +1,130 @@
+"use client";
+
+import { useEffect, useState, type FormEvent } from "react";
+import { useAuth } from "@/components/AuthProvider";
+import { UserAvatar } from "@/components/account/UserAvatar";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+interface ProfileFormProps {
+  labels: Dictionary["account"]["profile"];
+}
+
+export function ProfileForm({ labels }: ProfileFormProps) {
+  const { user, updateDisplayName } = useAuth();
+  const [displayName, setDisplayName] = useState(user?.displayName ?? "");
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setDisplayName(user?.displayName ?? "");
+  }, [user?.displayName]);
+
+  if (!user) return null;
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    const nextName = displayName.trim();
+    if (!nextName) {
+      setError(labels.nameRequired);
+      return;
+    }
+
+    setIsSaving(true);
+    setError(null);
+    setMessage(null);
+    try {
+      await updateDisplayName(nextName);
+      setMessage(labels.saved);
+    } catch {
+      setError(labels.saveFailed);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl border border-frame-border bg-frame-panel p-6 sm:p-8">
+      <div className="flex items-center gap-4">
+        <UserAvatar
+          name={user.displayName || labels.title}
+          photoURL={user.photoURL}
+          className="h-16 w-16 text-lg"
+        />
+        <div className="min-w-0">
+          <h2 className="font-display text-2xl font-black text-white">
+            {user.displayName || labels.title}
+          </h2>
+          <p className="mt-1 truncate text-sm text-frame-silver">
+            {user.email || user.phoneNumber || labels.noContact}
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="displayName" className="text-sm font-medium text-white">
+            {labels.displayName}
+          </label>
+          <input
+            id="displayName"
+            type="text"
+            autoComplete="name"
+            value={displayName}
+            onChange={(event) => setDisplayName(event.target.value)}
+            className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-white placeholder:text-frame-muted focus:border-frame-cyan focus:outline-none"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor="email" className="text-sm font-medium text-white">
+            {labels.email}
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={user.email ?? ""}
+            readOnly
+            className="rounded-xl border border-frame-border bg-frame-bg/60 px-4 py-3 text-sm text-frame-silver"
+          />
+          <p className="text-xs text-frame-muted">{labels.emailHint}</p>
+        </div>
+
+        {user.phoneNumber ? (
+          <div className="flex flex-col gap-2">
+            <label htmlFor="phone" className="text-sm font-medium text-white">
+              {labels.phone}
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              dir="ltr"
+              value={user.phoneNumber}
+              readOnly
+              className="rounded-xl border border-frame-border bg-frame-bg/60 px-4 py-3 text-sm text-frame-silver"
+            />
+          </div>
+        ) : null}
+
+        <button
+          type="submit"
+          disabled={isSaving}
+          className="rounded-full bg-neon-cta px-5 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110 disabled:opacity-50"
+        >
+          {isSaving ? labels.saving : labels.save}
+        </button>
+
+        {message ? (
+          <p className="text-sm font-medium text-frame-cyan">{message}</p>
+        ) : null}
+        {error ? (
+          <p role="alert" className="text-sm font-medium text-frame-magenta">
+            {error}
+          </p>
+        ) : null}
+      </form>
+    </div>
+  );
+}
+
+export default ProfileForm;
