@@ -17,8 +17,9 @@ Always reply in English unless the user explicitly asks for another language.
 For every implementation task:
 
 1. Create a GitHub issue (`gh issue create`) for the task.
-2. Open a dedicated branch from `preview` (not `main`), e.g. `feat/12-short-slug`.
-3. Link the PR/commits to the issue (`Fixes #N` / `Refs #N`).
-4. Open PRs into `preview`. Promote to production only via `preview` → `main`.
+2. Add the issue (and later the PR) to the **The Frame** project board: https://github.com/users/barzilaysapir/projects/4 (`gh project item-add 4 --owner "@me" --url …`).
+3. Open a dedicated branch from `preview` (not `main`), e.g. `feat/12-short-slug`.
+4. Link the PR/commits to the issue (`Fixes #N` / `Refs #N`).
+5. Open PRs into `preview`. Promote to production only via `preview` → `main`.
 
 Details: `.cursor/rules/task-git-workflow.mdc`, `.cursor/rules/language.mdc`
