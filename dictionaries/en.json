@@ -84,6 +84,10 @@
       "invalidCode": "That code is incorrect. Check the message and try again.",
       "tooMany": "Too many attempts. Try again later.",
       "popupClosed": "The window closed before sign-in finished.",
+      "unauthorizedDomain": "This domain isn’t authorized in Firebase. Add it under Authentication → Settings → Authorized domains (e.g. localhost or your LAN IP).",
+      "providerDisabled": "The Google provider isn’t enabled yet in Firebase Authentication.",
+      "popupBlocked": "The browser blocked the sign-in popup. Allow popups and try again.",
+      "network": "Network error. Check your connection and try again.",
       "generic": "Something went wrong. Please try again."
     }
   },

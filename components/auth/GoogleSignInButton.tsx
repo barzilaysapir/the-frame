@@ -19,7 +19,21 @@ interface GoogleSignInButtonProps {
 function getGoogleErrorMessage(error: unknown, errors: LoginErrors): string {
   if (error && typeof error === "object" && "code" in error) {
     const code = (error as { code?: string }).code;
-    if (code === "auth/popup-closed-by-user") return errors.popupClosed;
+    switch (code) {
+      case "auth/popup-closed-by-user":
+      case "auth/cancelled-popup-request":
+        return errors.popupClosed;
+      case "auth/unauthorized-domain":
+        return errors.unauthorizedDomain;
+      case "auth/operation-not-allowed":
+        return errors.providerDisabled;
+      case "auth/popup-blocked":
+        return errors.popupBlocked;
+      case "auth/network-request-failed":
+        return errors.network;
+      default:
+        return `${errors.generic} (${code ?? "unknown"})`;
+    }
   }
   return errors.generic;
 }
@@ -68,6 +82,7 @@ export function GoogleSignInButton({
       await signInWithPopup(auth, new GoogleAuthProvider());
       onSuccess?.();
     } catch (err) {
+      console.error("[Google sign-in]", err);
       onError?.(getGoogleErrorMessage(err, errors));
     } finally {
       setIsSubmitting(false);

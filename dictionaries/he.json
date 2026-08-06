@@ -84,6 +84,10 @@
       "invalidCode": "הקוד שהוזן שגוי. בדקו את ההודעה ונסו שוב.",
       "tooMany": "יותר מדי ניסיונות. נסו שוב מאוחר יותר.",
       "popupClosed": "החלון נסגר לפני השלמת ההתחברות.",
+      "unauthorizedDomain": "הדומיין הנוכחי לא מורשה ב-Firebase. הוסיפו אותו תחת Authentication → Settings → Authorized domains (למשל localhost או כתובת ה-IP שלכם).",
+      "providerDisabled": "ספק Google עדיין לא הופעל ב-Firebase Authentication.",
+      "popupBlocked": "הדפדפן חסם את חלון ההתחברות. אפשרו פופאפים ונסו שוב.",
+      "network": "בעיית רשת. בדקו את החיבור ונסו שוב.",
       "generic": "משהו השתבש. נסו שוב."
     }
   },
