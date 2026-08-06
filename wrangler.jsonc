@@ -32,5 +32,13 @@
 		// Enable image optimization
 		// see https://opennext.js.org/cloudflare/howtos/image
 		"binding": "IMAGES"
-	}
+	},
+	"d1_databases": [
+		{
+			"binding": "CATALOG_DB",
+			"database_name": "the-frame-catalog",
+			"database_id": "3e62170e-5120-437a-b506-fcdf078ef7c9",
+			"migrations_dir": "migrations"
+		}
+	]
 }

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getCatalogRepository,
+  resolveCatalog,
   resolveCatalogLocale,
 } from "@/lib/server/catalog";
 import type { CatalogListResponse } from "@/lib/server/catalog/types";
 import type { CatalogRoutine } from "@/lib/server/catalog/types";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const locale = resolveCatalogLocale(
@@ -16,8 +17,8 @@ export async function GET(request: NextRequest) {
   const style = request.nextUrl.searchParams.get("style") ?? undefined;
   const level = request.nextUrl.searchParams.get("level") ?? undefined;
 
-  const catalog = getCatalogRepository();
-  let items = await catalog.listRoutines(locale);
+  const { repository, source } = await resolveCatalog();
+  let items = await repository.listRoutines(locale);
 
   if (instructor) {
     items = items.filter((item) => item.instructorSlug === instructor);
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
 
   const body: CatalogListResponse<CatalogRoutine> = {
     locale,
-    source: "mock",
+    source,
     items,
   };
 

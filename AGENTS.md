@@ -25,13 +25,13 @@ Catalog that will come from a durable server later: routines, teachers, localize
 
 | Endpoint | Notes |
 | --- | --- |
-| `GET /api/v1/health` | Liveness |
+| `GET /api/v1/health` | Liveness + active `source` (`d1` or `mock`) |
 | `GET /api/v1/routines?locale=he\|en` | Optional `instructor`, `style`, `level` filters |
 | `GET /api/v1/routines/[slug]?locale=` | Single routine |
 | `GET /api/v1/instructors?locale=` | Teacher list |
 | `GET /api/v1/instructors/[slug]?locale=` | Single teacher |
 
-Swap `getCatalogRepository()` when D1/CMS is ready — route contracts stay stable.
+Data lives in Cloudflare D1 (`CATALOG_DB` / `the-frame-catalog`). Migrations: `migrations/`. Apply with `npm run db:migrate:local` or `npm run db:migrate:remote`. `resolveCatalog()` uses D1 when seeded, otherwise falls back to mocks.
 
 # Task git workflow
 
