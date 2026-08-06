@@ -10,26 +10,35 @@ export function SongCredit({ songName, artist, size = "card" }: SongCreditProps)
   const TitleTag = isHero ? "h1" : "h3";
 
   return (
-    <div dir="ltr" className="text-left">
-      <TitleTag
+    <TitleTag
+      dir="ltr"
+      className={
+        isHero
+          ? "text-balance font-display text-6xl font-black leading-[0.98] text-white sm:text-7xl"
+          : "font-display text-2xl font-black text-white"
+      }
+    >
+      {songName}
+      <span
         className={
           isHero
-            ? "text-balance font-display text-6xl font-black leading-[0.98] text-white sm:text-7xl"
-            : "font-display text-2xl font-black text-white"
+            ? "mx-3 font-sans text-3xl font-light text-frame-muted sm:mx-4 sm:text-4xl"
+            : "mx-2 font-sans text-lg font-light text-frame-muted"
         }
+        aria-hidden="true"
       >
-        {songName}
-      </TitleTag>
-      <p
+        /
+      </span>
+      <span
         className={
           isHero
-            ? "mt-3 text-sm font-medium uppercase tracking-[0.22em] text-frame-cyan sm:text-base"
-            : "mt-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-frame-cyan"
+            ? "font-sans text-2xl font-medium text-frame-silver sm:text-3xl"
+            : "font-sans text-base font-medium text-frame-silver"
         }
       >
         {artist}
-      </p>
-    </div>
+      </span>
+    </TitleTag>
   );
 }
 
