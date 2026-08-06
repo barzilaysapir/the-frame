@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 
 interface EarlyBirdBannerProps {
   /** ISO timestamp the early-bird pricing window closes. */
@@ -16,8 +16,11 @@ interface TimeLeft {
   seconds: number;
 }
 
-function getTimeLeft(endsAt: string): TimeLeft {
-  const diff = Math.max(0, new Date(endsAt).getTime() - Date.now());
+function getMsLeft(endsAt: string): number {
+  return Math.max(0, new Date(endsAt).getTime() - Date.now());
+}
+
+function msToTimeLeft(diff: number): TimeLeft {
   return {
     days: Math.floor(diff / (1000 * 60 * 60 * 24)),
     hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
@@ -26,20 +29,29 @@ function getTimeLeft(endsAt: string): TimeLeft {
   };
 }
 
+function subscribeToClockTick(callback: () => void) {
+  const interval = setInterval(callback, 1000);
+  return () => clearInterval(interval);
+}
+
 export function EarlyBirdBanner({
   endsAt,
   spotsRemaining = 12,
   totalSpots = 50,
 }: EarlyBirdBannerProps) {
-  // Start null so the server-rendered markup and first client render match;
-  // the real countdown fills in after mount (avoids a Date.now() hydration mismatch).
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
-
-  useEffect(() => {
-    setTimeLeft(getTimeLeft(endsAt));
-    const interval = setInterval(() => setTimeLeft(getTimeLeft(endsAt)), 1000);
-    return () => clearInterval(interval);
-  }, [endsAt]);
+  // Ties the countdown to the real clock (an external system) via
+  // useSyncExternalStore instead of setState-in-effect. The server
+  // snapshot is null so SSR markup and the first client render match;
+  // the real countdown fills in once the client subscribes.
+  const msLeft = useSyncExternalStore(
+    subscribeToClockTick,
+    () => getMsLeft(endsAt),
+    () => null
+  );
+  const timeLeft = useMemo(
+    () => (msLeft === null ? null : msToTimeLeft(msLeft)),
+    [msLeft]
+  );
 
   const units: { label: string; value: number }[] = timeLeft
     ? [
