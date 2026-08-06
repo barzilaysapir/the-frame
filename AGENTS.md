@@ -12,12 +12,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Always reply in English unless the user explicitly asks for another language.
 
-# Mock content vs translations
+# Mock content vs translations vs server
 
-- **`dictionaries/`** — UI translations only (nav, chrome, auth, player controls).
-- **`mocks/`** — demo catalog: `mocks/content/{he,en}.json`, `mocks/name-bank.ts`, plus structural records in `lib/routines.ts` / `lib/instructors.ts`.
+- **`dictionaries/`** — UI translations only (nav, chrome, auth, player controls). Stays client-side.
+- **`mocks/`** (+ structural rows in `lib/routines.ts` / `lib/instructors.ts`) — **temporary** demo catalog until server/CMS APIs exist.
 
-Do not mix demo catalog copy into UI dictionaries. Prefer the name bank for new sample rows; do not treat mocks as final/legal content.
+Catalog that will come from the server later: routines, teachers, localized catalog copy (names, bios, descriptions, style/level labels), pricing/media, and user library/purchases. Do not treat mocks as permanent source of truth; keep UI chrome separate from catalog entities.
 
 # Task git workflow
 

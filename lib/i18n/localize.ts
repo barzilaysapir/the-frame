@@ -1,3 +1,8 @@
+/**
+ * Resolves **display** fields for catalog entities.
+ * Today reads `mocks/content`; later prefer server-provided locale fields
+ * on routine/instructor payloads and keep this module as a thin adapter.
+ */
 import type { Locale } from "@/lib/i18n/config";
 import {
   formatMessage,

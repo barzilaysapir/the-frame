@@ -1,3 +1,8 @@
+/**
+ * Catalog types + **temporary in-memory mock routines**.
+ * Replace data access with server/CMS fetches when the API is ready;
+ * keep these shapes stable so UI can swap the source without rewrites.
+ */
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 

@@ -1,28 +1,39 @@
 ---
-description: Keep UI translations separate from demo/mock catalog content
+description: Keep UI translations separate from mock catalog; catalog is temporary until server APIs
 alwaysApply: true
 ---
 
-# Mock content vs translations
+# Translations vs mocks vs server
 
 ## Translations (`dictionaries/`)
 
 UI chrome only: nav, page chrome, auth, player controls, shared labels.
 
-Do **not** put demo catalog copy (teacher bios, routine descriptions, style/level taxonomy for sample data) in `dictionaries/`.
+These stay in the client bundle (or static messages). Do **not** put catalog/CMS fields here.
 
-## Mocks (`mocks/`)
+## Mocks (`mocks/` + structural records in `lib/`)
 
-Demo/sample catalog until real production content exists:
+Temporary stand-ins for **server-backed catalog data**. Assume they will be replaced by API/CMS responses (often already localized for the request locale).
 
-- `mocks/content/{he,en}.json` — localized mock copy (styles, levels, chapters, routine text, teacher names/bios)
+Includes:
+
+- `mocks/content/{he,en}.json` — demo localized catalog copy
 - `mocks/name-bank.ts` — seed pools for new demo rows
-- `lib/routines.ts` / `lib/instructors.ts` — structural mock records (slugs, keys, media paths)
+- `lib/routines.ts` / `lib/instructors.ts` — structural demo records (slugs, keys, media, pricing)
 
 Rules:
 
-- Do not treat bank names as final brand/legal choices
-- Song/artist pairs are placeholder catalog examples (clearance/licensing TBD)
+- Do not treat bank names or song/artist pairs as final/legal content
 - Instagram URLs may be placeholders — replace only with URLs the user supplies
-- Prefer pulling new demo rows from `mocks/name-bank.ts` instead of inventing one-off names
-- Resolve mock copy with `getMockContent(locale)` / `lib/i18n/localize.ts`, not the UI dictionary
+- Prefer `mocks/name-bank.ts` for new demo rows
+- Resolve mock catalog copy via `getMockContent` / `lib/i18n/localize.ts`, not UI dictionaries
+- When adding features, keep a clear boundary: UI strings in `dictionaries/`, catalog entities fetched (today: mocked) through catalog helpers — do not hard-wire demo rows deeper into components than necessary
+
+## Will come from the server (do not bake as permanent client data)
+
+- Routines / tutorials (metadata, media, chapters, pricing, technique, descriptions)
+- Teachers / instructors (name, bio, role/style, avatar, Instagram)
+- Catalog taxonomy labels when they are content (styles, levels, tags) for a locale
+- User-specific data (purchases, account library, auth profile beyond Firebase client session)
+
+When the API exists, prefer server-provided locale fields for catalog copy and keep `dictionaries/` for product UI chrome only.

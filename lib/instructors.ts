@@ -1,3 +1,7 @@
+/**
+ * Instructor types + **temporary in-memory mock teachers**.
+ * Replace with server/CMS fetches when the API is ready.
+ */
 import type { DanceStyleKey } from "@/lib/routines";
 
 export interface InstructorRecord {

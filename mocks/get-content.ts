@@ -9,7 +9,10 @@ const mockContent: Record<Locale, MockContent> = {
   en,
 };
 
-/** Locale-specific mock catalog copy (not UI chrome translations). */
+/**
+ * Locale-specific **mock** catalog copy (not UI chrome).
+ * Temporary until the server/CMS returns localized catalog fields per request.
+ */
 export function getMockContent(locale: Locale): MockContent {
   return mockContent[locale];
 }
