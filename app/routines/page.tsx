@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Header } from "@/components/Header";
 import { RoutineCard } from "@/components/RoutineCard";
 import { getAllRoutines } from "@/lib/routines";
@@ -41,7 +42,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
 
         {/* Instructor filter chips */}
         <div className="mb-10 flex flex-wrap gap-2">
-          <a
+          <Link
             href="/routines"
             className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
               !activeInstructor
@@ -50,9 +51,9 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             }`}
           >
             כולם
-          </a>
+          </Link>
           {instructors.map((instructor) => (
-            <a
+            <Link
               key={instructor.slug}
               href={`/routines?instructor=${instructor.slug}`}
               className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
@@ -62,7 +63,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
               }`}
             >
               {instructor.name}
-            </a>
+            </Link>
           ))}
         </div>
 

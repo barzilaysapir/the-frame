@@ -6,20 +6,19 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/components/AuthProvider";
-import { isFirebaseConfigured } from "@/lib/firebase";
 
 export default function AccountPage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading, isConfigured } = useAuth();
 
   useEffect(() => {
-    if (!isFirebaseConfigured) return;
+    if (!isConfigured) return;
     if (!loading && !user) {
       router.replace("/login");
     }
-  }, [loading, user, router]);
+  }, [isConfigured, loading, user, router]);
 
-  if (!isFirebaseConfigured) {
+  if (!isConfigured) {
     return (
       <>
         <Header />
