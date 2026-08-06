@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   return {
     title: `${routine.title} — קומבינציית ${routine.style}`,
-    description: `למדו את '${routine.title}', קומבינציית ${routine.style} בהנחיית ${instructor?.name ?? ""}. פירוק מלא, מצב תרגול במראה וספירות בהאטה כלולים.`,
+    description: `בואו ללמוד את '${routine.title}', קומבינציית ${routine.style} בהנחיית ${instructor?.name ?? ""}. פירוק מלא, מצב תרגול במראה וספירות בהאטה כלולים.`,
   };
 }
 

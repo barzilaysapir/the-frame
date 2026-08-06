@@ -7,7 +7,7 @@ export default function HomePage() {
       <div className="neon-glow" aria-hidden="true" />
       <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
         <h1 className="text-balance font-display text-6xl font-black leading-[0.98] text-white sm:text-7xl">
-          למדו את הקומבינציה, פריים אחרי פריים.
+          בואו ללמוד את הקומבינציה, פריים אחרי פריים.
         </h1>
         <p className="mt-5 max-w-xl text-frame-silver">
           מדריכי ריקוד יוקרתיים לרקדנים שרוצים לשלוט בקומבינציה אחת לעומק —
