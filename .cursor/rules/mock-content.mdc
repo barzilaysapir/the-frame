@@ -1,13 +1,28 @@
 ---
-description: Sample teachers, songs, and name-bank entries are mocks only
+description: Keep UI translations separate from demo/mock catalog content
 alwaysApply: true
 ---
 
-# Mock content
+# Mock content vs translations
 
-Teachers, songs, bios, Instagram URLs, posters, and `lib/name-bank.ts` are **mocks for UI/demo** until real production content is provided.
+## Translations (`dictionaries/`)
+
+UI chrome only: nav, page chrome, auth, player controls, shared labels.
+
+Do **not** put demo catalog copy (teacher bios, routine descriptions, style/level taxonomy for sample data) in `dictionaries/`.
+
+## Mocks (`mocks/`)
+
+Demo/sample catalog until real production content exists:
+
+- `mocks/content/{he,en}.json` — localized mock copy (styles, levels, chapters, routine text, teacher names/bios)
+- `mocks/name-bank.ts` — seed pools for new demo rows
+- `lib/routines.ts` / `lib/instructors.ts` — structural mock records (slugs, keys, media paths)
+
+Rules:
 
 - Do not treat bank names as final brand/legal choices
 - Song/artist pairs are placeholder catalog examples (clearance/licensing TBD)
 - Instagram URLs may be placeholders — replace only with URLs the user supplies
-- Prefer pulling new demo rows from `lib/name-bank.ts` instead of inventing one-off names
+- Prefer pulling new demo rows from `mocks/name-bank.ts` instead of inventing one-off names
+- Resolve mock copy with `getMockContent(locale)` / `lib/i18n/localize.ts`, not the UI dictionary

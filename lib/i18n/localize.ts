@@ -4,6 +4,7 @@ import {
   getDictionarySync,
   type Dictionary,
 } from "@/lib/i18n/get-dictionary";
+import { getMockContent } from "@/mocks/get-content";
 import type { InstructorRecord } from "@/lib/instructors";
 import type {
   ChapterId,
@@ -14,18 +15,18 @@ import type {
 } from "@/lib/routines";
 
 export function localizeStyle(locale: Locale, style: DanceStyleKey): string {
-  return getDictionarySync(locale).content.styles[style];
+  return getMockContent(locale).styles[style];
 }
 
 export function localizeLevel(locale: Locale, level: LevelKey): string {
-  return getDictionarySync(locale).content.levels[level];
+  return getMockContent(locale).levels[level];
 }
 
 export function localizeChapter(
   locale: Locale,
   chapterId: ChapterId,
 ): string {
-  return getDictionarySync(locale).content.chapters[chapterId];
+  return getMockContent(locale).chapters[chapterId];
 }
 
 export function localizeChapters(
@@ -49,13 +50,14 @@ export function localizeRoutine(
   description: string;
   chapters: Array<VideoChapter & { label: string }>;
 } {
-  const dict = getDictionarySync(locale);
-  const copy = dict.content.routines[routine.slug as keyof typeof dict.content.routines];
+  const content = getMockContent(locale);
+  const copy =
+    content.routines[routine.slug as keyof typeof content.routines];
 
   return {
-    style: dict.content.styles[routine.style],
-    level: dict.content.levels[routine.level],
-    length: `${routine.length} ${dict.content.minutes}`,
+    style: content.styles[routine.style],
+    level: content.levels[routine.level],
+    length: `${routine.length} ${content.minutes}`,
     technique: copy?.technique ?? "",
     description: copy?.description ?? "",
     chapters: localizeChapters(locale, routine.chapters),
@@ -70,15 +72,15 @@ export function localizeInstructor(
   role: string;
   bio: string;
 } {
-  const dict = getDictionarySync(locale);
+  const content = getMockContent(locale);
   const copy =
-    dict.content.instructors[
-      instructor.slug as keyof typeof dict.content.instructors
+    content.instructors[
+      instructor.slug as keyof typeof content.instructors
     ];
 
   return {
     name: copy?.name ?? instructor.slug,
-    role: dict.content.styles[instructor.style],
+    role: content.styles[instructor.style],
     bio: copy?.bio ?? "",
   };
 }
@@ -95,7 +97,7 @@ export function routineMetaTitle(
   const dict = getDictionarySync(locale);
   return formatMessage(dict.routine.metaTitle, {
     title,
-    style: dict.content.styles[styleKey],
+    style: getMockContent(locale).styles[styleKey],
   });
 }
 
@@ -108,7 +110,7 @@ export function routineMetaDescription(
   const dict = getDictionarySync(locale);
   return formatMessage(dict.routine.metaDescription, {
     title,
-    style: dict.content.styles[styleKey],
+    style: getMockContent(locale).styles[styleKey],
     instructor: instructorName,
   });
 }

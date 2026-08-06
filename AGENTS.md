@@ -12,9 +12,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Always reply in English unless the user explicitly asks for another language.
 
-# Mock content
+# Mock content vs translations
 
-Teachers, songs, bios, Instagram URLs, posters, and `lib/name-bank.ts` are **mocks for UI/demo** until real production content is provided. Prefer the name bank for new sample rows; do not treat them as final/legal content.
+- **`dictionaries/`** — UI translations only (nav, chrome, auth, player controls).
+- **`mocks/`** — demo catalog: `mocks/content/{he,en}.json`, `mocks/name-bank.ts`, plus structural records in `lib/routines.ts` / `lib/instructors.ts`.
+
+Do not mix demo catalog copy into UI dictionaries. Prefer the name bank for new sample rows; do not treat mocks as final/legal content.
 
 # Task git workflow
 
