@@ -18,10 +18,16 @@ export function InstructorCard({ instructor, routineCount }: InstructorCardProps
     >
       <div className="flex items-center gap-3">
         <InstructorAvatar name={instructor.name} className="h-12 w-12 text-sm" />
-        <div>
-          <h3 className="font-display text-xl font-black text-white">
-            {instructor.name}
-          </h3>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="font-display text-xl font-black text-white">
+              {instructor.name}
+            </h3>
+            <Instagram
+              className="h-4 w-4 shrink-0 text-frame-cyan transition-colors group-hover:text-white"
+              aria-hidden="true"
+            />
+          </div>
           <p className="text-sm text-frame-silver">{instructor.role}</p>
         </div>
       </div>
@@ -41,22 +47,14 @@ export function InstructorCard({ instructor, routineCount }: InstructorCardProps
         ))}
       </div>
 
-      <div className="mt-5 flex items-center justify-between gap-3 border-t border-frame-border pt-4">
-        {typeof routineCount === "number" && routineCount > 0 ? (
-          <p className="text-sm text-frame-silver">
-            {routineCount === 1
-              ? "קומבינציה אחת"
-              : `${routineCount} קומבינציות`}{" "}
-            באתר
-          </p>
-        ) : (
-          <span />
-        )}
-        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
-          <Instagram className="h-4 w-4" aria-hidden="true" />
-          אינסטגרם
-        </span>
-      </div>
+      {typeof routineCount === "number" && routineCount > 0 ? (
+        <p className="mt-5 border-t border-frame-border pt-4 text-sm text-frame-silver">
+          {routineCount === 1
+            ? "קומבינציה אחת"
+            : `${routineCount} קומבינציות`}{" "}
+          באתר
+        </p>
+      ) : null}
     </a>
   );
 }
