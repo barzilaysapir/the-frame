@@ -9,6 +9,7 @@ export interface InstructorRecord {
 }
 
 export const INSTRUCTORS: InstructorRecord[] = [
+  // MOCK teachers for demo UI — replace with real profiles when ready.
   {
     slug: "maya-azulai",
     name: "מאיה אזולאי",
