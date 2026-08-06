@@ -53,7 +53,7 @@ export default function AccountPage() {
           href="/routines"
           className="group mt-5 inline-flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
         >
-          עיינו בקומבינציות
+          עיינו במדריכים וקורסים
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
         </Link>
       </div>

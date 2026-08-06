@@ -13,8 +13,8 @@ export default function NotFound() {
           הדף הזה לא נמצא
         </h1>
         <p className="mt-4 max-w-md text-frame-silver">
-          ייתכן שהקישור שגוי או שהדף הוסר. חזרו לדף הבית או עיינו בקומבינציות
-          הזמינות.
+          ייתכן שהקישור שגוי או שהדף הוסר. חזרו לדף הבית או עיינו במדריכים
+          וקורסים הזמינים.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link
@@ -28,7 +28,7 @@ export default function NotFound() {
             href="/routines"
             className="rounded-full border border-frame-border px-6 py-3 text-sm font-semibold text-frame-silver transition-colors hover:border-white/40 hover:text-white"
           >
-            עיינו בקומבינציות
+            עיינו במדריכים וקורסים
           </Link>
         </div>
       </div>

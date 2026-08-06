@@ -11,6 +11,8 @@ export interface RoutineRecord {
   instructorSlug: string;
   level: string;
   style: string;
+  /** Filter tags (style + technique labels). MOCK demo metadata. */
+  tags: string[];
   songName: string;
   artist: string;
   bpm: string;
@@ -38,13 +40,14 @@ export const ROUTINES: RoutineRecord[] = [
     instructorSlug: "maya-azulai",
     level: "בינוני",
     style: "ג'אז פאנק",
+    tags: ["ג'אז פאנק", "פרפורמנס"],
     songName: "Levitating",
     artist: "Dua Lipa",
     bpm: "103 BPM",
     length: "3:23 דקות",
-    technique: "איזולציות ומעברי משקל קרקעיים",
+    technique: "מעברי משקל קרקעיים ופרפורמנס",
     description:
-      "קומבינציית ג'אז פאנק אנרגטית עם דגש על איזולציות נקיות ונוכחות בימתית, מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה.",
+      "קומבינציית ג'אז פאנק אנרגטית עם דגש על גרוב ופרפורמנס, מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה.",
     poster: "/routine-poster-midnight-static.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
@@ -65,6 +68,7 @@ export const ROUTINES: RoutineRecord[] = [
     instructorSlug: "daniel-cohen",
     level: "מתקדם",
     style: "היפ הופ",
+    tags: ["היפ הופ", "גרוב", "מוזיקליות"],
     songName: "Kill Bill",
     artist: "SZA",
     bpm: "89 BPM",
@@ -92,13 +96,14 @@ export const ROUTINES: RoutineRecord[] = [
     instructorSlug: "noa-sagi",
     level: "כל הרמות",
     style: "עקבים",
+    tags: ["עקבים", "שליטה בגוף", "פרפורמנס"],
     songName: "Earned It",
     artist: "The Weeknd",
     bpm: "120 BPM",
     length: "4:10 דקות",
-    technique: "אורך קו, שליטה בעקב ונוכחות בימתית",
+    technique: "אורך קו, שליטה בעקב ופרפורמנס",
     description:
-      "קומבינציית עקבים מפתה ובטוחה, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה — כולל דגשים על יציבה, אורך קו וביטחון עצמי על הבמה.",
+      "קומבינציית עקבים מפתה ובטוחה, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה — כולל דגשים על יציבה, אורך קו ופרפורמנס.",
     poster: "/routine-poster-velvet-heels.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
@@ -125,4 +130,40 @@ export function getRoutineBySlug(slug: string): RoutineRecord | undefined {
 
 export function getRoutinesByInstructor(instructorSlug: string): RoutineRecord[] {
   return ROUTINES.filter((routine) => routine.instructorSlug === instructorSlug);
+}
+
+export function getRoutinesByStyle(style: string): RoutineRecord[] {
+  return ROUTINES.filter((routine) => routine.style === style);
+}
+
+export function getRoutinesByLevel(level: string): RoutineRecord[] {
+  return ROUTINES.filter((routine) => routine.level === level);
+}
+
+export function getAllRoutineStyles(): string[] {
+  return [...new Set(ROUTINES.map((routine) => routine.style))];
+}
+
+export function getAllRoutineLevels(): string[] {
+  return [...new Set(ROUTINES.map((routine) => routine.level))];
+}
+
+export interface RoutinesFilterParams {
+  instructor?: string;
+  style?: string;
+  level?: string;
+}
+
+/** Build a `/routines` (tutorials catalog) URL from the active filters. */
+export function routinesFilterHref({
+  instructor,
+  style,
+  level,
+}: RoutinesFilterParams): string {
+  const params = new URLSearchParams();
+  if (instructor) params.set("instructor", instructor);
+  if (style) params.set("style", style);
+  if (level) params.set("level", level);
+  const query = params.toString();
+  return query ? `/routines?${query}` : "/routines";
 }

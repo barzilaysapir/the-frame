@@ -7,6 +7,7 @@ import { PricingCard } from "@/components/PricingCard";
 import { MobileStickyCta } from "@/components/MobileStickyCta";
 import { InstructorAvatar } from "@/components/InstructorAvatar";
 import { SongCredit } from "@/components/SongCredit";
+import { RoutineFilterTag } from "@/components/RoutineFilterTag";
 import { getAllRoutines, getRoutineBySlug } from "@/lib/routines";
 import { getInstructorBySlug } from "@/lib/instructors";
 
@@ -57,12 +58,8 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
             {/* Hero */}
             <section className="mb-8">
               <div className="mb-4 flex items-center gap-2">
-                <span className="rounded-full bg-frame-magenta px-3 py-1 text-xs font-bold text-frame-bg">
-                  {routine.style}
-                </span>
-                <span className="rounded-full border border-frame-cyan/60 px-3 py-1 text-xs font-bold text-frame-cyan">
-                  {routine.level}
-                </span>
+                <RoutineFilterTag label={routine.style} variant="style" />
+                <RoutineFilterTag label={routine.level} variant="level" />
               </div>
               <SongCredit
                 songName={routine.title}
@@ -71,7 +68,7 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
               />
               {instructor && (
                 <div className="mt-5 flex items-center gap-3">
-                  <InstructorAvatar name={instructor.name} />
+                  <InstructorAvatar name={instructor.name} src={instructor.avatar} />
                   <p className="text-sm text-frame-silver">
                     בהנחיית{" "}
                     <span className="font-medium text-white">{instructor.name}</span>

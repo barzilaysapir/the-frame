@@ -1,70 +1,154 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { RoutineCard } from "@/components/RoutineCard";
-import { getAllRoutines } from "@/lib/routines";
+import { RoutineFilters } from "@/components/routines/RoutineFilters";
+import {
+  getAllRoutineLevels,
+  getAllRoutineStyles,
+  getAllRoutines,
+  getRoutinesByInstructor,
+  getRoutinesByLevel,
+  getRoutinesByStyle,
+  routinesFilterHref,
+} from "@/lib/routines";
 import { getAllInstructors, getInstructorBySlug } from "@/lib/instructors";
 
 export const metadata: Metadata = {
-  title: "קומבינציות",
+  title: "מדריכים וקורסים",
   description:
-    "עיינו בקומבינציות — ג'אז פאנק, היפ הופ ועקבים — עם פירוק מלא, מצב תרגול במראה וספירות בהאטה.",
+    "עיינו במדריכים וקורסים — ג'אז פאנק, היפ הופ ועקבים — עם פירוק מלא, מצב תרגול במראה וספירות בהאטה.",
 };
 
 interface RoutinesPageProps {
-  searchParams: Promise<{ instructor?: string }>;
+  searchParams: Promise<{
+    instructor?: string;
+    style?: string;
+    level?: string;
+  }>;
 }
 
 export default async function RoutinesPage({ searchParams }: RoutinesPageProps) {
-  const { instructor: instructorSlug } = await searchParams;
+  const {
+    instructor: instructorSlug,
+    style,
+    level,
+  } = await searchParams;
   const allRoutines = getAllRoutines();
-  const routines = instructorSlug
-    ? allRoutines.filter((routine) => routine.instructorSlug === instructorSlug)
-    : allRoutines;
+  const instructors = getAllInstructors();
+  const styles = getAllRoutineStyles();
+  const levels = getAllRoutineLevels();
+
   const activeInstructor = instructorSlug
     ? getInstructorBySlug(instructorSlug)
     : undefined;
-  const instructors = getAllInstructors();
+
+  const filters = {
+    instructor: activeInstructor?.slug,
+    style,
+    level,
+  };
+
+  let routines = allRoutines;
+  if (filters.instructor) {
+    routines = getRoutinesByInstructor(filters.instructor);
+  }
+  if (filters.style) {
+    const byStyle = new Set(getRoutinesByStyle(filters.style).map((r) => r.slug));
+    routines = routines.filter((routine) => byStyle.has(routine.slug));
+  }
+  if (filters.level) {
+    const byLevel = new Set(getRoutinesByLevel(filters.level).map((r) => r.slug));
+    routines = routines.filter((routine) => byLevel.has(routine.slug));
+  }
+
+  const hasActiveFilters = Boolean(
+    filters.instructor || filters.style || filters.level,
+  );
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mb-10 max-w-2xl">
+      <div className="mb-8 max-w-2xl">
         <h1 className="text-balance font-display text-5xl font-black leading-[0.98] text-white sm:text-6xl">
-          {activeInstructor
-            ? `קומבינציות עם ${activeInstructor.name}`
-            : "כל הקומבינציות"}
+          מדריכים וקורסים
         </h1>
         <p className="mt-4 text-frame-silver">
-          כל קומבינציה כוללת פירוק מלא לספירות, מצב תרגול במראה ובהאטה, וגישה לכל
+          כל מדריך וקורס כוללים פירוק מלא לספירות, מצב תרגול במראה ובהאטה, וגישה לכל
           החיים.
         </p>
       </div>
 
-      {/* Instructor filter chips */}
-      <div className="mb-10 flex flex-wrap gap-2">
-        <Link
-          href="/routines"
-          className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-            !activeInstructor
-              ? "border-frame-cyan bg-frame-cyan/10 text-frame-cyan"
-              : "border-frame-border text-frame-silver hover:border-white/40 hover:text-white"
-          }`}
-        >
-          כולם
-        </Link>
-        {instructors.map((instructor) => (
-          <Link
-            key={instructor.slug}
-            href={`/routines?instructor=${instructor.slug}`}
-            className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-              activeInstructor?.slug === instructor.slug
-                ? "border-frame-cyan bg-frame-cyan/10 text-frame-cyan"
-                : "border-frame-border text-frame-silver hover:border-white/40 hover:text-white"
-            }`}
-          >
-            {instructor.name}
-          </Link>
-        ))}
-      </div>
+      <RoutineFilters
+        resultCount={routines.length}
+        hasActiveFilters={hasActiveFilters}
+        clearHref="/routines"
+        sections={[
+          {
+            label: "מורה",
+            chips: [
+              {
+                label: "הכל",
+                href: routinesFilterHref({
+                  style: filters.style,
+                  level: filters.level,
+                }),
+                active: !filters.instructor,
+              },
+              ...instructors.map((instructor) => ({
+                label: instructor.name,
+                href: routinesFilterHref({
+                  instructor: instructor.slug,
+                  style: filters.style,
+                  level: filters.level,
+                }),
+                active: filters.instructor === instructor.slug,
+              })),
+            ],
+          },
+          {
+            label: "סגנון",
+            chips: [
+              {
+                label: "הכל",
+                href: routinesFilterHref({
+                  instructor: filters.instructor,
+                  level: filters.level,
+                }),
+                active: !filters.style,
+              },
+              ...styles.map((item) => ({
+                label: item,
+                href: routinesFilterHref({
+                  instructor: filters.instructor,
+                  style: item,
+                  level: filters.level,
+                }),
+                active: filters.style === item,
+              })),
+            ],
+          },
+          {
+            label: "רמה",
+            chips: [
+              {
+                label: "הכל",
+                href: routinesFilterHref({
+                  instructor: filters.instructor,
+                  style: filters.style,
+                }),
+                active: !filters.level,
+              },
+              ...levels.map((item) => ({
+                label: item,
+                href: routinesFilterHref({
+                  instructor: filters.instructor,
+                  style: filters.style,
+                  level: item,
+                }),
+                active: filters.level === item,
+              })),
+            ],
+          },
+        ]}
+      />
 
       {routines.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -77,7 +161,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           ))}
         </div>
       ) : (
-        <p className="text-frame-silver">אין קומבינציות להצגה כרגע.</p>
+        <p className="text-frame-silver">אין מדריכים וקורסים להצגה כרגע.</p>
       )}
     </main>
   );
