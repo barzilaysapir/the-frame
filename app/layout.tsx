@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Heebo, Rubik, Alex_Brush } from "next/font/google";
 import { AuthProvider } from "@/components/AuthProvider";
+import { Header } from "@/components/Header";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const heebo = Heebo({
@@ -21,10 +23,29 @@ const logoScript = Alex_Brush({
   variable: "--font-logo",
 });
 
+const SITE_TITLE = "The Frame by Barzilay — למדו את הרוטינה";
+const SITE_DESCRIPTION =
+  "מדריכי ריקוד יוקרתיים. למדו רוטינות וקומבינציות בודדות, פריים אחרי פריים.";
+
 export const metadata: Metadata = {
-  title: "The Frame by Barzilay — למדו את הרוטינה",
-  description:
-    "מדריכי ריקוד יוקרתיים. למדו רוטינות וקומבינציות בודדות, פריים אחרי פריים.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: "%s | The Frame by Barzilay",
+  },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    siteName: "The Frame by Barzilay",
+    locale: "he_IL",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
@@ -39,7 +60,10 @@ export default function RootLayout({
       className={`dark ${heebo.variable} ${rubik.variable} ${logoScript.variable}`}
     >
       <body className="min-h-screen bg-frame-bg font-sans antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <Header />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

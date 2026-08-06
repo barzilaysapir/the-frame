@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Header } from "@/components/Header";
 import { EarlyBirdBanner } from "@/components/EarlyBirdBanner";
 import { DanceVideoPlayer } from "@/components/DanceVideoPlayer";
 import { RoutineBreakdown, type RoutineDetail } from "@/components/RoutineBreakdown";
@@ -28,7 +27,7 @@ export async function generateMetadata({
   const instructor = getInstructorBySlug(routine.instructorSlug);
 
   return {
-    title: `${routine.title} — רוטינת ${routine.style} | The Frame by Barzilay`,
+    title: `${routine.title} — רוטינת ${routine.style}`,
     description: `למדו את '${routine.title}', רוטינת ${routine.style} בהנחיית ${instructor?.name ?? ""}. פירוק מלא, מצב תרגול במראה וספירות בהאטה כלולים.`,
   };
 }
@@ -49,7 +48,6 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
 
   return (
     <>
-      <Header />
       <EarlyBirdBanner endsAt="2026-08-12T00:00:00Z" spotsRemaining={12} totalSpots={50} />
 
       <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8 lg:pb-16">
