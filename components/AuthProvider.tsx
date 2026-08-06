@@ -7,7 +7,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { onAuthStateChanged, signOut, type User } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  signOut,
+  updateProfile,
+  type User,
+} from "firebase/auth";
 import { auth, isFirebaseConfigured } from "@/lib/firebase";
 
 interface AuthContextValue {
@@ -15,6 +20,7 @@ interface AuthContextValue {
   loading: boolean;
   isConfigured: boolean;
   signOutUser: () => Promise<void>;
+  updateDisplayName: (displayName: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue>({
@@ -22,6 +28,7 @@ const AuthContext = createContext<AuthContextValue>({
   loading: false,
   isConfigured: false,
   signOutUser: async () => {},
+  updateDisplayName: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -44,9 +51,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth);
   };
 
+  const updateDisplayName = async (displayName: string) => {
+    if (!auth?.currentUser) return;
+    await updateProfile(auth.currentUser, { displayName });
+    await auth.currentUser.reload();
+    setUser(auth.currentUser);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, loading, isConfigured: isFirebaseConfigured, signOutUser }}
+      value={{
+        user,
+        loading,
+        isConfigured: isFirebaseConfigured,
+        signOutUser,
+        updateDisplayName,
+      }}
     >
       {children}
     </AuthContext.Provider>

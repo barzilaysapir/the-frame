@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Menu, X, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
+import { UserAvatar } from "@/components/account/UserAvatar";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -55,10 +56,11 @@ export function Header({ locale, labels }: HeaderProps) {
     router.push(localePath(locale));
   };
 
-  const accountInitial =
-    user?.displayName?.[0] ??
-    user?.phoneNumber?.slice(-2) ??
-    (locale === "he" ? "ב" : "T");
+  const accountName =
+    user?.displayName ||
+    user?.email ||
+    user?.phoneNumber ||
+    (locale === "he" ? "חשבון" : "Account");
 
   return (
     <header className="sticky top-0 z-50 border-b border-frame-border/80 bg-frame-bg/85 backdrop-blur-md">
@@ -113,9 +115,14 @@ export function Header({ locale, labels }: HeaderProps) {
               </button>
               <Link
                 href={localePath(locale, "/account")}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-frame-border bg-frame-panel text-sm font-semibold text-white transition-colors hover:border-white"
+                className="transition-opacity hover:opacity-90"
+                aria-label={labels.account}
               >
-                {accountInitial}
+                <UserAvatar
+                  name={accountName}
+                  photoURL={user?.photoURL}
+                  className="h-9 w-9 text-sm"
+                />
               </Link>
             </>
           ) : (
