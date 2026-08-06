@@ -11,7 +11,7 @@ import {
 } from "firebase/auth";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/components/AuthProvider";
-import { auth, isFirebaseConfigured } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 import { toIsraeliE164 } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 
@@ -38,7 +38,7 @@ function getErrorMessage(error: unknown): string {
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading, isConfigured } = useAuth();
 
   const [phoneStep, setPhoneStep] = useState<PhoneStep>("enter-phone");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -68,8 +68,11 @@ export default function LoginPage() {
     setError(null);
     setIsSubmitting(true);
     try {
+      // Navigation happens via the effect above once `user` updates, rather
+      // than here, so we never redirect ahead of the shared auth state
+      // (which would risk /account's own "sign in required" redirect
+      // bouncing the user straight back before that state catches up).
       await signInWithPopup(auth, new GoogleAuthProvider());
-      router.replace("/account");
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -118,8 +121,9 @@ export default function LoginPage() {
     setError(null);
     setIsSubmitting(true);
     try {
+      // See handleGoogleSignIn — navigation happens via the effect once
+      // `user` updates, not immediately here.
       await confirmationResult.confirm(code);
-      router.replace("/account");
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -140,7 +144,7 @@ export default function LoginPage() {
             התחברו כדי לגשת לרוטינות שרכשתם.
           </p>
 
-          {!isFirebaseConfigured ? (
+          {!isConfigured ? (
             <div className="mt-8 rounded-2xl border border-frame-border bg-frame-panel p-6 text-center text-sm text-frame-silver">
               התחברות עדיין לא זמינה — האתר נמצא בבנייה. חזרו בקרוב.
             </div>
