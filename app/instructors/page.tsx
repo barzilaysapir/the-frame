@@ -4,9 +4,9 @@ import { getAllInstructors } from "@/lib/instructors";
 import { getRoutinesByInstructor } from "@/lib/routines";
 
 export const metadata: Metadata = {
-  title: "מדריכים",
+  title: "מורים",
   description:
-    "הכירו את המדריכים היוקרתיים של The Frame by Barzilay — רקדנים מקצועיים עם ניסיון בהפקות, קליפים ותחרויות בינלאומיות.",
+    "הכירו את המורים של The Frame by Barzilay — רקדנים מקצועיים עם ניסיון בהפקות, קליפים ותחרויות בינלאומיות.",
 };
 
 export default function InstructorsPage() {
@@ -16,10 +16,10 @@ export default function InstructorsPage() {
     <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="mb-10 max-w-2xl">
         <h1 className="text-balance font-display text-5xl font-black leading-[0.98] text-white sm:text-6xl">
-          המדריכים שלנו
+          המורים שלנו
         </h1>
         <p className="mt-4 text-frame-silver">
-          כל מדריך ב-The Frame מביא רקע מקצועי משלו — קומרשל, היפ הופ והילס —
+          כל מורה ב-The Frame מביא רקע מקצועי משלו — קומרשל, היפ הופ והילס —
           ובונה כל קומבינציה כך שתלמדו אותה לעומק, פריים אחרי פריים.
         </p>
       </div>

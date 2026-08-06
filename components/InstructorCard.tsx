@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Instagram } from "lucide-react";
 import { InstructorAvatar } from "@/components/InstructorAvatar";
 import type { InstructorRecord } from "@/lib/instructors";
 
@@ -9,7 +9,13 @@ interface InstructorCardProps {
 
 export function InstructorCard({ instructor, routineCount }: InstructorCardProps) {
   return (
-    <div className="rounded-2xl border border-frame-border bg-frame-panel p-6">
+    <a
+      href={instructor.instagramUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block rounded-2xl border border-frame-border bg-frame-panel p-6 transition-colors hover:border-frame-cyan/60"
+      aria-label={`${instructor.name} באינסטגרם`}
+    >
       <div className="flex items-center gap-3">
         <InstructorAvatar name={instructor.name} className="h-12 w-12 text-sm" />
         <div>
@@ -35,16 +41,23 @@ export function InstructorCard({ instructor, routineCount }: InstructorCardProps
         ))}
       </div>
 
-      {typeof routineCount === "number" && routineCount > 0 && (
-        <Link
-          href={`/routines?instructor=${instructor.slug}`}
-          className="mt-5 inline-flex items-center text-sm font-semibold text-frame-cyan transition-colors hover:text-white"
-        >
-          {routineCount === 1 ? "קומבינציה אחת" : `${routineCount} קומבינציות`} עם{" "}
-          {instructor.name}
-        </Link>
-      )}
-    </div>
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-frame-border pt-4">
+        {typeof routineCount === "number" && routineCount > 0 ? (
+          <p className="text-sm text-frame-silver">
+            {routineCount === 1
+              ? "קומבינציה אחת"
+              : `${routineCount} קומבינציות`}{" "}
+            באתר
+          </p>
+        ) : (
+          <span />
+        )}
+        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
+          <Instagram className="h-4 w-4" aria-hidden="true" />
+          אינסטגרם
+        </span>
+      </div>
+    </a>
   );
 }
 

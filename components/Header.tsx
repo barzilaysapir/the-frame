@@ -9,7 +9,7 @@ import { useAuth } from "@/components/AuthProvider";
 
 const NAV_LINKS = [
   { label: "קומבינציות", href: "/routines" },
-  { label: "מדריכים", href: "/instructors" },
+  { label: "מורים", href: "/instructors" },
   { label: "אודות", href: "/about" },
 ];
 
