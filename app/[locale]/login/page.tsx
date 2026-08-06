@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   GoogleAuthProvider,
   RecaptchaVerifier,
@@ -13,6 +13,8 @@ import { useAuth } from "@/components/AuthProvider";
 import { auth } from "@/lib/firebase";
 import { toIsraeliE164 } from "@/lib/phone";
 import { cn } from "@/lib/utils";
+import { isLocale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/path";
 
 type PhoneStep = "enter-phone" | "enter-code";
 
@@ -37,6 +39,8 @@ function getErrorMessage(error: unknown): string {
 
 export default function LoginPage() {
   const router = useRouter();
+  const params = useParams<{ locale: string }>();
+  const locale = isLocale(params.locale) ? params.locale : "he";
   const { user, loading, isConfigured } = useAuth();
 
   const [phoneStep, setPhoneStep] = useState<PhoneStep>("enter-phone");
@@ -52,9 +56,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.replace("/account");
+      router.replace(localePath(locale, "/account"));
     }
-  }, [loading, user, router]);
+  }, [loading, user, router, locale]);
 
   useEffect(() => {
     return () => {

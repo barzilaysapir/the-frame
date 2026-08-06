@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { isLocale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/path";
 
 export const metadata: Metadata = {
   title: "אודות",
@@ -26,7 +30,15 @@ const VALUES = [
   },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  const dict = await getDictionary(locale);
+
   return (
     <main className="relative overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
@@ -46,7 +58,7 @@ export default function AboutPage() {
           {VALUES.map((value) => (
             <div
               key={value.title}
-              className="rounded-2xl border border-frame-border bg-frame-panel p-6 text-right"
+              className="rounded-2xl border border-frame-border bg-frame-panel p-6 text-start"
             >
               <h2 className="font-display text-xl font-black text-white">
                 {value.title}
@@ -60,10 +72,10 @@ export default function AboutPage() {
 
         <div className="mt-14 text-center">
           <Link
-            href="/routines"
+            href={localePath(locale, "/routines")}
             className="group inline-flex items-center gap-2 rounded-full bg-neon-cta px-6 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
           >
-            עיינו במדריכים וקורסים
+            {dict.common.browseTutorials}
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
           </Link>
         </div>

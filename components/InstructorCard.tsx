@@ -2,19 +2,36 @@ import Link from "next/link";
 import { Instagram } from "lucide-react";
 import { InstructorAvatar } from "@/components/InstructorAvatar";
 import type { InstructorRecord } from "@/lib/instructors";
+import type { Locale } from "@/lib/i18n/config";
+import { formatMessage } from "@/lib/i18n/get-dictionary";
+import { routinesFilterHref } from "@/lib/routines";
 
 interface InstructorCardProps {
   instructor: InstructorRecord;
+  locale: Locale;
   routineCount?: number;
+  labels: {
+    routineOne: string;
+    routineMany: string;
+    instagramAria: string;
+    tutorialsAria: string;
+  };
 }
 
-export function InstructorCard({ instructor, routineCount }: InstructorCardProps) {
+export function InstructorCard({
+  instructor,
+  locale,
+  routineCount,
+  labels,
+}: InstructorCardProps) {
   return (
     <article className="group relative rounded-2xl border border-frame-border bg-frame-panel p-6 transition-colors hover:border-frame-cyan/60">
       <Link
-        href={`/routines?instructor=${instructor.slug}`}
+        href={routinesFilterHref({ instructor: instructor.slug, locale })}
         className="absolute inset-0 z-0 rounded-2xl"
-        aria-label={`מדריכים וקורסים של ${instructor.name}`}
+        aria-label={formatMessage(labels.tutorialsAria, {
+          name: instructor.name,
+        })}
       />
 
       <div className="relative z-10 pointer-events-none">
@@ -34,7 +51,9 @@ export function InstructorCard({ instructor, routineCount }: InstructorCardProps
                 target="_blank"
                 rel="noopener noreferrer"
                 className="pointer-events-auto relative z-20 rounded-sm text-frame-cyan transition-colors hover:text-white"
-                aria-label={`${instructor.name} באינסטגרם`}
+                aria-label={formatMessage(labels.instagramAria, {
+                  name: instructor.name,
+                })}
               >
                 <Instagram className="h-4 w-4 shrink-0" aria-hidden="true" />
               </a>
@@ -46,8 +65,8 @@ export function InstructorCard({ instructor, routineCount }: InstructorCardProps
         {typeof routineCount === "number" && routineCount > 0 ? (
           <p className="mt-5 border-t border-frame-border pt-4 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
             {routineCount === 1
-              ? "קומבינציה אחת באתר"
-              : `${routineCount} קומבינציות באתר`}
+              ? labels.routineOne
+              : formatMessage(labels.routineMany, { count: routineCount })}
           </p>
         ) : null}
       </div>

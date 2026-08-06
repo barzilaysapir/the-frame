@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "siteTitle": "The Frame by Barzilay — Learn the combination",
+    "siteDescription": "Premium dance teachers. Learn individual combinations, frame by frame."
+  },
+  "nav": {
+    "tutorials": "Tutorials & courses",
+    "teachers": "Teachers",
+    "about": "About",
+    "login": "Log in",
+    "getAccess": "Get access",
+    "account": "My account",
+    "signOut": "Sign out",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": "Language"
+  },
+  "home": {
+    "title": "Learn the combination, frame by frame.",
+    "subtitle": "Premium dance teachers for dancers who want to own one combination deeply — mirrored, slowed down, and broken into counts.",
+    "cta": "Watch a sample combination"
+  },
+  "tutorials": {
+    "title": "Tutorials & courses",
+    "subtitle": "Every tutorial includes a full count breakdown, mirrored and slowed practice modes, and lifetime access.",
+    "filterAria": "Filter tutorials and courses",
+    "filterTeacher": "Teacher",
+    "filterStyle": "Style",
+    "filterLevel": "Level",
+    "filterAll": "All",
+    "clearFilters": "Clear filters",
+    "resultOne": "1 result",
+    "resultNone": "No results",
+    "resultMany": "{count} results",
+    "empty": "No tutorials to show right now.",
+    "viewRoutine": "View combination",
+    "taughtBy": "Taught by {name}"
+  },
+  "teachers": {
+    "title": "Our teachers",
+    "subtitle": "Every teacher at The Frame brings their own professional background — jazz funk, hip hop, and heels — and builds each combination so you can learn it deeply, frame by frame.",
+    "routineOne": "1 combination on the site",
+    "routineMany": "{count} combinations on the site",
+    "instagramAria": "{name} on Instagram",
+    "tutorialsAria": "Tutorials & courses by {name}"
+  },
+  "common": {
+    "browseTutorials": "Browse tutorials & courses",
+    "home": "Back to home"
+  }
+}

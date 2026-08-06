@@ -1,21 +1,25 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
+import { isLocale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/path";
 
 export default function AccountPage() {
   const router = useRouter();
+  const params = useParams<{ locale: string }>();
+  const locale = isLocale(params.locale) ? params.locale : "he";
   const { user, loading, isConfigured } = useAuth();
 
   useEffect(() => {
     if (!isConfigured) return;
     if (!loading && !user) {
-      router.replace("/login");
+      router.replace(localePath(locale, "/login"));
     }
-  }, [isConfigured, loading, user, router]);
+  }, [isConfigured, loading, user, router, locale]);
 
   if (!isConfigured) {
     return (
@@ -35,7 +39,8 @@ export default function AccountPage() {
     );
   }
 
-  const displayName = user.displayName || user.phoneNumber || user.email || "רקדן/ית";
+  const displayName =
+    user.displayName || user.phoneNumber || user.email || "רקדן/ית";
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
@@ -50,7 +55,7 @@ export default function AccountPage() {
       <div className="mt-10 rounded-2xl border border-frame-border bg-frame-panel p-8 text-center">
         <p className="text-frame-silver">עדיין לא רכשתם קומבינציות.</p>
         <Link
-          href="/routines"
+          href={localePath(locale, "/routines")}
           className="group mt-5 inline-flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
         >
           עיינו במדריכים וקורסים

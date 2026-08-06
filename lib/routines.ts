@@ -148,22 +148,28 @@ export function getAllRoutineLevels(): string[] {
   return [...new Set(ROUTINES.map((routine) => routine.level))];
 }
 
+import type { Locale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/path";
+
 export interface RoutinesFilterParams {
   instructor?: string;
   style?: string;
   level?: string;
+  locale?: Locale;
 }
 
-/** Build a `/routines` (tutorials catalog) URL from the active filters. */
+/** Build a locale-aware tutorials catalog URL from the active filters. */
 export function routinesFilterHref({
   instructor,
   style,
   level,
+  locale = "he",
 }: RoutinesFilterParams): string {
   const params = new URLSearchParams();
   if (instructor) params.set("instructor", instructor);
   if (style) params.set("style", style);
   if (level) params.set("level", level);
   const query = params.toString();
-  return query ? `/routines?${query}` : "/routines";
+  const base = localePath(locale, "/routines");
+  return query ? `${base}?${query}` : base;
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { RoutineCard } from "@/components/RoutineCard";
 import { RoutineFilters } from "@/components/routines/RoutineFilters";
 import {
@@ -11,14 +12,12 @@ import {
   routinesFilterHref,
 } from "@/lib/routines";
 import { getAllInstructors, getInstructorBySlug } from "@/lib/instructors";
-
-export const metadata: Metadata = {
-  title: "מדריכים וקורסים",
-  description:
-    "עיינו במדריכים וקורסים — ג'אז פאנק, היפ הופ ועקבים — עם פירוק מלא, מצב תרגול במראה וספירות בהאטה.",
-};
+import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
+import { isLocale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/path";
 
 interface RoutinesPageProps {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{
     instructor?: string;
     style?: string;
@@ -26,7 +25,27 @@ interface RoutinesPageProps {
   }>;
 }
 
-export default async function RoutinesPage({ searchParams }: RoutinesPageProps) {
+export async function generateMetadata({
+  params,
+}: Pick<RoutinesPageProps, "params">): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const dict = await getDictionary(locale);
+  return {
+    title: dict.tutorials.title,
+    description: dict.tutorials.subtitle,
+  };
+}
+
+export default async function RoutinesPage({
+  params,
+  searchParams,
+}: RoutinesPageProps) {
+  const { locale: localeParam } = await params;
+  if (!isLocale(localeParam)) notFound();
+  const locale = localeParam;
+  const dict = await getDictionary(locale);
+
   const {
     instructor: instructorSlug,
     style,
@@ -45,6 +64,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
     instructor: activeInstructor?.slug,
     style,
     level,
+    locale,
   };
 
   let routines = allRoutines;
@@ -64,31 +84,38 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
     filters.instructor || filters.style || filters.level,
   );
 
+  const resultLabel =
+    routines.length === 0
+      ? dict.tutorials.resultNone
+      : routines.length === 1
+        ? dict.tutorials.resultOne
+        : formatMessage(dict.tutorials.resultMany, { count: routines.length });
+
   return (
     <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="mb-8 max-w-2xl">
         <h1 className="text-balance font-display text-5xl font-black leading-[0.98] text-white sm:text-6xl">
-          מדריכים וקורסים
+          {dict.tutorials.title}
         </h1>
-        <p className="mt-4 text-frame-silver">
-          כל מדריך וקורס כוללים פירוק מלא לספירות, מצב תרגול במראה ובהאטה, וגישה לכל
-          החיים.
-        </p>
+        <p className="mt-4 text-frame-silver">{dict.tutorials.subtitle}</p>
       </div>
 
       <RoutineFilters
-        resultCount={routines.length}
+        ariaLabel={dict.tutorials.filterAria}
+        resultLabel={resultLabel}
+        clearLabel={dict.tutorials.clearFilters}
         hasActiveFilters={hasActiveFilters}
-        clearHref="/routines"
+        clearHref={localePath(locale, "/routines")}
         sections={[
           {
-            label: "מורה",
+            label: dict.tutorials.filterTeacher,
             chips: [
               {
-                label: "הכל",
+                label: dict.tutorials.filterAll,
                 href: routinesFilterHref({
                   style: filters.style,
                   level: filters.level,
+                  locale,
                 }),
                 active: !filters.instructor,
               },
@@ -98,19 +125,21 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
                   instructor: instructor.slug,
                   style: filters.style,
                   level: filters.level,
+                  locale,
                 }),
                 active: filters.instructor === instructor.slug,
               })),
             ],
           },
           {
-            label: "סגנון",
+            label: dict.tutorials.filterStyle,
             chips: [
               {
-                label: "הכל",
+                label: dict.tutorials.filterAll,
                 href: routinesFilterHref({
                   instructor: filters.instructor,
                   level: filters.level,
+                  locale,
                 }),
                 active: !filters.style,
               },
@@ -120,19 +149,21 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
                   instructor: filters.instructor,
                   style: item,
                   level: filters.level,
+                  locale,
                 }),
                 active: filters.style === item,
               })),
             ],
           },
           {
-            label: "רמה",
+            label: dict.tutorials.filterLevel,
             chips: [
               {
-                label: "הכל",
+                label: dict.tutorials.filterAll,
                 href: routinesFilterHref({
                   instructor: filters.instructor,
                   style: filters.style,
+                  locale,
                 }),
                 active: !filters.level,
               },
@@ -142,6 +173,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
                   instructor: filters.instructor,
                   style: filters.style,
                   level: item,
+                  locale,
                 }),
                 active: filters.level === item,
               })),
@@ -156,12 +188,17 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             <RoutineCard
               key={routine.slug}
               routine={routine}
+              locale={locale}
               instructorName={getInstructorBySlug(routine.instructorSlug)?.name}
+              labels={{
+                viewRoutine: dict.tutorials.viewRoutine,
+                taughtBy: dict.tutorials.taughtBy,
+              }}
             />
           ))}
         </div>
       ) : (
-        <p className="text-frame-silver">אין מדריכים וקורסים להצגה כרגע.</p>
+        <p className="text-frame-silver">{dict.tutorials.empty}</p>
       )}
     </main>
   );

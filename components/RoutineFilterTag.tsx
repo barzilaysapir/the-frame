@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import type { Locale } from "@/lib/i18n/config";
+import { routinesFilterHref } from "@/lib/routines";
 
 type RoutineFilterTagVariant = "style" | "level";
 type RoutineFilterTagSize = "sm" | "md";
@@ -7,6 +9,7 @@ type RoutineFilterTagSize = "sm" | "md";
 interface RoutineFilterTagProps {
   label: string;
   variant: RoutineFilterTagVariant;
+  locale: Locale;
   size?: RoutineFilterTagSize;
   className?: string;
 }
@@ -25,12 +28,16 @@ const variantClass: Record<RoutineFilterTagVariant, string> = {
 export function RoutineFilterTag({
   label,
   variant,
+  locale,
   size = "md",
   className,
 }: RoutineFilterTagProps) {
   return (
     <Link
-      href={`/routines?${variant}=${encodeURIComponent(label)}`}
+      href={routinesFilterHref({
+        locale,
+        ...(variant === "style" ? { style: label } : { level: label }),
+      })}
       className={cn(
         "rounded-full font-bold transition-[filter,border-color]",
         sizeClass[size],

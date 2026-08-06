@@ -10,12 +10,13 @@ import { SongCredit } from "@/components/SongCredit";
 import { RoutineFilterTag } from "@/components/RoutineFilterTag";
 import { getAllRoutines, getRoutineBySlug } from "@/lib/routines";
 import { getInstructorBySlug } from "@/lib/instructors";
+import { isLocale } from "@/lib/i18n/config";
 
 interface RoutinePageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   return getAllRoutines().map((routine) => ({ slug: routine.slug }));
 }
 
@@ -35,7 +36,9 @@ export async function generateMetadata({
 }
 
 export default async function RoutinePage({ params }: RoutinePageProps) {
-  const { slug } = await params;
+  const { locale: localeParam, slug } = await params;
+  if (!isLocale(localeParam)) notFound();
+  const locale = localeParam;
   const routine = getRoutineBySlug(slug);
   if (!routine) notFound();
 
@@ -58,8 +61,16 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
             {/* Hero */}
             <section className="mb-8">
               <div className="mb-4 flex items-center gap-2">
-                <RoutineFilterTag label={routine.style} variant="style" />
-                <RoutineFilterTag label={routine.level} variant="level" />
+                <RoutineFilterTag
+                  label={routine.style}
+                  variant="style"
+                  locale={locale}
+                />
+                <RoutineFilterTag
+                  label={routine.level}
+                  variant="level"
+                  locale={locale}
+                />
               </div>
               <SongCredit
                 songName={routine.title}
