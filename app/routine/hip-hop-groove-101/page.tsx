@@ -8,17 +8,18 @@ import { MobileStickyCta } from "@/components/MobileStickyCta";
 import { InstructorAvatar } from "@/components/InstructorAvatar";
 
 export const metadata: Metadata = {
-  title: "לילות ניאון — רוטינת קומרשל | The Frame by Barzilay",
+  title: "Neon Nights — רוטינת קומרשל | The Frame by Barzilay",
   description:
-    "למדו את 'לילות ניאון', רוטינת קומרשל בהנחיית מאיה אזולאי. פירוק מלא, מצב תרגול במראה וספירות בהאטה כלולים.",
+    "למדו את 'Neon Nights', רוטינת קומרשל בהנחיית מאיה אזולאי. פירוק מלא, מצב תרגול במראה וספירות בהאטה כלולים.",
 };
 
 const ROUTINE = {
-  title: "לילות ניאון",
+  title: "Neon Nights",
   instructor: "מאיה אזולאי",
   level: "בינוני",
   style: "קומרשל",
-  songName: "לילות ניאון (גרסה אינסטרומנטלית)",
+  songName: "Neon Nights (Instrumental Version)",
+  artist: "Luna Vale",
   bpm: "96 BPM",
   length: "3:42 דקות",
   technique: "איזולציות ומעברי משקל קרקעיים",
@@ -39,7 +40,7 @@ const VIDEO_CHAPTERS: VideoChapter[] = [
 const ROUTINE_DETAILS: RoutineDetail[] = [
   { label: "אורך", value: ROUTINE.length },
   { label: "קצב", value: ROUTINE.bpm },
-  { label: "שיר", value: ROUTINE.songName },
+  { label: "שיר", value: `${ROUTINE.songName} — ${ROUTINE.artist}` },
   { label: "דגש טכני מרכזי", value: ROUTINE.technique },
 ];
 
