@@ -19,7 +19,7 @@ export default function InstructorsPage() {
           המורים שלנו
         </h1>
         <p className="mt-4 text-frame-silver">
-          כל מורה ב-The Frame מביא רקע מקצועי משלו — קומרשל, היפ הופ והילס —
+          כל מורה ב-The Frame מביא רקע מקצועי משלו — ג'אז פאנק, היפ הופ ועקבים —
           ובונה כל קומבינציה כך שתלמדו אותה לעומק, פריים אחרי פריים.
         </p>
       </div>

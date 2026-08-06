@@ -36,14 +36,14 @@ export const ROUTINES: RoutineRecord[] = [
     title: "Levitating",
     instructorSlug: "maya-azulai",
     level: "בינוני",
-    style: "קומרשל",
+    style: "ג'אז פאנק",
     songName: "Levitating",
     artist: "Dua Lipa",
     bpm: "103 BPM",
     length: "3:23 דקות",
     technique: "איזולציות ומעברי משקל קרקעיים",
     description:
-      "קומבינציית קומרשל אנרגטית עם דגש על איזולציות נקיות ונוכחות בימתית, מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה.",
+      "קומבינציית ג'אז פאנק אנרגטית עם דגש על איזולציות נקיות ונוכחות בימתית, מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה.",
     poster: "/routine-poster-midnight-static.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
@@ -90,14 +90,14 @@ export const ROUTINES: RoutineRecord[] = [
     title: "Earned It",
     instructorSlug: "noa-sagi",
     level: "כל הרמות",
-    style: "הילס",
+    style: "עקבים",
     songName: "Earned It",
     artist: "The Weeknd",
     bpm: "120 BPM",
     length: "4:10 דקות",
     technique: "אורך קו, שליטה בעקב ונוכחות בימתית",
     description:
-      "קומבינציית הילס מפתה ובטוחה, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה — כולל דגשים על יציבה, אורך קו וביטחון עצמי על הבמה.",
+      "קומבינציית עקבים מפתה ובטוחה, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה — כולל דגשים על יציבה, אורך קו וביטחון עצמי על הבמה.",
     poster: "/routine-poster-velvet-heels.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [

@@ -12,9 +12,9 @@ export const INSTRUCTORS: InstructorRecord[] = [
   {
     slug: "maya-azulai",
     name: "מאיה אזולאי",
-    role: "קומרשל",
-    bio: "רקדנית קומרשל בהפקות וקליפים, עם דגש על איזולציות נקיות ונוכחות בימתית.",
-    specialties: ["קומרשל", "איזולציות", "נוכחות בימתית"],
+    role: "ג'אז פאנק",
+    bio: "רקדנית ג'אז פאנק בהפקות וקליפים, עם דגש על איזולציות נקיות ונוכחות בימתית.",
+    specialties: ["ג'אז פאנק", "איזולציות", "נוכחות בימתית"],
     // Placeholder — replace with the teacher's real Instagram URL.
     instagramUrl: "https://www.instagram.com/",
   },
@@ -29,9 +29,9 @@ export const INSTRUCTORS: InstructorRecord[] = [
   {
     slug: "noa-sagi",
     name: "נועה שגיא",
-    role: "הילס",
-    bio: "מתמחה בהילס: שליטה בעקב, אורך קו וביטחון על הבמה בכל הרמות.",
-    specialties: ["הילס", "שליטה בגוף", "ביטחון בימתי"],
+    role: "עקבים",
+    bio: "מתמחה בעקבים: שליטה בעקב, אורך קו וביטחון על הבמה בכל הרמות.",
+    specialties: ["עקבים", "שליטה בגוף", "ביטחון בימתי"],
     instagramUrl: "https://www.instagram.com/",
   },
 ];

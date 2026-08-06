@@ -7,7 +7,7 @@ import { getAllInstructors, getInstructorBySlug } from "@/lib/instructors";
 export const metadata: Metadata = {
   title: "קומבינציות",
   description:
-    "עיינו בקומבינציות — קומרשל, היפ הופ והילס — עם פירוק מלא, מצב תרגול במראה וספירות בהאטה.",
+    "עיינו בקומבינציות — ג'אז פאנק, היפ הופ ועקבים — עם פירוק מלא, מצב תרגול במראה וספירות בהאטה.",
 };
 
 interface RoutinesPageProps {
