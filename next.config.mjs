@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    // Cloudflare Workers can't run the default sharp-based optimizer; our
-    // only image today is a small local icon, so skip optimization rather
-    // than wiring up a custom loader.
+    // Cloudflare Workers can't run the default sharp-based optimizer, so
+    // skip optimization rather than wiring up a custom loader.
     unoptimized: true,
   },
   async headers() {

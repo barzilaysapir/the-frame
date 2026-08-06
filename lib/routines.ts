@@ -44,7 +44,7 @@ export const ROUTINES: RoutineRecord[] = [
     technique: "איזולציות ומעברי משקל קרקעיים",
     description:
       "רוטינת קומרשל אנרגטית עם דגש על איזולציות נקיות ונוכחות בימתית, מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה.",
-    poster: "/routine-poster.svg",
+    poster: "/routine-poster-neon-nights.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", label: "הופעה מלאה", time: 0 },
@@ -71,7 +71,7 @@ export const ROUTINES: RoutineRecord[] = [
     technique: "גרוב, פוליריתמיקה ועבודת רצפה",
     description:
       "רוטינת היפ הופ עוצמתית שבנויה על גרוב עמוק ומעברים חדים בין הקומבינציות, לרקדנים שרוצים להעמיק בסגנון עם דגש טכני גבוה.",
-    poster: "/routine-poster-cyan.svg",
+    poster: "/routine-poster-midnight-static.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", label: "הופעה מלאה", time: 0 },
@@ -98,7 +98,7 @@ export const ROUTINES: RoutineRecord[] = [
     technique: "אורך קו, שליטה בעקב ונוכחות בימתית",
     description:
       "רוטינת הילס מפתה ובטוחה, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה — כולל דגשים על יציבה, אורך קו וביטחון עצמי על הבמה.",
-    poster: "/routine-poster-magenta.svg",
+    poster: "/routine-poster-velvet-heels.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", label: "הופעה מלאה", time: 0 },
