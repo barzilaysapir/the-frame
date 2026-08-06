@@ -40,8 +40,7 @@ const VIDEO_CHAPTERS: VideoChapter[] = [
 const ROUTINE_DETAILS: RoutineDetail[] = [
   { label: "אורך", value: ROUTINE.length },
   { label: "קצב", value: ROUTINE.bpm },
-  { label: "שיר", value: ROUTINE.songName },
-  { label: "זמר/ת", value: ROUTINE.artist },
+  { label: "שיר", value: `${ROUTINE.songName} — ${ROUTINE.artist}` },
   { label: "דגש טכני מרכזי", value: ROUTINE.technique },
 ];
 
