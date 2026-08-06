@@ -259,7 +259,7 @@ export function DanceVideoPlayer({
                 className={cn(
                   "shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors sm:text-xs",
                   activeChapterId === chapter.id
-                    ? "border-white bg-white/10 text-white"
+                    ? "border-frame-accent bg-frame-accent/15 text-frame-accent"
                     : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
                 )}
               >
@@ -334,7 +334,7 @@ export function DanceVideoPlayer({
                   className={cn(
                     "flex h-8 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold transition-colors",
                     showSpeedMenu
-                      ? "border-white text-white"
+                      ? "border-frame-accent text-frame-accent"
                       : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
                   )}
                 >
@@ -352,7 +352,7 @@ export function DanceVideoPlayer({
                         className={cn(
                           "px-4 py-2 text-right text-xs font-medium whitespace-nowrap transition-colors hover:bg-white/5",
                           playbackRate === speed
-                            ? "text-white"
+                            ? "text-frame-accent"
                             : "text-white/80"
                         )}
                       >
@@ -372,7 +372,7 @@ export function DanceVideoPlayer({
                 className={cn(
                   "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
                   isMirrored
-                    ? "border-white text-white"
+                    ? "border-frame-accent text-frame-accent"
                     : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
                 )}
               >

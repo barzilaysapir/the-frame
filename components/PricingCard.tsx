@@ -33,12 +33,12 @@ export function PricingCard({
       )}
     >
       {/* corner accents, echoing the brand mark's viewfinder frame */}
-      <span className="pointer-events-none absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-white/70" />
-      <span className="pointer-events-none absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-white/70" />
+      <span className="pointer-events-none absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-frame-accent" />
+      <span className="pointer-events-none absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-frame-accent" />
 
       <div dir="ltr" className="flex items-baseline justify-end gap-2.5">
         {discountPercent > 0 && (
-          <span className="text-sm font-medium text-frame-silver">
+          <span className="text-sm font-semibold text-frame-accent">
             -{discountPercent}%
           </span>
         )}
@@ -55,7 +55,7 @@ export function PricingCard({
 
       <Link
         href={checkoutHref}
-        className="mt-6 flex w-full items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-frame-bg transition-colors hover:bg-frame-silver"
+        className="mt-6 flex w-full items-center justify-center rounded-full bg-frame-accent px-5 py-3 text-sm font-semibold text-frame-bg transition-colors hover:brightness-110"
       >
         קבלו גישה מיידית
       </Link>
