@@ -21,5 +21,6 @@ For every implementation task:
 3. Open a dedicated branch from `preview` (not `main`), e.g. `feat/12-short-slug`.
 4. Link the PR/commits to the issue (`Fixes #N` / `Refs #N`).
 5. Open PRs into `preview`. Promote to production only via `preview` → `main`.
+6. Move the board item to **Done** when the work is finished (merged/closed).
 
 Details: `.cursor/rules/task-git-workflow.mdc`, `.cursor/rules/language.mdc`

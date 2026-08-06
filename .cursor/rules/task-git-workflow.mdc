@@ -19,5 +19,6 @@ For every user task that involves code changes, before starting implementation:
 4. **Name branches** with a short type prefix: `feat/…`, `fix/…`, `chore/…`, `refactor/…`. Prefer including the issue number, e.g. `feat/12-routine-filters`.
 5. **Link work to the issue** — mention `Fixes #N` or `Refs #N` in the PR body (and commit messages when appropriate).
 6. Open the PR **into `preview`**, not `main`. Production goes `preview` → `main` only after validation. Also add the PR URL to project board `#4`.
+7. **Board status**: set the issue/PR to **In Progress** when work starts; move it to **Done** when the work is finished (PR merged into `preview` and/or issue closed). Use `gh project item-edit` with Status option Done (`98236657`) on project `PVT_kwHOBFmits4Bfk87`.
 
 Skip this workflow only for pure questions, read-only exploration, or when the user explicitly says not to open a branch/issue.
