@@ -15,9 +15,23 @@ Always reply in English unless the user explicitly asks for another language.
 # Mock content vs translations vs server
 
 - **`dictionaries/`** — UI translations only (nav, chrome, auth, player controls). Stays client-side.
-- **`mocks/`** (+ structural rows in `lib/routines.ts` / `lib/instructors.ts`) — **temporary** demo catalog until server/CMS APIs exist.
+- **`mocks/`** (+ structural rows in `lib/routines.ts` / `lib/instructors.ts`) — **temporary** demo catalog until a durable store (D1/CMS) replaces them.
+- **`lib/server/catalog/`** — catalog repository + DTO types. Server Components and Route Handlers should prefer this layer over importing mocks directly.
+- **`app/api/v1/`** — HTTP catalog API (`/api/v1/health`, `/routines`, `/instructors`). Currently backed by the mock repository (`source: "mock"`).
 
-Catalog that will come from the server later: routines, teachers, localized catalog copy (names, bios, descriptions, style/level labels), pricing/media, and user library/purchases. Do not treat mocks as permanent source of truth; keep UI chrome separate from catalog entities.
+Catalog that will come from a durable server later: routines, teachers, localized catalog copy, pricing/media, and user library/purchases. Do not treat mocks as permanent source of truth; keep UI chrome separate from catalog entities.
+
+## Catalog API (basic)
+
+| Endpoint | Notes |
+| --- | --- |
+| `GET /api/v1/health` | Liveness |
+| `GET /api/v1/routines?locale=he\|en` | Optional `instructor`, `style`, `level` filters |
+| `GET /api/v1/routines/[slug]?locale=` | Single routine |
+| `GET /api/v1/instructors?locale=` | Teacher list |
+| `GET /api/v1/instructors/[slug]?locale=` | Single teacher |
+
+Swap `getCatalogRepository()` when D1/CMS is ready — route contracts stay stable.
 
 # Task git workflow
 

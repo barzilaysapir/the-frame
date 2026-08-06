@@ -36,4 +36,4 @@ Rules:
 - Catalog taxonomy labels when they are content (styles, levels, tags) for a locale
 - User-specific data (purchases, account library, auth profile beyond Firebase client session)
 
-When the API exists, prefer server-provided locale fields for catalog copy and keep `dictionaries/` for product UI chrome only.
+Prefer `lib/server/catalog` (and `/api/v1/*`) for new catalog reads. When the API exists with a durable store, prefer server-provided locale fields for catalog copy and keep `dictionaries/` for product UI chrome only.
