@@ -1,5 +1,14 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
+	// Runs automatically before `wrangler dev`/`wrangler deploy`, so the Worker
+	// still gets an OpenNext build even if the CI trigger's own "build
+	// command" step is empty or just runs `next build`. Calls the OpenNext
+	// CLI directly (not `npm run build`) to avoid recursing back into this
+	// hook via the "build" npm script.
+	// See https://developers.cloudflare.com/workers/wrangler/custom-builds/
+	"build": {
+		"command": "npx opennextjs-cloudflare build"
+	},
 	"main": ".open-next/worker.js",
 	"name": "the-frame",
 	"compatibility_date": "2026-08-04",
