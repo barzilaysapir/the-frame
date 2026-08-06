@@ -3,6 +3,7 @@ import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import type { RoutineRecord } from "@/lib/routines";
 import { SongCredit } from "@/components/SongCredit";
+import { RoutineFilterTag } from "@/components/RoutineFilterTag";
 
 interface RoutineCardProps {
   routine: RoutineRecord;
@@ -11,28 +12,33 @@ interface RoutineCardProps {
 
 export function RoutineCard({ routine, instructorName }: RoutineCardProps) {
   return (
-    <Link
-      href={`/routine/${routine.slug}`}
-      className="group block overflow-hidden rounded-2xl border border-frame-border bg-frame-panel transition-colors hover:border-frame-cyan/60"
-    >
+    <article className="group overflow-hidden rounded-2xl border border-frame-border bg-frame-panel transition-colors hover:border-frame-cyan/60">
       <div className="relative aspect-video w-full overflow-hidden">
-        <Image
-          src={routine.poster}
-          alt=""
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        <div className="absolute inset-x-0 top-0 flex items-center gap-2 p-4">
-          <span className="rounded-full bg-frame-magenta px-2.5 py-1 text-[11px] font-bold text-frame-bg">
-            {routine.style}
-          </span>
-          <span className="rounded-full border border-white/30 bg-black/30 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
-            {routine.level}
-          </span>
+        <Link href={`/routine/${routine.slug}`} className="absolute inset-0 block">
+          <Image
+            src={routine.poster}
+            alt=""
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        </Link>
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center gap-2 p-4">
+          <RoutineFilterTag
+            label={routine.style}
+            variant="style"
+            size="sm"
+            className="pointer-events-auto"
+          />
+          <RoutineFilterTag
+            label={routine.level}
+            variant="level"
+            size="sm"
+            className="pointer-events-auto"
+          />
         </div>
       </div>
 
-      <div className="p-5">
+      <Link href={`/routine/${routine.slug}`} className="block p-5">
         <SongCredit songName={routine.title} artist={routine.artist} />
         {instructorName && (
           <p className="mt-2 text-sm text-frame-silver">בהנחיית {instructorName}</p>
@@ -52,8 +58,8 @@ export function RoutineCard({ routine, instructorName }: RoutineCardProps) {
             <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
           </span>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </article>
   );
 }
 

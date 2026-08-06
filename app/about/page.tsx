@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 export const metadata: Metadata = {
   title: "אודות",
   description:
-    "The Frame by Barzilay היא פלטפורמת מדריכי ריקוד יוקרתית שמלמדת קומבינציה אחת לעומק — פריים אחרי פריים.",
+    "The Frame by Barzilay היא פלטפורמת מורי ריקוד יוקרתית שמלמדת קומבינציה אחת לעומק — פריים אחרי פריים.",
 };
 
 const VALUES = [
@@ -20,9 +20,9 @@ const VALUES = [
       "כל קומבינציה מפורקת לספירות, עם מצב תרגול במראה ובהאטה, כך שאף תנועה לא נשארת סתומה.",
   },
   {
-    title: "מדריכים מהשטח",
+    title: "מורים מהשטח",
     description:
-      "המדריכים שלנו רקדו בהפקות, קליפים ותחרויות אמיתיות — ומביאים את הניסיון הזה ישירות לשיעור.",
+      "המורים שלנו רקדו בהפקות, קליפים ותחרויות אמיתיות — ומביאים את הניסיון הזה ישירות לשיעור.",
   },
 ];
 
@@ -35,7 +35,7 @@ export default function AboutPage() {
           למדנו לרקוד בשטח. עכשיו אנחנו מלמדים אתכם.
         </h1>
         <p className="mt-5 text-frame-silver">
-          The Frame by Barzilay נולדה מתוך תסכול אחד: מדריכי ריקוד ברשת שמלמדים
+          The Frame by Barzilay נולדה מתוך תסכול אחד: מורי ריקוד ברשת שמלמדים
           שטחי, מהר מדי, בלי לתת לרקדן זמן להבין את התנועה. בנינו פלטפורמה
           שהופכת את זה — קומבינציה אחת, בעומק מלא.
         </p>
@@ -63,7 +63,7 @@ export default function AboutPage() {
             href="/routines"
             className="group inline-flex items-center gap-2 rounded-full bg-neon-cta px-6 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
           >
-            עיינו בקומבינציות
+            עיינו במדריכים וקורסים
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
           </Link>
         </div>
