@@ -3,13 +3,12 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  GoogleAuthProvider,
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  signInWithPopup,
   type ConfirmationResult,
 } from "firebase/auth";
 import { useAuth } from "@/components/AuthProvider";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { auth } from "@/lib/firebase";
 import { toIsraeliE164 } from "@/lib/phone";
 import { cn } from "@/lib/utils";
@@ -73,19 +72,6 @@ export default function LoginPage() {
       recaptchaVerifierRef.current?.clear();
     };
   }, []);
-
-  const handleGoogleSignIn = async () => {
-    if (!auth) return;
-    setError(null);
-    setIsSubmitting(true);
-    try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
-    } catch (err) {
-      setError(getErrorMessage(err, labels.errors));
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleSendCode = async (event: FormEvent) => {
     event.preventDefault();
@@ -153,14 +139,11 @@ export default function LoginPage() {
           </div>
         ) : (
           <div className="mt-8 rounded-2xl border border-frame-border bg-frame-panel p-6">
-            <button
-              type="button"
-              onClick={handleGoogleSignIn}
-              disabled={isSubmitting}
-              className="flex w-full items-center justify-center gap-2 rounded-full border border-frame-border bg-white px-5 py-3 text-sm font-semibold text-frame-bg transition-opacity hover:opacity-90 disabled:opacity-50"
-            >
-              {labels.continueGoogle}
-            </button>
+            <GoogleSignInButton
+              label={labels.continueGoogle}
+              errors={labels.errors}
+              onError={setError}
+            />
 
             <div className="my-6 flex items-center gap-3">
               <span className="h-px flex-1 bg-frame-border" />

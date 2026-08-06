@@ -68,7 +68,7 @@
     "metaTitle": "Log in",
     "title": "Log in",
     "subtitle": "Sign in to access the combinations you’ve purchased.",
-    "unavailable": "Sign-in isn’t available yet — the site is still being built. Check back soon.",
+    "unavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local and enable the Google provider in the console.",
     "continueGoogle": "Continue with Google",
     "or": "or",
     "phoneLabel": "Phone number",
@@ -95,6 +95,27 @@
     "unavailable": "My account isn’t available yet — the site is still being built.",
     "loading": "Loading…",
     "fallbackName": "dancer"
+  },
+  "checkout": {
+    "metaTitle": "Checkout",
+    "title": "Complete your purchase",
+    "subtitle": "Review the combination and price. Google sign-in is ready — a payment provider comes next.",
+    "backToRoutine": "Back to combination",
+    "loading": "Loading…",
+    "paymentTitle": "Payment",
+    "paymentBody": "After payment you’ll get instant lifetime access to every breakdown and practice mode.",
+    "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
+    "signInPrompt": "Sign in with Google to continue to checkout.",
+    "otherSignIn": "More sign-in options",
+    "signedInAs": "Signed in as",
+    "payCta": "Continue to payment",
+    "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
+    "guarantees": [
+      "Lifetime access to every breakdown",
+      "Slowed and mirrored practice modes",
+      "Watch on any device, forever",
+      "7-day money-back guarantee"
+    ]
   },
   "notFound": {
     "title": "This page wasn’t found",

@@ -18,6 +18,7 @@ import {
   routineMetaDescription,
   routineMetaTitle,
 } from "@/lib/i18n/localize";
+import { localePath } from "@/lib/i18n/path";
 
 interface RoutinePageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -155,7 +156,7 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
               <PricingCard
                 originalPrice={routine.pricing.original}
                 discountedPrice={routine.pricing.earlyBird}
-                checkoutHref={routine.checkoutHref}
+                checkoutHref={localePath(locale, `/checkout/${routine.slug}`)}
                 labels={pricingLabels}
               />
             </div>
@@ -166,7 +167,7 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
       <MobileStickyCta
         originalPrice={routine.pricing.original}
         discountedPrice={routine.pricing.earlyBird}
-        checkoutHref={routine.checkoutHref}
+        checkoutHref={localePath(locale, `/checkout/${routine.slug}`)}
         ctaLabel={dict.routine.getAccessNow}
       />
     </>
