@@ -34,18 +34,36 @@ function subscribeToClockTick(callback: () => void) {
   return () => clearInterval(interval);
 }
 
+// Cache the client snapshot so React's getSnapshot stays referentially stable
+// between ticks (returning a fresh number every call triggers an infinite loop).
+const clientSnapshots = new Map<string, number>();
+
+function getClientMsLeft(endsAt: string): number {
+  const cached = clientSnapshots.get(endsAt);
+  if (cached !== undefined) return cached;
+  const next = getMsLeft(endsAt);
+  clientSnapshots.set(endsAt, next);
+  return next;
+}
+
+function subscribeToEndsAt(endsAt: string, callback: () => void) {
+  const tick = () => {
+    clientSnapshots.set(endsAt, getMsLeft(endsAt));
+    callback();
+  };
+  tick();
+  const interval = setInterval(tick, 1000);
+  return () => clearInterval(interval);
+}
+
 export function EarlyBirdBanner({
   endsAt,
   spotsRemaining = 12,
   totalSpots = 50,
 }: EarlyBirdBannerProps) {
-  // Ties the countdown to the real clock (an external system) via
-  // useSyncExternalStore instead of setState-in-effect. The server
-  // snapshot is null so SSR markup and the first client render match;
-  // the real countdown fills in once the client subscribes.
   const msLeft = useSyncExternalStore(
-    subscribeToClockTick,
-    () => getMsLeft(endsAt),
+    (onStoreChange) => subscribeToEndsAt(endsAt, onStoreChange),
+    () => getClientMsLeft(endsAt),
     () => null
   );
   const timeLeft = useMemo(

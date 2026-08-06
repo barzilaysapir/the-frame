@@ -3,7 +3,7 @@
 import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Menu, X, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
@@ -15,25 +15,16 @@ const NAV_LINKS = [
 
 export function Header() {
   const menuId = useId();
-  const pathname = usePathname();
   const router = useRouter();
   const { user, signOutUser } = useAuth();
   const isAuthenticated = Boolean(user);
-
-  // Track which path the menu was opened on. When the route changes,
-  // openPath !== pathname and the menu closes without an effect.
-  const [openPath, setOpenPath] = useState<string | null>(null);
-  const isMenuOpen = openPath === pathname;
-
-  const closeMenu = () => setOpenPath(null);
-  const toggleMenu = () =>
-    setOpenPath((current) => (current === pathname ? null : pathname));
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!isMenuOpen) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpenPath(null);
+      if (event.key === "Escape") setIsMenuOpen(false);
     };
 
     document.addEventListener("keydown", onKeyDown);
@@ -46,6 +37,9 @@ export function Header() {
     };
   }, [isMenuOpen]);
 
+  const closeMenu = () => setIsMenuOpen(false);
+  const toggleMenu = () => setIsMenuOpen((open) => !open);
+
   const handleSignOut = async () => {
     await signOutUser();
     closeMenu();
@@ -57,11 +51,11 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-frame-border/80 bg-frame-bg/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        {/* Logo / Brand — kept in a fixed left-to-right lockup, matching the brand mark itself */}
+      <div className="relative z-[60] mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
           dir="ltr"
+          onClick={closeMenu}
           className="group flex min-w-0 items-center gap-2.5"
           aria-label="The Frame by Barzilay — לדף הבית"
         >
@@ -83,7 +77,6 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Desktop nav — lg+ only so tablets keep the hamburger */}
         <nav className="hidden items-center gap-8 lg:flex">
           {NAV_LINKS.map((link) => (
             <Link
@@ -96,7 +89,6 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Desktop CTA */}
         <div className="hidden items-center gap-4 lg:flex">
           {isAuthenticated ? (
             <>
@@ -133,23 +125,18 @@ export function Header() {
           )}
         </div>
 
-        {/* Tablet + mobile menu toggle */}
         <button
           type="button"
           onClick={toggleMenu}
-          className="relative z-[60] -m-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white touch-manipulation lg:hidden"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white touch-manipulation lg:hidden"
           aria-label={isMenuOpen ? "סגור תפריט" : "פתח תפריט"}
           aria-expanded={isMenuOpen}
-          aria-controls={menuId}
+          aria-controls={isMenuOpen ? menuId : undefined}
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/*
-        Mount only while open. An always-present full-screen layer (even with
-        pointer-events-none) can swallow taps on iPad Safari.
-      */}
       {isMenuOpen ? (
         <div id={menuId} className="fixed inset-x-0 bottom-0 top-16 z-[55] lg:hidden">
           <button
@@ -183,7 +170,7 @@ export function Header() {
                     <button
                       type="button"
                       onClick={handleSignOut}
-                      className="rounded-full bg-neon-cta px-3 py-3 text-center text-base font-semibold text-frame-bg hover:brightness-110 touch-manipulation"
+                      className="rounded-full bg-neon-cta px-3 py-3 text-center text-base font-semibold text-frame-bg touch-manipulation hover:brightness-110"
                     >
                       התנתקות
                     </button>
