@@ -42,7 +42,6 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
   const routineDetails: RoutineDetail[] = [
     { label: "אורך", value: routine.length },
     { label: "קצב", value: routine.bpm },
-    { label: "שיר", value: `${routine.songName} — ${routine.artist}` },
     { label: "דגש טכני מרכזי", value: routine.technique },
   ];
 
@@ -65,7 +64,12 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
                 </span>
               </div>
               <h1 className="text-balance font-display text-6xl font-black leading-[0.98] text-white sm:text-7xl">
-                {routine.title}
+                <span dir="ltr" className="inline-block">
+                  {routine.title}
+                  <span className="ms-3 font-sans text-2xl font-medium text-frame-silver sm:text-3xl">
+                    — {routine.artist}
+                  </span>
+                </span>
               </h1>
               {instructor && (
                 <div className="mt-5 flex items-center gap-3">
