@@ -44,7 +44,7 @@ export const ROUTINES: RoutineRecord[] = [
     technique: "איזולציות ומעברי משקל קרקעיים",
     description:
       "קומבינציית קומרשל אנרגטית עם דגש על איזולציות נקיות ונוכחות בימתית, מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה.",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-poster-midnight-static.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", label: "הופעה מלאה", time: 0 },
@@ -71,7 +71,7 @@ export const ROUTINES: RoutineRecord[] = [
     technique: "גרוב, פוליריתמיקה ועבודת רצפה",
     description:
       "קומבינציית היפ הופ עוצמתית שבנויה על גרוב עמוק ומעברים חדים בין התנועות, לרקדנים שרוצים להעמיק בסגנון עם דגש טכני גבוה.",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-poster-neon-nights.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", label: "הופעה מלאה", time: 0 },

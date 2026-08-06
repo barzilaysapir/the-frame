@@ -6,6 +6,7 @@ import { RoutineBreakdown, type RoutineDetail } from "@/components/RoutineBreakd
 import { PricingCard } from "@/components/PricingCard";
 import { MobileStickyCta } from "@/components/MobileStickyCta";
 import { InstructorAvatar } from "@/components/InstructorAvatar";
+import { SongCredit } from "@/components/SongCredit";
 import { getAllRoutines, getRoutineBySlug } from "@/lib/routines";
 import { getInstructorBySlug } from "@/lib/instructors";
 
@@ -42,7 +43,6 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
   const routineDetails: RoutineDetail[] = [
     { label: "אורך", value: routine.length },
     { label: "קצב", value: routine.bpm },
-    { label: "שיר", value: `${routine.songName} — ${routine.artist}` },
     { label: "דגש טכני מרכזי", value: routine.technique },
   ];
 
@@ -64,9 +64,11 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
                   {routine.level}
                 </span>
               </div>
-              <h1 className="text-balance font-display text-6xl font-black leading-[0.98] text-white sm:text-7xl">
-                {routine.title}
-              </h1>
+              <SongCredit
+                songName={routine.title}
+                artist={routine.artist}
+                size="hero"
+              />
               {instructor && (
                 <div className="mt-5 flex items-center gap-3">
                   <InstructorAvatar name={instructor.name} />

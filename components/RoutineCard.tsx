@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import type { RoutineRecord } from "@/lib/routines";
+import { SongCredit } from "@/components/SongCredit";
 
 interface RoutineCardProps {
   routine: RoutineRecord;
@@ -32,11 +33,9 @@ export function RoutineCard({ routine, instructorName }: RoutineCardProps) {
       </div>
 
       <div className="p-5">
-        <h3 className="font-display text-2xl font-black text-white">
-          {routine.title}
-        </h3>
+        <SongCredit songName={routine.title} artist={routine.artist} />
         {instructorName && (
-          <p className="mt-1 text-sm text-frame-silver">בהנחיית {instructorName}</p>
+          <p className="mt-2 text-sm text-frame-silver">בהנחיית {instructorName}</p>
         )}
 
         <div className="mt-4 flex items-center justify-between border-t border-frame-border pt-4">
