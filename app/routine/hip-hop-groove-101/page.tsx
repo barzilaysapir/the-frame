@@ -54,27 +54,24 @@ export default function RoutinePage() {
           {/* Main column */}
           <div className="lg:col-span-2">
             {/* Hero */}
-            <section className="relative mb-8 overflow-hidden">
-              <div className="neon-glow" aria-hidden="true" />
-              <div className="relative z-10">
-                <div className="mb-4 flex items-center gap-2">
-                  <span className="rounded-full bg-frame-magenta px-3 py-1 text-xs font-bold text-frame-bg">
-                    {ROUTINE.style}
-                  </span>
-                  <span className="rounded-full border border-frame-cyan/60 px-3 py-1 text-xs font-bold text-frame-cyan">
-                    {ROUTINE.level}
-                  </span>
-                </div>
-                <h1 className="text-balance font-display text-6xl font-black leading-[0.98] text-white sm:text-7xl">
-                  {ROUTINE.title}
-                </h1>
-                <div className="mt-5 flex items-center gap-3">
-                  <InstructorAvatar name={ROUTINE.instructor} />
-                  <p className="text-sm text-frame-silver">
-                    בהנחיית{" "}
-                    <span className="font-medium text-white">{ROUTINE.instructor}</span>
-                  </p>
-                </div>
+            <section className="mb-8">
+              <div className="mb-4 flex items-center gap-2">
+                <span className="rounded-full bg-frame-magenta px-3 py-1 text-xs font-bold text-frame-bg">
+                  {ROUTINE.style}
+                </span>
+                <span className="rounded-full border border-frame-cyan/60 px-3 py-1 text-xs font-bold text-frame-cyan">
+                  {ROUTINE.level}
+                </span>
+              </div>
+              <h1 className="text-balance font-display text-6xl font-black leading-[0.98] text-white sm:text-7xl">
+                {ROUTINE.title}
+              </h1>
+              <div className="mt-5 flex items-center gap-3">
+                <InstructorAvatar name={ROUTINE.instructor} />
+                <p className="text-sm text-frame-silver">
+                  בהנחיית{" "}
+                  <span className="font-medium text-white">{ROUTINE.instructor}</span>
+                </p>
               </div>
             </section>
 

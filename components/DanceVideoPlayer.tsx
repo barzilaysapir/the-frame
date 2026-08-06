@@ -196,7 +196,7 @@ export function DanceVideoPlayer({
       ref={containerRef}
       dir="ltr"
       className={cn(
-        "group relative w-full overflow-hidden rounded-2xl border border-frame-border bg-black",
+        "neon-frame-glow group relative w-full overflow-hidden rounded-2xl border border-frame-border bg-black",
         className
       )}
       onMouseMove={scheduleHideControls}
