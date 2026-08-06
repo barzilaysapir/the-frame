@@ -36,10 +36,6 @@ export function InstructorCard({ instructor, routineCount }: InstructorCardProps
           </div>
         </div>
 
-        <p className="mt-4 text-sm leading-relaxed text-frame-silver">
-          {instructor.bio}
-        </p>
-
         <div className="mt-4 flex flex-wrap gap-2">
           {instructor.specialties.map((specialty) => (
             <span
