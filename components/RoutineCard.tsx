@@ -35,6 +35,10 @@ export function RoutineCard({ routine, instructorName }: RoutineCardProps) {
         <h3 className="font-display text-2xl font-black text-white">
           {routine.title}
         </h3>
+        <p dir="ltr" className="mt-1 text-sm text-frame-silver">
+          {routine.songName}
+          <span className="text-frame-muted"> — {routine.artist}</span>
+        </p>
         {instructorName && (
           <p className="mt-1 text-sm text-frame-silver">בהנחיית {instructorName}</p>
         )}
@@ -49,7 +53,7 @@ export function RoutineCard({ routine, instructorName }: RoutineCardProps) {
             </span>
           </div>
           <span className="inline-flex items-center gap-1 text-sm font-semibold text-frame-cyan">
-            צפו ברוטינה
+            צפו בקומבו
             <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
           </span>
         </div>

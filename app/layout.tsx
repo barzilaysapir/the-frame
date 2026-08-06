@@ -23,9 +23,9 @@ const logoScript = Alex_Brush({
   variable: "--font-logo",
 });
 
-const SITE_TITLE = "The Frame by Barzilay — למדו את הרוטינה";
+const SITE_TITLE = "The Frame by Barzilay — למדו את הקומבו";
 const SITE_DESCRIPTION =
-  "מדריכי ריקוד יוקרתיים. למדו רוטינות וקומבינציות בודדות, פריים אחרי פריים.";
+  "מדריכי ריקוד יוקרתיים. למדו קומבינציות בודדות, פריים אחרי פריים.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

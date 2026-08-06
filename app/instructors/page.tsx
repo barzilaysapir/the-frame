@@ -20,7 +20,7 @@ export default function InstructorsPage() {
         </h1>
         <p className="mt-4 text-frame-silver">
           כל מדריך ב-The Frame מביא רקע מקצועי משלו — קומרשל, היפ הופ והילס —
-          ובונה כל רוטינה כך שתלמדו אותה לעומק, פריים אחרי פריים.
+          ובונה כל קומבו כך שתלמדו אותו לעומק, פריים אחרי פריים.
         </p>
       </div>
 

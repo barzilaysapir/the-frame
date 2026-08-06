@@ -5,19 +5,19 @@ import { ArrowLeft } from "lucide-react";
 export const metadata: Metadata = {
   title: "אודות",
   description:
-    "The Frame by Barzilay היא פלטפורמת מדריכי ריקוד יוקרתית שמלמדת רוטינה אחת לעומק — פריים אחרי פריים.",
+    "The Frame by Barzilay היא פלטפורמת מדריכי ריקוד יוקרתית שמלמדת קומבינציה אחת לעומק — פריים אחרי פריים.",
 };
 
 const VALUES = [
   {
     title: "עומק, לא כמות",
     description:
-      "במקום עשרות סרטונים שטחיים, אנחנו מלמדים רוטינה אחת בכל פעם — עד שהיא נכנסת לגוף.",
+      "במקום עשרות סרטונים שטחיים, אנחנו מלמדים קומבינציה אחת בכל פעם — עד שהיא נכנסת לגוף.",
   },
   {
     title: "פירוק אמיתי",
     description:
-      "כל רוטינה מפורקת לספירות, עם מצב תרגול במראה ובהאטה, כך שאף תנועה לא נשארת סתומה.",
+      "כל קומבו מפורק לספירות, עם מצב תרגול במראה ובהאטה, כך שאף תנועה לא נשארת סתומה.",
   },
   {
     title: "מדריכים מהשטח",
@@ -37,7 +37,7 @@ export default function AboutPage() {
         <p className="mt-5 text-frame-silver">
           The Frame by Barzilay נולדה מתוך תסכול אחד: מדריכי ריקוד ברשת שמלמדים
           שטחי, מהר מדי, בלי לתת לרקדן זמן להבין את התנועה. בנינו פלטפורמה
-          שהופכת את זה — רוטינה אחת, בעומק מלא.
+          שהופכת את זה — קומבינציה אחת, בעומק מלא.
         </p>
       </div>
 
@@ -63,7 +63,7 @@ export default function AboutPage() {
             href="/routines"
             className="group inline-flex items-center gap-2 rounded-full bg-neon-cta px-6 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
           >
-            עיינו ברוטינות
+            עיינו בקומבואים
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
           </Link>
         </div>

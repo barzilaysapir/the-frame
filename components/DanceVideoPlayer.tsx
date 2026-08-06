@@ -44,7 +44,7 @@ interface DanceVideoPlayerProps {
 export function DanceVideoPlayer({
   src,
   poster,
-  title = "תצוגה מקדימה של הרוטינה",
+  title = "תצוגה מקדימה של הקומבו",
   chapters = DEFAULT_CHAPTERS,
   className,
 }: DanceVideoPlayerProps) {
