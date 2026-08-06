@@ -8,20 +8,24 @@ export interface RoutineFilterSection {
 
 interface RoutineFiltersProps {
   sections: RoutineFilterSection[];
-  resultCount: number;
+  resultLabel: string;
+  clearLabel: string;
+  ariaLabel: string;
   hasActiveFilters: boolean;
   clearHref: string;
 }
 
 export function RoutineFilters({
   sections,
-  resultCount,
+  resultLabel,
+  clearLabel,
+  ariaLabel,
   hasActiveFilters,
   clearHref,
 }: RoutineFiltersProps) {
   return (
     <section
-      aria-label="סינון מדריכים וקורסים"
+      aria-label={ariaLabel}
       className="mb-10 overflow-hidden rounded-2xl border border-frame-border bg-frame-panel/40"
     >
       <div className="divide-y divide-frame-border">
@@ -34,18 +38,12 @@ export function RoutineFilters({
 
       {hasActiveFilters ? (
         <div className="flex items-center justify-between gap-4 border-t border-frame-border bg-frame-bg/40 px-4 py-3 sm:px-5">
-          <p className="text-sm text-frame-silver">
-            {resultCount === 0
-              ? "אין תוצאות"
-              : resultCount === 1
-                ? "תוצאה אחת"
-                : `${resultCount} תוצאות`}
-          </p>
+          <p className="text-sm text-frame-silver">{resultLabel}</p>
           <Link
             href={clearHref}
             className="text-sm font-semibold text-frame-cyan transition-colors hover:text-white"
           >
-            נקה סינון
+            {clearLabel}
           </Link>
         </div>
       ) : null}

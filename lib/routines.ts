@@ -1,6 +1,27 @@
+/**
+ * Catalog types + **temporary in-memory mock routines**.
+ * Replace data access with server/CMS fetches when the API is ready;
+ * keep these shapes stable so UI can swap the source without rewrites.
+ */
+import type { Locale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/path";
+
+export type DanceStyleKey = "jazz-funk" | "hip-hop" | "heels";
+export type LevelKey = "intermediate" | "advanced" | "all-levels";
+export type TagKey =
+  | DanceStyleKey
+  | "performance"
+  | "groove"
+  | "musicality"
+  | "body-control";
+export type ChapterId =
+  | "full-performance"
+  | "breakdown"
+  | "slow-practice"
+  | "full-speed";
+
 export interface VideoChapter {
-  id: string;
-  label: string;
+  id: ChapterId;
   /** Timestamp in seconds where this section of the routine begins. */
   time: number;
 }
@@ -9,16 +30,15 @@ export interface RoutineRecord {
   slug: string;
   title: string;
   instructorSlug: string;
-  level: string;
-  style: string;
+  level: LevelKey;
+  style: DanceStyleKey;
   /** Filter tags (style + technique labels). MOCK demo metadata. */
-  tags: string[];
+  tags: TagKey[];
   songName: string;
   artist: string;
   bpm: string;
+  /** Duration timestamp without locale suffix, e.g. "3:23". */
   length: string;
-  technique: string;
-  description: string;
   poster: string;
   videoSrc: string;
   chapters: VideoChapter[];
@@ -38,23 +58,20 @@ export const ROUTINES: RoutineRecord[] = [
     slug: "levitating",
     title: "Levitating",
     instructorSlug: "maya-azulai",
-    level: "בינוני",
-    style: "ג'אז פאנק",
-    tags: ["ג'אז פאנק", "פרפורמנס"],
+    level: "intermediate",
+    style: "jazz-funk",
+    tags: ["jazz-funk", "performance"],
     songName: "Levitating",
     artist: "Dua Lipa",
     bpm: "103 BPM",
-    length: "3:23 דקות",
-    technique: "מעברי משקל קרקעיים ופרפורמנס",
-    description:
-      "קומבינציית ג'אז פאנק אנרגטית עם דגש על גרוב ופרפורמנס, מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה.",
+    length: "3:23",
     poster: "/routine-poster-midnight-static.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
-      { id: "full-performance", label: "הופעה מלאה", time: 0 },
-      { id: "breakdown", label: "פירוק תנועות (ספירות)", time: 22 },
-      { id: "slow-practice", label: "תרגול איטי (50%)", time: 58 },
-      { id: "full-speed", label: "תרגול במהירות מלאה (100%)", time: 96 },
+      { id: "full-performance", time: 0 },
+      { id: "breakdown", time: 22 },
+      { id: "slow-practice", time: 58 },
+      { id: "full-speed", time: 96 },
     ],
     checkoutHref: "/checkout/levitating",
     pricing: {
@@ -66,23 +83,20 @@ export const ROUTINES: RoutineRecord[] = [
     slug: "kill-bill",
     title: "Kill Bill",
     instructorSlug: "daniel-cohen",
-    level: "מתקדם",
-    style: "היפ הופ",
-    tags: ["היפ הופ", "גרוב", "מוזיקליות"],
+    level: "advanced",
+    style: "hip-hop",
+    tags: ["hip-hop", "groove", "musicality"],
     songName: "Kill Bill",
     artist: "SZA",
     bpm: "89 BPM",
-    length: "2:33 דקות",
-    technique: "גרוב, פוליריתמיקה ועבודת רצפה",
-    description:
-      "קומבינציית היפ הופ עוצמתית שבנויה על גרוב עמוק ומעברים חדים בין התנועות, לרקדנים שרוצים להעמיק בסגנון עם דגש טכני גבוה.",
+    length: "2:33",
     poster: "/routine-poster-neon-nights.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
-      { id: "full-performance", label: "הופעה מלאה", time: 0 },
-      { id: "breakdown", label: "פירוק תנועות (ספירות)", time: 20 },
-      { id: "slow-practice", label: "תרגול איטי (50%)", time: 55 },
-      { id: "full-speed", label: "תרגול במהירות מלאה (100%)", time: 92 },
+      { id: "full-performance", time: 0 },
+      { id: "breakdown", time: 20 },
+      { id: "slow-practice", time: 55 },
+      { id: "full-speed", time: 92 },
     ],
     checkoutHref: "/checkout/kill-bill",
     pricing: {
@@ -94,23 +108,20 @@ export const ROUTINES: RoutineRecord[] = [
     slug: "earned-it",
     title: "Earned It",
     instructorSlug: "noa-sagi",
-    level: "כל הרמות",
-    style: "עקבים",
-    tags: ["עקבים", "שליטה בגוף", "פרפורמנס"],
+    level: "all-levels",
+    style: "heels",
+    tags: ["heels", "body-control", "performance"],
     songName: "Earned It",
     artist: "The Weeknd",
     bpm: "120 BPM",
-    length: "4:10 דקות",
-    technique: "אורך קו, שליטה בעקב ופרפורמנס",
-    description:
-      "קומבינציית עקבים מפתה ובטוחה, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה — כולל דגשים על יציבה, אורך קו ופרפורמנס.",
+    length: "4:10",
     poster: "/routine-poster-velvet-heels.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
-      { id: "full-performance", label: "הופעה מלאה", time: 0 },
-      { id: "breakdown", label: "פירוק תנועות (ספירות)", time: 24 },
-      { id: "slow-practice", label: "תרגול איטי (50%)", time: 60 },
-      { id: "full-speed", label: "תרגול במהירות מלאה (100%)", time: 98 },
+      { id: "full-performance", time: 0 },
+      { id: "breakdown", time: 24 },
+      { id: "slow-practice", time: 60 },
+      { id: "full-speed", time: 98 },
     ],
     checkoutHref: "/checkout/earned-it",
     pricing: {
@@ -140,11 +151,11 @@ export function getRoutinesByLevel(level: string): RoutineRecord[] {
   return ROUTINES.filter((routine) => routine.level === level);
 }
 
-export function getAllRoutineStyles(): string[] {
+export function getAllRoutineStyles(): DanceStyleKey[] {
   return [...new Set(ROUTINES.map((routine) => routine.style))];
 }
 
-export function getAllRoutineLevels(): string[] {
+export function getAllRoutineLevels(): LevelKey[] {
   return [...new Set(ROUTINES.map((routine) => routine.level))];
 }
 
@@ -152,18 +163,21 @@ export interface RoutinesFilterParams {
   instructor?: string;
   style?: string;
   level?: string;
+  locale?: Locale;
 }
 
-/** Build a `/routines` (tutorials catalog) URL from the active filters. */
+/** Build a locale-aware tutorials catalog URL from the active filters. */
 export function routinesFilterHref({
   instructor,
   style,
   level,
+  locale = "he",
 }: RoutinesFilterParams): string {
   const params = new URLSearchParams();
   if (instructor) params.set("instructor", instructor);
   if (style) params.set("style", style);
   if (level) params.set("level", level);
   const query = params.toString();
-  return query ? `/routines?${query}` : "/routines";
+  const base = localePath(locale, "/routines");
+  return query ? `${base}?${query}` : base;
 }

@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "siteTitle": "The Frame by Barzilay — Learn the combination",
+    "siteDescription": "Premium dance teachers. Learn individual combinations, frame by frame."
+  },
+  "nav": {
+    "tutorials": "Tutorials & courses",
+    "teachers": "Teachers",
+    "about": "About",
+    "login": "Log in",
+    "getAccess": "Get access",
+    "account": "My account",
+    "signOut": "Sign out",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": "Language"
+  },
+  "home": {
+    "title": "Learn the combination, frame by frame.",
+    "subtitle": "Premium dance teachers for dancers who want to own one combination deeply — mirrored, slowed down, and broken into counts.",
+    "cta": "Watch a sample combination"
+  },
+  "tutorials": {
+    "title": "Tutorials & courses",
+    "subtitle": "Every tutorial includes a full count breakdown, mirrored and slowed practice modes, and lifetime access.",
+    "filterAria": "Filter tutorials and courses",
+    "filterTeacher": "Teacher",
+    "filterStyle": "Style",
+    "filterLevel": "Level",
+    "filterAll": "All",
+    "clearFilters": "Clear filters",
+    "resultOne": "1 result",
+    "resultNone": "No results",
+    "resultMany": "{count} results",
+    "empty": "No tutorials to show right now.",
+    "viewRoutine": "View combination",
+    "taughtBy": "Taught by {name}"
+  },
+  "teachers": {
+    "title": "Our teachers",
+    "subtitle": "Every teacher at The Frame brings their own professional background — jazz funk, hip hop, and heels — and builds each combination so you can learn it deeply, frame by frame.",
+    "routineOne": "1 combination on the site",
+    "routineMany": "{count} combinations on the site",
+    "instagramAria": "{name} on Instagram",
+    "tutorialsAria": "Tutorials & courses by {name}"
+  },
+  "about": {
+    "metaTitle": "About",
+    "metaDescription": "The Frame by Barzilay is a premium dance platform that teaches one combination deeply — frame by frame.",
+    "title": "We learned to dance in the field. Now we teach you.",
+    "body": "The Frame by Barzilay was born from one frustration: online dance teachers who skim the surface, move too fast, and never give dancers time to understand the movement. We built a platform that flips that — one combination, full depth.",
+    "values": [
+      {
+        "title": "Depth, not volume",
+        "description": "Instead of dozens of shallow clips, we teach one combination at a time — until it lives in your body."
+      },
+      {
+        "title": "Real breakdowns",
+        "description": "Every combination is broken into counts, with mirrored and slowed practice modes, so no move stays opaque."
+      },
+      {
+        "title": "Teachers from the field",
+        "description": "Our teachers have danced in productions, music videos, and real competitions — and bring that experience straight into class."
+      }
+    ]
+  },
+  "login": {
+    "metaTitle": "Log in",
+    "title": "Log in",
+    "subtitle": "Sign in to access the combinations you’ve purchased.",
+    "unavailable": "Sign-in isn’t available yet — the site is still being built. Check back soon.",
+    "continueGoogle": "Continue with Google",
+    "or": "or",
+    "phoneLabel": "Phone number",
+    "sendCode": "Send verification code",
+    "sendingCode": "Sending code…",
+    "codeLabel": "Verification code",
+    "verifyCode": "Verify code",
+    "verifying": "Verifying…",
+    "changePhone": "Change phone number",
+    "invalidPhoneInput": "Enter a valid Israeli phone number, e.g. 050-1234567.",
+    "errors": {
+      "invalidPhone": "That phone number isn’t valid. Try again with a full Israeli number.",
+      "invalidCode": "That code is incorrect. Check the message and try again.",
+      "tooMany": "Too many attempts. Try again later.",
+      "popupClosed": "The window closed before sign-in finished.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "account": {
+    "metaTitle": "My account",
+    "greeting": "Hi, {name}",
+    "subtitle": "Your purchased combinations will appear here, with lifetime access to breakdowns, mirrored practice, and slowed practice.",
+    "empty": "You haven’t purchased any combinations yet.",
+    "unavailable": "My account isn’t available yet — the site is still being built.",
+    "loading": "Loading…",
+    "fallbackName": "dancer"
+  },
+  "notFound": {
+    "title": "This page wasn’t found",
+    "body": "The link may be wrong or the page was removed. Head home or browse available tutorials and courses."
+  },
+  "routine": {
+    "metaTitle": "{title} — {style} combination",
+    "metaDescription": "Learn '{title}', a {style} combination with {instructor}. Full breakdown, mirrored practice, and slowed counts included.",
+    "previewTitle": "{title} — preview",
+    "taughtBy": "Taught by",
+    "includedHeading": "What’s included",
+    "detailLength": "Length",
+    "detailBpm": "Tempo",
+    "detailTechnique": "Key technique focus",
+    "earlyBirdTitle": "Early bird —",
+    "earlyBirdDiscount": "50% off",
+    "earlyBirdFor": "for the first {count} dancers",
+    "earlyBirdAria": "Time left for early-bird pricing",
+    "earlyBirdSpots": "{remaining} of {total} spots left",
+    "unitDays": "days",
+    "unitHours": "hrs",
+    "unitMinutes": "min",
+    "unitSeconds": "sec",
+    "pricingNote": "One-time payment · lifetime access",
+    "getAccessNow": "Get instant access",
+    "secureNote": "Secure checkout · instant access guaranteed",
+    "guarantees": [
+      "Lifetime access to every breakdown",
+      "Slowed and mirrored practice modes",
+      "Watch on any device, forever",
+      "7-day money-back guarantee"
+    ]
+  },
+  "common": {
+    "browseTutorials": "Browse tutorials & courses",
+    "home": "Back to home"
+  },
+  "player": {
+    "defaultTitle": "Combination preview",
+    "playVideo": "Play video",
+    "mirrored": "Mirrored",
+    "seek": "Video progress",
+    "pause": "Pause",
+    "play": "Play",
+    "unmute": "Unmute",
+    "mute": "Mute",
+    "volume": "Volume",
+    "speed": "Playback speed",
+    "normalSpeed": "Normal",
+    "mirrorMode": "Mirror mode",
+    "exitFullscreen": "Exit fullscreen",
+    "fullscreen": "Fullscreen"
+  }
+}

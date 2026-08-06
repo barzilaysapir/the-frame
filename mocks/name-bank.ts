@@ -5,7 +5,9 @@
  * `INSTRUCTORS` / `ROUTINES` as the published subset.
  */
 
-export type DanceStyle = "ג'אז פאנק" | "היפ הופ" | "עקבים";
+import type { DanceStyleKey } from "@/lib/routines";
+
+export type DanceStyle = DanceStyleKey;
 
 export interface TeacherNameSeed {
   /** URL-safe id, e.g. "tali-mizrahi" */
@@ -30,21 +32,21 @@ export interface SongSeed {
 
 /** MOCK Hebrew teacher-name pool (demo only; not all published on the site). */
 export const TEACHER_NAME_BANK: TeacherNameSeed[] = [
-  { slug: "tali-mizrahi", name: "טלי מזרחי", style: "ג'אז פאנק" },
-  { slug: "yael-bar", name: "יעל בר", style: "ג'אז פאנק" },
-  { slug: "roni-ashkenazi", name: "רוני אשכנזי", style: "ג'אז פאנק" },
-  { slug: "lior-hadad", name: "ליאור חדד", style: "ג'אז פאנק" },
-  { slug: "shira-levi", name: "שירה לוי", style: "ג'אז פאנק" },
-  { slug: "oran-ben-david", name: "אורן בן דוד", style: "היפ הופ" },
-  { slug: "amit-sharabi", name: "עמית שרעבי", style: "היפ הופ" },
-  { slug: "ido-malka", name: "עידו מלכה", style: "היפ הופ" },
-  { slug: "gal-peretz", name: "גל פרץ", style: "היפ הופ" },
-  { slug: "tom-avraham", name: "תום אברהם", style: "היפ הופ" },
-  { slug: "maya-rozin", name: "מאיה רוזין", style: "עקבים" },
-  { slug: "noga-eliyahu", name: "נגה אליהו", style: "עקבים" },
-  { slug: "adi-sabag", name: "עדי סבג", style: "עקבים" },
-  { slug: "yuval-cohen", name: "יובל כהן", style: "עקבים" },
-  { slug: "eden-biton", name: "עדן ביטון", style: "עקבים" },
+  { slug: "tali-mizrahi", name: "טלי מזרחי", style: "jazz-funk" },
+  { slug: "yael-bar", name: "יעל בר", style: "jazz-funk" },
+  { slug: "roni-ashkenazi", name: "רוני אשכנזי", style: "jazz-funk" },
+  { slug: "lior-hadad", name: "ליאור חדד", style: "jazz-funk" },
+  { slug: "shira-levi", name: "שירה לוי", style: "jazz-funk" },
+  { slug: "oran-ben-david", name: "אורן בן דוד", style: "hip-hop" },
+  { slug: "amit-sharabi", name: "עמית שרעבי", style: "hip-hop" },
+  { slug: "ido-malka", name: "עידו מלכה", style: "hip-hop" },
+  { slug: "gal-peretz", name: "גל פרץ", style: "hip-hop" },
+  { slug: "tom-avraham", name: "תום אברהם", style: "hip-hop" },
+  { slug: "maya-rozin", name: "מאיה רוזין", style: "heels" },
+  { slug: "noga-eliyahu", name: "נגה אליהו", style: "heels" },
+  { slug: "adi-sabag", name: "עדי סבג", style: "heels" },
+  { slug: "yuval-cohen", name: "יובל כהן", style: "heels" },
+  { slug: "eden-biton", name: "עדן ביטון", style: "heels" },
 ];
 
 /** MOCK pop / R&B song pool for demo combinations (licensing TBD). */
@@ -55,7 +57,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Dua Lipa",
     bpm: 103,
     length: "3:23",
-    styles: ["ג'אז פאנק"],
+    styles: ["jazz-funk"],
   },
   {
     slug: "dont-start-now",
@@ -63,7 +65,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Dua Lipa",
     bpm: 124,
     length: "3:03",
-    styles: ["ג'אז פאנק"],
+    styles: ["jazz-funk"],
   },
   {
     slug: "physical",
@@ -71,7 +73,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Dua Lipa",
     bpm: 147,
     length: "3:13",
-    styles: ["ג'אז פאנק"],
+    styles: ["jazz-funk"],
   },
   {
     slug: "about-damn-time",
@@ -79,7 +81,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Lizzo",
     bpm: 109,
     length: "3:11",
-    styles: ["ג'אז פאנק", "היפ הופ"],
+    styles: ["jazz-funk", "hip-hop"],
   },
   {
     slug: "good-as-hell",
@@ -87,7 +89,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Lizzo",
     bpm: 96,
     length: "2:39",
-    styles: ["ג'אז פאנק"],
+    styles: ["jazz-funk"],
   },
   {
     slug: "flowers",
@@ -95,7 +97,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Miley Cyrus",
     bpm: 118,
     length: "3:20",
-    styles: ["ג'אז פאנק"],
+    styles: ["jazz-funk"],
   },
   {
     slug: "kill-bill",
@@ -103,7 +105,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "SZA",
     bpm: 89,
     length: "2:33",
-    styles: ["היפ הופ", "עקבים"],
+    styles: ["hip-hop", "heels"],
   },
   {
     slug: "snooze",
@@ -111,7 +113,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "SZA",
     bpm: 77,
     length: "3:21",
-    styles: ["עקבים"],
+    styles: ["heels"],
   },
   {
     slug: "shirt",
@@ -119,7 +121,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "SZA",
     bpm: 120,
     length: "3:01",
-    styles: ["עקבים", "ג'אז פאנק"],
+    styles: ["heels", "jazz-funk"],
   },
   {
     slug: "earned-it",
@@ -127,7 +129,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "The Weeknd",
     bpm: 120,
     length: "4:10",
-    styles: ["עקבים"],
+    styles: ["heels"],
   },
   {
     slug: "die-for-you",
@@ -135,7 +137,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "The Weeknd",
     bpm: 67,
     length: "4:20",
-    styles: ["עקבים"],
+    styles: ["heels"],
   },
   {
     slug: "blinding-lights",
@@ -143,7 +145,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "The Weeknd",
     bpm: 171,
     length: "3:20",
-    styles: ["ג'אז פאנק"],
+    styles: ["jazz-funk"],
   },
   {
     slug: "creepin",
@@ -151,7 +153,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Metro Boomin, The Weeknd, 21 Savage",
     bpm: 98,
     length: "3:41",
-    styles: ["היפ הופ", "עקבים"],
+    styles: ["hip-hop", "heels"],
   },
   {
     slug: "need-to-know",
@@ -159,7 +161,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Doja Cat",
     bpm: 130,
     length: "3:30",
-    styles: ["עקבים", "ג'אז פאנק"],
+    styles: ["heels", "jazz-funk"],
   },
   {
     slug: "kiss-me-more",
@@ -167,7 +169,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Doja Cat ft. SZA",
     bpm: 111,
     length: "3:28",
-    styles: ["ג'אז פאנק", "עקבים"],
+    styles: ["jazz-funk", "heels"],
   },
   {
     slug: "woman",
@@ -175,7 +177,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Doja Cat",
     bpm: 128,
     length: "2:52",
-    styles: ["ג'אז פאנק"],
+    styles: ["jazz-funk"],
   },
   {
     slug: "first-class",
@@ -183,7 +185,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Jack Harlow",
     bpm: 107,
     length: "2:53",
-    styles: ["היפ הופ"],
+    styles: ["hip-hop"],
   },
   {
     slug: "industry-baby",
@@ -191,7 +193,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Lil Nas X & Jack Harlow",
     bpm: 150,
     length: "3:32",
-    styles: ["היפ הופ"],
+    styles: ["hip-hop"],
   },
   {
     slug: "god-s-plan",
@@ -199,7 +201,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Drake",
     bpm: 77,
     length: "3:18",
-    styles: ["היפ הופ"],
+    styles: ["hip-hop"],
   },
   {
     slug: "nice-for-what",
@@ -207,7 +209,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Drake",
     bpm: 93,
     length: "3:30",
-    styles: ["היפ הופ", "ג'אז פאנק"],
+    styles: ["hip-hop", "jazz-funk"],
   },
   {
     slug: "as-it-was",
@@ -215,7 +217,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Harry Styles",
     bpm: 174,
     length: "2:47",
-    styles: ["ג'אז פאנק"],
+    styles: ["jazz-funk"],
   },
   {
     slug: "anti-hero",
@@ -223,7 +225,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Taylor Swift",
     bpm: 97,
     length: "3:20",
-    styles: ["ג'אז פאנק"],
+    styles: ["jazz-funk"],
   },
   {
     slug: "savage",
@@ -231,7 +233,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Megan Thee Stallion",
     bpm: 127,
     length: "2:35",
-    styles: ["היפ הופ"],
+    styles: ["hip-hop"],
   },
   {
     slug: "body",
@@ -239,7 +241,7 @@ export const SONG_NAME_BANK: SongSeed[] = [
     artist: "Megan Thee Stallion",
     bpm: 123,
     length: "2:51",
-    styles: ["היפ הופ", "ג'אז פאנק"],
+    styles: ["hip-hop", "jazz-funk"],
   },
 ];
 
