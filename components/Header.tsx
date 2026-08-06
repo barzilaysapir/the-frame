@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthProvider";
@@ -15,14 +15,41 @@ const NAV_LINKS = [
 ];
 
 export function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuId = useId();
+  const pathname = usePathname();
   const router = useRouter();
   const { user, signOutUser } = useAuth();
   const isAuthenticated = Boolean(user);
 
+  // Track which path the menu was opened on. When the route changes,
+  // openPath !== pathname and the menu closes without an effect.
+  const [openPath, setOpenPath] = useState<string | null>(null);
+  const isMenuOpen = openPath === pathname;
+
+  const closeMenu = () => setOpenPath(null);
+  const toggleMenu = () =>
+    setOpenPath((current) => (current === pathname ? null : pathname));
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpenPath(null);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMenuOpen]);
+
   const handleSignOut = async () => {
     await signOutUser();
-    setIsMenuOpen(false);
+    closeMenu();
     router.push("/");
   };
 
@@ -110,69 +137,92 @@ export function Header() {
         {/* Mobile menu toggle */}
         <button
           type="button"
-          onClick={() => setIsMenuOpen((open) => !open)}
-          className="flex h-9 w-9 items-center justify-center rounded-full text-white md:hidden"
+          onClick={toggleMenu}
+          className="relative z-[60] flex h-10 w-10 items-center justify-center rounded-full text-white md:hidden"
           aria-label={isMenuOpen ? "סגור תפריט" : "פתח תפריט"}
           aria-expanded={isMenuOpen}
+          aria-controls={menuId}
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Mobile nav */}
+      {/* Mobile nav — fixed panel below the bar so sticky/backdrop-blur can't clip it */}
       <div
+        id={menuId}
         className={cn(
-          "overflow-hidden border-t border-frame-border/80 bg-frame-bg transition-[max-height] duration-300 ease-in-out md:hidden",
-          isMenuOpen ? "max-h-96" : "max-h-0 border-t-0"
+          "fixed inset-x-0 bottom-0 top-16 z-[55] md:hidden",
+          isMenuOpen ? "pointer-events-auto" : "pointer-events-none"
         )}
       >
-        <nav className="flex flex-col gap-1 px-4 py-4 sm:px-6">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsMenuOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm font-medium text-frame-silver transition-colors hover:bg-frame-panel hover:text-white"
-            >
-              {link.label}
-            </Link>
-          ))}
-          <div className="mt-2 flex flex-col gap-2 border-t border-frame-border/80 pt-4">
-            {isAuthenticated ? (
-              <>
-                <Link
-                  href="/account"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
-                >
-                  האזור האישי
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="rounded-full bg-neon-cta px-3 py-2.5 text-center text-sm font-semibold text-frame-bg hover:brightness-110"
-                >
-                  התנתקות
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
-                >
-                  התחברות
-                </Link>
-                <Link
-                  href="/routines"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="rounded-full bg-neon-cta px-3 py-2.5 text-center text-sm font-semibold text-frame-bg hover:brightness-110"
-                >
-                  קבלו גישה
-                </Link>
-              </>
-            )}
+        <button
+          type="button"
+          tabIndex={isMenuOpen ? 0 : -1}
+          aria-label="סגור תפריט"
+          onClick={closeMenu}
+          className={cn(
+            "absolute inset-0 bg-black/50 transition-opacity duration-200",
+            isMenuOpen ? "opacity-100" : "opacity-0"
+          )}
+        />
+        <nav
+          className={cn(
+            "relative origin-top border-b border-frame-border/80 bg-frame-bg shadow-xl transition-all duration-200 ease-out",
+            isMenuOpen
+              ? "translate-y-0 opacity-100"
+              : "-translate-y-2 opacity-0"
+          )}
+          aria-hidden={!isMenuOpen}
+        >
+          <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                tabIndex={isMenuOpen ? 0 : -1}
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-frame-silver transition-colors hover:bg-frame-panel hover:text-white"
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="mt-2 flex flex-col gap-2 border-t border-frame-border/80 pt-4">
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    href="/account"
+                    tabIndex={isMenuOpen ? 0 : -1}
+                    className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
+                  >
+                    האזור האישי
+                  </Link>
+                  <button
+                    type="button"
+                    tabIndex={isMenuOpen ? 0 : -1}
+                    onClick={handleSignOut}
+                    className="rounded-full bg-neon-cta px-3 py-2.5 text-center text-sm font-semibold text-frame-bg hover:brightness-110"
+                  >
+                    התנתקות
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    tabIndex={isMenuOpen ? 0 : -1}
+                    className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
+                  >
+                    התחברות
+                  </Link>
+                  <Link
+                    href="/routines"
+                    tabIndex={isMenuOpen ? 0 : -1}
+                    className="rounded-full bg-neon-cta px-3 py-2.5 text-center text-sm font-semibold text-frame-bg hover:brightness-110"
+                  >
+                    קבלו גישה
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </nav>
       </div>
