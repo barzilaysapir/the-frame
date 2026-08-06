@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ChangeEvent,
@@ -19,13 +20,9 @@ import {
   Gauge,
 } from "lucide-react";
 import { cn, formatTime } from "@/lib/utils";
+import type { VideoChapter } from "@/lib/routines";
 
-export interface VideoChapter {
-  id: string;
-  label: string;
-  /** Timestamp in seconds where this section of the routine begins. */
-  time: number;
-}
+export type { VideoChapter };
 
 const PLAYBACK_SPEEDS = [0.5, 0.75, 1, 1.25] as const;
 
@@ -67,9 +64,6 @@ export function DanceVideoPlayer({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(true);
-  const [activeChapterId, setActiveChapterId] = useState<string>(
-    chapters[0]?.id ?? ""
-  );
 
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
@@ -123,13 +117,14 @@ export function DanceVideoPlayer({
       document.removeEventListener("fullscreenchange", onFullscreenChange);
   }, []);
 
-  // Highlight whichever chapter the current playhead is inside.
-  useEffect(() => {
+  // Whichever chapter the current playhead is inside — derived directly from
+  // currentTime/chapters rather than mirrored into its own state.
+  const activeChapterId = useMemo(() => {
     const sorted = [...chapters].sort((a, b) => a.time - b.time);
     const current = sorted.reduce<VideoChapter | undefined>((acc, chapter) => {
       return currentTime >= chapter.time ? chapter : acc;
     }, sorted[0]);
-    if (current) setActiveChapterId(current.id);
+    return current?.id ?? chapters[0]?.id ?? "";
   }, [currentTime, chapters]);
 
   const handleSeek = (event: ChangeEvent<HTMLInputElement>) => {
@@ -173,7 +168,6 @@ export function DanceVideoPlayer({
     if (!video) return;
     video.currentTime = chapter.time;
     setCurrentTime(chapter.time);
-    setActiveChapterId(chapter.id);
     if (video.paused) video.play();
   };
 
