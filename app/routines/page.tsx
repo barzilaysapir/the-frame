@@ -5,9 +5,9 @@ import { getAllRoutines } from "@/lib/routines";
 import { getAllInstructors, getInstructorBySlug } from "@/lib/instructors";
 
 export const metadata: Metadata = {
-  title: "קומבואים",
+  title: "קומבינציות",
   description:
-    "עיינו בקומבואים — קומרשל, היפ הופ והילס — עם פירוק מלא, מצב תרגול במראה וספירות בהאטה.",
+    "עיינו בקומבינציות — קומרשל, היפ הופ והילס — עם פירוק מלא, מצב תרגול במראה וספירות בהאטה.",
 };
 
 interface RoutinesPageProps {
@@ -30,11 +30,11 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       <div className="mb-10 max-w-2xl">
         <h1 className="text-balance font-display text-5xl font-black leading-[0.98] text-white sm:text-6xl">
           {activeInstructor
-            ? `קומבואים עם ${activeInstructor.name}`
-            : "כל הקומבואים"}
+            ? `קומבינציות עם ${activeInstructor.name}`
+            : "כל הקומבינציות"}
         </h1>
         <p className="mt-4 text-frame-silver">
-          כל קומבו כולל פירוק מלא לספירות, מצב תרגול במראה ובהאטה, וגישה לכל
+          כל קומבינציה כוללת פירוק מלא לספירות, מצב תרגול במראה ובהאטה, וגישה לכל
           החיים.
         </p>
       </div>
@@ -77,7 +77,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           ))}
         </div>
       ) : (
-        <p className="text-frame-silver">אין קומבואים להצגה כרגע.</p>
+        <p className="text-frame-silver">אין קומבינציות להצגה כרגע.</p>
       )}
     </main>
   );

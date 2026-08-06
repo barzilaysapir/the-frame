@@ -23,7 +23,7 @@ const logoScript = Alex_Brush({
   variable: "--font-logo",
 });
 
-const SITE_TITLE = "The Frame by Barzilay — למדו את הקומבו";
+const SITE_TITLE = "The Frame by Barzilay — למדו את הקומבינציה";
 const SITE_DESCRIPTION =
   "מדריכי ריקוד יוקרתיים. למדו קומבינציות בודדות, פריים אחרי פריים.";
 

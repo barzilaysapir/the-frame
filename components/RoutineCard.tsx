@@ -49,7 +49,7 @@ export function RoutineCard({ routine, instructorName }: RoutineCardProps) {
             </span>
           </div>
           <span className="inline-flex items-center gap-1 text-sm font-semibold text-frame-cyan">
-            צפו בקומבו
+            צפו בקומבינציה
             <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
           </span>
         </div>

@@ -17,7 +17,7 @@ const VALUES = [
   {
     title: "פירוק אמיתי",
     description:
-      "כל קומבו מפורק לספירות, עם מצב תרגול במראה ובהאטה, כך שאף תנועה לא נשארת סתומה.",
+      "כל קומבינציה מפורקת לספירות, עם מצב תרגול במראה ובהאטה, כך שאף תנועה לא נשארת סתומה.",
   },
   {
     title: "מדריכים מהשטח",
@@ -63,7 +63,7 @@ export default function AboutPage() {
             href="/routines"
             className="group inline-flex items-center gap-2 rounded-full bg-neon-cta px-6 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
           >
-            עיינו בקומבואים
+            עיינו בקומבינציות
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
           </Link>
         </div>
