@@ -75,8 +75,8 @@ export const ROUTINES: RoutineRecord[] = [
     ],
     checkoutHref: "/checkout/levitating",
     pricing: {
-      original: 79,
-      earlyBird: 49,
+      original: 49,
+      earlyBird: 29,
     },
   },
   {
@@ -100,8 +100,8 @@ export const ROUTINES: RoutineRecord[] = [
     ],
     checkoutHref: "/checkout/kill-bill",
     pricing: {
-      original: 79,
-      earlyBird: 49,
+      original: 49,
+      earlyBird: 29,
     },
   },
   {
@@ -125,8 +125,8 @@ export const ROUTINES: RoutineRecord[] = [
     ],
     checkoutHref: "/checkout/earned-it",
     pricing: {
-      original: 79,
-      earlyBird: 49,
+      original: 49,
+      earlyBird: 29,
     },
   },
 ];
