@@ -14,19 +14,17 @@ interface PlanCopy {
 interface CheckoutPlanOptionProps {
   id: CheckoutPlanId;
   selected: boolean;
-  expanded: boolean;
-  onToggle: (id: CheckoutPlanId) => void;
+  onSelect: (id: CheckoutPlanId) => void;
   price: number;
   originalPrice?: number;
   copy: PlanCopy;
 }
 
-/** Compact plan row; expands accordion-style for details. */
+/** Compact plan row; the selected plan stays expanded with details. */
 export function CheckoutPlanOption({
   id,
   selected,
-  expanded,
-  onToggle,
+  onSelect,
   price,
   originalPrice,
   copy,
@@ -46,8 +44,8 @@ export function CheckoutPlanOption({
     >
       <button
         type="button"
-        onClick={() => onToggle(id)}
-        aria-expanded={expanded}
+        onClick={() => onSelect(id)}
+        aria-expanded={selected}
         aria-controls={panelId}
         className="flex w-full items-center gap-3 px-4 py-3 text-start"
       >
@@ -79,30 +77,31 @@ export function CheckoutPlanOption({
         <ChevronDown
           className={cn(
             "h-4 w-4 shrink-0 text-frame-silver transition-transform",
-            expanded && "rotate-180",
+            selected && "rotate-180",
           )}
           aria-hidden
         />
       </button>
 
-      <div
-        id={panelId}
-        hidden={!expanded}
-        className="border-t border-frame-border/70 px-4 pb-4 pt-3"
-      >
-        <p className="text-xs text-frame-silver">{copy.description}</p>
-        <ul className="mt-3 space-y-2">
-          {copy.guarantees.map((item) => (
-            <li
-              key={item}
-              className="flex items-baseline gap-2 text-xs text-frame-silver"
-            >
-              <span className="text-frame-muted">—</span>
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {selected ? (
+        <div
+          id={panelId}
+          className="border-t border-frame-border/70 px-4 pb-4 pt-3"
+        >
+          <p className="text-xs text-frame-silver">{copy.description}</p>
+          <ul className="mt-3 space-y-2">
+            {copy.guarantees.map((item) => (
+              <li
+                key={item}
+                className="flex items-baseline gap-2 text-xs text-frame-silver"
+              >
+                <span className="text-frame-muted">—</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 }

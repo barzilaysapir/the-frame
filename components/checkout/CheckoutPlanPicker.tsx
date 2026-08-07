@@ -12,8 +12,7 @@ interface PlanCopy {
 
 interface CheckoutPlanPickerProps {
   selected: CheckoutPlanId;
-  expanded: CheckoutPlanId | null;
-  onToggle: (id: CheckoutPlanId) => void;
+  onSelect: (id: CheckoutPlanId) => void;
   chooseLabel: string;
   rentalPrice: number;
   rentalOriginalPrice: number;
@@ -25,8 +24,7 @@ interface CheckoutPlanPickerProps {
 
 export function CheckoutPlanPicker({
   selected,
-  expanded,
-  onToggle,
+  onSelect,
   chooseLabel,
   rentalPrice,
   rentalOriginalPrice,
@@ -43,8 +41,7 @@ export function CheckoutPlanPicker({
       <CheckoutPlanOption
         id="rental"
         selected={selected === "rental"}
-        expanded={expanded === "rental"}
-        onToggle={onToggle}
+        onSelect={onSelect}
         price={rentalPrice}
         originalPrice={rentalOriginalPrice}
         copy={rentalCopy}
@@ -52,8 +49,7 @@ export function CheckoutPlanPicker({
       <CheckoutPlanOption
         id="subscription"
         selected={selected === "subscription"}
-        expanded={expanded === "subscription"}
-        onToggle={onToggle}
+        onSelect={onSelect}
         price={subscriptionPrice}
         originalPrice={subscriptionOriginalPrice}
         copy={subscriptionCopy}
