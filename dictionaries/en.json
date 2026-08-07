@@ -134,13 +134,13 @@
   },
   "checkout": {
     "metaTitle": "Checkout",
-    "title": "Complete your rental",
-    "subtitle": "Confirm the price and pay for 30 days of access to this combination.",
+    "title": "Start learning",
+    "subtitle": "Confirm the price. This unlocks 30 days of viewing access to this combination (one-time payment).",
     "backToRoutine": "Back to combination",
     "loading": "Loading…",
     "paymentTitle": "Payment",
-    "paymentBody": "Pay once for 30 days of access to this combination.",
-    "planLabel": "30-day rental",
+    "paymentBody": "One-time payment for 30 days of viewing access to this combination.",
+    "planLabel": "30 days of viewing access",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
     "signInPrompt": "Sign in with Google to continue to payment.",
     "otherSignIn": "More sign-in options",
@@ -148,9 +148,9 @@
     "payCta": "Continue to payment",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
     "guarantees": [
-      "30 days of access to this combination",
+      "30 days of viewing access to this combination",
       "Full breakdowns, slowed and mirrored practice",
-      "Watch on any device during the rental",
+      "Watch on any device during your access period",
       "7-day money-back guarantee"
     ]
   },
@@ -176,13 +176,13 @@
     "unitHours": "hrs",
     "unitMinutes": "min",
     "unitSeconds": "sec",
-    "pricingNote": "30-day rental · one-time payment",
-    "getAccessNow": "Rent for 30 days",
+    "pricingNote": "30 days of viewing access · one-time payment",
+    "getAccessNow": "Start learning",
     "secureNote": "Secure checkout · access starts right after payment",
     "guarantees": [
-      "30 days of access to this combination",
+      "30 days of viewing access to this combination",
       "Slowed and mirrored practice modes",
-      "Watch on any device during the rental",
+      "Watch on any device during your access period",
       "7-day money-back guarantee"
     ]
   },
