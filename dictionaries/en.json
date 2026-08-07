@@ -135,7 +135,7 @@
   "checkout": {
     "metaTitle": "Checkout",
     "title": "Complete your purchase",
-    "subtitle": "Review the combination and price, then complete payment for lifetime access.",
+    "subtitle": "Confirm the price and complete payment for lifetime access.",
     "backToRoutine": "Back to combination",
     "loading": "Loading…",
     "paymentTitle": "Payment",
