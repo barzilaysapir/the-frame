@@ -1,10 +1,12 @@
-import Link from "next/link";
+import { GetAccessButton } from "@/components/checkout/GetAccessButton";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 interface MobileStickyCtaProps {
   originalPrice: number;
   discountedPrice: number;
   checkoutHref: string;
   ctaLabel: string;
+  loginErrors: Dictionary["login"]["errors"];
 }
 
 export function MobileStickyCta({
@@ -12,6 +14,7 @@ export function MobileStickyCta({
   discountedPrice,
   checkoutHref,
   ctaLabel,
+  loginErrors,
 }: MobileStickyCtaProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-frame-border bg-frame-bg/95 backdrop-blur-md lg:hidden">
@@ -24,12 +27,14 @@ export function MobileStickyCta({
             ₪{originalPrice}
           </span>
         </div>
-        <Link
-          href={checkoutHref}
-          className="max-w-[220px] flex-1 rounded-full bg-neon-cta px-5 py-2.5 text-center text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
-        >
-          {ctaLabel}
-        </Link>
+        <div className="max-w-[220px] flex-1">
+          <GetAccessButton
+            checkoutHref={checkoutHref}
+            label={ctaLabel}
+            loginErrors={loginErrors}
+            className="py-2.5"
+          />
+        </div>
       </div>
     </div>
   );

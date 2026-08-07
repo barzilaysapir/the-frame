@@ -1,10 +1,12 @@
-import Link from "next/link";
+import { GetAccessButton } from "@/components/checkout/GetAccessButton";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { cn } from "@/lib/utils";
 
 interface PricingCardProps {
   originalPrice: number;
   discountedPrice: number;
   checkoutHref: string;
+  loginErrors: Dictionary["login"]["errors"];
   labels: {
     pricingNote: string;
     getAccessNow: string;
@@ -18,6 +20,7 @@ export function PricingCard({
   originalPrice,
   discountedPrice,
   checkoutHref,
+  loginErrors,
   labels,
   className,
 }: PricingCardProps) {
@@ -50,12 +53,13 @@ export function PricingCard({
       </div>
       <p className="mt-1 text-xs text-frame-muted">{labels.pricingNote}</p>
 
-      <Link
-        href={checkoutHref}
-        className="mt-6 flex w-full items-center justify-center rounded-full bg-neon-cta px-5 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
-      >
-        {labels.getAccessNow}
-      </Link>
+      <div className="mt-6">
+        <GetAccessButton
+          checkoutHref={checkoutHref}
+          label={labels.getAccessNow}
+          loginErrors={loginErrors}
+        />
+      </div>
 
       <ul className="mt-6 space-y-3 border-t border-frame-border/70 pt-6">
         {labels.guarantees.map((item) => (
