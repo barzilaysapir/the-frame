@@ -64,6 +64,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
           title={routine.title}
           instructorName={instructor?.name}
           taughtByLabel={dict.routine.taughtBy}
+          planLabel={dict.checkout.planLabel}
           originalPrice={routine.pricing.original}
           discountedPrice={routine.pricing.earlyBird}
           pricingNote={dict.routine.pricingNote}

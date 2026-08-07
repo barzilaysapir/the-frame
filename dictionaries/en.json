@@ -22,7 +22,7 @@
   },
   "tutorials": {
     "title": "Tutorials & courses",
-    "subtitle": "Every tutorial includes a full count breakdown, mirrored and slowed practice modes, and lifetime access.",
+    "subtitle": "Every tutorial includes a full count breakdown, mirrored and slowed practice modes, and a 30-day rental.",
     "filterAria": "Filter tutorials and courses",
     "filterTeacher": "Teacher",
     "filterStyle": "Style",
@@ -67,7 +67,7 @@
   "login": {
     "metaTitle": "Log in",
     "title": "Log in",
-    "subtitle": "Sign in to access the combinations you’ve purchased.",
+    "subtitle": "Sign in to access the combinations you’ve rented.",
     "unavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local and enable the Google provider in the console.",
     "continueGoogle": "Continue with Google",
     "or": "or",
@@ -94,8 +94,8 @@
   "account": {
     "metaTitle": "My account",
     "greeting": "Hi, {name}",
-    "subtitle": "Your purchased combinations will appear here, with lifetime access to breakdowns, mirrored practice, and slowed practice.",
-    "empty": "You haven’t purchased any combinations yet.",
+    "subtitle": "Your rented combinations will appear here for the active rental period, with breakdowns, mirrored practice, and slowed practice.",
+    "empty": "You haven’t rented any combinations yet.",
     "loadFailed": "Couldn’t load your library. Please try again.",
     "unavailable": "My account isn’t available yet — the site is still being built.",
     "loading": "Loading…",
@@ -134,12 +134,14 @@
   },
   "checkout": {
     "metaTitle": "Checkout",
-    "title": "Complete your purchase",
-    "subtitle": "Confirm the price and complete payment for lifetime access.",
+    "title": "Complete your rental",
+    "subtitle": "This is a 30-day rental of this combination — not a purchase. A monthly subscription for the whole site is coming next.",
     "backToRoutine": "Back to combination",
     "loading": "Loading…",
     "paymentTitle": "Payment",
-    "paymentBody": "After payment you’ll get instant lifetime access to every breakdown and practice mode.",
+    "paymentBody": "Pay once for 30 days of access to this combination’s breakdowns and practice modes.",
+    "planLabel": "30-day rental",
+    "subscriptionTeaser": "Coming soon: a monthly subscription for every combination on the site.",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
     "signInPrompt": "Sign in with Google to continue to payment.",
     "otherSignIn": "More sign-in options",
@@ -147,9 +149,9 @@
     "payCta": "Continue to payment",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
     "guarantees": [
-      "Lifetime access to every breakdown",
-      "Slowed and mirrored practice modes",
-      "Watch on any device, forever",
+      "30 days of access to this combination",
+      "Full breakdowns, slowed and mirrored practice",
+      "Watch on any device during the rental",
       "7-day money-back guarantee"
     ]
   },
@@ -175,13 +177,13 @@
     "unitHours": "hrs",
     "unitMinutes": "min",
     "unitSeconds": "sec",
-    "pricingNote": "One-time payment · lifetime access",
-    "getAccessNow": "Get instant access",
-    "secureNote": "Secure checkout · instant access guaranteed",
+    "pricingNote": "30-day rental · one-time payment",
+    "getAccessNow": "Rent for 30 days",
+    "secureNote": "Secure checkout · access starts right after payment",
     "guarantees": [
-      "Lifetime access to every breakdown",
+      "30 days of access to this combination",
       "Slowed and mirrored practice modes",
-      "Watch on any device, forever",
+      "Watch on any device during the rental",
       "7-day money-back guarantee"
     ]
   },
