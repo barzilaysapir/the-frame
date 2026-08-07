@@ -155,6 +155,7 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
                 originalPrice={routine.pricing.original}
                 discountedPrice={routine.pricing.earlyBird}
                 checkoutHref={localePath(locale, `/checkout/${routine.slug}`)}
+                loginErrors={dict.login.errors}
                 labels={pricingLabels}
               />
             </div>
@@ -167,6 +168,7 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
         discountedPrice={routine.pricing.earlyBird}
         checkoutHref={localePath(locale, `/checkout/${routine.slug}`)}
         ctaLabel={dict.routine.getAccessNow}
+        loginErrors={dict.login.errors}
       />
     </>
   );

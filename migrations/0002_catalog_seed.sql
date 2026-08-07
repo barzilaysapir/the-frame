@@ -56,21 +56,21 @@ INSERT INTO routines (
     'intermediate', 'jazz-funk', '["jazz-funk","performance"]',
     '103 BPM', '3:23', '/routine-poster-midnight-static.png',
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    198, 99
+    59, 39
   ),
   (
     'kill-bill', 'Kill Bill', 'Kill Bill', 'SZA', 'daniel-cohen',
     'advanced', 'hip-hop', '["hip-hop","groove","musicality"]',
     '89 BPM', '2:33', '/routine-poster-neon-nights.png',
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    198, 99
+    59, 39
   ),
   (
     'earned-it', 'Earned It', 'Earned It', 'The Weeknd', 'noa-sagi',
     'all-levels', 'heels', '["heels","body-control","performance"]',
     '120 BPM', '4:10', '/routine-poster-velvet-heels.png',
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    198, 99
+    59, 39
   );
 
 INSERT INTO routine_i18n (slug, locale, technique, description) VALUES

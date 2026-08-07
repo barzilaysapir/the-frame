@@ -22,7 +22,7 @@
   },
   "tutorials": {
     "title": "Tutorials & courses",
-    "subtitle": "Every tutorial includes a full count breakdown, mirrored and slowed practice modes, and lifetime access.",
+    "subtitle": "Every tutorial includes a full count breakdown, mirrored and slowed practice modes, and a 30-day rental.",
     "filterAria": "Filter tutorials and courses",
     "filterTeacher": "Teacher",
     "filterStyle": "Style",
@@ -67,7 +67,7 @@
   "login": {
     "metaTitle": "Log in",
     "title": "Log in",
-    "subtitle": "Sign in to access the combinations you’ve purchased.",
+    "subtitle": "Sign in to access the combinations you’ve rented.",
     "unavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local and enable the Google provider in the console.",
     "continueGoogle": "Continue with Google",
     "or": "or",
@@ -94,8 +94,8 @@
   "account": {
     "metaTitle": "My account",
     "greeting": "Hi, {name}",
-    "subtitle": "Your purchased combinations will appear here, with lifetime access to breakdowns, mirrored practice, and slowed practice.",
-    "empty": "You haven’t purchased any combinations yet.",
+    "subtitle": "Your rented combinations will appear here for the active rental period, with breakdowns, mirrored practice, and slowed practice.",
+    "empty": "You haven’t rented any combinations yet.",
     "loadFailed": "Couldn’t load your library. Please try again.",
     "unavailable": "My account isn’t available yet — the site is still being built.",
     "loading": "Loading…",
@@ -134,24 +134,44 @@
   },
   "checkout": {
     "metaTitle": "Checkout",
-    "title": "Complete your purchase",
-    "subtitle": "Review the combination and price. Google sign-in is ready — a payment provider comes next.",
+    "title": "Start learning",
+    "subtitle": "Choose a plan and complete payment.",
     "backToRoutine": "Back to combination",
     "loading": "Loading…",
     "paymentTitle": "Payment",
-    "paymentBody": "After payment you’ll get instant lifetime access to every breakdown and practice mode.",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
-    "signInPrompt": "Sign in with Google to continue to checkout.",
+    "signInPrompt": "Sign in with Google to continue to payment.",
     "otherSignIn": "More sign-in options",
     "signedInAs": "Signed in as",
     "payCta": "Continue to payment",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
-    "guarantees": [
-      "Lifetime access to every breakdown",
-      "Slowed and mirrored practice modes",
-      "Watch on any device, forever",
-      "7-day money-back guarantee"
-    ]
+    "plans": {
+      "chooseLabel": "Choose a plan",
+      "rental": {
+        "title": "This combination",
+        "description": "30 days of viewing access to this combination only",
+        "priceNote": "launch price · one-time",
+        "paymentBody": "One-time payment for 30 days of viewing access to this combination.",
+        "guarantees": [
+          "30 days of viewing access to this combination",
+          "Slowed and mirrored practice modes",
+          "Watch on any device during your access period",
+          "7-day money-back guarantee"
+        ]
+      },
+      "subscription": {
+        "title": "Monthly site subscription",
+        "description": "Access every combination on The Frame, renews each month",
+        "priceNote": "launch price · per month",
+        "paymentBody": "Monthly subscription for every combination on the site.",
+        "guarantees": [
+          "Access to every combination on the site",
+          "New releases included while subscribed",
+          "Cancel anytime",
+          "7-day money-back guarantee"
+        ]
+      }
+    }
   },
   "notFound": {
     "title": "This page wasn’t found",
@@ -175,13 +195,13 @@
     "unitHours": "hrs",
     "unitMinutes": "min",
     "unitSeconds": "sec",
-    "pricingNote": "One-time payment · lifetime access",
-    "getAccessNow": "Get instant access",
-    "secureNote": "Secure checkout · instant access guaranteed",
+    "pricingNote": "30-day access or monthly site plan · choose at checkout",
+    "getAccessNow": "Start learning",
+    "secureNote": "Secure checkout · access starts right after payment",
     "guarantees": [
-      "Lifetime access to every breakdown",
+      "30 days of viewing access to this combination",
       "Slowed and mirrored practice modes",
-      "Watch on any device, forever",
+      "Watch on any device during your access period",
       "7-day money-back guarantee"
     ]
   },

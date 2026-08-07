@@ -1,18 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
-import type { Locale } from "@/lib/i18n/config";
-import { useState } from "react";
 
 interface CheckoutPaymentPlaceholderProps {
   locale: Locale;
   labels: Dictionary["checkout"];
   loginErrors: Dictionary["login"]["errors"];
   continueGoogleLabel: string;
+  paymentBody: string;
 }
 
 export function CheckoutPaymentPlaceholder({
@@ -20,6 +21,7 @@ export function CheckoutPaymentPlaceholder({
   labels,
   loginErrors,
   continueGoogleLabel,
+  paymentBody,
 }: CheckoutPaymentPlaceholderProps) {
   const { user, loading, isConfigured } = useAuth();
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,7 @@ export function CheckoutPaymentPlaceholder({
       <h2 className="font-display text-2xl font-black text-white">
         {labels.paymentTitle}
       </h2>
-      <p className="mt-2 text-sm text-frame-silver">{labels.paymentBody}</p>
+      <p className="mt-2 text-sm text-frame-silver">{paymentBody}</p>
 
       {!isConfigured ? (
         <p className="mt-6 rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
@@ -82,18 +84,6 @@ export function CheckoutPaymentPlaceholder({
           {error}
         </p>
       ) : null}
-
-      <ul className="mt-6 space-y-3 border-t border-frame-border pt-6">
-        {labels.guarantees.map((item) => (
-          <li
-            key={item}
-            className="flex items-baseline gap-2.5 text-sm text-frame-silver"
-          >
-            <span className="text-frame-silver">—</span>
-            {item}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

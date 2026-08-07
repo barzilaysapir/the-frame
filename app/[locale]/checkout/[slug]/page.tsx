@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
-import { CheckoutOrderSummary } from "@/components/checkout/CheckoutOrderSummary";
-import { CheckoutPaymentPlaceholder } from "@/components/checkout/CheckoutPaymentPlaceholder";
+import { CheckoutPlans } from "@/components/checkout/CheckoutPlans";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -45,7 +44,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   );
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <main className="mx-auto max-w-lg px-4 py-12 sm:px-6 lg:py-16">
       <Link
         href={localePath(localeParam, `/routine/${routine.slug}`)}
         className="group mb-8 inline-flex items-center gap-2 text-sm font-medium text-frame-silver transition-colors hover:text-white"
@@ -57,26 +56,16 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       <h1 className="text-balance font-display text-4xl font-black leading-[0.98] text-white sm:text-5xl">
         {dict.checkout.title}
       </h1>
-      <p className="mt-3 max-w-xl text-frame-silver">{dict.checkout.subtitle}</p>
+      <p className="mt-3 text-frame-silver">{dict.checkout.subtitle}</p>
 
-      <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
-        <CheckoutOrderSummary
+      <div className="mt-10">
+        <CheckoutPlans
           locale={localeParam}
-          title={routine.title}
-          artist={routine.artist}
-          style={routine.style}
-          level={routine.level}
-          poster={routine.poster}
-          instructorName={instructor?.name ?? ""}
-          instructorAvatar={instructor?.avatar}
+          routineTitle={routine.title}
+          instructorName={instructor?.name}
           taughtByLabel={dict.routine.taughtBy}
-          originalPrice={routine.pricing.original}
-          discountedPrice={routine.pricing.earlyBird}
-          pricingNote={dict.routine.pricingNote}
-        />
-
-        <CheckoutPaymentPlaceholder
-          locale={localeParam}
+          rentalOriginalPrice={routine.pricing.original}
+          rentalPrice={routine.pricing.earlyBird}
           labels={dict.checkout}
           loginErrors={dict.login.errors}
           continueGoogleLabel={dict.login.continueGoogle}

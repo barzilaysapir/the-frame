@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  getGoogleSignInErrorMessage,
+  signInWithGoogle,
+} from "@/lib/client/sign-in-with-google";
 import { auth } from "@/lib/firebase";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { cn } from "@/lib/utils";
@@ -14,28 +17,6 @@ interface GoogleSignInButtonProps {
   className?: string;
   onError?: (message: string) => void;
   onSuccess?: () => void;
-}
-
-function getGoogleErrorMessage(error: unknown, errors: LoginErrors): string {
-  if (error && typeof error === "object" && "code" in error) {
-    const code = (error as { code?: string }).code;
-    switch (code) {
-      case "auth/popup-closed-by-user":
-      case "auth/cancelled-popup-request":
-        return errors.popupClosed;
-      case "auth/unauthorized-domain":
-        return errors.unauthorizedDomain;
-      case "auth/operation-not-allowed":
-        return errors.providerDisabled;
-      case "auth/popup-blocked":
-        return errors.popupBlocked;
-      case "auth/network-request-failed":
-        return errors.network;
-      default:
-        return `${errors.generic} (${code ?? "unknown"})`;
-    }
-  }
-  return errors.generic;
 }
 
 function GoogleMark({ className }: { className?: string }) {
@@ -79,11 +60,11 @@ export function GoogleSignInButton({
     if (!auth) return;
     setIsSubmitting(true);
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
+      await signInWithGoogle();
       onSuccess?.();
     } catch (err) {
       console.error("[Google sign-in]", err);
-      onError?.(getGoogleErrorMessage(err, errors));
+      onError?.(getGoogleSignInErrorMessage(err, errors));
     } finally {
       setIsSubmitting(false);
     }
