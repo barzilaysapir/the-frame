@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
-import { CheckoutSubscriptionTeaser } from "@/components/checkout/CheckoutSubscriptionTeaser";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -83,8 +82,6 @@ export function CheckoutPaymentPlaceholder({
           {error}
         </p>
       ) : null}
-
-      <CheckoutSubscriptionTeaser text={labels.subscriptionTeaser} />
 
       <ul className="mt-6 space-y-3 border-t border-frame-border pt-6">
         {labels.guarantees.map((item) => (
