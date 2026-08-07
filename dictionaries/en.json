@@ -139,7 +139,7 @@
     "backToRoutine": "Back to combination",
     "loading": "Loading…",
     "paymentTitle": "Payment",
-    "paymentBody": "Pay once for 30 days of access to this combination’s breakdowns and practice modes.",
+    "paymentBody": "Pay once for 30 days of access to this combination.",
     "planLabel": "30-day rental",
     "subscriptionTeaser": "Coming soon: a monthly subscription for every combination on the site.",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
