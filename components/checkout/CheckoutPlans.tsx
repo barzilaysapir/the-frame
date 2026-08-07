@@ -6,7 +6,7 @@ import { CheckoutPlanPicker } from "@/components/checkout/CheckoutPlanPicker";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import {
-  MONTHLY_SUBSCRIPTION_ILS,
+  MONTHLY_SUBSCRIPTION,
   type CheckoutPlanId,
 } from "@/lib/pricing";
 
@@ -62,7 +62,8 @@ export function CheckoutPlans({
         chooseLabel={labels.plans.chooseLabel}
         rentalPrice={rentalPrice}
         rentalOriginalPrice={rentalOriginalPrice}
-        subscriptionPrice={MONTHLY_SUBSCRIPTION_ILS}
+        subscriptionPrice={MONTHLY_SUBSCRIPTION.earlyBird}
+        subscriptionOriginalPrice={MONTHLY_SUBSCRIPTION.original}
         rentalCopy={labels.plans.rental}
         subscriptionCopy={labels.plans.subscription}
       />

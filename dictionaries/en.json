@@ -150,7 +150,7 @@
       "rental": {
         "title": "This combination",
         "description": "30 days of viewing access to this combination only",
-        "priceNote": "one-time",
+        "priceNote": "launch price · one-time",
         "paymentBody": "One-time payment for 30 days of viewing access to this combination.",
         "guarantees": [
           "30 days of viewing access to this combination",
@@ -162,7 +162,7 @@
       "subscription": {
         "title": "Monthly site subscription",
         "description": "Access every combination on The Frame, renews each month",
-        "priceNote": "per month",
+        "priceNote": "launch price · per month",
         "paymentBody": "Monthly subscription for every combination on the site.",
         "guarantees": [
           "Access to every combination on the site",

@@ -18,6 +18,7 @@ interface CheckoutPlanPickerProps {
   rentalPrice: number;
   rentalOriginalPrice: number;
   subscriptionPrice: number;
+  subscriptionOriginalPrice: number;
   rentalCopy: PlanCopy;
   subscriptionCopy: PlanCopy;
 }
@@ -30,6 +31,7 @@ export function CheckoutPlanPicker({
   rentalPrice,
   rentalOriginalPrice,
   subscriptionPrice,
+  subscriptionOriginalPrice,
   rentalCopy,
   subscriptionCopy,
 }: CheckoutPlanPickerProps) {
@@ -53,6 +55,7 @@ export function CheckoutPlanPicker({
         expanded={expanded === "subscription"}
         onToggle={onToggle}
         price={subscriptionPrice}
+        originalPrice={subscriptionOriginalPrice}
         copy={subscriptionCopy}
       />
     </fieldset>
