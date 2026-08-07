@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { InstructorCard } from "@/components/InstructorCard";
-import { getAllInstructors } from "@/lib/instructors";
-import { getRoutinesByInstructor } from "@/lib/routines";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
+import { resolveCatalog } from "@/lib/server/catalog";
+
+export const dynamic = "force-dynamic";
 
 interface InstructorsPageProps {
   params: Promise<{ locale: string }>;
@@ -27,7 +28,8 @@ export default async function InstructorsPage({ params }: InstructorsPageProps) 
   if (!isLocale(localeParam)) notFound();
   const locale = localeParam;
   const dict = await getDictionary(locale);
-  const instructors = getAllInstructors();
+  const { repository } = await resolveCatalog();
+  const instructors = await repository.listInstructors(locale);
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -44,7 +46,6 @@ export default async function InstructorsPage({ params }: InstructorsPageProps) 
             key={instructor.slug}
             instructor={instructor}
             locale={locale}
-            routineCount={getRoutinesByInstructor(instructor.slug).length}
             labels={{
               routineOne: dict.teachers.routineOne,
               routineMany: dict.teachers.routineMany,

@@ -1,7 +1,7 @@
 /**
- * Mock-backed catalog repository.
- * Temporary: same data as `lib/routines` + `mocks/content`.
- * Replace with D1/CMS queries while keeping CatalogRepository stable.
+ * In-memory catalog repository (same content as D1 seed).
+ * Used only when the D1 binding is unavailable (e.g. plain `next dev`
+ * without OpenNext/Wrangler). Prefer D1 in preview/production.
  */
 import type { Locale } from "@/lib/i18n/config";
 import {

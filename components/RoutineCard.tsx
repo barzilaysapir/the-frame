@@ -1,15 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import type { RoutineRecord } from "@/lib/routines";
 import { SongCredit } from "@/components/SongCredit";
 import { RoutineFilterTag } from "@/components/RoutineFilterTag";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
+import type { CatalogRoutine } from "@/lib/server/catalog/types";
 
 interface RoutineCardProps {
-  routine: RoutineRecord;
+  routine: CatalogRoutine;
   locale: Locale;
   instructorName?: string;
   labels: {

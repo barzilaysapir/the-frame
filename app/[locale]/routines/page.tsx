@@ -2,24 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RoutineCard } from "@/components/RoutineCard";
 import { RoutineFilters } from "@/components/routines/RoutineFilters";
-import {
-  getAllRoutineLevels,
-  getAllRoutineStyles,
-  getAllRoutines,
-  getRoutinesByInstructor,
-  getRoutinesByLevel,
-  getRoutinesByStyle,
-  routinesFilterHref,
-} from "@/lib/routines";
-import { getAllInstructors, getInstructorBySlug } from "@/lib/instructors";
+import type { DanceStyleKey, LevelKey } from "@/lib/routines";
+import { routinesFilterHref } from "@/lib/routines";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
-import {
-  localizeInstructor,
-  localizeLevel,
-  localizeStyle,
-} from "@/lib/i18n/localize";
 import { localePath } from "@/lib/i18n/path";
+import { resolveCatalog } from "@/lib/server/catalog";
+
+export const dynamic = "force-dynamic";
 
 interface RoutinesPageProps {
   params: Promise<{ locale: string }>;
@@ -50,40 +40,45 @@ export default async function RoutinesPage({
   if (!isLocale(localeParam)) notFound();
   const locale = localeParam;
   const dict = await getDictionary(locale);
+  const { repository } = await resolveCatalog();
 
   const {
     instructor: instructorSlug,
     style,
     level,
   } = await searchParams;
-  const allRoutines = getAllRoutines();
-  const instructors = getAllInstructors();
-  const styles = getAllRoutineStyles();
-  const levels = getAllRoutineLevels();
 
-  const activeInstructor = instructorSlug
-    ? getInstructorBySlug(instructorSlug)
-    : undefined;
+  const [allRoutines, instructors] = await Promise.all([
+    repository.listRoutines(locale),
+    repository.listInstructors(locale),
+  ]);
+
+  const styles = [...new Set(allRoutines.map((routine) => routine.style))];
+  const levels = [...new Set(allRoutines.map((routine) => routine.level))];
 
   const filters = {
-    instructor: activeInstructor?.slug,
-    style,
-    level,
+    instructor: instructorSlug,
+    style: style as DanceStyleKey | undefined,
+    level: level as LevelKey | undefined,
     locale,
   };
 
   let routines = allRoutines;
   if (filters.instructor) {
-    routines = getRoutinesByInstructor(filters.instructor);
+    routines = routines.filter(
+      (routine) => routine.instructorSlug === filters.instructor,
+    );
   }
   if (filters.style) {
-    const byStyle = new Set(getRoutinesByStyle(filters.style).map((r) => r.slug));
-    routines = routines.filter((routine) => byStyle.has(routine.slug));
+    routines = routines.filter((routine) => routine.style === filters.style);
   }
   if (filters.level) {
-    const byLevel = new Set(getRoutinesByLevel(filters.level).map((r) => r.slug));
-    routines = routines.filter((routine) => byLevel.has(routine.slug));
+    routines = routines.filter((routine) => routine.level === filters.level);
   }
+
+  const instructorBySlug = new Map(
+    instructors.map((instructor) => [instructor.slug, instructor]),
+  );
 
   const hasActiveFilters = Boolean(
     filters.instructor || filters.style || filters.level,
@@ -125,7 +120,7 @@ export default async function RoutinesPage({
                 active: !filters.instructor,
               },
               ...instructors.map((instructor) => ({
-                label: localizeInstructor(locale, instructor).name,
+                label: instructor.name,
                 href: routinesFilterHref({
                   instructor: instructor.slug,
                   style: filters.style,
@@ -148,16 +143,21 @@ export default async function RoutinesPage({
                 }),
                 active: !filters.style,
               },
-              ...styles.map((item) => ({
-                label: localizeStyle(locale, item),
-                href: routinesFilterHref({
-                  instructor: filters.instructor,
-                  style: item,
-                  level: filters.level,
-                  locale,
-                }),
-                active: filters.style === item,
-              })),
+              ...styles.map((item) => {
+                const label =
+                  allRoutines.find((routine) => routine.style === item)
+                    ?.styleLabel ?? item;
+                return {
+                  label,
+                  href: routinesFilterHref({
+                    instructor: filters.instructor,
+                    style: item,
+                    level: filters.level,
+                    locale,
+                  }),
+                  active: filters.style === item,
+                };
+              }),
             ],
           },
           {
@@ -172,16 +172,21 @@ export default async function RoutinesPage({
                 }),
                 active: !filters.level,
               },
-              ...levels.map((item) => ({
-                label: localizeLevel(locale, item),
-                href: routinesFilterHref({
-                  instructor: filters.instructor,
-                  style: filters.style,
-                  level: item,
-                  locale,
-                }),
-                active: filters.level === item,
-              })),
+              ...levels.map((item) => {
+                const label =
+                  allRoutines.find((routine) => routine.level === item)
+                    ?.levelLabel ?? item;
+                return {
+                  label,
+                  href: routinesFilterHref({
+                    instructor: filters.instructor,
+                    style: filters.style,
+                    level: item,
+                    locale,
+                  }),
+                  active: filters.level === item,
+                };
+              }),
             ],
           },
         ]}
@@ -189,25 +194,20 @@ export default async function RoutinesPage({
 
       {routines.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {routines.map((routine) => {
-            const instructor = getInstructorBySlug(routine.instructorSlug);
-            return (
-              <RoutineCard
-                key={routine.slug}
-                routine={routine}
-                locale={locale}
-                instructorName={
-                  instructor
-                    ? localizeInstructor(locale, instructor).name
-                    : undefined
-                }
-                labels={{
-                  viewRoutine: dict.tutorials.viewRoutine,
-                  taughtBy: dict.tutorials.taughtBy,
-                }}
-              />
-            );
-          })}
+          {routines.map((routine) => (
+            <RoutineCard
+              key={routine.slug}
+              routine={routine}
+              locale={locale}
+              instructorName={
+                instructorBySlug.get(routine.instructorSlug)?.name
+              }
+              labels={{
+                viewRoutine: dict.tutorials.viewRoutine,
+                taughtBy: dict.tutorials.taughtBy,
+              }}
+            />
+          ))}
         </div>
       ) : (
         <p className="text-frame-silver">{dict.tutorials.empty}</p>

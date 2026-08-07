@@ -11,14 +11,17 @@
     "start": "next start",
     "lint": "eslint .",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload"
+    "db:migrate:local": "wrangler d1 migrations apply the-frame-catalog --local",
+    "db:migrate:remote": "wrangler d1 migrations apply the-frame-catalog --remote",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload -- --keep-vars"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.13",
     "clsx": "^2.1.1",
     "firebase": "^12.17.1",
+    "jose": "^6.2.8",
     "lucide-react": "^0.462.0",
     "negotiator": "^1.0.0",
     "next": "^16.3.0",

@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { AccountNav } from "@/components/account/AccountNav";
+import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import { isLocale } from "@/lib/i18n/config";
 import {
   formatMessage,
@@ -34,6 +35,14 @@ export function AccountPageShell({
       router.replace(localePath(locale, "/login"));
     }
   }, [isConfigured, loading, user, router, locale]);
+
+  // Upsert D1 app profile on account visits (Firebase remains identity).
+  useEffect(() => {
+    if (!user) return;
+    void fetchWithAuth(user, `/api/v1/me?locale=${locale}`).catch(() => {
+      // Non-blocking: account UI still works from Firebase client state.
+    });
+  }, [user, locale]);
 
   if (!isConfigured) {
     return (

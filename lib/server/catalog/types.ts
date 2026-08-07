@@ -51,21 +51,23 @@ export interface CatalogInstructor {
   routineCount: number;
 }
 
+export type CatalogSource = "d1" | "mock";
+
 export interface CatalogListResponse<T> {
   locale: Locale;
-  source: "mock";
+  source: CatalogSource;
   items: T[];
 }
 
 export interface CatalogItemResponse<T> {
   locale: Locale;
-  source: "mock";
+  source: CatalogSource;
   item: T;
 }
 
 export interface CatalogHealthResponse {
   ok: true;
   service: "the-frame-catalog";
-  source: "mock";
+  source: CatalogSource;
   now: string;
 }

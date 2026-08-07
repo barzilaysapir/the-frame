@@ -3,6 +3,10 @@ import Negotiator from "negotiator";
 import { NextRequest, NextResponse } from "next/server";
 import { defaultLocale, locales } from "@/lib/i18n/config";
 
+/**
+ * Edge Middleware (not proxy.ts): OpenNext Cloudflare 1.20.x does not support
+ * Next.js 16 Node.js proxy yet. Keep locale redirects on the Edge runtime.
+ */
 function getPreferredLocale(request: NextRequest): string {
   const languages = new Negotiator({
     headers: {
@@ -17,7 +21,7 @@ function getPreferredLocale(request: NextRequest): string {
   }
 }
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const pathnameHasLocale = locales.some(

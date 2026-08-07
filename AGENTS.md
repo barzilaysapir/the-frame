@@ -15,23 +15,41 @@ Always reply in English unless the user explicitly asks for another language.
 # Mock content vs translations vs server
 
 - **`dictionaries/`** — UI translations only (nav, chrome, auth, player controls). Stays client-side.
-- **`mocks/`** (+ structural rows in `lib/routines.ts` / `lib/instructors.ts`) — **temporary** demo catalog until a durable store (D1/CMS) replaces them.
-- **`lib/server/catalog/`** — catalog repository + DTO types. Server Components and Route Handlers should prefer this layer over importing mocks directly.
-- **`app/api/v1/`** — HTTP catalog API (`/api/v1/health`, `/routines`, `/instructors`). Currently backed by the mock repository (`source: "mock"`).
+- **`mocks/`** + `lib/routines.ts` / `lib/instructors.ts` — demo catalog; also the source for D1 seed SQL (`migrations/0002_catalog_seed.sql`).
+- **`lib/server/db.ts`** — shared app D1 binding (`DB` in `wrangler.jsonc`; physical DB name `the-frame-catalog`). Domains: catalog + users + purchases.
+- **`lib/server/catalog/`** — catalog repository. Prefer D1; fall back to in-memory mocks when the binding is missing.
+- **`lib/server/users/`** — app profile + paid library queries (keyed by Firebase UID).
+- **`app/api/v1/`** — HTTP API (`source: d1|mock` for catalog; `/me*` requires Firebase ID token).
 
-Catalog that will come from a durable server later: routines, teachers, localized catalog copy, pricing/media, and user library/purchases. Do not treat mocks as permanent source of truth; keep UI chrome separate from catalog entities.
+## App D1 (one database)
 
-## Catalog API (basic)
+| Domain | Tables |
+| --- | --- |
+| Catalog | `instructors`, `routines`, i18n, chapters, … |
+| Users | `users` (`firebase_uid` PK; profile cache + prefs) |
+| Commerce | `purchases` (entitlements; library = `status = paid`) |
+
+Firebase Auth remains identity. D1 does not store passwords/sessions.
+
+## Catalog API
 
 | Endpoint | Notes |
 | --- | --- |
-| `GET /api/v1/health` | Liveness |
+| `GET /api/v1/health` | Liveness + active `source` (`d1` or `mock`) |
 | `GET /api/v1/routines?locale=he\|en` | Optional `instructor`, `style`, `level` filters |
 | `GET /api/v1/routines/[slug]?locale=` | Single routine |
 | `GET /api/v1/instructors?locale=` | Teacher list |
 | `GET /api/v1/instructors/[slug]?locale=` | Single teacher |
 
-Swap `getCatalogRepository()` when D1/CMS is ready — route contracts stay stable.
+## Me / library API (Bearer Firebase ID token)
+
+| Endpoint | Notes |
+| --- | --- |
+| `GET /api/v1/me` | Verify token → upsert `users` → profile |
+| `PATCH /api/v1/me` | Update `displayName` / `localePref` in D1 |
+| `GET /api/v1/me/library?locale=` | Paid purchases joined to catalog routines |
+
+Demo catalog data is **already in D1** via seed migration. Apply migrations with `npm run db:migrate:local` or `npm run db:migrate:remote`.
 
 # Task git workflow
 
@@ -45,3 +63,8 @@ For every implementation task:
 6. When the PR merges into `preview`: close the linked issue and move the board item to **Done**.
 
 Details: `.cursor/rules/`
+
+# Cloudflare / OpenNext notes
+
+- Locale routing uses Edge **`middleware.ts`** (not Next 16 `proxy.ts`). `@opennextjs/cloudflare@1.20.x` still rejects Node.js proxy with “Node.js middleware is not currently supported”; switch back when OpenNext ships proxy support (see opennextjs-cloudflare#1309).
+- Firebase `NEXT_PUBLIC_*` must be set in Cloudflare **Build variables and secrets** (Workers Builds) *and* as Worker **runtime** vars/secrets. `.env.local` is local-only (gitignored) and does not reach production. Deploy scripts use `--keep-vars` so dashboard vars are not wiped.

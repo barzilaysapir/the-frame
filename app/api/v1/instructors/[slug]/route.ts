@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getCatalogRepository,
+  resolveCatalog,
   resolveCatalogLocale,
 } from "@/lib/server/catalog";
 import type {
@@ -9,6 +9,7 @@ import type {
 } from "@/lib/server/catalog/types";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 interface RouteContext {
   params: Promise<{ slug: string }>;
@@ -20,7 +21,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
     request.nextUrl.searchParams.get("locale"),
   );
 
-  const item = await getCatalogRepository().getInstructor(locale, slug);
+  const { repository, source } = await resolveCatalog();
+  const item = await repository.getInstructor(locale, slug);
   if (!item) {
     return NextResponse.json(
       { error: "Instructor not found", slug, locale },
@@ -30,7 +32,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
 
   const body: CatalogItemResponse<CatalogInstructor> = {
     locale,
-    source: "mock",
+    source,
     item,
   };
 

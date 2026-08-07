@@ -96,6 +96,7 @@
     "greeting": "Hi, {name}",
     "subtitle": "Your purchased combinations will appear here, with lifetime access to breakdowns, mirrored practice, and slowed practice.",
     "empty": "You haven’t purchased any combinations yet.",
+    "loadFailed": "Couldn’t load your library. Please try again.",
     "unavailable": "My account isn’t available yet — the site is still being built.",
     "loading": "Loading…",
     "fallbackName": "dancer",
