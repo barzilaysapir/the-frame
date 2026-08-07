@@ -67,3 +67,4 @@ Details: `.cursor/rules/`
 # Cloudflare / OpenNext notes
 
 - Locale routing uses Edge **`middleware.ts`** (not Next 16 `proxy.ts`). `@opennextjs/cloudflare@1.20.x` still rejects Node.js proxy with “Node.js middleware is not currently supported”; switch back when OpenNext ships proxy support (see opennextjs-cloudflare#1309).
+- Firebase `NEXT_PUBLIC_*` must be set in Cloudflare **Build variables and secrets** (Workers Builds) *and* as Worker **runtime** vars/secrets. `.env.local` is local-only (gitignored) and does not reach production. Deploy scripts use `--keep-vars` so dashboard vars are not wiped.
