@@ -34,9 +34,12 @@ export function CheckoutPlans({
   continueGoogleLabel,
 }: CheckoutPlansProps) {
   const [plan, setPlan] = useState<CheckoutPlanId>("rental");
+  const [expanded, setExpanded] = useState<CheckoutPlanId | null>(null);
 
-  const guarantees =
-    plan === "rental" ? labels.plans.rental.guarantees : labels.plans.subscription.guarantees;
+  const handleToggle = (id: CheckoutPlanId) => {
+    setPlan(id);
+    setExpanded((current) => (current === id ? null : id));
+  };
 
   return (
     <div className="space-y-8">
@@ -54,7 +57,8 @@ export function CheckoutPlans({
 
       <CheckoutPlanPicker
         selected={plan}
-        onSelect={setPlan}
+        expanded={expanded}
+        onToggle={handleToggle}
         chooseLabel={labels.plans.chooseLabel}
         rentalPrice={rentalPrice}
         rentalOriginalPrice={rentalOriginalPrice}
@@ -73,7 +77,6 @@ export function CheckoutPlans({
             ? labels.plans.rental.paymentBody
             : labels.plans.subscription.paymentBody
         }
-        guarantees={guarantees}
       />
     </div>
   );
