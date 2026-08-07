@@ -135,24 +135,43 @@
   "checkout": {
     "metaTitle": "Checkout",
     "title": "Start learning",
-    "subtitle": "Confirm the price. This unlocks 30 days of viewing access to this combination (one-time payment).",
+    "subtitle": "Choose a plan and complete payment.",
     "backToRoutine": "Back to combination",
     "loading": "Loading…",
     "paymentTitle": "Payment",
-    "paymentBody": "One-time payment for 30 days of viewing access to this combination.",
-    "planLabel": "30 days of viewing access",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
     "signInPrompt": "Sign in with Google to continue to payment.",
     "otherSignIn": "More sign-in options",
     "signedInAs": "Signed in as",
     "payCta": "Continue to payment",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
-    "guarantees": [
-      "30 days of viewing access to this combination",
-      "Full breakdowns, slowed and mirrored practice",
-      "Watch on any device during your access period",
-      "7-day money-back guarantee"
-    ]
+    "plans": {
+      "chooseLabel": "Choose a plan",
+      "rental": {
+        "title": "This combination",
+        "description": "30 days of viewing access to this combination only",
+        "priceNote": "one-time",
+        "paymentBody": "One-time payment for 30 days of viewing access to this combination.",
+        "guarantees": [
+          "30 days of viewing access to this combination",
+          "Slowed and mirrored practice modes",
+          "Watch on any device during your access period",
+          "7-day money-back guarantee"
+        ]
+      },
+      "subscription": {
+        "title": "Monthly site subscription",
+        "description": "Access every combination on The Frame, renews each month",
+        "priceNote": "per month",
+        "paymentBody": "Monthly subscription for every combination on the site.",
+        "guarantees": [
+          "Access to every combination on the site",
+          "New releases included while subscribed",
+          "Cancel anytime",
+          "7-day money-back guarantee"
+        ]
+      }
+    }
   },
   "notFound": {
     "title": "This page wasn’t found",
@@ -176,7 +195,7 @@
     "unitHours": "hrs",
     "unitMinutes": "min",
     "unitSeconds": "sec",
-    "pricingNote": "30 days of viewing access · one-time payment",
+    "pricingNote": "30-day access or monthly site plan · choose at checkout",
     "getAccessNow": "Start learning",
     "secureNote": "Secure checkout · access starts right after payment",
     "guarantees": [

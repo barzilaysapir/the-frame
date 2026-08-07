@@ -13,6 +13,8 @@ interface CheckoutPaymentPlaceholderProps {
   labels: Dictionary["checkout"];
   loginErrors: Dictionary["login"]["errors"];
   continueGoogleLabel: string;
+  paymentBody: string;
+  guarantees: string[];
 }
 
 export function CheckoutPaymentPlaceholder({
@@ -20,6 +22,8 @@ export function CheckoutPaymentPlaceholder({
   labels,
   loginErrors,
   continueGoogleLabel,
+  paymentBody,
+  guarantees,
 }: CheckoutPaymentPlaceholderProps) {
   const { user, loading, isConfigured } = useAuth();
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +41,7 @@ export function CheckoutPaymentPlaceholder({
       <h2 className="font-display text-2xl font-black text-white">
         {labels.paymentTitle}
       </h2>
-      <p className="mt-2 text-sm text-frame-silver">{labels.paymentBody}</p>
+      <p className="mt-2 text-sm text-frame-silver">{paymentBody}</p>
 
       {!isConfigured ? (
         <p className="mt-6 rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
@@ -84,7 +88,7 @@ export function CheckoutPaymentPlaceholder({
       ) : null}
 
       <ul className="mt-6 space-y-3 border-t border-frame-border pt-6">
-        {labels.guarantees.map((item) => (
+        {guarantees.map((item) => (
           <li
             key={item}
             className="flex items-baseline gap-2.5 text-sm text-frame-silver"

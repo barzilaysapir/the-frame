@@ -2,8 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
-import { CheckoutLineItem } from "@/components/checkout/CheckoutLineItem";
-import { CheckoutPaymentPlaceholder } from "@/components/checkout/CheckoutPaymentPlaceholder";
+import { CheckoutPlans } from "@/components/checkout/CheckoutPlans";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -59,19 +58,14 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       </h1>
       <p className="mt-3 text-frame-silver">{dict.checkout.subtitle}</p>
 
-      <div className="mt-10 space-y-8">
-        <CheckoutLineItem
-          title={routine.title}
+      <div className="mt-10">
+        <CheckoutPlans
+          locale={localeParam}
+          routineTitle={routine.title}
           instructorName={instructor?.name}
           taughtByLabel={dict.routine.taughtBy}
-          planLabel={dict.checkout.planLabel}
-          originalPrice={routine.pricing.original}
-          discountedPrice={routine.pricing.earlyBird}
-          pricingNote={dict.routine.pricingNote}
-        />
-
-        <CheckoutPaymentPlaceholder
-          locale={localeParam}
+          rentalOriginalPrice={routine.pricing.original}
+          rentalPrice={routine.pricing.earlyBird}
           labels={dict.checkout}
           loginErrors={dict.login.errors}
           continueGoogleLabel={dict.login.continueGoogle}
