@@ -51,7 +51,7 @@ export interface CatalogInstructor {
   routineCount: number;
 }
 
-export type CatalogSource = "mock" | "d1";
+export type CatalogSource = "d1" | "mock";
 
 export interface CatalogListResponse<T> {
   locale: Locale;

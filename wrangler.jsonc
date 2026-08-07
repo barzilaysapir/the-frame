@@ -11,6 +11,7 @@
 	},
 	"main": ".open-next/worker.js",
 	"name": "the-frame",
+	"account_id": "8739cda6b7162b44320b8f637feb219a",
 	"compatibility_date": "2026-08-04",
 	"compatibility_flags": [
 		"nodejs_compat",
@@ -33,11 +34,12 @@
 		// see https://opennext.js.org/cloudflare/howtos/image
 		"binding": "IMAGES"
 	},
+	// Single app D1: catalog + users + purchases (physical name still the-frame-catalog).
 	"d1_databases": [
 		{
-			"binding": "CATALOG_DB",
+			"binding": "DB",
 			"database_name": "the-frame-catalog",
-			"database_id": "3e62170e-5120-437a-b506-fcdf078ef7c9",
+			"database_id": "841f01c5-b3c3-4b8c-8891-da5cd2c9b2de",
 			"migrations_dir": "migrations"
 		}
 	]

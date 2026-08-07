@@ -1,11 +1,11 @@
 import type { Locale } from "@/lib/i18n/config";
-import type { CatalogDb } from "@/lib/server/catalog/db";
 import type { CatalogRepository } from "@/lib/server/catalog/repository";
 import type {
   CatalogInstructor,
   CatalogRoutine,
   CatalogChapter,
 } from "@/lib/server/catalog/types";
+import type { AppDb } from "@/lib/server/db";
 import type {
   ChapterId,
   DanceStyleKey,
@@ -63,7 +63,7 @@ function parseTags(tagsJson: string): TagKey[] {
 }
 
 async function mapRoutine(
-  db: CatalogDb,
+  db: AppDb,
   locale: Locale,
   row: RoutineRow,
 ): Promise<CatalogRoutine> {
@@ -132,7 +132,7 @@ const ROUTINE_SELECT = `
   LEFT JOIN locale_meta lm ON lm.locale = ?
 `;
 
-export function createD1CatalogRepository(db: CatalogDb): CatalogRepository {
+export function createD1CatalogRepository(db: AppDb): CatalogRepository {
   return {
     async listRoutines(locale) {
       const result = await db

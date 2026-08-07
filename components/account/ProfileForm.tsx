@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { UserAvatar } from "@/components/account/UserAvatar";
+import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 interface ProfileFormProps {
@@ -35,6 +36,14 @@ export function ProfileForm({ labels }: ProfileFormProps) {
     setMessage(null);
     try {
       await updateDisplayName(nextName);
+      // Keep D1 app profile in sync for library/admin queries.
+      const response = await fetchWithAuth(user, "/api/v1/me", {
+        method: "PATCH",
+        body: JSON.stringify({ displayName: nextName }),
+      });
+      if (!response.ok) {
+        throw new Error(`me patch ${response.status}`);
+      }
       setMessage(labels.saved);
     } catch {
       setError(labels.saveFailed);

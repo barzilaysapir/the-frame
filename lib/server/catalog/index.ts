@@ -1,5 +1,5 @@
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
-import { getCatalogDb } from "@/lib/server/catalog/db";
+import { getAppDb } from "@/lib/server/db";
 import { createD1CatalogRepository } from "@/lib/server/catalog/d1-repository";
 import { mockCatalogRepository } from "@/lib/server/catalog/mock-repository";
 import type { CatalogRepository } from "@/lib/server/catalog/repository";
@@ -11,11 +11,12 @@ export interface ResolvedCatalog {
 }
 
 /**
- * Prefer D1 when the binding is available and seeded; otherwise mock data.
- * Callers (API routes / server code) should use this instead of importing mocks.
+ * Prefer Cloudflare D1 (already seeded with the demo/mock catalog).
+ * Fall back to the in-memory mock repo when the D1 binding is missing
+ * (typical for plain `next dev` without Wrangler).
  */
 export async function resolveCatalog(): Promise<ResolvedCatalog> {
-  const db = await getCatalogDb();
+  const db = await getAppDb();
   if (!db) {
     return { repository: mockCatalogRepository, source: "mock" };
   }
@@ -34,12 +35,6 @@ export async function resolveCatalog(): Promise<ResolvedCatalog> {
   } catch {
     return { repository: mockCatalogRepository, source: "mock" };
   }
-}
-
-/** @deprecated Prefer resolveCatalog() so the active source is known. */
-export async function getCatalogRepository(): Promise<CatalogRepository> {
-  const resolved = await resolveCatalog();
-  return resolved.repository;
 }
 
 export function resolveCatalogLocale(

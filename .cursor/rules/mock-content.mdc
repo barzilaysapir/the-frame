@@ -36,4 +36,4 @@ Rules:
 - Catalog taxonomy labels when they are content (styles, levels, tags) for a locale
 - User-specific data (purchases, account library, auth profile beyond Firebase client session)
 
-Prefer `lib/server/catalog` (and `/api/v1/*`) for new catalog reads. When the API exists with a durable store, prefer server-provided locale fields for catalog copy and keep `dictionaries/` for product UI chrome only.
+Prefer `lib/server/catalog` (and `/api/v1/*`) for catalog reads. **Primary store is the shared app D1** (`DB` binding; database name `the-frame-catalog`), seeded from the mock catalog (`migrations/0002_catalog_seed.sql`). Users + purchases live in the same DB (`migrations/0003_users_and_purchases.sql`). In-memory mocks remain as a catalog fallback when the D1 binding is unavailable (e.g. plain `next dev`).

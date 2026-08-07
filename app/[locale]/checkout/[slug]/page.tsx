@@ -4,26 +4,15 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { CheckoutOrderSummary } from "@/components/checkout/CheckoutOrderSummary";
 import { CheckoutPaymentPlaceholder } from "@/components/checkout/CheckoutPaymentPlaceholder";
-import { getAllRoutines, getRoutineBySlug } from "@/lib/routines";
-import { getInstructorBySlug } from "@/lib/instructors";
-import { isLocale, locales } from "@/lib/i18n/config";
+import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import {
-  localizeInstructor,
-} from "@/lib/i18n/localize";
 import { localePath } from "@/lib/i18n/path";
+import { resolveCatalog } from "@/lib/server/catalog";
+
+export const dynamic = "force-dynamic";
 
 interface CheckoutPageProps {
   params: Promise<{ locale: string; slug: string }>;
-}
-
-export async function generateStaticParams() {
-  return locales.flatMap((locale) =>
-    getAllRoutines().map((routine) => ({
-      locale,
-      slug: routine.slug,
-    })),
-  );
 }
 
 export async function generateMetadata({
@@ -31,7 +20,8 @@ export async function generateMetadata({
 }: CheckoutPageProps): Promise<Metadata> {
   const { locale: localeParam, slug } = await params;
   if (!isLocale(localeParam)) return {};
-  const routine = getRoutineBySlug(slug);
+  const { repository } = await resolveCatalog();
+  const routine = await repository.getRoutine(localeParam, slug);
   if (!routine) return {};
   const dict = await getDictionary(localeParam);
   return {
@@ -43,14 +33,16 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   const { locale: localeParam, slug } = await params;
   if (!isLocale(localeParam)) notFound();
 
-  const routine = getRoutineBySlug(slug);
+  const dict = await getDictionary(localeParam);
+  const { repository } = await resolveCatalog();
+
+  const routine = await repository.getRoutine(localeParam, slug);
   if (!routine) notFound();
 
-  const dict = await getDictionary(localeParam);
-  const instructor = getInstructorBySlug(routine.instructorSlug);
-  const localizedInstructor = instructor
-    ? localizeInstructor(localeParam, instructor)
-    : undefined;
+  const instructor = await repository.getInstructor(
+    localeParam,
+    routine.instructorSlug,
+  );
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
@@ -75,7 +67,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
           style={routine.style}
           level={routine.level}
           poster={routine.poster}
-          instructorName={localizedInstructor?.name ?? ""}
+          instructorName={instructor?.name ?? ""}
           instructorAvatar={instructor?.avatar}
           taughtByLabel={dict.routine.taughtBy}
           originalPrice={routine.pricing.original}
