@@ -6,7 +6,7 @@ import { CheckoutPlans } from "@/components/checkout/CheckoutPlans";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
-import { resolveCatalog } from "@/lib/server/catalog";
+import { getCachedInstructor, getCachedRoutine } from "@/lib/server/catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -19,8 +19,7 @@ export async function generateMetadata({
 }: CheckoutPageProps): Promise<Metadata> {
   const { locale: localeParam, slug } = await params;
   if (!isLocale(localeParam)) return {};
-  const { repository } = await resolveCatalog();
-  const routine = await repository.getRoutine(localeParam, slug);
+  const routine = await getCachedRoutine(localeParam, slug);
   if (!routine) return {};
   const dict = await getDictionary(localeParam);
   return {
@@ -33,12 +32,11 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   if (!isLocale(localeParam)) notFound();
 
   const dict = await getDictionary(localeParam);
-  const { repository } = await resolveCatalog();
 
-  const routine = await repository.getRoutine(localeParam, slug);
+  const routine = await getCachedRoutine(localeParam, slug);
   if (!routine) notFound();
 
-  const instructor = await repository.getInstructor(
+  const instructor = await getCachedInstructor(
     localeParam,
     routine.instructorSlug,
   );
