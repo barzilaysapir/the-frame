@@ -62,7 +62,12 @@
         "title": "Teachers from the field",
         "description": "Our teachers have danced in productions, music videos, and real competitions — and bring that experience straight into class."
       }
-    ]
+    ],
+    "founder": {
+      "title": "Who's behind The Frame",
+      "body": "The Frame by Barzilay is built by Sapir Barzilay — a professional dancer, teacher, and choreographer who has danced in music videos, live shows, and television, and who also works as a video editor and web developer. Sapir combines both of her worlds — movement and digital craft — to build a learning platform that looks great and works right.",
+      "cta": "More about me at bybarzilay.com"
+    }
   },
   "login": {
     "metaTitle": "Log in",

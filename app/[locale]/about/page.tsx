@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
+import { AboutFounderSection } from "@/components/about/AboutFounderSection";
 
 interface AboutPageProps {
   params: Promise<{ locale: string }>;
@@ -53,6 +54,8 @@ export default async function AboutPage({ params }: AboutPageProps) {
             </div>
           ))}
         </div>
+
+        <AboutFounderSection founder={dict.about.founder} />
 
         <div className="mt-14 text-center">
           <Link
