@@ -27,6 +27,7 @@ export function Header({ locale, labels }: HeaderProps) {
   const navLinks = [
     { label: labels.tutorials, href: localePath(locale, "/routines") },
     { label: labels.teachers, href: localePath(locale, "/instructors") },
+    { label: labels.favorites, href: localePath(locale, "/favorites") },
     { label: labels.about, href: localePath(locale, "/about") },
   ];
 

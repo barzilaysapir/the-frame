@@ -25,6 +25,8 @@ interface AccountLibraryProps {
     browseTutorials: string;
     viewRoutine: string;
     taughtBy: string;
+    favoriteAdd: string;
+    favoriteRemove: string;
   };
 }
 
@@ -105,6 +107,8 @@ export function AccountLibrary({ locale, labels }: AccountLibraryProps) {
             labels={{
               viewRoutine: labels.viewRoutine,
               taughtBy: labels.taughtBy,
+              favoriteAdd: labels.favoriteAdd,
+              favoriteRemove: labels.favoriteRemove,
             }}
           />
         </li>
