@@ -12,6 +12,8 @@ interface RoutineCardProps {
   routine: CatalogRoutine;
   locale: Locale;
   instructorName?: string;
+  /** Set for above-the-fold cards (first grid row) to improve LCP. */
+  priority?: boolean;
   labels: {
     viewRoutine: string;
     taughtBy: string;
@@ -22,6 +24,7 @@ export function RoutineCard({
   routine,
   locale,
   instructorName,
+  priority = false,
   labels,
 }: RoutineCardProps) {
   const href = localePath(locale, `/routine/${routine.slug}`);
@@ -34,6 +37,9 @@ export function RoutineCard({
             src={routine.poster}
             alt=""
             fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            priority={priority}
+            loading={priority ? "eager" : "lazy"}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </Link>

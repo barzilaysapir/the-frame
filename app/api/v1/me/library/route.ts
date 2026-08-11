@@ -32,15 +32,22 @@ export async function GET(request: NextRequest) {
     const locale = resolveCatalogLocale(
       request.nextUrl.searchParams.get("locale"),
     );
-    const purchases = await listPaidPurchases(db, claims.uid);
-    const { repository, source } = await resolveCatalog();
+    const [purchases, { repository, source }] = await Promise.all([
+      listPaidPurchases(db, claims.uid),
+      resolveCatalog(),
+    ]);
+
+    // Fetch the full catalog once (batched internally) rather than issuing
+    // getRoutine() per purchase — avoids N+1 queries when a user's library
+    // grows to many routines.
+    const allRoutines = await repository.listRoutines(locale);
+    const routineBySlug = new Map(
+      allRoutines.map((routine) => [routine.slug, routine]),
+    );
 
     const items: LibraryItem[] = [];
     for (const purchase of purchases) {
-      const routine = await repository.getRoutine(
-        locale,
-        purchase.routineSlug,
-      );
+      const routine = routineBySlug.get(purchase.routineSlug);
       if (!routine) continue;
       items.push({
         purchaseId: purchase.id,

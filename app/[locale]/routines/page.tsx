@@ -194,7 +194,7 @@ export default async function RoutinesPage({
 
       {routines.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {routines.map((routine) => (
+          {routines.map((routine, index) => (
             <RoutineCard
               key={routine.slug}
               routine={routine}
@@ -202,6 +202,7 @@ export default async function RoutinesPage({
               instructorName={
                 instructorBySlug.get(routine.instructorSlug)?.name
               }
+              priority={index < 3}
               labels={{
                 viewRoutine: dict.tutorials.viewRoutine,
                 taughtBy: dict.tutorials.taughtBy,

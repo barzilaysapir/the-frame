@@ -11,7 +11,7 @@ import { RoutineFilterTag } from "@/components/RoutineFilterTag";
 import { isLocale } from "@/lib/i18n/config";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
-import { resolveCatalog } from "@/lib/server/catalog";
+import { getCachedInstructor, getCachedRoutine } from "@/lib/server/catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -25,11 +25,10 @@ export async function generateMetadata({
   const { locale: localeParam, slug } = await params;
   if (!isLocale(localeParam)) return {};
 
-  const { repository } = await resolveCatalog();
-  const routine = await repository.getRoutine(localeParam, slug);
+  const routine = await getCachedRoutine(localeParam, slug);
   if (!routine) return {};
 
-  const instructor = await repository.getInstructor(
+  const instructor = await getCachedInstructor(
     localeParam,
     routine.instructorSlug,
   );
@@ -53,12 +52,11 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
   if (!isLocale(localeParam)) notFound();
   const locale = localeParam;
   const dict = await getDictionary(locale);
-  const { repository } = await resolveCatalog();
 
-  const routine = await repository.getRoutine(locale, slug);
+  const routine = await getCachedRoutine(locale, slug);
   if (!routine) notFound();
 
-  const instructor = await repository.getInstructor(
+  const instructor = await getCachedInstructor(
     locale,
     routine.instructorSlug,
   );
