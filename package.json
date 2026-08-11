@@ -13,6 +13,8 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "generate:mock-catalog": "node scripts/generate-mock-catalog.ts",
+    "compress:generated-media": "node scripts/compress-generated-media.mjs",
     "db:migrate:local": "wrangler d1 migrations apply the-frame-catalog --local",
     "db:migrate:remote": "wrangler d1 migrations apply the-frame-catalog --remote",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload -- --keep-vars"
@@ -38,6 +40,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.0",
     "postcss": "^8.4.39",
+    "sharp": "^0.35.3",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.3",
     "wrangler": "^4.119.0"

@@ -62,31 +62,10 @@ function parseTags(tagsJson: string): TagKey[] {
   }
 }
 
-async function mapRoutine(
-  db: AppDb,
-  locale: Locale,
+function mapRoutine(
   row: RoutineRow,
-): Promise<CatalogRoutine> {
-  const chapters = await db
-    .prepare(
-      `SELECT c.chapter_id, c.time_seconds, ci.label
-       FROM routine_chapters c
-       LEFT JOIN chapter_i18n ci
-         ON ci.chapter_id = c.chapter_id AND ci.locale = ?
-       WHERE c.routine_slug = ?
-       ORDER BY c.sort_order ASC`,
-    )
-    .bind(locale, row.slug)
-    .all<ChapterRow>();
-
-  const mappedChapters: CatalogChapter[] = (chapters.results ?? []).map(
-    (chapter: ChapterRow) => ({
-      id: chapter.chapter_id as ChapterId,
-      time: chapter.time_seconds,
-      label: chapter.label ?? chapter.chapter_id,
-    }),
-  );
-
+  chapters: CatalogChapter[],
+): CatalogRoutine {
   const minutes = row.minutes_label ?? "";
   const lengthLabel = minutes ? `${row.length} ${minutes}` : row.length;
 
@@ -108,12 +87,69 @@ async function mapRoutine(
     description: row.description ?? "",
     poster: row.poster,
     videoSrc: row.video_src,
-    chapters: mappedChapters,
+    chapters,
     pricing: {
       original: row.price_original,
       earlyBird: row.price_early_bird,
     },
   };
+}
+
+/** Chapters for a single routine, ordered by sort_order. */
+async function fetchChaptersForSlug(
+  db: AppDb,
+  locale: Locale,
+  slug: string,
+): Promise<CatalogChapter[]> {
+  const chapters = await db
+    .prepare(
+      `SELECT c.chapter_id, c.time_seconds, ci.label
+       FROM routine_chapters c
+       LEFT JOIN chapter_i18n ci
+         ON ci.chapter_id = c.chapter_id AND ci.locale = ?
+       WHERE c.routine_slug = ?
+       ORDER BY c.sort_order ASC`,
+    )
+    .bind(locale, slug)
+    .all<ChapterRow>();
+
+  return (chapters.results ?? []).map((chapter: ChapterRow) => ({
+    id: chapter.chapter_id as ChapterId,
+    time: chapter.time_seconds,
+    label: chapter.label ?? chapter.chapter_id,
+  }));
+}
+
+/**
+ * Chapters for *all* routines in one round trip, grouped by slug. Avoids an
+ * N+1 query per routine when listing the full catalog (100+ rows).
+ */
+async function fetchChaptersForAllRoutines(
+  db: AppDb,
+  locale: Locale,
+): Promise<Map<string, CatalogChapter[]>> {
+  const result = await db
+    .prepare(
+      `SELECT c.routine_slug, c.chapter_id, c.time_seconds, ci.label
+       FROM routine_chapters c
+       LEFT JOIN chapter_i18n ci
+         ON ci.chapter_id = c.chapter_id AND ci.locale = ?
+       ORDER BY c.routine_slug ASC, c.sort_order ASC`,
+    )
+    .bind(locale)
+    .all<ChapterRow & { routine_slug: string }>();
+
+  const bySlug = new Map<string, CatalogChapter[]>();
+  for (const chapter of result.results ?? []) {
+    const list = bySlug.get(chapter.routine_slug) ?? [];
+    list.push({
+      id: chapter.chapter_id as ChapterId,
+      time: chapter.time_seconds,
+      label: chapter.label ?? chapter.chapter_id,
+    });
+    bySlug.set(chapter.routine_slug, list);
+  }
+  return bySlug;
 }
 
 const ROUTINE_SELECT = `
@@ -135,23 +171,28 @@ const ROUTINE_SELECT = `
 export function createD1CatalogRepository(db: AppDb): CatalogRepository {
   return {
     async listRoutines(locale) {
-      const result = await db
-        .prepare(ROUTINE_SELECT)
-        .bind(locale, locale, locale, locale)
-        .all<RoutineRow>();
+      const [result, chaptersBySlug] = await Promise.all([
+        db.prepare(ROUTINE_SELECT).bind(locale, locale, locale, locale).all<RoutineRow>(),
+        fetchChaptersForAllRoutines(db, locale),
+      ]);
 
       const rows: RoutineRow[] = result.results ?? [];
-      return Promise.all(rows.map((row: RoutineRow) => mapRoutine(db, locale, row)));
+      return rows.map((row: RoutineRow) =>
+        mapRoutine(row, chaptersBySlug.get(row.slug) ?? []),
+      );
     },
 
     async getRoutine(locale, slug) {
-      const row = await db
-        .prepare(`${ROUTINE_SELECT} WHERE r.slug = ?`)
-        .bind(locale, locale, locale, locale, slug)
-        .first<RoutineRow>();
+      const [row, chapters] = await Promise.all([
+        db
+          .prepare(`${ROUTINE_SELECT} WHERE r.slug = ?`)
+          .bind(locale, locale, locale, locale, slug)
+          .first<RoutineRow>(),
+        fetchChaptersForSlug(db, locale, slug),
+      ]);
 
       if (!row) return null;
-      return mapRoutine(db, locale, row);
+      return mapRoutine(row, chapters);
     },
 
     async listInstructors(locale) {
