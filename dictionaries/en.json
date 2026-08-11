@@ -47,22 +47,11 @@
   "about": {
     "metaTitle": "About",
     "metaDescription": "The Frame by Barzilay is a premium dance platform that teaches one combination deeply — frame by frame.",
-    "title": "We learned to dance in the field. Now we teach you.",
-    "body": "The Frame by Barzilay was born from one frustration: online dance teachers who skim the surface, move too fast, and never give dancers time to understand the movement. We built a platform that flips that — one combination, full depth.",
-    "values": [
-      {
-        "title": "Depth, not volume",
-        "description": "Instead of dozens of shallow clips, we teach one combination at a time — until it lives in your body."
-      },
-      {
-        "title": "Real breakdowns",
-        "description": "Every combination is broken into counts, with mirrored and slowed practice modes, so no move stays opaque."
-      },
-      {
-        "title": "Teachers from the field",
-        "description": "Our teachers have danced in productions, music videos, and real competitions — and bring that experience straight into class."
-      }
-    ]
+    "founder": {
+      "title": "Behind The Frame",
+      "body": "The Frame, by Barzilay. Created by Sapir Barzilay — a professional dancer and hip-hop teacher who also works as a video editor and web developer. Sapir combines both of her worlds — movement and digital craft — to build a learning platform that answers dancers' artistic needs alongside technological and technical ones.",
+      "cta": "More about me at bybarzilay.com"
+    }
   },
   "login": {
     "metaTitle": "Log in",
