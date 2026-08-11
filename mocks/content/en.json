@@ -3,7 +3,11 @@
   "styles": {
     "jazz-funk": "Jazz Funk",
     "hip-hop": "Hip Hop",
-    "heels": "Heels"
+    "heels": "Heels",
+    "jazz": "Jazz",
+    "afro": "Afro",
+    "dancehall": "Dancehall",
+    "commercial": "Commercial"
   },
   "levels": {
     "intermediate": "Intermediate",
@@ -28,6 +32,394 @@
     "earned-it": {
       "technique": "Line length, heel control, and performance",
       "description": "A seductive, grounded heels combination that teaches heel control without sacrificing technique — with focus on posture, line, and performance."
+    },
+    "levitating-maya-azulai": {
+      "technique": "Grounded weight shifts and performance",
+      "description": "An energetic Jazz Funk combination to \"Levitating\" by Dua Lipa, focused on groove and performance — ideal for dancers who want to sharpen their stage expression."
+    },
+    "dont-start-now-tali-mizrahi": {
+      "technique": "Groove, isolations, and movement precision",
+      "description": "A rhythmic Jazz Funk routine to \"Don't Start Now\" (Dua Lipa), teaching smooth weight shifts without losing energy."
+    },
+    "physical-yael-bar": {
+      "technique": "Rhythm, line, and performance energy",
+      "description": "An energetic Jazz Funk combination to \"Physical\" by Dua Lipa, focused on groove and performance — ideal for dancers who want to sharpen their stage expression."
+    },
+    "about-damn-time-maya-azulai": {
+      "technique": "Grounded weight shifts and performance",
+      "description": "A rhythmic Jazz Funk routine to \"About Damn Time\" (Lizzo), teaching smooth weight shifts without losing energy."
+    },
+    "good-as-hell-tali-mizrahi": {
+      "technique": "Groove, isolations, and movement precision",
+      "description": "An energetic Jazz Funk combination to \"Good as Hell\" by Lizzo, focused on groove and performance — ideal for dancers who want to sharpen their stage expression."
+    },
+    "flowers-yael-bar": {
+      "technique": "Rhythm, line, and performance energy",
+      "description": "A rhythmic Jazz Funk routine to \"Flowers\" (Miley Cyrus), teaching smooth weight shifts without losing energy."
+    },
+    "shirt-maya-azulai": {
+      "technique": "Grounded weight shifts and performance",
+      "description": "An energetic Jazz Funk combination to \"Shirt\" by SZA, focused on groove and performance — ideal for dancers who want to sharpen their stage expression."
+    },
+    "blinding-lights-tali-mizrahi": {
+      "technique": "Groove, isolations, and movement precision",
+      "description": "A rhythmic Jazz Funk routine to \"Blinding Lights\" (The Weeknd), teaching smooth weight shifts without losing energy."
+    },
+    "need-to-know-yael-bar": {
+      "technique": "Rhythm, line, and performance energy",
+      "description": "An energetic Jazz Funk combination to \"Need to Know\" by Doja Cat, focused on groove and performance — ideal for dancers who want to sharpen their stage expression."
+    },
+    "kiss-me-more-maya-azulai": {
+      "technique": "Grounded weight shifts and performance",
+      "description": "A rhythmic Jazz Funk routine to \"Kiss Me More\" (Doja Cat ft. SZA), teaching smooth weight shifts without losing energy."
+    },
+    "woman-tali-mizrahi": {
+      "technique": "Groove, isolations, and movement precision",
+      "description": "An energetic Jazz Funk combination to \"Woman\" by Doja Cat, focused on groove and performance — ideal for dancers who want to sharpen their stage expression."
+    },
+    "nice-for-what-yael-bar": {
+      "technique": "Rhythm, line, and performance energy",
+      "description": "A rhythmic Jazz Funk routine to \"Nice For What\" (Drake), teaching smooth weight shifts without losing energy."
+    },
+    "as-it-was-maya-azulai": {
+      "technique": "Grounded weight shifts and performance",
+      "description": "An energetic Jazz Funk combination to \"As It Was\" by Harry Styles, focused on groove and performance — ideal for dancers who want to sharpen their stage expression."
+    },
+    "anti-hero-tali-mizrahi": {
+      "technique": "Groove, isolations, and movement precision",
+      "description": "A rhythmic Jazz Funk routine to \"Anti-Hero\" (Taylor Swift), teaching smooth weight shifts without losing energy."
+    },
+    "about-damn-time-daniel-cohen": {
+      "technique": "Groove, polyrhythm, and floorwork",
+      "description": "A powerful Hip Hop combination to \"About Damn Time\" by Lizzo, built on deep groove and sharp transitions."
+    },
+    "kill-bill-oran-ben-david": {
+      "technique": "Systematic breakdown and coordination",
+      "description": "A Hip Hop routine with a high technical emphasis to \"Kill Bill\" (SZA) — for dancers who want to go deeper into the style."
+    },
+    "creepin-amit-sharabi": {
+      "technique": "Power, groove, and personal style",
+      "description": "A powerful Hip Hop combination to \"Creepin'\" by Metro Boomin, The Weeknd, 21 Savage, built on deep groove and sharp transitions."
+    },
+    "first-class-daniel-cohen": {
+      "technique": "Groove, polyrhythm, and floorwork",
+      "description": "A Hip Hop routine with a high technical emphasis to \"First Class\" (Jack Harlow) — for dancers who want to go deeper into the style."
+    },
+    "industry-baby-oran-ben-david": {
+      "technique": "Systematic breakdown and coordination",
+      "description": "A powerful Hip Hop combination to \"Industry Baby\" by Lil Nas X & Jack Harlow, built on deep groove and sharp transitions."
+    },
+    "god-s-plan-amit-sharabi": {
+      "technique": "Power, groove, and personal style",
+      "description": "A Hip Hop routine with a high technical emphasis to \"God's Plan\" (Drake) — for dancers who want to go deeper into the style."
+    },
+    "nice-for-what-daniel-cohen": {
+      "technique": "Groove, polyrhythm, and floorwork",
+      "description": "A powerful Hip Hop combination to \"Nice For What\" by Drake, built on deep groove and sharp transitions."
+    },
+    "savage-oran-ben-david": {
+      "technique": "Systematic breakdown and coordination",
+      "description": "A Hip Hop routine with a high technical emphasis to \"Savage\" (Megan Thee Stallion) — for dancers who want to go deeper into the style."
+    },
+    "body-amit-sharabi": {
+      "technique": "Power, groove, and personal style",
+      "description": "A powerful Hip Hop combination to \"Body\" by Megan Thee Stallion, built on deep groove and sharp transitions."
+    },
+    "get-ur-freak-on-daniel-cohen": {
+      "technique": "Groove, polyrhythm, and floorwork",
+      "description": "A Hip Hop routine with a high technical emphasis to \"Get Ur Freak On\" (Missy Elliott) — for dancers who want to go deeper into the style."
+    },
+    "work-it-oran-ben-david": {
+      "technique": "Systematic breakdown and coordination",
+      "description": "A powerful Hip Hop combination to \"Work It\" by Missy Elliott, built on deep groove and sharp transitions."
+    },
+    "sicko-mode-amit-sharabi": {
+      "technique": "Power, groove, and personal style",
+      "description": "A Hip Hop routine with a high technical emphasis to \"Sicko Mode\" (Travis Scott) — for dancers who want to go deeper into the style."
+    },
+    "humble-daniel-cohen": {
+      "technique": "Groove, polyrhythm, and floorwork",
+      "description": "A powerful Hip Hop combination to \"Humble\" by Kendrick Lamar, built on deep groove and sharp transitions."
+    },
+    "dna-oran-ben-david": {
+      "technique": "Systematic breakdown and coordination",
+      "description": "A Hip Hop routine with a high technical emphasis to \"DNA\" (Kendrick Lamar) — for dancers who want to go deeper into the style."
+    },
+    "kill-bill-noa-sagi": {
+      "technique": "Line, heel control, and performance",
+      "description": "A seductive, confident Heels combination to \"Kill Bill\" by SZA, teaching heel control without sacrificing technique."
+    },
+    "snooze-maya-rozin": {
+      "technique": "Posture, confidence, and heel mobility",
+      "description": "A Heels routine with an emphasis on posture, line, and performance, to \"Snooze\" (SZA)."
+    },
+    "shirt-noga-eliyahu": {
+      "technique": "Grace and control on stage",
+      "description": "A seductive, confident Heels combination to \"Shirt\" by SZA, teaching heel control without sacrificing technique."
+    },
+    "earned-it-noa-sagi": {
+      "technique": "Line, heel control, and performance",
+      "description": "A Heels routine with an emphasis on posture, line, and performance, to \"Earned It\" (The Weeknd)."
+    },
+    "die-for-you-maya-rozin": {
+      "technique": "Posture, confidence, and heel mobility",
+      "description": "A seductive, confident Heels combination to \"Die For You\" by The Weeknd, teaching heel control without sacrificing technique."
+    },
+    "creepin-noga-eliyahu": {
+      "technique": "Grace and control on stage",
+      "description": "A Heels routine with an emphasis on posture, line, and performance, to \"Creepin'\" (Metro Boomin, The Weeknd, 21 Savage)."
+    },
+    "need-to-know-noa-sagi": {
+      "technique": "Line, heel control, and performance",
+      "description": "A seductive, confident Heels combination to \"Need to Know\" by Doja Cat, teaching heel control without sacrificing technique."
+    },
+    "kiss-me-more-maya-rozin": {
+      "technique": "Posture, confidence, and heel mobility",
+      "description": "A Heels routine with an emphasis on posture, line, and performance, to \"Kiss Me More\" (Doja Cat ft. SZA)."
+    },
+    "body-party-noga-eliyahu": {
+      "technique": "Grace and control on stage",
+      "description": "A seductive, confident Heels combination to \"Body Party\" by Ciara, teaching heel control without sacrificing technique."
+    },
+    "ride-noa-sagi": {
+      "technique": "Line, heel control, and performance",
+      "description": "A Heels routine with an emphasis on posture, line, and performance, to \"Ride\" (Ciara)."
+    },
+    "2-on-maya-rozin": {
+      "technique": "Posture, confidence, and heel mobility",
+      "description": "A seductive, confident Heels combination to \"2 On\" by Tinashe, teaching heel control without sacrificing technique."
+    },
+    "distraction-noga-eliyahu": {
+      "technique": "Grace and control on stage",
+      "description": "A Heels routine with an emphasis on posture, line, and performance, to \"Distraction\" (Kehlani)."
+    },
+    "me-and-u-noa-sagi": {
+      "technique": "Line, heel control, and performance",
+      "description": "A seductive, confident Heels combination to \"Me & U\" by Cassie, teaching heel control without sacrificing technique."
+    },
+    "rock-the-boat-maya-rozin": {
+      "technique": "Posture, confidence, and heel mobility",
+      "description": "A Heels routine with an emphasis on posture, line, and performance, to \"Rock the Boat\" (Aaliyah)."
+    },
+    "easy-on-me-yasmin-kadosh": {
+      "technique": "Technique, line, and emotional depth",
+      "description": "A lyrical Jazz combination to \"Easy On Me\" by Adele, with an emphasis on emotional depth and musicality."
+    },
+    "rolling-in-the-deep-omer-tzur": {
+      "technique": "Musicality and body control",
+      "description": "A technical Jazz routine to \"Rolling in the Deep\" (Adele) — for dancers who want to sharpen line and physical expression."
+    },
+    "stay-with-me-hila-ben-ari": {
+      "technique": "Lyricism and performance",
+      "description": "A lyrical Jazz combination to \"Stay With Me\" by Sam Smith, with an emphasis on emotional depth and musicality."
+    },
+    "unholy-yasmin-kadosh": {
+      "technique": "Technique, line, and emotional depth",
+      "description": "A technical Jazz routine to \"Unholy\" (Sam Smith ft. Kim Petras) — for dancers who want to sharpen line and physical expression."
+    },
+    "ocean-eyes-omer-tzur": {
+      "technique": "Musicality and body control",
+      "description": "A lyrical Jazz combination to \"Ocean Eyes\" by Billie Eilish, with an emphasis on emotional depth and musicality."
+    },
+    "happier-than-ever-hila-ben-ari": {
+      "technique": "Lyricism and performance",
+      "description": "A technical Jazz routine to \"Happier Than Ever\" (Billie Eilish) — for dancers who want to sharpen line and physical expression."
+    },
+    "best-part-yasmin-kadosh": {
+      "technique": "Technique, line, and emotional depth",
+      "description": "A lyrical Jazz combination to \"Best Part\" by H.E.R. ft. Daniel Caesar, with an emphasis on emotional depth and musicality."
+    },
+    "someone-you-loved-omer-tzur": {
+      "technique": "Musicality and body control",
+      "description": "A technical Jazz routine to \"Someone You Loved\" (Lewis Capaldi) — for dancers who want to sharpen line and physical expression."
+    },
+    "my-hair-hila-ben-ari": {
+      "technique": "Lyricism and performance",
+      "description": "A lyrical Jazz combination to \"my hair\" by Ariana Grande, with an emphasis on emotional depth and musicality."
+    },
+    "be-honest-yasmin-kadosh": {
+      "technique": "Technique, line, and emotional depth",
+      "description": "A technical Jazz routine to \"Be Honest\" (Jorja Smith) — for dancers who want to sharpen line and physical expression."
+    },
+    "if-i-aint-got-you-omer-tzur": {
+      "technique": "Musicality and body control",
+      "description": "A lyrical Jazz combination to \"If I Ain't Got You\" by Alicia Keys, with an emphasis on emotional depth and musicality."
+    },
+    "all-of-me-hila-ben-ari": {
+      "technique": "Lyricism and performance",
+      "description": "A technical Jazz routine to \"All of Me\" (John Legend) — for dancers who want to sharpen line and physical expression."
+    },
+    "get-you-yasmin-kadosh": {
+      "technique": "Technique, line, and emotional depth",
+      "description": "A lyrical Jazz combination to \"Get You\" by Daniel Caesar ft. Kali Uchis, with an emphasis on emotional depth and musicality."
+    },
+    "toronto-omer-tzur": {
+      "technique": "Musicality and body control",
+      "description": "A technical Jazz routine to \"Toronto\" (Snoh Aalegra) — for dancers who want to sharpen line and physical expression."
+    },
+    "be-honest-efrat-wolde": {
+      "technique": "Isolations, groove, and group energy",
+      "description": "A rhythmic Afro combination to \"Be Honest\" by Jorja Smith, with an emphasis on isolations and group energy."
+    },
+    "higher-yonatan-tesfaye": {
+      "technique": "Authentic African rhythm and free movement",
+      "description": "A joyful Afro routine to \"Higher\" (Tems) — authentic African rhythm and free movement."
+    },
+    "last-last-efrat-wolde": {
+      "technique": "Sending energy and movement joy",
+      "description": "A rhythmic Afro combination to \"Last Last\" by Burna Boy, with an emphasis on isolations and group energy."
+    },
+    "kilometre-yonatan-tesfaye": {
+      "technique": "Isolations, groove, and group energy",
+      "description": "A joyful Afro routine to \"Kilometre\" (Burna Boy) — authentic African rhythm and free movement."
+    },
+    "essence-efrat-wolde": {
+      "technique": "Authentic African rhythm and free movement",
+      "description": "A rhythmic Afro combination to \"Essence\" by Wizkid ft. Tems, with an emphasis on isolations and group energy."
+    },
+    "ojuelegba-yonatan-tesfaye": {
+      "technique": "Sending energy and movement joy",
+      "description": "A joyful Afro routine to \"Ojuelegba\" (Wizkid) — authentic African rhythm and free movement."
+    },
+    "fall-efrat-wolde": {
+      "technique": "Isolations, groove, and group energy",
+      "description": "A rhythmic Afro combination to \"Fall\" by Davido, with an emphasis on isolations and group energy."
+    },
+    "unavailable-yonatan-tesfaye": {
+      "technique": "Authentic African rhythm and free movement",
+      "description": "A joyful Afro routine to \"Unavailable\" (Davido ft. Musa Keys) — authentic African rhythm and free movement."
+    },
+    "calm-down-efrat-wolde": {
+      "technique": "Sending energy and movement joy",
+      "description": "A rhythmic Afro combination to \"Calm Down\" by Rema, with an emphasis on isolations and group energy."
+    },
+    "dumebi-yonatan-tesfaye": {
+      "technique": "Isolations, groove, and group energy",
+      "description": "A joyful Afro routine to \"Dumebi\" (Rema) — authentic African rhythm and free movement."
+    },
+    "love-nwantiti-efrat-wolde": {
+      "technique": "Authentic African rhythm and free movement",
+      "description": "A rhythmic Afro combination to \"Love Nwantiti\" by CKay, with an emphasis on isolations and group energy."
+    },
+    "free-mind-yonatan-tesfaye": {
+      "technique": "Sending energy and movement joy",
+      "description": "A joyful Afro routine to \"Free Mind\" (Tems) — authentic African rhythm and free movement."
+    },
+    "peru-efrat-wolde": {
+      "technique": "Isolations, groove, and group energy",
+      "description": "A rhythmic Afro combination to \"Peru\" by Fireboy DML, with an emphasis on isolations and group energy."
+    },
+    "rush-yonatan-tesfaye": {
+      "technique": "Authentic African rhythm and free movement",
+      "description": "A joyful Afro routine to \"Rush\" (Ayra Starr) — authentic African rhythm and free movement."
+    },
+    "terminator-or-katz": {
+      "technique": "Bounce, groove, and attitude",
+      "description": "A bouncy, attitude-filled Dancehall combination to \"Terminator\" by Asake, for dancers who want real street style."
+    },
+    "touch-it-tamir-levy": {
+      "technique": "Power and precision in footwork",
+      "description": "A high-energy Dancehall routine to \"Touch It\" (KiDi) — power and precision in the footwork."
+    },
+    "temperature-or-katz": {
+      "technique": "High energy and street style",
+      "description": "A bouncy, attitude-filled Dancehall combination to \"Temperature\" by Sean Paul, for dancers who want real street style."
+    },
+    "get-busy-tamir-levy": {
+      "technique": "Bounce, groove, and attitude",
+      "description": "A high-energy Dancehall routine to \"Get Busy\" (Sean Paul) — power and precision in the footwork."
+    },
+    "family-or-katz": {
+      "technique": "Power and precision in footwork",
+      "description": "A bouncy, attitude-filled Dancehall combination to \"Family\" by Popcaan, for dancers who want real street style."
+    },
+    "ova-dweet-tamir-levy": {
+      "technique": "High energy and street style",
+      "description": "A high-energy Dancehall routine to \"Ova Dweet\" (Popcaan) — power and precision in the footwork."
+    },
+    "blessed-or-katz": {
+      "technique": "Bounce, groove, and attitude",
+      "description": "A bouncy, attitude-filled Dancehall combination to \"Blessed\" by Shenseea, for dancers who want real street style."
+    },
+    "lick-tamir-levy": {
+      "technique": "Power and precision in footwork",
+      "description": "A high-energy Dancehall routine to \"Lick\" (Shenseea) — power and precision in the footwork."
+    },
+    "bruk-off-yuh-back-or-katz": {
+      "technique": "High energy and street style",
+      "description": "A bouncy, attitude-filled Dancehall combination to \"Bruk Off Yuh Back\" by Konshens, for dancers who want real street style."
+    },
+    "fever-tamir-levy": {
+      "technique": "Bounce, groove, and attitude",
+      "description": "A high-energy Dancehall routine to \"Fever\" (Vybz Kartel) — power and precision in the footwork."
+    },
+    "so-mi-like-it-or-katz": {
+      "technique": "Power and precision in footwork",
+      "description": "A bouncy, attitude-filled Dancehall combination to \"So Mi Like It\" by Spice, for dancers who want real street style."
+    },
+    "coke-tamir-levy": {
+      "technique": "High energy and street style",
+      "description": "A high-energy Dancehall routine to \"Coke\" (Skillibeng) — power and precision in the footwork."
+    },
+    "ina-real-life-or-katz": {
+      "technique": "Bounce, groove, and attitude",
+      "description": "A bouncy, attitude-filled Dancehall combination to \"Ina Real Life\" by Alkaline, for dancers who want real street style."
+    },
+    "owe-me-nothing-tamir-levy": {
+      "technique": "Power and precision in footwork",
+      "description": "A high-energy Dancehall routine to \"Owe Me Nothing\" (Dexta Daps) — power and precision in the footwork."
+    },
+    "cant-stop-the-feeling-michal-buzaglo": {
+      "technique": "Sharp performance and commercial style",
+      "description": "A sharp Commercial combination to \"Can't Stop the Feeling\" by Justin Timberlake, blending technique with stage confidence."
+    },
+    "unholy-guy-ravid": {
+      "technique": "Blending technique with stage confidence",
+      "description": "A Commercial routine with precise timing to \"Unholy\" (Sam Smith ft. Kim Petras) — commercial style for gigs and auditions."
+    },
+    "unavailable-michal-buzaglo": {
+      "technique": "Clean movement and precise timing",
+      "description": "A sharp Commercial combination to \"Unavailable\" by Davido ft. Musa Keys, blending technique with stage confidence."
+    },
+    "calm-down-guy-ravid": {
+      "technique": "Sharp performance and commercial style",
+      "description": "A Commercial routine with precise timing to \"Calm Down\" (Rema) — commercial style for gigs and auditions."
+    },
+    "rush-michal-buzaglo": {
+      "technique": "Blending technique with stage confidence",
+      "description": "A sharp Commercial combination to \"Rush\" by Ayra Starr, blending technique with stage confidence."
+    },
+    "sad-girlz-luv-money-guy-ravid": {
+      "technique": "Clean movement and precise timing",
+      "description": "A Commercial routine with precise timing to \"Sad Girlz Luv Money\" (Amaarae) — commercial style for gigs and auditions."
+    },
+    "blessed-michal-buzaglo": {
+      "technique": "Sharp performance and commercial style",
+      "description": "A sharp Commercial combination to \"Blessed\" by Shenseea, blending technique with stage confidence."
+    },
+    "break-my-soul-guy-ravid": {
+      "technique": "Blending technique with stage confidence",
+      "description": "A Commercial routine with precise timing to \"Break My Soul\" (Beyoncé) — commercial style for gigs and auditions."
+    },
+    "formation-michal-buzaglo": {
+      "technique": "Clean movement and precise timing",
+      "description": "A sharp Commercial combination to \"Formation\" by Beyoncé, blending technique with stage confidence."
+    },
+    "umbrella-guy-ravid": {
+      "technique": "Sharp performance and commercial style",
+      "description": "A Commercial routine with precise timing to \"Umbrella\" (Rihanna) — commercial style for gigs and auditions."
+    },
+    "dont-stop-the-music-michal-buzaglo": {
+      "technique": "Blending technique with stage confidence",
+      "description": "A sharp Commercial combination to \"Don't Stop the Music\" by Rihanna, blending technique with stage confidence."
+    },
+    "7-rings-guy-ravid": {
+      "technique": "Clean movement and precise timing",
+      "description": "A Commercial routine with precise timing to \"7 rings\" (Ariana Grande) — commercial style for gigs and auditions."
+    },
+    "break-free-michal-buzaglo": {
+      "technique": "Sharp performance and commercial style",
+      "description": "A sharp Commercial combination to \"Break Free\" by Ariana Grande, blending technique with stage confidence."
     }
   },
   "instructors": {
@@ -42,6 +434,66 @@
     "noa-sagi": {
       "name": "Noa Sagi",
       "bio": "Teaches heels — heel control, line length, and performance."
+    },
+    "tali-mizrahi": {
+      "name": "Tali Mizrahi",
+      "bio": "Teaches Jazz Funk — groove and performance."
+    },
+    "yael-bar": {
+      "name": "Yael Bar",
+      "bio": "Teaches Jazz Funk — weight shifts and rhythm control."
+    },
+    "oran-ben-david": {
+      "name": "Oran Ben David",
+      "bio": "Teaches Hip Hop — polyrhythm and personal style."
+    },
+    "amit-sharabi": {
+      "name": "Amit Sharabi",
+      "bio": "Teaches Hip Hop — groove, musicality, and systematic breakdown."
+    },
+    "maya-rozin": {
+      "name": "Maya Rozin",
+      "bio": "Teaches Heels — posture and heel mobility."
+    },
+    "noga-eliyahu": {
+      "name": "Noga Eliyahu",
+      "bio": "Teaches Heels — confidence and stage grace."
+    },
+    "yasmin-kadosh": {
+      "name": "Yasmin Kadosh",
+      "bio": "Teaches Jazz — technique, line, and musicality."
+    },
+    "omer-tzur": {
+      "name": "Omer Tzur",
+      "bio": "Teaches Jazz — lyrical depth in movement."
+    },
+    "hila-ben-ari": {
+      "name": "Hila Ben Ari",
+      "bio": "Teaches Jazz — body control and performance."
+    },
+    "efrat-wolde": {
+      "name": "Efrat Wolde",
+      "bio": "Teaches Afro — isolations, groove, and energy."
+    },
+    "yonatan-tesfaye": {
+      "name": "Yonatan Tesfaye",
+      "bio": "Teaches Afro — authentic African rhythm and community."
+    },
+    "or-katz": {
+      "name": "Or Katz",
+      "bio": "Teaches Dancehall — high energy and street style."
+    },
+    "tamir-levy": {
+      "name": "Tamir Levy",
+      "bio": "Teaches Dancehall — bounce, groove, and attitude."
+    },
+    "michal-buzaglo": {
+      "name": "Michal Buzaglo",
+      "bio": "Teaches Commercial — blending technique with stage confidence."
+    },
+    "guy-ravid": {
+      "name": "Guy Ravid",
+      "bio": "Teaches Commercial — sharp movement and precise timing."
     }
   }
 }
