@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/path";
 
 const FOUNDER_SITE_URL = "https://bybarzilay.com";
 
@@ -45,6 +47,17 @@ export default async function AboutPage({ params }: AboutPageProps) {
           {founder.cta}
           <ArrowUpRight className="h-4 w-4" />
         </a>
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-3xl border-t border-frame-border px-4 py-16 text-center sm:px-6">
+        <p className="text-frame-silver">{dict.about.browsePrompt}</p>
+        <Link
+          href={localePath(locale, "/routines")}
+          className="group mt-5 inline-flex items-center gap-2 rounded-full bg-neon-cta px-6 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
+        >
+          {dict.common.browseTutorials}
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+        </Link>
       </div>
     </main>
   );
