@@ -198,6 +198,10 @@
     "browseTutorials": "עיינו במדריכים וקורסים",
     "home": "לדף הבית"
   },
+  "footer": {
+    "rights": "כל הזכויות שמורות.",
+    "socialAria": "The Frame ב-{platform}"
+  },
   "player": {
     "defaultTitle": "תצוגה מקדימה של הקומבינציה",
     "playVideo": "הפעל וידאו",

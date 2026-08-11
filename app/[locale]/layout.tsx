@@ -3,6 +3,7 @@ import { Heebo, Rubik, Alex_Brush } from "next/font/google";
 import { notFound } from "next/navigation";
 import { AuthProvider } from "@/components/AuthProvider";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import {
   isLocale,
@@ -91,10 +92,11 @@ export default async function LocaleLayout({
       dir={localeDirections[locale]}
       className={`dark ${heebo.variable} ${rubik.variable} ${logoScript.variable}`}
     >
-      <body className="min-h-screen bg-frame-bg font-sans antialiased">
+      <body className="flex min-h-screen flex-col bg-frame-bg font-sans antialiased">
         <AuthProvider>
           <Header locale={locale} labels={dict.nav} />
-          {children}
+          <div className="flex-1">{children}</div>
+          <Footer locale={locale} labels={dict.nav} footer={dict.footer} />
         </AuthProvider>
       </body>
     </html>

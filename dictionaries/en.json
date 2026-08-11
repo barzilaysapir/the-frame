@@ -198,6 +198,10 @@
     "browseTutorials": "Browse tutorials & courses",
     "home": "Back to home"
   },
+  "footer": {
+    "rights": "All rights reserved.",
+    "socialAria": "The Frame on {platform}"
+  },
   "player": {
     "defaultTitle": "Combination preview",
     "playVideo": "Play video",
