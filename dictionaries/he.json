@@ -5,6 +5,7 @@
   },
   "nav": {
     "tutorials": "ספרייה",
+    "styles": "סגנונות",
     "teachers": "מורים",
     "about": "אודות",
     "login": "התחברות",
@@ -43,6 +44,13 @@
     "routineMany": "{count} קומבינציות באתר",
     "instagramAria": "{name} באינסטגרם",
     "tutorialsAria": "ספריית {name}"
+  },
+  "styles": {
+    "title": "סגנונות ריקוד",
+    "subtitle": "עברו על הספרייה לפי סגנון, ובחרו לאיזה מהם לצלול.",
+    "routineOne": "קומבינציה אחת",
+    "routineMany": "{count} קומבינציות",
+    "browseAria": "עיינו בקומבינציות בסגנון {name}"
   },
   "about": {
     "metaTitle": "אודות",

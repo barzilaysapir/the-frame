@@ -115,13 +115,13 @@ export const INSTRUCTORS: InstructorRecord[] = [
   },
   {
     slug: "michal-buzaglo",
-    style: "commercial",
+    style: "voguing",
     avatar: "/instructors/michal-buzaglo.jpg",
     instagramUrl: "https://www.instagram.com/",
   },
   {
     slug: "guy-ravid",
-    style: "commercial",
+    style: "voguing",
     avatar: "/instructors/guy-ravid.jpg",
     instagramUrl: "https://www.instagram.com/",
   },

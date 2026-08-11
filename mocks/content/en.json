@@ -7,7 +7,7 @@
     "jazz": "Jazz",
     "afro": "Afro",
     "dancehall": "Dancehall",
-    "commercial": "Commercial"
+    "voguing": "Voguing"
   },
   "levels": {
     "intermediate": "Intermediate",
@@ -370,56 +370,56 @@
       "description": "A high-energy Dancehall routine to \"Owe Me Nothing\" (Dexta Daps) — power and precision in the footwork."
     },
     "cant-stop-the-feeling-michal-buzaglo": {
-      "technique": "Sharp performance and commercial style",
-      "description": "A sharp Commercial combination to \"Can't Stop the Feeling\" by Justin Timberlake, blending technique with stage confidence."
+      "technique": "Sharp performance and voguing style",
+      "description": "A sharp Voguing combination to \"Can't Stop the Feeling\" by Justin Timberlake, blending technique with stage confidence."
     },
     "unholy-guy-ravid": {
       "technique": "Blending technique with stage confidence",
-      "description": "A Commercial routine with precise timing to \"Unholy\" (Sam Smith ft. Kim Petras) — commercial style for gigs and auditions."
+      "description": "A Voguing routine with precise timing to \"Unholy\" (Sam Smith ft. Kim Petras) — voguing style for gigs and auditions."
     },
     "unavailable-michal-buzaglo": {
       "technique": "Clean movement and precise timing",
-      "description": "A sharp Commercial combination to \"Unavailable\" by Davido ft. Musa Keys, blending technique with stage confidence."
+      "description": "A sharp Voguing combination to \"Unavailable\" by Davido ft. Musa Keys, blending technique with stage confidence."
     },
     "calm-down-guy-ravid": {
-      "technique": "Sharp performance and commercial style",
-      "description": "A Commercial routine with precise timing to \"Calm Down\" (Rema) — commercial style for gigs and auditions."
+      "technique": "Sharp performance and voguing style",
+      "description": "A Voguing routine with precise timing to \"Calm Down\" (Rema) — voguing style for gigs and auditions."
     },
     "rush-michal-buzaglo": {
       "technique": "Blending technique with stage confidence",
-      "description": "A sharp Commercial combination to \"Rush\" by Ayra Starr, blending technique with stage confidence."
+      "description": "A sharp Voguing combination to \"Rush\" by Ayra Starr, blending technique with stage confidence."
     },
     "sad-girlz-luv-money-guy-ravid": {
       "technique": "Clean movement and precise timing",
-      "description": "A Commercial routine with precise timing to \"Sad Girlz Luv Money\" (Amaarae) — commercial style for gigs and auditions."
+      "description": "A Voguing routine with precise timing to \"Sad Girlz Luv Money\" (Amaarae) — voguing style for gigs and auditions."
     },
     "blessed-michal-buzaglo": {
-      "technique": "Sharp performance and commercial style",
-      "description": "A sharp Commercial combination to \"Blessed\" by Shenseea, blending technique with stage confidence."
+      "technique": "Sharp performance and voguing style",
+      "description": "A sharp Voguing combination to \"Blessed\" by Shenseea, blending technique with stage confidence."
     },
     "break-my-soul-guy-ravid": {
       "technique": "Blending technique with stage confidence",
-      "description": "A Commercial routine with precise timing to \"Break My Soul\" (Beyoncé) — commercial style for gigs and auditions."
+      "description": "A Voguing routine with precise timing to \"Break My Soul\" (Beyoncé) — voguing style for gigs and auditions."
     },
     "formation-michal-buzaglo": {
       "technique": "Clean movement and precise timing",
-      "description": "A sharp Commercial combination to \"Formation\" by Beyoncé, blending technique with stage confidence."
+      "description": "A sharp Voguing combination to \"Formation\" by Beyoncé, blending technique with stage confidence."
     },
     "umbrella-guy-ravid": {
-      "technique": "Sharp performance and commercial style",
-      "description": "A Commercial routine with precise timing to \"Umbrella\" (Rihanna) — commercial style for gigs and auditions."
+      "technique": "Sharp performance and voguing style",
+      "description": "A Voguing routine with precise timing to \"Umbrella\" (Rihanna) — voguing style for gigs and auditions."
     },
     "dont-stop-the-music-michal-buzaglo": {
       "technique": "Blending technique with stage confidence",
-      "description": "A sharp Commercial combination to \"Don't Stop the Music\" by Rihanna, blending technique with stage confidence."
+      "description": "A sharp Voguing combination to \"Don't Stop the Music\" by Rihanna, blending technique with stage confidence."
     },
     "7-rings-guy-ravid": {
       "technique": "Clean movement and precise timing",
-      "description": "A Commercial routine with precise timing to \"7 rings\" (Ariana Grande) — commercial style for gigs and auditions."
+      "description": "A Voguing routine with precise timing to \"7 rings\" (Ariana Grande) — voguing style for gigs and auditions."
     },
     "break-free-michal-buzaglo": {
-      "technique": "Sharp performance and commercial style",
-      "description": "A sharp Commercial combination to \"Break Free\" by Ariana Grande, blending technique with stage confidence."
+      "technique": "Sharp performance and voguing style",
+      "description": "A sharp Voguing combination to \"Break Free\" by Ariana Grande, blending technique with stage confidence."
     }
   },
   "instructors": {
@@ -489,11 +489,11 @@
     },
     "michal-buzaglo": {
       "name": "Michal Buzaglo",
-      "bio": "Teaches Commercial — blending technique with stage confidence."
+      "bio": "Teaches Voguing — blending technique with stage confidence."
     },
     "guy-ravid": {
       "name": "Guy Ravid",
-      "bio": "Teaches Commercial — sharp movement and precise timing."
+      "bio": "Teaches Voguing — sharp movement and precise timing."
     }
   }
 }

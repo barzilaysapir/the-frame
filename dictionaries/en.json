@@ -5,6 +5,7 @@
   },
   "nav": {
     "tutorials": "Library",
+    "styles": "Styles",
     "teachers": "Teachers",
     "about": "About",
     "login": "Log in",
@@ -43,6 +44,13 @@
     "routineMany": "{count} combinations on the site",
     "instagramAria": "{name} on Instagram",
     "tutorialsAria": "{name}'s library"
+  },
+  "styles": {
+    "title": "Dance styles",
+    "subtitle": "Browse the library by style and dive into the one you want to learn.",
+    "routineOne": "1 combination",
+    "routineMany": "{count} combinations",
+    "browseAria": "Browse {name} combinations"
   },
   "about": {
     "metaTitle": "About",
