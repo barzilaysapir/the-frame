@@ -198,6 +198,9 @@
     "browseTutorials": "Browse tutorials & courses",
     "home": "Back to home"
   },
+  "footer": {
+    "rights": "All rights reserved."
+  },
   "player": {
     "defaultTitle": "Combination preview",
     "playVideo": "Play video",

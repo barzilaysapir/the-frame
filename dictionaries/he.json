@@ -198,6 +198,9 @@
     "browseTutorials": "עיינו במדריכים וקורסים",
     "home": "לדף הבית"
   },
+  "footer": {
+    "rights": "כל הזכויות שמורות."
+  },
   "player": {
     "defaultTitle": "תצוגה מקדימה של הקומבינציה",
     "playVideo": "הפעל וידאו",
