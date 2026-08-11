@@ -96,7 +96,7 @@ export default async function LocaleLayout({
         <AuthProvider>
           <Header locale={locale} labels={dict.nav} />
           <div className="flex-1">{children}</div>
-          <Footer locale={locale} labels={dict.nav} rights={dict.footer.rights} />
+          <Footer locale={locale} labels={dict.nav} footer={dict.footer} />
         </AuthProvider>
       </body>
     </html>

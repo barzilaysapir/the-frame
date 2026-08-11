@@ -199,7 +199,8 @@
     "home": "Back to home"
   },
   "footer": {
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "socialAria": "The Frame on {platform}"
   },
   "player": {
     "defaultTitle": "Combination preview",
