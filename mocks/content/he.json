@@ -7,7 +7,7 @@
     "jazz": "ג'אז",
     "afro": "אפרו",
     "dancehall": "דאנסהול",
-    "commercial": "קומרשיאל"
+    "voguing": "ווגינג"
   },
   "levels": {
     "intermediate": "בינוני",
@@ -370,56 +370,56 @@
       "description": "שגרת דאנסהול באנרגייה גבוהה ל\"Owe Me Nothing\" (Dexta Daps) — עוצמה ודיוק בתנועות הרגליים."
     },
     "cant-stop-the-feeling-michal-buzaglo": {
-      "technique": "פרפורמנס וסטייל מסחרי חד",
-      "description": "קומבינציית קומרשיאל חדה ל\"Can't Stop the Feeling\" של Justin Timberlake, שמשלבת טכניקה עם ביטחון על הבמה."
+      "technique": "פרפורמנס וסטייל ווגינג חד",
+      "description": "קומבינציית ווגינג חדה ל\"Can't Stop the Feeling\" של Justin Timberlake, שמשלבת טכניקה עם ביטחון על הבמה."
     },
     "unholy-guy-ravid": {
       "technique": "שילוב טכניקה עם ביטחון על הבמה",
-      "description": "שגרת קומרשיאל עם טיימינג מדויק ל\"Unholy\" (Sam Smith ft. Kim Petras) — סטייל מסחרי לביצועים ואודישנים."
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"Unholy\" (Sam Smith ft. Kim Petras) — סטייל ווגינג לביצועים ואודישנים."
     },
     "unavailable-michal-buzaglo": {
       "technique": "קלינות תנועה וטיימינג מדויק",
-      "description": "קומבינציית קומרשיאל חדה ל\"Unavailable\" של Davido ft. Musa Keys, שמשלבת טכניקה עם ביטחון על הבמה."
+      "description": "קומבינציית ווגינג חדה ל\"Unavailable\" של Davido ft. Musa Keys, שמשלבת טכניקה עם ביטחון על הבמה."
     },
     "calm-down-guy-ravid": {
-      "technique": "פרפורמנס וסטייל מסחרי חד",
-      "description": "שגרת קומרשיאל עם טיימינג מדויק ל\"Calm Down\" (Rema) — סטייל מסחרי לביצועים ואודישנים."
+      "technique": "פרפורמנס וסטייל ווגינג חד",
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"Calm Down\" (Rema) — סטייל ווגינג לביצועים ואודישנים."
     },
     "rush-michal-buzaglo": {
       "technique": "שילוב טכניקה עם ביטחון על הבמה",
-      "description": "קומבינציית קומרשיאל חדה ל\"Rush\" של Ayra Starr, שמשלבת טכניקה עם ביטחון על הבמה."
+      "description": "קומבינציית ווגינג חדה ל\"Rush\" של Ayra Starr, שמשלבת טכניקה עם ביטחון על הבמה."
     },
     "sad-girlz-luv-money-guy-ravid": {
       "technique": "קלינות תנועה וטיימינג מדויק",
-      "description": "שגרת קומרשיאל עם טיימינג מדויק ל\"Sad Girlz Luv Money\" (Amaarae) — סטייל מסחרי לביצועים ואודישנים."
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"Sad Girlz Luv Money\" (Amaarae) — סטייל ווגינג לביצועים ואודישנים."
     },
     "blessed-michal-buzaglo": {
-      "technique": "פרפורמנס וסטייל מסחרי חד",
-      "description": "קומבינציית קומרשיאל חדה ל\"Blessed\" של Shenseea, שמשלבת טכניקה עם ביטחון על הבמה."
+      "technique": "פרפורמנס וסטייל ווגינג חד",
+      "description": "קומבינציית ווגינג חדה ל\"Blessed\" של Shenseea, שמשלבת טכניקה עם ביטחון על הבמה."
     },
     "break-my-soul-guy-ravid": {
       "technique": "שילוב טכניקה עם ביטחון על הבמה",
-      "description": "שגרת קומרשיאל עם טיימינג מדויק ל\"Break My Soul\" (Beyoncé) — סטייל מסחרי לביצועים ואודישנים."
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"Break My Soul\" (Beyoncé) — סטייל ווגינג לביצועים ואודישנים."
     },
     "formation-michal-buzaglo": {
       "technique": "קלינות תנועה וטיימינג מדויק",
-      "description": "קומבינציית קומרשיאל חדה ל\"Formation\" של Beyoncé, שמשלבת טכניקה עם ביטחון על הבמה."
+      "description": "קומבינציית ווגינג חדה ל\"Formation\" של Beyoncé, שמשלבת טכניקה עם ביטחון על הבמה."
     },
     "umbrella-guy-ravid": {
-      "technique": "פרפורמנס וסטייל מסחרי חד",
-      "description": "שגרת קומרשיאל עם טיימינג מדויק ל\"Umbrella\" (Rihanna) — סטייל מסחרי לביצועים ואודישנים."
+      "technique": "פרפורמנס וסטייל ווגינג חד",
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"Umbrella\" (Rihanna) — סטייל ווגינג לביצועים ואודישנים."
     },
     "dont-stop-the-music-michal-buzaglo": {
       "technique": "שילוב טכניקה עם ביטחון על הבמה",
-      "description": "קומבינציית קומרשיאל חדה ל\"Don't Stop the Music\" של Rihanna, שמשלבת טכניקה עם ביטחון על הבמה."
+      "description": "קומבינציית ווגינג חדה ל\"Don't Stop the Music\" של Rihanna, שמשלבת טכניקה עם ביטחון על הבמה."
     },
     "7-rings-guy-ravid": {
       "technique": "קלינות תנועה וטיימינג מדויק",
-      "description": "שגרת קומרשיאל עם טיימינג מדויק ל\"7 rings\" (Ariana Grande) — סטייל מסחרי לביצועים ואודישנים."
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"7 rings\" (Ariana Grande) — סטייל ווגינג לביצועים ואודישנים."
     },
     "break-free-michal-buzaglo": {
-      "technique": "פרפורמנס וסטייל מסחרי חד",
-      "description": "קומבינציית קומרשיאל חדה ל\"Break Free\" של Ariana Grande, שמשלבת טכניקה עם ביטחון על הבמה."
+      "technique": "פרפורמנס וסטייל ווגינג חד",
+      "description": "קומבינציית ווגינג חדה ל\"Break Free\" של Ariana Grande, שמשלבת טכניקה עם ביטחון על הבמה."
     }
   },
   "instructors": {
@@ -489,11 +489,11 @@
     },
     "michal-buzaglo": {
       "name": "מיכל בוזגלו",
-      "bio": "מלמדת קומרשיאל — שילוב טכניקה עם ביטחון על הבמה."
+      "bio": "מלמדת ווגינג — שילוב טכניקה עם ביטחון על הבמה."
     },
     "guy-ravid": {
       "name": "גיא רביד",
-      "bio": "מלמד קומרשיאל — קלינות תנועה וקצב מדויק."
+      "bio": "מלמד ווגינג — קלינות תנועה וקצב מדויק."
     }
   }
 }
