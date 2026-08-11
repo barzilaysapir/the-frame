@@ -4,7 +4,7 @@
     "siteDescription": "Premium dance teachers. Learn individual combinations, frame by frame."
   },
   "nav": {
-    "tutorials": "Tutorials & courses",
+    "tutorials": "Library",
     "teachers": "Teachers",
     "about": "About",
     "login": "Log in",
@@ -21,9 +21,9 @@
     "cta": "Watch a sample combination"
   },
   "tutorials": {
-    "title": "Tutorials & courses",
+    "title": "Library",
     "subtitle": "Every tutorial includes a full count breakdown, mirrored and slowed practice modes, and a 30-day rental.",
-    "filterAria": "Filter tutorials and courses",
+    "filterAria": "Filter the library",
     "filterTeacher": "Teacher",
     "filterStyle": "Style",
     "filterLevel": "Level",
@@ -32,7 +32,7 @@
     "resultOne": "1 result",
     "resultNone": "No results",
     "resultMany": "{count} results",
-    "empty": "No tutorials to show right now.",
+    "empty": "No combinations to show in the library right now.",
     "viewRoutine": "View combination",
     "taughtBy": "Taught by {name}"
   },
@@ -42,7 +42,7 @@
     "routineOne": "1 combination on the site",
     "routineMany": "{count} combinations on the site",
     "instagramAria": "{name} on Instagram",
-    "tutorialsAria": "Tutorials & courses by {name}"
+    "tutorialsAria": "{name}'s library"
   },
   "about": {
     "metaTitle": "About",
@@ -164,7 +164,7 @@
   },
   "notFound": {
     "title": "This page wasn’t found",
-    "body": "The link may be wrong or the page was removed. Head home or browse available tutorials and courses."
+    "body": "The link may be wrong or the page was removed. Head home or browse the library."
   },
   "routine": {
     "metaTitle": "{title} — {style} combination",
@@ -195,7 +195,7 @@
     ]
   },
   "common": {
-    "browseTutorials": "Browse tutorials & courses",
+    "browseTutorials": "Browse the library",
     "home": "Back to home"
   },
   "footer": {
