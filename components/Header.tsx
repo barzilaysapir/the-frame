@@ -67,7 +67,7 @@ export function Header({ locale, labels }: HeaderProps) {
       <div className="relative z-[60] mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <Link
           href={localePath(locale)}
-          dir="ltr"
+          dir={locale === "he" ? "rtl" : "ltr"}
           onClick={closeMenu}
           className="group flex min-w-0 items-center gap-2.5"
           aria-label="The Frame by Barzilay"
