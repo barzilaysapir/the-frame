@@ -49,14 +49,13 @@ export default async function AboutPage({ params }: AboutPageProps) {
         </a>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-3xl border-t border-frame-border px-4 py-16 text-center sm:px-6">
-        <p className="text-frame-silver">{dict.about.browsePrompt}</p>
+      <div className="relative z-10 mx-auto max-w-3xl px-4 pb-16 text-center sm:px-6">
         <Link
           href={localePath(locale, "/routines")}
-          className="group mt-5 inline-flex items-center gap-2 rounded-full bg-neon-cta px-6 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
+          className="group inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
         >
           {dict.common.browseTutorials}
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
         </Link>
       </div>
     </main>
