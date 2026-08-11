@@ -3,6 +3,7 @@ import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { SongCredit } from "@/components/SongCredit";
 import { RoutineFilterTag } from "@/components/RoutineFilterTag";
+import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -17,6 +18,8 @@ interface RoutineCardProps {
   labels: {
     viewRoutine: string;
     taughtBy: string;
+    favoriteAdd: string;
+    favoriteRemove: string;
   };
 }
 
@@ -43,20 +46,28 @@ export function RoutineCard({
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </Link>
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center gap-2 p-4">
-          <RoutineFilterTag
-            value={routine.style}
-            variant="style"
-            size="sm"
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-2 p-4">
+          <div className="flex items-center gap-2">
+            <RoutineFilterTag
+              value={routine.style}
+              variant="style"
+              size="sm"
+              locale={locale}
+              className="pointer-events-auto"
+            />
+            <RoutineFilterTag
+              value={routine.level}
+              variant="level"
+              size="sm"
+              locale={locale}
+              className="pointer-events-auto"
+            />
+          </div>
+          <FavoriteButton
+            routine={routine}
             locale={locale}
             className="pointer-events-auto"
-          />
-          <RoutineFilterTag
-            value={routine.level}
-            variant="level"
-            size="sm"
-            locale={locale}
-            className="pointer-events-auto"
+            labels={{ add: labels.favoriteAdd, remove: labels.favoriteRemove }}
           />
         </div>
       </div>

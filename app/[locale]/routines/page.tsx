@@ -206,6 +206,8 @@ export default async function RoutinesPage({
               labels={{
                 viewRoutine: dict.tutorials.viewRoutine,
                 taughtBy: dict.tutorials.taughtBy,
+                favoriteAdd: dict.tutorials.favoriteAdd,
+                favoriteRemove: dict.tutorials.favoriteRemove,
               }}
             />
           ))}

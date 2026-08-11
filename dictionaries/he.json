@@ -7,6 +7,7 @@
     "tutorials": "ספרייה",
     "styles": "סגנונות",
     "teachers": "מורים",
+    "favorites": "מועדפים",
     "about": "אודות",
     "login": "התחברות",
     "getAccess": "קבלו גישה",
@@ -35,7 +36,19 @@
     "resultMany": "{count} תוצאות",
     "empty": "אין קומבינציות להצגה בספרייה כרגע.",
     "viewRoutine": "צפו בקומבינציה",
-    "taughtBy": "בהנחיית {name}"
+    "taughtBy": "בהנחיית {name}",
+    "favoriteAdd": "הוספה למועדפים",
+    "favoriteRemove": "הסרה מהמועדפים"
+  },
+  "favorites": {
+    "metaTitle": "מועדפים",
+    "title": "מועדפים",
+    "subtitle": "קומבינציות ששמרתם לצפייה מאוחר יותר.",
+    "loading": "טוען...",
+    "loggedOutTitle": "התחברו כדי לראות את המועדפים שלכם",
+    "loggedOutBody": "שמרו קומבינציות עם סימן הלב ומצאו אותן כאן לאחר ההתחברות.",
+    "loginCta": "התחברות",
+    "empty": "עדיין לא הוספתם קומבינציות למועדפים."
   },
   "teachers": {
     "title": "המורים שלנו",

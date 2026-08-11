@@ -166,3 +166,61 @@ export async function listPaidPurchases(
     createdAt: row.created_at,
   }));
 }
+
+export interface FavoriteRow {
+  routineSlug: string;
+  createdAt: string;
+}
+
+interface FavoriteDbRow {
+  routine_slug: string;
+  created_at: string;
+}
+
+export async function listFavorites(
+  db: AppDb,
+  firebaseUid: string,
+): Promise<FavoriteRow[]> {
+  const { results } = await db
+    .prepare(
+      `SELECT routine_slug, created_at
+       FROM favorites
+       WHERE firebase_uid = ?
+       ORDER BY created_at DESC`,
+    )
+    .bind(firebaseUid)
+    .all<FavoriteDbRow>();
+
+  return (results ?? []).map((row) => ({
+    routineSlug: row.routine_slug,
+    createdAt: row.created_at,
+  }));
+}
+
+export async function addFavorite(
+  db: AppDb,
+  firebaseUid: string,
+  routineSlug: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO favorites (firebase_uid, routine_slug)
+       VALUES (?, ?)
+       ON CONFLICT(firebase_uid, routine_slug) DO NOTHING`,
+    )
+    .bind(firebaseUid, routineSlug)
+    .run();
+}
+
+export async function removeFavorite(
+  db: AppDb,
+  firebaseUid: string,
+  routineSlug: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `DELETE FROM favorites WHERE firebase_uid = ? AND routine_slug = ?`,
+    )
+    .bind(firebaseUid, routineSlug)
+    .run();
+}

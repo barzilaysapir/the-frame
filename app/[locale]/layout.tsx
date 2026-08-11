@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Heebo, Rubik, Alex_Brush } from "next/font/google";
 import { notFound } from "next/navigation";
 import { AuthProvider } from "@/components/AuthProvider";
+import { FavoritesProvider } from "@/components/favorites/FavoritesProvider";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -94,9 +95,11 @@ export default async function LocaleLayout({
     >
       <body className="flex min-h-screen flex-col bg-frame-bg font-sans antialiased">
         <AuthProvider>
-          <Header locale={locale} labels={dict.nav} />
-          <div className="flex-1">{children}</div>
-          <Footer locale={locale} labels={dict.nav} footer={dict.footer} />
+          <FavoritesProvider locale={locale}>
+            <Header locale={locale} labels={dict.nav} />
+            <div className="flex-1">{children}</div>
+            <Footer locale={locale} labels={dict.nav} footer={dict.footer} />
+          </FavoritesProvider>
         </AuthProvider>
       </body>
     </html>

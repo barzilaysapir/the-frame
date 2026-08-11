@@ -7,6 +7,7 @@
     "tutorials": "Library",
     "styles": "Styles",
     "teachers": "Teachers",
+    "favorites": "Favorites",
     "about": "About",
     "login": "Log in",
     "getAccess": "Get access",
@@ -35,7 +36,19 @@
     "resultMany": "{count} results",
     "empty": "No combinations to show in the library right now.",
     "viewRoutine": "View combination",
-    "taughtBy": "Taught by {name}"
+    "taughtBy": "Taught by {name}",
+    "favoriteAdd": "Add to favorites",
+    "favoriteRemove": "Remove from favorites"
+  },
+  "favorites": {
+    "metaTitle": "Favorites",
+    "title": "Favorites",
+    "subtitle": "Combinations you’ve saved for later.",
+    "loading": "Loading…",
+    "loggedOutTitle": "Sign in to see your favorites",
+    "loggedOutBody": "Save combinations with the heart icon and find them here once you’re signed in.",
+    "loginCta": "Log in",
+    "empty": "You haven’t favorited any combinations yet."
   },
   "teachers": {
     "title": "Our teachers",
