@@ -43,10 +43,12 @@ export function CheckoutPlanOption({
       )}
     >
       <button
+        id={`checkout-plan-option-${id}`}
         type="button"
+        role="radio"
+        aria-checked={selected}
+        tabIndex={selected ? 0 : -1}
         onClick={() => onSelect(id)}
-        aria-expanded={selected}
-        aria-controls={panelId}
         className="flex w-full items-center gap-3 px-4 py-3 text-start"
       >
         <span
