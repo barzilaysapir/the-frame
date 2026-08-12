@@ -7,13 +7,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import {
-  onAuthStateChanged,
-  signOut,
-  updateProfile,
-  type User,
-} from "firebase/auth";
-import { auth, isFirebaseConfigured } from "@/lib/firebase";
+import type { User } from "firebase/auth";
+import { getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
 
 interface AuthContextValue {
   user: User | null;
@@ -38,21 +33,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(isFirebaseConfigured);
 
   useEffect(() => {
-    if (!auth) return;
-    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
-      setUser(nextUser);
-      setLoading(false);
-    });
-    return unsubscribe;
+    if (!isFirebaseConfigured) return;
+    let unsubscribe: (() => void) | undefined;
+    let cancelled = false;
+
+    Promise.all([getFirebaseAuth(), import("firebase/auth")]).then(
+      ([auth, { onAuthStateChanged }]) => {
+        if (!auth || cancelled) return;
+        unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+          setUser(nextUser);
+          setLoading(false);
+        });
+      },
+    );
+
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
   }, []);
 
   const signOutUser = async () => {
+    const auth = await getFirebaseAuth();
     if (!auth) return;
+    const { signOut } = await import("firebase/auth");
     await signOut(auth);
   };
 
   const updateDisplayName = async (displayName: string) => {
+    const auth = await getFirebaseAuth();
     if (!auth?.currentUser) return;
+    const { updateProfile } = await import("firebase/auth");
     await updateProfile(auth.currentUser, { displayName });
     await auth.currentUser.reload();
     setUser(auth.currentUser);

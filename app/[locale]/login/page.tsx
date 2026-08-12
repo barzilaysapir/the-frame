@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import { useAuth } from "@/components/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 import { toIsraeliE164 } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 import { isLocale } from "@/lib/i18n/config";
@@ -75,7 +75,9 @@ export default function LoginPage() {
 
   const handleSendCode = async (event: FormEvent) => {
     event.preventDefault();
-    if (!auth || !recaptchaContainerRef.current) return;
+    if (!recaptchaContainerRef.current) return;
+    const auth = await getFirebaseAuth();
+    if (!auth) return;
 
     const e164 = toIsraeliE164(phoneNumber);
     if (!e164) {

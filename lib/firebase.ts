@@ -1,7 +1,6 @@
 "use client";
 
-import { getApps, initializeApp, type FirebaseOptions } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import type { Auth } from "firebase/auth";
 
 /**
  * Trims whitespace from an env var. Some deployment pipelines (e.g. values
@@ -15,7 +14,7 @@ function cleanEnv(value: string | undefined): string | undefined {
   return value?.trim() || undefined;
 }
 
-const firebaseConfig: FirebaseOptions = {
+const firebaseConfig = {
   apiKey: cleanEnv(process.env.NEXT_PUBLIC_FIREBASE_API_KEY),
   authDomain: cleanEnv(process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN),
   projectId: cleanEnv(process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID),
@@ -25,16 +24,34 @@ const firebaseConfig: FirebaseOptions = {
 };
 
 /**
- * True once every required Firebase env var is present. Auth UI checks this
- * before touching the SDK so local/dev/preview builds without a configured
- * Firebase project degrade gracefully instead of throwing at import time.
+ * True once every required Firebase env var is present. Plain env var
+ * checks — no SDK import — so this stays free to check synchronously
+ * (e.g. to disable a sign-in button) without pulling in firebase/auth.
  */
 export const isFirebaseConfigured = Boolean(
   firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId
 );
 
-const firebaseApp = isFirebaseConfigured
-  ? getApps()[0] ?? initializeApp(firebaseConfig)
-  : undefined;
+let authPromise: Promise<Auth | undefined> | undefined;
 
-export const auth = firebaseApp ? getAuth(firebaseApp) : undefined;
+/**
+ * Lazily loads and initializes Firebase Auth on first use instead of
+ * bundling firebase/app + firebase/auth into every page's shared JS.
+ * AuthProvider wraps the root layout, so without this, anonymous visitors
+ * browsing the home page or catalog would pay for the auth SDK's weight
+ * upfront even though only signed-in flows need it. Memoized so repeated
+ * calls reuse the same dynamic import + initialized app/auth instance.
+ */
+export function getFirebaseAuth(): Promise<Auth | undefined> {
+  if (!isFirebaseConfigured) return Promise.resolve(undefined);
+  if (!authPromise) {
+    authPromise = Promise.all([
+      import("firebase/app"),
+      import("firebase/auth"),
+    ]).then(([{ getApps, initializeApp }, { getAuth }]) => {
+      const app = getApps()[0] ?? initializeApp(firebaseConfig);
+      return getAuth(app);
+    });
+  }
+  return authPromise;
+}
