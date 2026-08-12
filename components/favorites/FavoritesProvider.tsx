@@ -84,7 +84,14 @@ export function FavoritesProvider({
   const isCurrent = Boolean(
     user && snapshot && snapshot.uid === user.uid && snapshot.locale === locale,
   );
-  const favorites = isCurrent ? snapshot!.items : [];
+  // Memoized so it's referentially stable across renders where the
+  // underlying snapshot hasn't changed — otherwise the `[]` fallback (and
+  // `snapshot!.items`) would be a new array identity every render, defeating
+  // the useCallback/useMemo hooks below that depend on it.
+  const favorites = useMemo(
+    () => (isCurrent ? snapshot!.items : []),
+    [isCurrent, snapshot],
+  );
   const loading = Boolean(user) && !isCurrent;
 
   const isFavorited = useCallback(
