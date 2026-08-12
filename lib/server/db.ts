@@ -1,3 +1,4 @@
+import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export type AppDb = CloudflareEnv["DB"];
@@ -10,7 +11,8 @@ export async function getAppDb(): Promise<AppDb | null> {
   try {
     const { env } = await getCloudflareContext({ async: true });
     return env.DB ?? null;
-  } catch {
+  } catch (error) {
+    console.error("Failed to resolve Cloudflare context for the DB binding:", error);
     return null;
   }
 }

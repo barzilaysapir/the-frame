@@ -237,6 +237,11 @@
     "normalSpeed": "רגיל",
     "mirrorMode": "מצב מראה",
     "exitFullscreen": "צא ממסך מלא",
-    "fullscreen": "מסך מלא"
+    "fullscreen": "מסך מלא",
+    "videoErrorTitle": "לא ניתן לטעון את הסרטון",
+    "videoErrorBody": "בדקו את החיבור לאינטרנט ונסו שוב.",
+    "retry": "נסה שוב",
+    "captionsOn": "כבה כתוביות",
+    "captionsOff": "הפעל כתוביות"
   }
 }

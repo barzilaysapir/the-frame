@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { EarlyBirdBanner } from "@/components/EarlyBirdBanner";
-import { DanceVideoPlayer } from "@/components/DanceVideoPlayer";
-import { RoutineBreakdown, type RoutineDetail } from "@/components/RoutineBreakdown";
+import { DanceVideoPlayer } from "@/components/player/DanceVideoPlayer";
+import { RoutineBreakdown, type RoutineDetail } from "@/components/routines/RoutineBreakdown";
 import { PricingCard } from "@/components/PricingCard";
 import { MobileStickyCta } from "@/components/MobileStickyCta";
 import { InstructorAvatar } from "@/components/InstructorAvatar";
 import { SongCredit } from "@/components/SongCredit";
-import { RoutineFilterTag } from "@/components/RoutineFilterTag";
+import { RoutineFilterTag } from "@/components/routines/RoutineFilterTag";
 import { isLocale } from "@/lib/i18n/config";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";

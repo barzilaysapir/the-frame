@@ -1,3 +1,4 @@
+import "server-only";
 import { NextResponse } from "next/server";
 import {
   getBearerToken,
@@ -34,6 +35,14 @@ export async function requireFirebaseClaims(
     return await verifyFirebaseIdToken(token);
   } catch {
     throw new ApiError(401, "Invalid or expired Firebase ID token");
+  }
+}
+
+export async function readJsonBody<T>(request: Request): Promise<T> {
+  try {
+    return (await request.json()) as T;
+  } catch {
+    throw new ApiError(400, "Invalid JSON body");
   }
 }
 

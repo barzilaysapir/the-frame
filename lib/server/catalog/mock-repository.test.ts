@@ -1,0 +1,115 @@
+import { describe, expect, it } from "vitest";
+import { mockCatalogRepository } from "@/lib/server/catalog/mock-repository";
+
+// Deliberately doesn't hardcode specific demo slugs/styles - the mock catalog
+// content is temporary stand-in data (see mock-content rule) and could
+// change shape at any time. Every filter assertion below derives its
+// expected values from the repository's own unfiltered output instead.
+
+describe("mockCatalogRepository.listRoutines", () => {
+  it("returns a non-empty, localized routine list with no filters", async () => {
+    const routines = await mockCatalogRepository.listRoutines("en");
+    expect(routines.length).toBeGreaterThan(0);
+    expect(
+      routines.every((routine) => routine.title.length > 0 && routine.slug.length > 0),
+    ).toBe(true);
+  });
+
+  it("filters strictly by instructor", async () => {
+    const all = await mockCatalogRepository.listRoutines("en");
+    const { instructorSlug } = all[0];
+
+    const filtered = await mockCatalogRepository.listRoutines("en", {
+      instructor: instructorSlug,
+    });
+
+    expect(filtered.length).toBeGreaterThan(0);
+    expect(filtered.every((routine) => routine.instructorSlug === instructorSlug)).toBe(
+      true,
+    );
+    expect(filtered.length).toBeLessThanOrEqual(all.length);
+  });
+
+  it("filters strictly by style", async () => {
+    const all = await mockCatalogRepository.listRoutines("en");
+    const { style } = all[0];
+
+    const filtered = await mockCatalogRepository.listRoutines("en", { style });
+
+    expect(filtered.every((routine) => routine.style === style)).toBe(true);
+  });
+
+  it("filters strictly by level", async () => {
+    const all = await mockCatalogRepository.listRoutines("en");
+    const { level } = all[0];
+
+    const filtered = await mockCatalogRepository.listRoutines("en", { level });
+
+    expect(filtered.every((routine) => routine.level === level)).toBe(true);
+  });
+
+  it("combines multiple filters with AND semantics", async () => {
+    const all = await mockCatalogRepository.listRoutines("en");
+    const sample = all[0];
+
+    const filtered = await mockCatalogRepository.listRoutines("en", {
+      instructor: sample.instructorSlug,
+      style: sample.style,
+      level: sample.level,
+    });
+
+    expect(filtered.some((routine) => routine.slug === sample.slug)).toBe(true);
+    expect(
+      filtered.every(
+        (routine) =>
+          routine.instructorSlug === sample.instructorSlug &&
+          routine.style === sample.style &&
+          routine.level === sample.level,
+      ),
+    ).toBe(true);
+  });
+
+  it("returns an empty array for a filter that matches nothing", async () => {
+    const filtered = await mockCatalogRepository.listRoutines("en", {
+      instructor: "definitely-not-a-real-instructor-slug",
+    });
+    expect(filtered).toEqual([]);
+  });
+});
+
+describe("mockCatalogRepository.getRoutine", () => {
+  it("returns the routine matching a known slug", async () => {
+    const all = await mockCatalogRepository.listRoutines("en");
+    const { slug } = all[0];
+
+    const routine = await mockCatalogRepository.getRoutine("en", slug);
+
+    expect(routine?.slug).toBe(slug);
+  });
+
+  it("returns null for an unknown slug", async () => {
+    const routine = await mockCatalogRepository.getRoutine(
+      "en",
+      "definitely-not-a-real-slug",
+    );
+    expect(routine).toBeNull();
+  });
+});
+
+describe("mockCatalogRepository.listInstructors / getInstructor", () => {
+  it("returns instructors with a computed routineCount", async () => {
+    const instructors = await mockCatalogRepository.listInstructors("en");
+    expect(instructors.length).toBeGreaterThan(0);
+    expect(
+      instructors.every((instructor) => typeof instructor.routineCount === "number"),
+    ).toBe(true);
+  });
+
+  it("getInstructor returns null for an unknown slug", async () => {
+    const instructor = await mockCatalogRepository.getInstructor(
+      "en",
+      "definitely-not-a-real-slug",
+    );
+    expect(instructor).toBeNull();
+  });
+});

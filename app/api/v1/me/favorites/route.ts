@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   jsonError,
+  readJsonBody,
   requireAppDb,
   requireFirebaseClaims,
 } from "@/lib/server/api/auth-context";
+import { enforceWriteRateLimit } from "@/lib/server/api/rate-limit";
 import {
   resolveCatalog,
   resolveCatalogLocale,
@@ -67,13 +69,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const claims = await requireFirebaseClaims(request);
+    await enforceWriteRateLimit(claims.uid);
     const db = await requireAppDb();
     const locale = resolveCatalogLocale(
       request.nextUrl.searchParams.get("locale"),
     );
     await upsertUserFromClaims(db, claims, locale);
 
-    const body = (await request.json()) as { routineSlug?: unknown };
+    const body = await readJsonBody<{ routineSlug?: unknown }>(request);
     if (typeof body.routineSlug !== "string" || !body.routineSlug) {
       return NextResponse.json(
         { error: "routineSlug is required" },

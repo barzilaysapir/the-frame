@@ -237,6 +237,11 @@
     "normalSpeed": "Normal",
     "mirrorMode": "Mirror mode",
     "exitFullscreen": "Exit fullscreen",
-    "fullscreen": "Fullscreen"
+    "fullscreen": "Fullscreen",
+    "videoErrorTitle": "Couldn't load the video",
+    "videoErrorBody": "Check your connection and try again.",
+    "retry": "Try again",
+    "captionsOn": "Turn off captions",
+    "captionsOff": "Turn on captions"
   }
 }

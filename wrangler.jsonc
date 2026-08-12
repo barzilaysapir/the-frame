@@ -12,6 +12,12 @@
 	"main": ".open-next/worker.js",
 	"name": "the-frame",
 	"account_id": "8739cda6b7162b44320b8f637feb219a",
+	"routes": [
+		{
+			"pattern": "theframe.bybarzilay.com",
+			"custom_domain": true
+		}
+	],
 	"compatibility_date": "2026-08-04",
 	"compatibility_flags": [
 		"nodejs_compat",
@@ -29,11 +35,6 @@
 			"service": "the-frame"
 		}
 	],
-	"images": {
-		// Enable image optimization
-		// see https://opennext.js.org/cloudflare/howtos/image
-		"binding": "IMAGES"
-	},
 	// Single app D1: catalog + users + purchases (physical name still the-frame-catalog).
 	"d1_databases": [
 		{
@@ -41,6 +42,20 @@
 			"database_name": "the-frame-catalog",
 			"database_id": "841f01c5-b3c3-4b8c-8891-da5cd2c9b2de",
 			"migrations_dir": "migrations"
+		}
+	],
+	// Guards the /me* write endpoints (see lib/server/api/rate-limit.ts) against
+	// a single account hammering profile/favorites writes. Per-PoP and
+	// eventually consistent by design — not an accounting system, just abuse
+	// mitigation. https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
+	"ratelimits": [
+		{
+			"name": "ME_WRITE_RATE_LIMITER",
+			"namespace_id": "1001",
+			"simple": {
+				"limit": 30,
+				"period": 60
+			}
 		}
 	]
 }

@@ -5,7 +5,7 @@ import {
   getGoogleSignInErrorMessage,
   signInWithGoogle,
 } from "@/lib/client/sign-in-with-google";
-import { auth } from "@/lib/firebase";
+import { isFirebaseConfigured } from "@/lib/firebase";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { cn } from "@/lib/utils";
 
@@ -57,7 +57,7 @@ export function GoogleSignInButton({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClick = async () => {
-    if (!auth) return;
+    if (!isFirebaseConfigured) return;
     setIsSubmitting(true);
     try {
       await signInWithGoogle();
@@ -74,14 +74,15 @@ export function GoogleSignInButton({
     <button
       type="button"
       onClick={handleClick}
-      disabled={isSubmitting || !auth}
+      disabled={isSubmitting || !isFirebaseConfigured}
+      aria-busy={isSubmitting}
       className={cn(
         "flex w-full items-center justify-center gap-3 rounded-full border border-frame-border bg-white px-5 py-3 text-sm font-semibold text-frame-bg transition-opacity hover:opacity-90 disabled:opacity-50",
         className,
       )}
     >
       <GoogleMark className="h-5 w-5 shrink-0" />
-      {isSubmitting ? "…" : label}
+      {label}
     </button>
   );
 }

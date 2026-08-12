@@ -1,5 +1,4 @@
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type LoginErrors = Dictionary["login"]["errors"];
@@ -31,8 +30,10 @@ export function getGoogleSignInErrorMessage(
 
 /** Open Google sign-in popup. Throws if Firebase isn’t configured or sign-in fails. */
 export async function signInWithGoogle(): Promise<void> {
+  const auth = await getFirebaseAuth();
   if (!auth) {
     throw new Error("Firebase Auth is not configured");
   }
+  const { GoogleAuthProvider, signInWithPopup } = await import("firebase/auth");
   await signInWithPopup(auth, new GoogleAuthProvider());
 }

@@ -7,28 +7,32 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type CSSProperties,
 } from "react";
 import {
   Play,
   Pause,
-  Volume2,
-  Volume1,
-  VolumeX,
   Maximize,
   Minimize,
   FlipHorizontal2,
-  Gauge,
+  Captions,
+  RotateCw,
 } from "lucide-react";
 import { cn, formatTime } from "@/lib/utils";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { ChapterMarkers } from "@/components/player/ChapterMarkers";
+import { VolumeControl } from "@/components/player/VolumeControl";
+import { SpeedMenu } from "@/components/player/SpeedMenu";
+import type { PlayerChapter } from "@/components/player/types";
 
-export interface PlayerChapter {
-  id: string;
+export type { PlayerChapter } from "@/components/player/types";
+
+interface CaptionsTrack {
+  src: string;
+  srcLang: string;
   label: string;
-  time: number;
+  default?: boolean;
 }
-
-const PLAYBACK_SPEEDS = [0.5, 0.75, 1, 1.25] as const;
 
 interface DanceVideoPlayerProps {
   src: string;
@@ -37,6 +41,13 @@ interface DanceVideoPlayerProps {
   chapters: PlayerChapter[];
   labels: Dictionary["player"];
   className?: string;
+  /**
+   * Optional VTT captions track. No mock/demo routine ships one today (real
+   * caption authoring is ongoing content cost, not a one-time code fix — see
+   * accessibility-priorities rule) — this just wires up the infrastructure
+   * so a real CMS-provided VTT URL lights up the CC button automatically.
+   */
+  captions?: CaptionsTrack;
 }
 
 export function DanceVideoPlayer({
@@ -46,10 +57,12 @@ export function DanceVideoPlayer({
   chapters,
   labels,
   className,
+  captions,
 }: DanceVideoPlayerProps) {
   const resolvedTitle = title ?? labels.defaultTitle;
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLTrackElement>(null);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
@@ -62,8 +75,11 @@ export function DanceVideoPlayer({
   const [isMirrored, setIsMirrored] = useState(false);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [captionsEnabled, setCaptionsEnabled] = useState(
+    Boolean(captions?.default),
+  );
 
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
@@ -94,19 +110,34 @@ export function DanceVideoPlayer({
     };
     const onTimeUpdate = () => setCurrentTime(video.currentTime);
     const onLoadedMetadata = () => setDuration(video.duration || 0);
+    const onError = () => {
+      setHasError(true);
+      setIsPlaying(false);
+    };
 
     video.addEventListener("play", onPlay);
     video.addEventListener("pause", onPause);
     video.addEventListener("timeupdate", onTimeUpdate);
     video.addEventListener("loadedmetadata", onLoadedMetadata);
+    video.addEventListener("error", onError);
 
     return () => {
       video.removeEventListener("play", onPlay);
       video.removeEventListener("pause", onPause);
       video.removeEventListener("timeupdate", onTimeUpdate);
       video.removeEventListener("loadedmetadata", onLoadedMetadata);
+      video.removeEventListener("error", onError);
     };
   }, []);
+
+  // Sync the <track>'s live TextTrack mode with the toggle — `default`/
+  // `src` attributes alone don't control visibility once the track is
+  // already loaded, only its `.track.mode` does.
+  useEffect(() => {
+    const track = trackRef.current?.track;
+    if (!track) return;
+    track.mode = captionsEnabled ? "showing" : "hidden";
+  }, [captionsEnabled, captions?.src]);
 
   useEffect(() => {
     const onFullscreenChange = () => {
@@ -155,12 +186,25 @@ export function DanceVideoPlayer({
 
   const toggleMirror = () => setIsMirrored((mirrored) => !mirrored);
 
+  const toggleCaptions = () => setCaptionsEnabled((enabled) => !enabled);
+
+  const handleRetry = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    setHasError(false);
+    video.load();
+    video.play().catch(() => {
+      // Autoplay can still be blocked after a manual retry click (e.g. no
+      // user-activation left in some browsers) — leave it paused rather
+      // than re-entering the error state for an unrelated reason.
+    });
+  };
+
   const setSpeed = (rate: number) => {
     const video = videoRef.current;
     if (!video) return;
     video.playbackRate = rate;
     setPlaybackRate(rate);
-    setShowSpeedMenu(false);
   };
 
   const jumpToChapter = (chapter: PlayerChapter) => {
@@ -181,9 +225,7 @@ export function DanceVideoPlayer({
     }
   };
 
-  const VolumeIcon = isMuted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
-  const volumePercent = isMuted ? 0 : volume * 100;
 
   return (
     <div
@@ -205,10 +247,21 @@ export function DanceVideoPlayer({
           style={{ transform: isMirrored ? "scaleX(-1)" : "scaleX(1)" }}
           onClick={togglePlay}
           playsInline
-        />
+        >
+          {captions ? (
+            <track
+              ref={trackRef}
+              kind="captions"
+              src={captions.src}
+              srcLang={captions.srcLang}
+              label={captions.label}
+              default={captions.default}
+            />
+          ) : null}
+        </video>
 
         {/* Center play button, shown when paused */}
-        {!isPlaying && (
+        {!hasError && !isPlaying && (
           <button
             type="button"
             onClick={togglePlay}
@@ -223,9 +276,7 @@ export function DanceVideoPlayer({
 
         {/* Mirrored indicator badge */}
         {isMirrored && (
-          <span
-            className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm"
-          >
+          <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
             {labels.mirrored}
           </span>
         )}
@@ -236,35 +287,23 @@ export function DanceVideoPlayer({
         <div
           className={cn(
             "absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-3 pb-3 pt-10 transition-opacity duration-300 sm:px-4",
+            hasError && "hidden",
             areControlsVisible || !isPlaying
               ? "opacity-100"
               : "opacity-0 group-hover:opacity-100"
           )}
         >
-          {/* Chapter / timeline markers */}
-          <div className="mb-3 flex flex-nowrap gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {chapters.map((chapter) => (
-              <button
-                key={chapter.id}
-                type="button"
-                onClick={() => jumpToChapter(chapter)}
-                className={cn(
-                  "shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors sm:text-xs",
-                  activeChapterId === chapter.id
-                    ? "border-frame-magenta bg-frame-magenta/15 text-frame-magenta"
-                    : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
-                )}
-              >
-                {chapter.label}
-              </button>
-            ))}
-          </div>
+          <ChapterMarkers
+            chapters={chapters}
+            activeChapterId={activeChapterId}
+            onJumpToChapter={jumpToChapter}
+          />
 
           {/* Seek bar */}
           <input
             type="range"
             className="frame-range w-full cursor-pointer"
-            style={{ "--range-progress": `${progressPercent}%` } as React.CSSProperties}
+            style={{ "--range-progress": `${progressPercent}%` } as CSSProperties}
             min={0}
             max={duration || 0}
             step={0.01}
@@ -288,27 +327,13 @@ export function DanceVideoPlayer({
                 )}
               </button>
 
-              <div className="hidden items-center gap-1.5 sm:flex">
-                <button
-                  type="button"
-                  onClick={toggleMute}
-                  aria-label={isMuted ? labels.unmute : labels.mute}
-                  className="flex h-8 w-8 items-center justify-center text-frame-silver transition-colors hover:text-white"
-                >
-                  <VolumeIcon className="h-4 w-4" />
-                </button>
-                <input
-                  type="range"
-                  className="frame-range w-16 cursor-pointer"
-                  style={{ "--range-progress": `${volumePercent}%` } as React.CSSProperties}
-                  min={0}
-                  max={1}
-                  step={0.05}
-                  value={isMuted ? 0 : volume}
-                  onChange={handleVolumeChange}
-                  aria-label={labels.volume}
-                />
-              </div>
+              <VolumeControl
+                volume={volume}
+                isMuted={isMuted}
+                labels={labels}
+                onToggleMute={toggleMute}
+                onVolumeChange={handleVolumeChange}
+              />
 
               <span className="text-xs font-medium tabular-nums text-white/80">
                 {formatTime(currentTime)} / {formatTime(duration)}
@@ -316,43 +341,32 @@ export function DanceVideoPlayer({
             </div>
 
             <div className="flex items-center gap-1.5 sm:gap-2">
-              {/* Playback speed */}
-              <div className="relative">
+              <SpeedMenu
+                playbackRate={playbackRate}
+                labels={labels}
+                onChangeSpeed={setSpeed}
+              />
+
+              {/* Captions toggle — only rendered when a track is actually
+                  available, since there's nothing to toggle otherwise */}
+              {captions ? (
                 <button
                   type="button"
-                  onClick={() => setShowSpeedMenu((open) => !open)}
-                  aria-label={labels.speed}
-                  aria-expanded={showSpeedMenu}
+                  onClick={toggleCaptions}
+                  aria-label={
+                    captionsEnabled ? labels.captionsOn : labels.captionsOff
+                  }
+                  aria-pressed={captionsEnabled}
                   className={cn(
-                    "flex h-8 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold transition-colors",
-                    showSpeedMenu
-                      ? "border-frame-magenta text-frame-magenta"
+                    "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
+                    captionsEnabled
+                      ? "border-frame-cyan text-frame-cyan"
                       : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
                   )}
                 >
-                  <Gauge className="h-3.5 w-3.5" />
-                  {playbackRate}x
+                  <Captions className="h-4 w-4" />
                 </button>
-                {showSpeedMenu && (
-                  <div className="absolute bottom-10 right-0 z-10 flex flex-col overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl">
-                    {PLAYBACK_SPEEDS.map((speed) => (
-                      <button
-                        key={speed}
-                        type="button"
-                        onClick={() => setSpeed(speed)}
-                        className={cn(
-                          "px-4 py-2 text-start text-xs font-medium whitespace-nowrap transition-colors hover:bg-white/5",
-                          playbackRate === speed
-                            ? "text-frame-magenta"
-                            : "text-white/80"
-                        )}
-                      >
-                        {speed}x{speed === 1 ? ` · ${labels.normalSpeed}` : ""}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              ) : null}
 
               {/* Mirror toggle */}
               <button
@@ -388,6 +402,26 @@ export function DanceVideoPlayer({
             </div>
           </div>
         </div>
+
+        {/* Playback error overlay — last in DOM order so it stacks above
+            the controls; replaces them entirely since seek/volume/speed
+            are meaningless with no loaded media. */}
+        {hasError && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/80 px-6 text-center">
+            <p className="font-display text-lg font-bold text-white">
+              {labels.videoErrorTitle}
+            </p>
+            <p className="text-sm text-frame-silver">{labels.videoErrorBody}</p>
+            <button
+              type="button"
+              onClick={handleRetry}
+              className="flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
+            >
+              <RotateCw className="h-4 w-4" />
+              {labels.retry}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

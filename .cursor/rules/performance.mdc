@@ -39,6 +39,30 @@ pass after shipping a feature.
   on the above-the-fold image (first grid row); leave the rest on default lazy
   loading.
 
+## Filtering / query shape
+
+- If a column has an index (e.g. `instructor_slug`/`style`/`level` in
+  `migrations/0009_catalog_indexes.sql`), push `WHERE`-able filters down into
+  the SQL query. Don't fetch the whole table and `Array.filter()` in JS —
+  that pays the full fetch/join cost on every filtered request and leaves the
+  index unused.
+- Any non-`next/image` asset (raw `<img>`, `<video poster>`, etc.) still needs
+  explicit `width`/`height` to avoid layout shift, since nothing resizes it
+  at runtime either.
+
+## Client bundle
+
+- Don't let a client SDK only needed for signed-in flows (e.g. `firebase/auth`)
+  load unconditionally on pages anonymous visitors hit most (home, catalog
+  browsing). Lazy-init it, or gate it behind the auth-related UI that actually
+  needs it.
+
+## Static asset caching
+
+- `public/_headers`'s long-cache rule only covers `/_next/static/*` (content-hashed).
+  Anything else served straight from `public/` (posters, avatars, logo) needs
+  its own explicit `Cache-Control` rule there too — it won't get one by default.
+
 ## When adding/expanding mock or seed data at scale
 
 Before considering a data-scaling task (like growing a catalog) done, sanity-check

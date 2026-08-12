@@ -11,6 +11,7 @@
  * (fresh clone before the first `npm run db:migrate:local`) or a real D1
  * error occurs — see `resolveCatalog()`.
  */
+import "server-only";
 import type { Locale } from "@/lib/i18n/config";
 import {
   localizeInstructor,
@@ -25,7 +26,10 @@ import {
   getRoutineBySlug,
   getRoutinesByInstructor,
 } from "@/lib/routines";
-import type { CatalogRepository } from "@/lib/server/catalog/repository";
+import type {
+  CatalogRepository,
+  RoutineFilters,
+} from "@/lib/server/catalog/repository";
 import type {
   CatalogInstructor,
   CatalogRoutine,
@@ -85,8 +89,16 @@ function toCatalogInstructor(
 }
 
 export const mockCatalogRepository: CatalogRepository = {
-  async listRoutines(locale) {
+  async listRoutines(locale, filters?: RoutineFilters) {
     return getAllRoutines()
+      .filter((routine) => {
+        if (filters?.instructor && routine.instructorSlug !== filters.instructor) {
+          return false;
+        }
+        if (filters?.style && routine.style !== filters.style) return false;
+        if (filters?.level && routine.level !== filters.level) return false;
+        return true;
+      })
       .map((routine) => toCatalogRoutine(locale, routine.slug))
       .filter((item): item is CatalogRoutine => item !== null);
   },

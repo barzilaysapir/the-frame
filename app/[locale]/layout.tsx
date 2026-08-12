@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { AuthProvider } from "@/components/AuthProvider";
 import { FavoritesProvider } from "@/components/favorites/FavoritesProvider";
 import { LocalePrefSync } from "@/components/LocalePrefSync";
-import { Header } from "@/components/Header";
+import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/Footer";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import {

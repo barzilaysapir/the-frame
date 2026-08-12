@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import {
   jsonError,
+  readJsonBody,
   requireAppDb,
   requireFirebaseClaims,
 } from "@/lib/server/api/auth-context";
+import { enforceWriteRateLimit } from "@/lib/server/api/rate-limit";
 import {
   updateUserProfile,
   upsertUserFromClaims,
@@ -27,6 +29,8 @@ function serializeUser(user: AppUser) {
   };
 }
 
+const MAX_DISPLAY_NAME_LENGTH = 100;
+
 export async function GET(request: NextRequest) {
   try {
     const claims = await requireFirebaseClaims(request);
@@ -44,14 +48,15 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const claims = await requireFirebaseClaims(request);
+    await enforceWriteRateLimit(claims.uid);
     const db = await requireAppDb();
     // Ensure the row exists before patching (first-login race).
     await upsertUserFromClaims(db, claims);
 
-    const body = (await request.json()) as {
+    const body = await readJsonBody<{
       displayName?: unknown;
       localePref?: unknown;
-    };
+    }>(request);
 
     const patch: { displayName?: string; localePref?: Locale } = {};
     if (typeof body.displayName === "string") {
@@ -59,6 +64,12 @@ export async function PATCH(request: NextRequest) {
       if (!trimmed) {
         return NextResponse.json(
           { error: "displayName must not be empty" },
+          { status: 400 },
+        );
+      }
+      if (trimmed.length > MAX_DISPLAY_NAME_LENGTH) {
+        return NextResponse.json(
+          { error: `displayName must be at most ${MAX_DISPLAY_NAME_LENGTH} characters` },
           { status: 400 },
         );
       }
