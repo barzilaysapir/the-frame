@@ -317,7 +317,11 @@ function generateRoutines(newInstructors: GeneratedInstructor[]): GeneratedRouti
   for (const style of styles) {
     const count = ROUTINE_COUNT_BY_STYLE[style];
     const instructors = instructorsForStyle(style, newInstructors);
-    const songs = SONG_NAME_BANK.filter((s) => s.styles.includes(style));
+    // This script's local StyleKey (below) predates lib/routines.ts's final
+    // DanceStyleKey set and still carries "commercial", which was dropped
+    // before the catalog shipped — cast rather than widening the live
+    // DanceStyleKey type just to satisfy this one-off, already-run script.
+    const songs = SONG_NAME_BANK.filter((s) => (s.styles as string[]).includes(style));
     const styleLabelHe = STYLE_LABEL_HE[style];
     const styleLabelEn = STYLE_LABEL_EN[style];
 
