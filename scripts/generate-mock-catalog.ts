@@ -13,7 +13,6 @@ import { fileURLToPath } from "node:url";
 import {
   TEACHER_NAME_BANK,
   SONG_NAME_BANK,
-  type TeacherNameSeed,
   type SongSeed,
 } from "../mocks/name-bank.ts";
 
