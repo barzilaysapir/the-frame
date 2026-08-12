@@ -12,6 +12,12 @@
 	"main": ".open-next/worker.js",
 	"name": "the-frame",
 	"account_id": "8739cda6b7162b44320b8f637feb219a",
+	"routes": [
+		{
+			"pattern": "theframe.bybarzilay.com",
+			"custom_domain": true
+		}
+	],
 	"compatibility_date": "2026-08-04",
 	"compatibility_flags": [
 		"nodejs_compat",
