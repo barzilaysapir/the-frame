@@ -11,20 +11,28 @@
     "start": "next start",
     "lint": "eslint .",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload"
+    "generate:mock-catalog": "node scripts/generate-mock-catalog.ts",
+    "compress:generated-media": "node scripts/compress-generated-media.mjs",
+    "db:migrate:local": "wrangler d1 migrations apply the-frame-catalog --local",
+    "db:migrate:remote": "wrangler d1 migrations apply the-frame-catalog --remote",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload -- --keep-vars"
   },
   "dependencies": {
+    "@formatjs/intl-localematcher": "^0.8.13",
     "clsx": "^2.1.1",
     "firebase": "^12.17.1",
+    "jose": "^6.2.8",
     "lucide-react": "^0.462.0",
+    "negotiator": "^1.0.0",
     "next": "^16.3.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
     "@opennextjs/cloudflare": "^1.20.2",
+    "@types/negotiator": "^0.6.4",
     "@types/node": "^20.14.10",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
@@ -32,6 +40,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.0",
     "postcss": "^8.4.39",
+    "sharp": "^0.35.3",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.3",
     "wrangler": "^4.119.0"

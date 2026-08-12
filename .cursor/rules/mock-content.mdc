@@ -1,0 +1,39 @@
+---
+description: Keep UI translations separate from mock catalog; catalog is temporary until server APIs
+alwaysApply: true
+---
+
+# Translations vs mocks vs server
+
+## Translations (`dictionaries/`)
+
+UI chrome only: nav, page chrome, auth, player controls, shared labels.
+
+These stay in the client bundle (or static messages). Do **not** put catalog/CMS fields here.
+
+## Mocks (`mocks/` + structural records in `lib/`)
+
+Temporary stand-ins for **server-backed catalog data**. Assume they will be replaced by API/CMS responses (often already localized for the request locale).
+
+Includes:
+
+- `mocks/content/{he,en}.json` — demo localized catalog copy
+- `mocks/name-bank.ts` — seed pools for new demo rows
+- `lib/routines.ts` / `lib/instructors.ts` — structural demo records (slugs, keys, media, pricing)
+
+Rules:
+
+- Do not treat bank names or song/artist pairs as final/legal content
+- Instagram URLs may be placeholders — replace only with URLs the user supplies
+- Prefer `mocks/name-bank.ts` for new demo rows
+- Resolve mock catalog copy via `getMockContent` / `lib/i18n/localize.ts`, not UI dictionaries
+- When adding features, keep a clear boundary: UI strings in `dictionaries/`, catalog entities fetched (today: mocked) through catalog helpers — do not hard-wire demo rows deeper into components than necessary
+
+## Will come from the server (do not bake as permanent client data)
+
+- Routines / tutorials (metadata, media, chapters, pricing, technique, descriptions)
+- Teachers / instructors (name, bio, role/style, avatar, Instagram)
+- Catalog taxonomy labels when they are content (styles, levels, tags) for a locale
+- User-specific data (purchases, account library, auth profile beyond Firebase client session)
+
+Prefer `lib/server/catalog` (and `/api/v1/*`) for catalog reads. **Primary store is the shared app D1** (`DB` binding; database name `the-frame-catalog`), seeded from the mock catalog (`migrations/0002_catalog_seed.sql`). Users + purchases live in the same DB (`migrations/0003_users_and_purchases.sql`). In-memory mocks remain as a catalog fallback when the D1 binding is unavailable (e.g. plain `next dev`).

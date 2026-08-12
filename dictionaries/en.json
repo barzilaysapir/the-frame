@@ -1,0 +1,242 @@
+{
+  "meta": {
+    "siteTitle": "The Frame by Barzilay — Learn the combo",
+    "siteDescription": "Premium dance teachers. Learn individual combinations, frame by frame."
+  },
+  "nav": {
+    "tutorials": "Library",
+    "styles": "Styles",
+    "teachers": "Teachers",
+    "favorites": "Favorites",
+    "about": "About",
+    "login": "Log in",
+    "getAccess": "Get access",
+    "account": "My account",
+    "signOut": "Sign out",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": "Language"
+  },
+  "home": {
+    "title": "Learn the combo, frame by frame.",
+    "subtitle": "Premium dance teachers for dancers who want to own one combination deeply — mirrored, slowed down, and broken into counts.",
+    "cta": "Watch a sample combination"
+  },
+  "tutorials": {
+    "title": "Library",
+    "subtitle": "Every tutorial includes a full count breakdown, mirrored and slowed practice modes, and a 30-day rental.",
+    "filterAria": "Filter the library",
+    "filterTeacher": "Teacher",
+    "filterStyle": "Style",
+    "filterLevel": "Level",
+    "filterAll": "All",
+    "clearFilters": "Clear filters",
+    "resultOne": "1 result",
+    "resultNone": "No results",
+    "resultMany": "{count} results",
+    "empty": "No combinations to show in the library right now.",
+    "viewRoutine": "View combination",
+    "taughtBy": "Taught by {name}",
+    "favoriteAdd": "Add to favorites",
+    "favoriteRemove": "Remove from favorites"
+  },
+  "favorites": {
+    "metaTitle": "Favorites",
+    "title": "Favorites",
+    "subtitle": "Combinations you’ve saved for later.",
+    "loading": "Loading…",
+    "loggedOutTitle": "Sign in to see your favorites",
+    "loggedOutBody": "Save combinations with the heart icon and find them here once you’re signed in.",
+    "loginCta": "Log in",
+    "empty": "You haven’t favorited any combinations yet."
+  },
+  "teachers": {
+    "title": "Our teachers",
+    "subtitle": "Every teacher at The Frame brings their own professional background — jazz funk, hip hop, and heels — and builds each combination so you can learn it deeply, frame by frame.",
+    "routineOne": "1 combination on the site",
+    "routineMany": "{count} combinations on the site",
+    "instagramAria": "{name} on Instagram",
+    "tutorialsAria": "{name}'s library"
+  },
+  "styles": {
+    "title": "Dance styles",
+    "subtitle": "Browse the library by style and dive into the one you want to learn.",
+    "routineOne": "1 combination",
+    "routineMany": "{count} combinations",
+    "browseAria": "Browse {name} combinations"
+  },
+  "about": {
+    "metaTitle": "About",
+    "metaDescription": "The Frame by Barzilay is a premium dance platform that teaches one combination deeply — frame by frame.",
+    "founder": {
+      "title": "Behind The Frame",
+      "body": "The Frame, by Barzilay. Created by Sapir Barzilay, a professional dancer and hip-hop teacher who also works as a video editor and web developer. Sapir combines both of her worlds, dance and digital, to build a learning platform that answers dancers' artistic needs alongside technological and technical ones.",
+      "cta": "More about me at bybarzilay.com"
+    }
+  },
+  "login": {
+    "metaTitle": "Log in",
+    "title": "Log in",
+    "subtitle": "Sign in to access the combinations you’ve rented.",
+    "unavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local and enable the Google provider in the console.",
+    "continueGoogle": "Continue with Google",
+    "or": "or",
+    "phoneLabel": "Phone number",
+    "sendCode": "Send verification code",
+    "sendingCode": "Sending code…",
+    "codeLabel": "Verification code",
+    "verifyCode": "Verify code",
+    "verifying": "Verifying…",
+    "changePhone": "Change phone number",
+    "invalidPhoneInput": "Enter a valid Israeli phone number, e.g. 050-1234567.",
+    "errors": {
+      "invalidPhone": "That phone number isn’t valid. Try again with a full Israeli number.",
+      "invalidCode": "That code is incorrect. Check the message and try again.",
+      "tooMany": "Too many attempts. Try again later.",
+      "popupClosed": "The window closed before sign-in finished.",
+      "unauthorizedDomain": "This domain isn’t authorized in Firebase. Add it under Authentication → Settings → Authorized domains (e.g. localhost or your LAN IP).",
+      "providerDisabled": "The Google provider isn’t enabled yet in Firebase Authentication.",
+      "popupBlocked": "The browser blocked the sign-in popup. Allow popups and try again.",
+      "network": "Network error. Check your connection and try again.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "account": {
+    "metaTitle": "My account",
+    "greeting": "Hi, {name}",
+    "subtitle": "Your rented combinations will appear here for the active rental period, with breakdowns, mirrored practice, and slowed practice.",
+    "empty": "You haven’t rented any combinations yet.",
+    "loadFailed": "Couldn’t load your library. Please try again.",
+    "unavailable": "My account isn’t available yet — the site is still being built.",
+    "loading": "Loading…",
+    "fallbackName": "dancer",
+    "nav": {
+      "library": "Library",
+      "profile": "Profile",
+      "settings": "Settings"
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Your The Frame account details.",
+      "displayName": "Display name",
+      "email": "Email",
+      "emailHint": "Email comes from your sign-in provider and can’t be edited here.",
+      "phone": "Phone",
+      "noContact": "No contact details",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "Profile updated.",
+      "saveFailed": "Couldn’t save. Please try again.",
+      "nameRequired": "Enter a display name."
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Language, account, and sign out.",
+      "languageTitle": "Language",
+      "languageBody": "Choose the site interface language.",
+      "sessionTitle": "Account",
+      "sessionBody": "Details for your current session.",
+      "signedInAs": "Signed in as",
+      "email": "Email",
+      "uid": "User ID",
+      "signOut": "Sign out"
+    }
+  },
+  "checkout": {
+    "metaTitle": "Checkout",
+    "title": "Start learning",
+    "subtitle": "Choose a plan and complete payment.",
+    "backToRoutine": "Back to combination",
+    "loading": "Loading…",
+    "paymentTitle": "Payment",
+    "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
+    "signInPrompt": "Sign in with Google to continue to payment.",
+    "otherSignIn": "More sign-in options",
+    "signedInAs": "Signed in as",
+    "payCta": "Continue to payment",
+    "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
+    "plans": {
+      "chooseLabel": "Choose a plan",
+      "rental": {
+        "title": "This combination",
+        "description": "30 days of viewing access to this combination only",
+        "priceNote": "launch price · one-time",
+        "paymentBody": "One-time payment for 30 days of viewing access to this combination.",
+        "guarantees": [
+          "30 days of viewing access to this combination",
+          "Slowed and mirrored practice modes",
+          "Watch on any device during your access period",
+          "7-day money-back guarantee"
+        ]
+      },
+      "subscription": {
+        "title": "Monthly site subscription",
+        "description": "Access every combination on The Frame, renews each month",
+        "priceNote": "launch price · per month",
+        "paymentBody": "Monthly subscription for every combination on the site.",
+        "guarantees": [
+          "Access to every combination on the site",
+          "New releases included while subscribed",
+          "Cancel anytime",
+          "7-day money-back guarantee"
+        ]
+      }
+    }
+  },
+  "notFound": {
+    "title": "This page wasn’t found",
+    "body": "The link may be wrong or the page was removed. Head home or browse the library."
+  },
+  "routine": {
+    "metaTitle": "{title} — {style} combination",
+    "metaDescription": "Learn '{title}', a {style} combination with {instructor}. Full breakdown, mirrored practice, and slowed counts included.",
+    "previewTitle": "{title} — preview",
+    "taughtBy": "Taught by",
+    "includedHeading": "What’s included",
+    "detailLength": "Length",
+    "detailBpm": "Tempo",
+    "detailTechnique": "Key technique focus",
+    "earlyBirdTitle": "Early bird —",
+    "earlyBirdDiscount": "50% off",
+    "earlyBirdFor": "for the first {count} dancers",
+    "earlyBirdAria": "Time left for early-bird pricing",
+    "earlyBirdSpots": "{remaining} of {total} spots left",
+    "unitDays": "days",
+    "unitHours": "hrs",
+    "unitMinutes": "min",
+    "unitSeconds": "sec",
+    "pricingNote": "30-day access or monthly site plan · choose at checkout",
+    "getAccessNow": "Start learning",
+    "secureNote": "Secure checkout · access starts right after payment",
+    "guarantees": [
+      "30 days of viewing access to this combination",
+      "Slowed and mirrored practice modes",
+      "Watch on any device during your access period",
+      "7-day money-back guarantee"
+    ]
+  },
+  "common": {
+    "browseTutorials": "Browse the library",
+    "home": "Back to home"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "socialAria": "The Frame on {platform}"
+  },
+  "player": {
+    "defaultTitle": "Combination preview",
+    "playVideo": "Play video",
+    "mirrored": "Mirrored",
+    "seek": "Video progress",
+    "pause": "Pause",
+    "play": "Play",
+    "unmute": "Unmute",
+    "mute": "Mute",
+    "volume": "Volume",
+    "speed": "Playback speed",
+    "normalSpeed": "Normal",
+    "mirrorMode": "Mirror mode",
+    "exitFullscreen": "Exit fullscreen",
+    "fullscreen": "Fullscreen"
+  }
+}

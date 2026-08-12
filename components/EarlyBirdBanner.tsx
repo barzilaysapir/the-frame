@@ -1,12 +1,23 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
+import { formatMessage } from "@/lib/i18n/get-dictionary";
 
 interface EarlyBirdBannerProps {
-  /** ISO timestamp the early-bird pricing window closes. */
   endsAt: string;
   spotsRemaining?: number;
   totalSpots?: number;
+  labels: {
+    title: string;
+    discount: string;
+    forFirst: string;
+    aria: string;
+    spots: string;
+    unitDays: string;
+    unitHours: string;
+    unitMinutes: string;
+    unitSeconds: string;
+  };
 }
 
 interface TimeLeft {
@@ -29,8 +40,32 @@ function msToTimeLeft(diff: number): TimeLeft {
   };
 }
 
-function subscribeToClockTick(callback: () => void) {
-  const interval = setInterval(callback, 1000);
+function getSecondsLeft(endsAt: string): number {
+  return Math.floor(getMsLeft(endsAt) / 1000);
+}
+
+const clientSnapshots = new Map<string, number>();
+
+function getClientSecondsLeft(endsAt: string): number {
+  const cached = clientSnapshots.get(endsAt);
+  if (cached !== undefined) return cached;
+  const next = getSecondsLeft(endsAt);
+  clientSnapshots.set(endsAt, next);
+  return next;
+}
+
+function subscribeToEndsAt(endsAt: string, onStoreChange: () => void) {
+  if (!clientSnapshots.has(endsAt)) {
+    clientSnapshots.set(endsAt, getSecondsLeft(endsAt));
+  }
+
+  const interval = setInterval(() => {
+    const next = getSecondsLeft(endsAt);
+    if (clientSnapshots.get(endsAt) === next) return;
+    clientSnapshots.set(endsAt, next);
+    onStoreChange();
+  }, 1000);
+
   return () => clearInterval(interval);
 }
 
@@ -38,27 +73,24 @@ export function EarlyBirdBanner({
   endsAt,
   spotsRemaining = 12,
   totalSpots = 50,
+  labels,
 }: EarlyBirdBannerProps) {
-  // Ties the countdown to the real clock (an external system) via
-  // useSyncExternalStore instead of setState-in-effect. The server
-  // snapshot is null so SSR markup and the first client render match;
-  // the real countdown fills in once the client subscribes.
-  const msLeft = useSyncExternalStore(
-    subscribeToClockTick,
-    () => getMsLeft(endsAt),
-    () => null
+  const secondsLeft = useSyncExternalStore(
+    (onStoreChange) => subscribeToEndsAt(endsAt, onStoreChange),
+    () => getClientSecondsLeft(endsAt),
+    () => null,
   );
   const timeLeft = useMemo(
-    () => (msLeft === null ? null : msToTimeLeft(msLeft)),
-    [msLeft]
+    () => (secondsLeft === null ? null : msToTimeLeft(secondsLeft * 1000)),
+    [secondsLeft],
   );
 
   const units: { label: string; value: number }[] = timeLeft
     ? [
-        { label: "ימים", value: timeLeft.days },
-        { label: "שעות", value: timeLeft.hours },
-        { label: "דקות", value: timeLeft.minutes },
-        { label: "שניות", value: timeLeft.seconds },
+        { label: labels.unitDays, value: timeLeft.days },
+        { label: labels.unitHours, value: timeLeft.hours },
+        { label: labels.unitMinutes, value: timeLeft.minutes },
+        { label: labels.unitSeconds, value: timeLeft.seconds },
       ]
     : [];
 
@@ -66,9 +98,10 @@ export function EarlyBirdBanner({
     <div className="border-y border-frame-border bg-frame-panel">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 py-3 text-center sm:flex-row sm:justify-between sm:px-6 sm:text-start lg:px-8">
         <p className="text-sm font-semibold text-white">
-          השקה מוקדמת — <span className="text-frame-magenta">50% הנחה</span>
+          {labels.title}{" "}
+          <span className="text-frame-magenta">{labels.discount}</span>
           <span className="ms-1 hidden font-normal text-frame-silver sm:inline">
-            ל-{totalSpots} הרקדנים הראשונים
+            {formatMessage(labels.forFirst, { count: totalSpots })}
           </span>
         </p>
 
@@ -77,11 +110,11 @@ export function EarlyBirdBanner({
             dir="ltr"
             className="flex items-baseline gap-1"
             aria-live="polite"
-            aria-label="זמן שנותר למחיר ההשקה המוקדמת"
+            aria-label={labels.aria}
           >
             {units.map((unit, i) => (
               <div key={unit.label} className="flex items-baseline gap-1">
-                {i > 0 && <span className="text-frame-border">:</span>}
+                {i > 0 ? <span className="text-frame-border">:</span> : null}
                 <div className="flex flex-col items-center">
                   <span className="font-display text-lg font-bold leading-none tabular-nums text-white">
                     {unit.value.toString().padStart(2, "0")}
@@ -97,7 +130,10 @@ export function EarlyBirdBanner({
           <span className="hidden h-7 w-px bg-frame-border md:block" />
 
           <p className="hidden text-xs font-medium text-frame-silver md:block">
-            {spotsRemaining} מתוך {totalSpots} מקומות נותרו
+            {formatMessage(labels.spots, {
+              remaining: spotsRemaining,
+              total: totalSpots,
+            })}
           </p>
         </div>
       </div>

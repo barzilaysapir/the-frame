@@ -1,0 +1,499 @@
+{
+  "minutes": "דקות",
+  "styles": {
+    "jazz-funk": "ג'אז פאנק",
+    "hip-hop": "היפ הופ",
+    "heels": "עקבים",
+    "jazz": "ג'אז",
+    "afro": "אפרו",
+    "dancehall": "דאנסהול",
+    "voguing": "ווגינג"
+  },
+  "levels": {
+    "intermediate": "בינוני",
+    "advanced": "מתקדם",
+    "all-levels": "כל הרמות"
+  },
+  "chapters": {
+    "full-performance": "הופעה מלאה",
+    "breakdown": "פירוק תנועות (ספירות)",
+    "slow-practice": "תרגול איטי (50%)",
+    "full-speed": "תרגול במהירות מלאה (100%)"
+  },
+  "routines": {
+    "levitating": {
+      "technique": "מעברי משקל קרקעיים ופרפורמנס",
+      "description": "קומבינציית ג'אז פאנק אנרגטית עם דגש על גרוב ופרפורמנס, מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה."
+    },
+    "kill-bill": {
+      "technique": "גרוב, פוליריתמיקה ועבודת רצפה",
+      "description": "קומבינציית היפ הופ עוצמתית שבנויה על גרוב עמוק ומעברים חדים בין התנועות, לרקדנים שרוצים להעמיק בסגנון עם דגש טכני גבוה."
+    },
+    "earned-it": {
+      "technique": "אורך קו, שליטה בעקב ופרפורמנס",
+      "description": "קומבינציית עקבים מפתה ובטוחה, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה — כולל דגשים על יציבה, אורך קו ופרפורמנס."
+    },
+    "levitating-maya-azulai": {
+      "technique": "מעברי משקל קרקעיים ופרפורמנס",
+      "description": "קומבינציית ג'אז פאנק אנרגטית על \"Levitating\" של Dua Lipa, עם דגש על גרוב ופרפורמנס — מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה."
+    },
+    "dont-start-now-tali-mizrahi": {
+      "technique": "גרוב, איזולציות ודיוק תנועה",
+      "description": "שגרת ג'אז פאנק קצבית ל\"Don't Start Now\" (Dua Lipa), שמלמדת שליטה במעברי משקל ותנועה חלקה מבלי לוותר על אנרגייה."
+    },
+    "physical-yael-bar": {
+      "technique": "קצב, ליין ואנרגיית ביצוע",
+      "description": "קומבינציית ג'אז פאנק אנרגטית על \"Physical\" של Dua Lipa, עם דגש על גרוב ופרפורמנס — מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה."
+    },
+    "about-damn-time-maya-azulai": {
+      "technique": "מעברי משקל קרקעיים ופרפורמנס",
+      "description": "שגרת ג'אז פאנק קצבית ל\"About Damn Time\" (Lizzo), שמלמדת שליטה במעברי משקל ותנועה חלקה מבלי לוותר על אנרגייה."
+    },
+    "good-as-hell-tali-mizrahi": {
+      "technique": "גרוב, איזולציות ודיוק תנועה",
+      "description": "קומבינציית ג'אז פאנק אנרגטית על \"Good as Hell\" של Lizzo, עם דגש על גרוב ופרפורמנס — מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה."
+    },
+    "flowers-yael-bar": {
+      "technique": "קצב, ליין ואנרגיית ביצוע",
+      "description": "שגרת ג'אז פאנק קצבית ל\"Flowers\" (Miley Cyrus), שמלמדת שליטה במעברי משקל ותנועה חלקה מבלי לוותר על אנרגייה."
+    },
+    "shirt-maya-azulai": {
+      "technique": "מעברי משקל קרקעיים ופרפורמנס",
+      "description": "קומבינציית ג'אז פאנק אנרגטית על \"Shirt\" של SZA, עם דגש על גרוב ופרפורמנס — מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה."
+    },
+    "blinding-lights-tali-mizrahi": {
+      "technique": "גרוב, איזולציות ודיוק תנועה",
+      "description": "שגרת ג'אז פאנק קצבית ל\"Blinding Lights\" (The Weeknd), שמלמדת שליטה במעברי משקל ותנועה חלקה מבלי לוותר על אנרגייה."
+    },
+    "need-to-know-yael-bar": {
+      "technique": "קצב, ליין ואנרגיית ביצוע",
+      "description": "קומבינציית ג'אז פאנק אנרגטית על \"Need to Know\" של Doja Cat, עם דגש על גרוב ופרפורמנס — מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה."
+    },
+    "kiss-me-more-maya-azulai": {
+      "technique": "מעברי משקל קרקעיים ופרפורמנס",
+      "description": "שגרת ג'אז פאנק קצבית ל\"Kiss Me More\" (Doja Cat ft. SZA), שמלמדת שליטה במעברי משקל ותנועה חלקה מבלי לוותר על אנרגייה."
+    },
+    "woman-tali-mizrahi": {
+      "technique": "גרוב, איזולציות ודיוק תנועה",
+      "description": "קומבינציית ג'אז פאנק אנרגטית על \"Woman\" של Doja Cat, עם דגש על גרוב ופרפורמנס — מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה."
+    },
+    "nice-for-what-yael-bar": {
+      "technique": "קצב, ליין ואנרגיית ביצוע",
+      "description": "שגרת ג'אז פאנק קצבית ל\"Nice For What\" (Drake), שמלמדת שליטה במעברי משקל ותנועה חלקה מבלי לוותר על אנרגייה."
+    },
+    "as-it-was-maya-azulai": {
+      "technique": "מעברי משקל קרקעיים ופרפורמנס",
+      "description": "קומבינציית ג'אז פאנק אנרגטית על \"As It Was\" של Harry Styles, עם דגש על גרוב ופרפורמנס — מושלמת לרקדנים שרוצים לשדרג את הביטוי האישי שלהם על הבמה."
+    },
+    "anti-hero-tali-mizrahi": {
+      "technique": "גרוב, איזולציות ודיוק תנועה",
+      "description": "שגרת ג'אז פאנק קצבית ל\"Anti-Hero\" (Taylor Swift), שמלמדת שליטה במעברי משקל ותנועה חלקה מבלי לוותר על אנרגייה."
+    },
+    "about-damn-time-daniel-cohen": {
+      "technique": "גרוב, פוליריתמיקה ועבודת רצפה",
+      "description": "קומבינציית היפ הופ עוצמתית ל\"About Damn Time\" של Lizzo, שבנויה על גרוב עמוק ומעברים חדים בין התנועות."
+    },
+    "kill-bill-oran-ben-david": {
+      "technique": "פירוק שיטתי וקואורדינציה",
+      "description": "שגרת היפ הופ עם דגש טכני גבוה ל\"Kill Bill\" (SZA) — לרקדנים שרוצים להעמיק בסגנון ובפירוק התנועות."
+    },
+    "creepin-amit-sharabi": {
+      "technique": "עוצמה, גרוב וסטייל אישי",
+      "description": "קומבינציית היפ הופ עוצמתית ל\"Creepin'\" של Metro Boomin, The Weeknd, 21 Savage, שבנויה על גרוב עמוק ומעברים חדים בין התנועות."
+    },
+    "first-class-daniel-cohen": {
+      "technique": "גרוב, פוליריתמיקה ועבודת רצפה",
+      "description": "שגרת היפ הופ עם דגש טכני גבוה ל\"First Class\" (Jack Harlow) — לרקדנים שרוצים להעמיק בסגנון ובפירוק התנועות."
+    },
+    "industry-baby-oran-ben-david": {
+      "technique": "פירוק שיטתי וקואורדינציה",
+      "description": "קומבינציית היפ הופ עוצמתית ל\"Industry Baby\" של Lil Nas X & Jack Harlow, שבנויה על גרוב עמוק ומעברים חדים בין התנועות."
+    },
+    "god-s-plan-amit-sharabi": {
+      "technique": "עוצמה, גרוב וסטייל אישי",
+      "description": "שגרת היפ הופ עם דגש טכני גבוה ל\"God's Plan\" (Drake) — לרקדנים שרוצים להעמיק בסגנון ובפירוק התנועות."
+    },
+    "nice-for-what-daniel-cohen": {
+      "technique": "גרוב, פוליריתמיקה ועבודת רצפה",
+      "description": "קומבינציית היפ הופ עוצמתית ל\"Nice For What\" של Drake, שבנויה על גרוב עמוק ומעברים חדים בין התנועות."
+    },
+    "savage-oran-ben-david": {
+      "technique": "פירוק שיטתי וקואורדינציה",
+      "description": "שגרת היפ הופ עם דגש טכני גבוה ל\"Savage\" (Megan Thee Stallion) — לרקדנים שרוצים להעמיק בסגנון ובפירוק התנועות."
+    },
+    "body-amit-sharabi": {
+      "technique": "עוצמה, גרוב וסטייל אישי",
+      "description": "קומבינציית היפ הופ עוצמתית ל\"Body\" של Megan Thee Stallion, שבנויה על גרוב עמוק ומעברים חדים בין התנועות."
+    },
+    "get-ur-freak-on-daniel-cohen": {
+      "technique": "גרוב, פוליריתמיקה ועבודת רצפה",
+      "description": "שגרת היפ הופ עם דגש טכני גבוה ל\"Get Ur Freak On\" (Missy Elliott) — לרקדנים שרוצים להעמיק בסגנון ובפירוק התנועות."
+    },
+    "work-it-oran-ben-david": {
+      "technique": "פירוק שיטתי וקואורדינציה",
+      "description": "קומבינציית היפ הופ עוצמתית ל\"Work It\" של Missy Elliott, שבנויה על גרוב עמוק ומעברים חדים בין התנועות."
+    },
+    "sicko-mode-amit-sharabi": {
+      "technique": "עוצמה, גרוב וסטייל אישי",
+      "description": "שגרת היפ הופ עם דגש טכני גבוה ל\"Sicko Mode\" (Travis Scott) — לרקדנים שרוצים להעמיק בסגנון ובפירוק התנועות."
+    },
+    "humble-daniel-cohen": {
+      "technique": "גרוב, פוליריתמיקה ועבודת רצפה",
+      "description": "קומבינציית היפ הופ עוצמתית ל\"Humble\" של Kendrick Lamar, שבנויה על גרוב עמוק ומעברים חדים בין התנועות."
+    },
+    "dna-oran-ben-david": {
+      "technique": "פירוק שיטתי וקואורדינציה",
+      "description": "שגרת היפ הופ עם דגש טכני גבוה ל\"DNA\" (Kendrick Lamar) — לרקדנים שרוצים להעמיק בסגנון ובפירוק התנועות."
+    },
+    "kill-bill-noa-sagi": {
+      "technique": "אורך קו, שליטה בעקב ופרפורמנס",
+      "description": "קומבינציית עקבים מפתה ובטוחה ל\"Kill Bill\" של SZA, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה."
+    },
+    "snooze-maya-rozin": {
+      "technique": "יציבה, בטחון ותנועתיות בעקב",
+      "description": "שגרת עקבים עם דגשים על יציבה, אורך קו ופרפורמנס, ל\"Snooze\" (SZA)."
+    },
+    "shirt-noga-eliyahu": {
+      "technique": "גרייס וקונטרול על הבמה",
+      "description": "קומבינציית עקבים מפתה ובטוחה ל\"Shirt\" של SZA, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה."
+    },
+    "earned-it-noa-sagi": {
+      "technique": "אורך קו, שליטה בעקב ופרפורמנס",
+      "description": "שגרת עקבים עם דגשים על יציבה, אורך קו ופרפורמנס, ל\"Earned It\" (The Weeknd)."
+    },
+    "die-for-you-maya-rozin": {
+      "technique": "יציבה, בטחון ותנועתיות בעקב",
+      "description": "קומבינציית עקבים מפתה ובטוחה ל\"Die For You\" של The Weeknd, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה."
+    },
+    "creepin-noga-eliyahu": {
+      "technique": "גרייס וקונטרול על הבמה",
+      "description": "שגרת עקבים עם דגשים על יציבה, אורך קו ופרפורמנס, ל\"Creepin'\" (Metro Boomin, The Weeknd, 21 Savage)."
+    },
+    "need-to-know-noa-sagi": {
+      "technique": "אורך קו, שליטה בעקב ופרפורמנס",
+      "description": "קומבינציית עקבים מפתה ובטוחה ל\"Need to Know\" של Doja Cat, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה."
+    },
+    "kiss-me-more-maya-rozin": {
+      "technique": "יציבה, בטחון ותנועתיות בעקב",
+      "description": "שגרת עקבים עם דגשים על יציבה, אורך קו ופרפורמנס, ל\"Kiss Me More\" (Doja Cat ft. SZA)."
+    },
+    "body-party-noga-eliyahu": {
+      "technique": "גרייס וקונטרול על הבמה",
+      "description": "קומבינציית עקבים מפתה ובטוחה ל\"Body Party\" של Ciara, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה."
+    },
+    "ride-noa-sagi": {
+      "technique": "אורך קו, שליטה בעקב ופרפורמנס",
+      "description": "שגרת עקבים עם דגשים על יציבה, אורך קו ופרפורמנס, ל\"Ride\" (Ciara)."
+    },
+    "2-on-maya-rozin": {
+      "technique": "יציבה, בטחון ותנועתיות בעקב",
+      "description": "קומבינציית עקבים מפתה ובטוחה ל\"2 On\" של Tinashe, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה."
+    },
+    "distraction-noga-eliyahu": {
+      "technique": "גרייס וקונטרול על הבמה",
+      "description": "שגרת עקבים עם דגשים על יציבה, אורך קו ופרפורמנס, ל\"Distraction\" (Kehlani)."
+    },
+    "me-and-u-noa-sagi": {
+      "technique": "אורך קו, שליטה בעקב ופרפורמנס",
+      "description": "קומבינציית עקבים מפתה ובטוחה ל\"Me & U\" של Cassie, שמלמדת איך לשלוט בעקב מבלי לוותר על טכניקה."
+    },
+    "rock-the-boat-maya-rozin": {
+      "technique": "יציבה, בטחון ותנועתיות בעקב",
+      "description": "שגרת עקבים עם דגשים על יציבה, אורך קו ופרפורמנס, ל\"Rock the Boat\" (Aaliyah)."
+    },
+    "easy-on-me-yasmin-kadosh": {
+      "technique": "טכניקה, קו ועומק רגשי",
+      "description": "קומבינציית ג'אז ליריקה ל\"Easy On Me\" של Adele, עם דגש על עומק רגשי ומוזיקליות."
+    },
+    "rolling-in-the-deep-omer-tzur": {
+      "technique": "מוזיקליות ושליטה בגוף",
+      "description": "שגרת ג'אז טכנית ל\"Rolling in the Deep\" (Adele) — לרקדנים שרוצים לחדד קו וביטוי בגוף."
+    },
+    "stay-with-me-hila-ben-ari": {
+      "technique": "ליריקה ופרפורמנס",
+      "description": "קומבינציית ג'אז ליריקה ל\"Stay With Me\" של Sam Smith, עם דגש על עומק רגשי ומוזיקליות."
+    },
+    "unholy-yasmin-kadosh": {
+      "technique": "טכניקה, קו ועומק רגשי",
+      "description": "שגרת ג'אז טכנית ל\"Unholy\" (Sam Smith ft. Kim Petras) — לרקדנים שרוצים לחדד קו וביטוי בגוף."
+    },
+    "ocean-eyes-omer-tzur": {
+      "technique": "מוזיקליות ושליטה בגוף",
+      "description": "קומבינציית ג'אז ליריקה ל\"Ocean Eyes\" של Billie Eilish, עם דגש על עומק רגשי ומוזיקליות."
+    },
+    "happier-than-ever-hila-ben-ari": {
+      "technique": "ליריקה ופרפורמנס",
+      "description": "שגרת ג'אז טכנית ל\"Happier Than Ever\" (Billie Eilish) — לרקדנים שרוצים לחדד קו וביטוי בגוף."
+    },
+    "best-part-yasmin-kadosh": {
+      "technique": "טכניקה, קו ועומק רגשי",
+      "description": "קומבינציית ג'אז ליריקה ל\"Best Part\" של H.E.R. ft. Daniel Caesar, עם דגש על עומק רגשי ומוזיקליות."
+    },
+    "someone-you-loved-omer-tzur": {
+      "technique": "מוזיקליות ושליטה בגוף",
+      "description": "שגרת ג'אז טכנית ל\"Someone You Loved\" (Lewis Capaldi) — לרקדנים שרוצים לחדד קו וביטוי בגוף."
+    },
+    "my-hair-hila-ben-ari": {
+      "technique": "ליריקה ופרפורמנס",
+      "description": "קומבינציית ג'אז ליריקה ל\"my hair\" של Ariana Grande, עם דגש על עומק רגשי ומוזיקליות."
+    },
+    "be-honest-yasmin-kadosh": {
+      "technique": "טכניקה, קו ועומק רגשי",
+      "description": "שגרת ג'אז טכנית ל\"Be Honest\" (Jorja Smith) — לרקדנים שרוצים לחדד קו וביטוי בגוף."
+    },
+    "if-i-aint-got-you-omer-tzur": {
+      "technique": "מוזיקליות ושליטה בגוף",
+      "description": "קומבינציית ג'אז ליריקה ל\"If I Ain't Got You\" של Alicia Keys, עם דגש על עומק רגשי ומוזיקליות."
+    },
+    "all-of-me-hila-ben-ari": {
+      "technique": "ליריקה ופרפורמנס",
+      "description": "שגרת ג'אז טכנית ל\"All of Me\" (John Legend) — לרקדנים שרוצים לחדד קו וביטוי בגוף."
+    },
+    "get-you-yasmin-kadosh": {
+      "technique": "טכניקה, קו ועומק רגשי",
+      "description": "קומבינציית ג'אז ליריקה ל\"Get You\" של Daniel Caesar ft. Kali Uchis, עם דגש על עומק רגשי ומוזיקליות."
+    },
+    "toronto-omer-tzur": {
+      "technique": "מוזיקליות ושליטה בגוף",
+      "description": "שגרת ג'אז טכנית ל\"Toronto\" (Snoh Aalegra) — לרקדנים שרוצים לחדד קו וביטוי בגוף."
+    },
+    "be-honest-efrat-wolde": {
+      "technique": "איזולציות, גרוב ואנרגייה קבוצתית",
+      "description": "קומבינציית אפרו קצבית ל\"Be Honest\" של Jorja Smith, עם דגש על איזולציות ואנרגייה קבוצתית."
+    },
+    "higher-yonatan-tesfaye": {
+      "technique": "קצב אפריקאי אותנטי ותנועתיות חופשית",
+      "description": "שגרת אפרו שמחה ל\"Higher\" (Tems) — קצב אפריקאי אותנטי ותנועתיות חופשית."
+    },
+    "last-last-efrat-wolde": {
+      "technique": "שליחת אנרגייה ושמחת תנועה",
+      "description": "קומבינציית אפרו קצבית ל\"Last Last\" של Burna Boy, עם דגש על איזולציות ואנרגייה קבוצתית."
+    },
+    "kilometre-yonatan-tesfaye": {
+      "technique": "איזולציות, גרוב ואנרגייה קבוצתית",
+      "description": "שגרת אפרו שמחה ל\"Kilometre\" (Burna Boy) — קצב אפריקאי אותנטי ותנועתיות חופשית."
+    },
+    "essence-efrat-wolde": {
+      "technique": "קצב אפריקאי אותנטי ותנועתיות חופשית",
+      "description": "קומבינציית אפרו קצבית ל\"Essence\" של Wizkid ft. Tems, עם דגש על איזולציות ואנרגייה קבוצתית."
+    },
+    "ojuelegba-yonatan-tesfaye": {
+      "technique": "שליחת אנרגייה ושמחת תנועה",
+      "description": "שגרת אפרו שמחה ל\"Ojuelegba\" (Wizkid) — קצב אפריקאי אותנטי ותנועתיות חופשית."
+    },
+    "fall-efrat-wolde": {
+      "technique": "איזולציות, גרוב ואנרגייה קבוצתית",
+      "description": "קומבינציית אפרו קצבית ל\"Fall\" של Davido, עם דגש על איזולציות ואנרגייה קבוצתית."
+    },
+    "unavailable-yonatan-tesfaye": {
+      "technique": "קצב אפריקאי אותנטי ותנועתיות חופשית",
+      "description": "שגרת אפרו שמחה ל\"Unavailable\" (Davido ft. Musa Keys) — קצב אפריקאי אותנטי ותנועתיות חופשית."
+    },
+    "calm-down-efrat-wolde": {
+      "technique": "שליחת אנרגייה ושמחת תנועה",
+      "description": "קומבינציית אפרו קצבית ל\"Calm Down\" של Rema, עם דגש על איזולציות ואנרגייה קבוצתית."
+    },
+    "dumebi-yonatan-tesfaye": {
+      "technique": "איזולציות, גרוב ואנרגייה קבוצתית",
+      "description": "שגרת אפרו שמחה ל\"Dumebi\" (Rema) — קצב אפריקאי אותנטי ותנועתיות חופשית."
+    },
+    "love-nwantiti-efrat-wolde": {
+      "technique": "קצב אפריקאי אותנטי ותנועתיות חופשית",
+      "description": "קומבינציית אפרו קצבית ל\"Love Nwantiti\" של CKay, עם דגש על איזולציות ואנרגייה קבוצתית."
+    },
+    "free-mind-yonatan-tesfaye": {
+      "technique": "שליחת אנרגייה ושמחת תנועה",
+      "description": "שגרת אפרו שמחה ל\"Free Mind\" (Tems) — קצב אפריקאי אותנטי ותנועתיות חופשית."
+    },
+    "peru-efrat-wolde": {
+      "technique": "איזולציות, גרוב ואנרגייה קבוצתית",
+      "description": "קומבינציית אפרו קצבית ל\"Peru\" של Fireboy DML, עם דגש על איזולציות ואנרגייה קבוצתית."
+    },
+    "rush-yonatan-tesfaye": {
+      "technique": "קצב אפריקאי אותנטי ותנועתיות חופשית",
+      "description": "שגרת אפרו שמחה ל\"Rush\" (Ayra Starr) — קצב אפריקאי אותנטי ותנועתיות חופשית."
+    },
+    "terminator-or-katz": {
+      "technique": "בונס, גרוב ואטיטיוד",
+      "description": "קומבינציית דאנסהול עם בונס ואטיטיוד ל\"Terminator\" של Asake, לרקדנים שרוצים סטייל רחוב אמיתי."
+    },
+    "touch-it-tamir-levy": {
+      "technique": "עוצמה ודיוק בתנועות רגליים",
+      "description": "שגרת דאנסהול באנרגייה גבוהה ל\"Touch It\" (KiDi) — עוצמה ודיוק בתנועות הרגליים."
+    },
+    "temperature-or-katz": {
+      "technique": "אנרגייה גבוהה וסטייל רחוב",
+      "description": "קומבינציית דאנסהול עם בונס ואטיטיוד ל\"Temperature\" של Sean Paul, לרקדנים שרוצים סטייל רחוב אמיתי."
+    },
+    "get-busy-tamir-levy": {
+      "technique": "בונס, גרוב ואטיטיוד",
+      "description": "שגרת דאנסהול באנרגייה גבוהה ל\"Get Busy\" (Sean Paul) — עוצמה ודיוק בתנועות הרגליים."
+    },
+    "family-or-katz": {
+      "technique": "עוצמה ודיוק בתנועות רגליים",
+      "description": "קומבינציית דאנסהול עם בונס ואטיטיוד ל\"Family\" של Popcaan, לרקדנים שרוצים סטייל רחוב אמיתי."
+    },
+    "ova-dweet-tamir-levy": {
+      "technique": "אנרגייה גבוהה וסטייל רחוב",
+      "description": "שגרת דאנסהול באנרגייה גבוהה ל\"Ova Dweet\" (Popcaan) — עוצמה ודיוק בתנועות הרגליים."
+    },
+    "blessed-or-katz": {
+      "technique": "בונס, גרוב ואטיטיוד",
+      "description": "קומבינציית דאנסהול עם בונס ואטיטיוד ל\"Blessed\" של Shenseea, לרקדנים שרוצים סטייל רחוב אמיתי."
+    },
+    "lick-tamir-levy": {
+      "technique": "עוצמה ודיוק בתנועות רגליים",
+      "description": "שגרת דאנסהול באנרגייה גבוהה ל\"Lick\" (Shenseea) — עוצמה ודיוק בתנועות הרגליים."
+    },
+    "bruk-off-yuh-back-or-katz": {
+      "technique": "אנרגייה גבוהה וסטייל רחוב",
+      "description": "קומבינציית דאנסהול עם בונס ואטיטיוד ל\"Bruk Off Yuh Back\" של Konshens, לרקדנים שרוצים סטייל רחוב אמיתי."
+    },
+    "fever-tamir-levy": {
+      "technique": "בונס, גרוב ואטיטיוד",
+      "description": "שגרת דאנסהול באנרגייה גבוהה ל\"Fever\" (Vybz Kartel) — עוצמה ודיוק בתנועות הרגליים."
+    },
+    "so-mi-like-it-or-katz": {
+      "technique": "עוצמה ודיוק בתנועות רגליים",
+      "description": "קומבינציית דאנסהול עם בונס ואטיטיוד ל\"So Mi Like It\" של Spice, לרקדנים שרוצים סטייל רחוב אמיתי."
+    },
+    "coke-tamir-levy": {
+      "technique": "אנרגייה גבוהה וסטייל רחוב",
+      "description": "שגרת דאנסהול באנרגייה גבוהה ל\"Coke\" (Skillibeng) — עוצמה ודיוק בתנועות הרגליים."
+    },
+    "ina-real-life-or-katz": {
+      "technique": "בונס, גרוב ואטיטיוד",
+      "description": "קומבינציית דאנסהול עם בונס ואטיטיוד ל\"Ina Real Life\" של Alkaline, לרקדנים שרוצים סטייל רחוב אמיתי."
+    },
+    "owe-me-nothing-tamir-levy": {
+      "technique": "עוצמה ודיוק בתנועות רגליים",
+      "description": "שגרת דאנסהול באנרגייה גבוהה ל\"Owe Me Nothing\" (Dexta Daps) — עוצמה ודיוק בתנועות הרגליים."
+    },
+    "cant-stop-the-feeling-michal-buzaglo": {
+      "technique": "פרפורמנס וסטייל ווגינג חד",
+      "description": "קומבינציית ווגינג חדה ל\"Can't Stop the Feeling\" של Justin Timberlake, שמשלבת טכניקה עם ביטחון על הבמה."
+    },
+    "unholy-guy-ravid": {
+      "technique": "שילוב טכניקה עם ביטחון על הבמה",
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"Unholy\" (Sam Smith ft. Kim Petras) — סטייל ווגינג לביצועים ואודישנים."
+    },
+    "unavailable-michal-buzaglo": {
+      "technique": "קלינות תנועה וטיימינג מדויק",
+      "description": "קומבינציית ווגינג חדה ל\"Unavailable\" של Davido ft. Musa Keys, שמשלבת טכניקה עם ביטחון על הבמה."
+    },
+    "calm-down-guy-ravid": {
+      "technique": "פרפורמנס וסטייל ווגינג חד",
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"Calm Down\" (Rema) — סטייל ווגינג לביצועים ואודישנים."
+    },
+    "rush-michal-buzaglo": {
+      "technique": "שילוב טכניקה עם ביטחון על הבמה",
+      "description": "קומבינציית ווגינג חדה ל\"Rush\" של Ayra Starr, שמשלבת טכניקה עם ביטחון על הבמה."
+    },
+    "sad-girlz-luv-money-guy-ravid": {
+      "technique": "קלינות תנועה וטיימינג מדויק",
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"Sad Girlz Luv Money\" (Amaarae) — סטייל ווגינג לביצועים ואודישנים."
+    },
+    "blessed-michal-buzaglo": {
+      "technique": "פרפורמנס וסטייל ווגינג חד",
+      "description": "קומבינציית ווגינג חדה ל\"Blessed\" של Shenseea, שמשלבת טכניקה עם ביטחון על הבמה."
+    },
+    "break-my-soul-guy-ravid": {
+      "technique": "שילוב טכניקה עם ביטחון על הבמה",
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"Break My Soul\" (Beyoncé) — סטייל ווגינג לביצועים ואודישנים."
+    },
+    "formation-michal-buzaglo": {
+      "technique": "קלינות תנועה וטיימינג מדויק",
+      "description": "קומבינציית ווגינג חדה ל\"Formation\" של Beyoncé, שמשלבת טכניקה עם ביטחון על הבמה."
+    },
+    "umbrella-guy-ravid": {
+      "technique": "פרפורמנס וסטייל ווגינג חד",
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"Umbrella\" (Rihanna) — סטייל ווגינג לביצועים ואודישנים."
+    },
+    "dont-stop-the-music-michal-buzaglo": {
+      "technique": "שילוב טכניקה עם ביטחון על הבמה",
+      "description": "קומבינציית ווגינג חדה ל\"Don't Stop the Music\" של Rihanna, שמשלבת טכניקה עם ביטחון על הבמה."
+    },
+    "7-rings-guy-ravid": {
+      "technique": "קלינות תנועה וטיימינג מדויק",
+      "description": "שגרת ווגינג עם טיימינג מדויק ל\"7 rings\" (Ariana Grande) — סטייל ווגינג לביצועים ואודישנים."
+    },
+    "break-free-michal-buzaglo": {
+      "technique": "פרפורמנס וסטייל ווגינג חד",
+      "description": "קומבינציית ווגינג חדה ל\"Break Free\" של Ariana Grande, שמשלבת טכניקה עם ביטחון על הבמה."
+    }
+  },
+  "instructors": {
+    "maya-azulai": {
+      "name": "מאיה אזולאי",
+      "bio": "מלמדת ג'אז פאנק — גרוב ופרפורמנס."
+    },
+    "daniel-cohen": {
+      "name": "דניאל כהן",
+      "bio": "מלמד היפ הופ — גרוב, מוזיקליות ופירוק שיטתי."
+    },
+    "noa-sagi": {
+      "name": "נועה שגיא",
+      "bio": "מלמדת עקבים — שליטה בעקב, אורך קו ופרפורמנס."
+    },
+    "tali-mizrahi": {
+      "name": "טלי מזרחי",
+      "bio": "מלמדת ג'אז פאנק — גרוב ופרפורמנס."
+    },
+    "yael-bar": {
+      "name": "יעל בר",
+      "bio": "מלמדת ג'אז פאנק — מעברי משקל ושליטה בקצב."
+    },
+    "oran-ben-david": {
+      "name": "אורן בן דוד",
+      "bio": "מלמד היפ הופ — פוליריתמיקה וסטייל אישי."
+    },
+    "amit-sharabi": {
+      "name": "עמית שרעבי",
+      "bio": "מלמד היפ הופ — גרוב, מוזיקליות ופירוק שיטתי."
+    },
+    "maya-rozin": {
+      "name": "מאיה רוזין",
+      "bio": "מלמדת עקבים — יציבה ותנועתיות בעקב."
+    },
+    "noga-eliyahu": {
+      "name": "נגה אליהו",
+      "bio": "מלמדת עקבים — ביטחון וגרייס על הבמה."
+    },
+    "yasmin-kadosh": {
+      "name": "יסמין קדוש",
+      "bio": "מלמדת ג'אז — טכניקה, קו ומוזיקליות."
+    },
+    "omer-tzur": {
+      "name": "עומר צור",
+      "bio": "מלמד ג'אז — ליריקה ועומק רגשי בתנועה."
+    },
+    "hila-ben-ari": {
+      "name": "הילה בן ארי",
+      "bio": "מלמדת ג'אז — שליטה בגוף ופרפורמנס."
+    },
+    "efrat-wolde": {
+      "name": "אפרת וולדה",
+      "bio": "מלמדת אפרו — איזולציות, גרוב ואנרגייה."
+    },
+    "yonatan-tesfaye": {
+      "name": "יונתן טספאיה",
+      "bio": "מלמד אפרו — קצב אפריקאי אותנטי וקהילתיות."
+    },
+    "or-katz": {
+      "name": "אור כץ",
+      "bio": "מלמד דאנסהול — אנרגייה גבוהה וסטייל רחוב."
+    },
+    "tamir-levy": {
+      "name": "תמיר לוי",
+      "bio": "מלמד דאנסהול — בונס, גרוב ואטיטיוד."
+    },
+    "michal-buzaglo": {
+      "name": "מיכל בוזגלו",
+      "bio": "מלמדת ווגינג — שילוב טכניקה עם ביטחון על הבמה."
+    },
+    "guy-ravid": {
+      "name": "גיא רביד",
+      "bio": "מלמד ווגינג — קלינות תנועה וקצב מדויק."
+    }
+  }
+}
