@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -5,11 +6,25 @@ import { isLocale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 import { notFound } from "next/navigation";
 
-export default async function HomePage({
-  params,
-}: {
+interface HomePageProps {
   params: Promise<{ locale: string }>;
-}) {
+}
+
+export async function generateMetadata({
+  params,
+}: HomePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const dict = await getDictionary(locale);
+  return {
+    // Bypasses the layout's "%s | The Frame by Barzilay" template — the
+    // homepage title is already the full site title, not a page suffix.
+    title: { absolute: dict.meta.siteTitle },
+    description: dict.meta.siteDescription,
+  };
+}
+
+export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dict = await getDictionary(locale);
