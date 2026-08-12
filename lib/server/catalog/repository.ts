@@ -4,8 +4,17 @@ import type {
   CatalogRoutine,
 } from "@/lib/server/catalog/types";
 
+export interface RoutineFilters {
+  instructor?: string;
+  style?: string;
+  level?: string;
+}
+
 export interface CatalogRepository {
-  listRoutines(locale: Locale): Promise<CatalogRoutine[]>;
+  listRoutines(
+    locale: Locale,
+    filters?: RoutineFilters,
+  ): Promise<CatalogRoutine[]>;
   getRoutine(locale: Locale, slug: string): Promise<CatalogRoutine | null>;
   listInstructors(locale: Locale): Promise<CatalogInstructor[]>;
   getInstructor(

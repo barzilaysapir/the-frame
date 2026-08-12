@@ -3,6 +3,7 @@ import {
   resolveCatalog,
   resolveCatalogLocale,
 } from "@/lib/server/catalog";
+import { jsonError } from "@/lib/server/api/auth-context";
 import type {
   CatalogInstructor,
   CatalogListResponse,
@@ -12,17 +13,21 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const locale = resolveCatalogLocale(
-    request.nextUrl.searchParams.get("locale"),
-  );
-  const { repository, source } = await resolveCatalog();
-  const items = await repository.listInstructors(locale);
+  try {
+    const locale = resolveCatalogLocale(
+      request.nextUrl.searchParams.get("locale"),
+    );
+    const { repository, source } = await resolveCatalog();
+    const items = await repository.listInstructors(locale);
 
-  const body: CatalogListResponse<CatalogInstructor> = {
-    locale,
-    source,
-    items,
-  };
+    const body: CatalogListResponse<CatalogInstructor> = {
+      locale,
+      source,
+      items,
+    };
 
-  return NextResponse.json(body);
+    return NextResponse.json(body);
+  } catch (error) {
+    return jsonError(error);
+  }
 }

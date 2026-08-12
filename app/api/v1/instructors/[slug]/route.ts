@@ -3,6 +3,7 @@ import {
   resolveCatalog,
   resolveCatalogLocale,
 } from "@/lib/server/catalog";
+import { jsonError } from "@/lib/server/api/auth-context";
 import type {
   CatalogInstructor,
   CatalogItemResponse,
@@ -16,25 +17,29 @@ interface RouteContext {
 }
 
 export async function GET(request: NextRequest, context: RouteContext) {
-  const { slug } = await context.params;
-  const locale = resolveCatalogLocale(
-    request.nextUrl.searchParams.get("locale"),
-  );
-
-  const { repository, source } = await resolveCatalog();
-  const item = await repository.getInstructor(locale, slug);
-  if (!item) {
-    return NextResponse.json(
-      { error: "Instructor not found", slug, locale },
-      { status: 404 },
+  try {
+    const { slug } = await context.params;
+    const locale = resolveCatalogLocale(
+      request.nextUrl.searchParams.get("locale"),
     );
+
+    const { repository, source } = await resolveCatalog();
+    const item = await repository.getInstructor(locale, slug);
+    if (!item) {
+      return NextResponse.json(
+        { error: "Instructor not found", slug, locale },
+        { status: 404 },
+      );
+    }
+
+    const body: CatalogItemResponse<CatalogInstructor> = {
+      locale,
+      source,
+      item,
+    };
+
+    return NextResponse.json(body);
+  } catch (error) {
+    return jsonError(error);
   }
-
-  const body: CatalogItemResponse<CatalogInstructor> = {
-    locale,
-    source,
-    item,
-  };
-
-  return NextResponse.json(body);
 }
