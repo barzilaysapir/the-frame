@@ -27,6 +27,8 @@ function serializeUser(user: AppUser) {
   };
 }
 
+const MAX_DISPLAY_NAME_LENGTH = 100;
+
 export async function GET(request: NextRequest) {
   try {
     const claims = await requireFirebaseClaims(request);
@@ -59,6 +61,12 @@ export async function PATCH(request: NextRequest) {
       if (!trimmed) {
         return NextResponse.json(
           { error: "displayName must not be empty" },
+          { status: 400 },
+        );
+      }
+      if (trimmed.length > MAX_DISPLAY_NAME_LENGTH) {
+        return NextResponse.json(
+          { error: `displayName must be at most ${MAX_DISPLAY_NAME_LENGTH} characters` },
           { status: 400 },
         );
       }
