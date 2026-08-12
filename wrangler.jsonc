@@ -43,5 +43,19 @@
 			"database_id": "841f01c5-b3c3-4b8c-8891-da5cd2c9b2de",
 			"migrations_dir": "migrations"
 		}
+	],
+	// Guards the /me* write endpoints (see lib/server/api/rate-limit.ts) against
+	// a single account hammering profile/favorites writes. Per-PoP and
+	// eventually consistent by design — not an accounting system, just abuse
+	// mitigation. https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
+	"ratelimits": [
+		{
+			"name": "ME_WRITE_RATE_LIMITER",
+			"namespace_id": "1001",
+			"simple": {
+				"limit": 30,
+				"period": 60
+			}
+		}
 	]
 }
