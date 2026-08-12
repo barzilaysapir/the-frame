@@ -1,0 +1,38 @@
+---
+description: Consistent error handling and validation for app/api/v1 routes
+globs: app/api/v1/**/*.ts
+alwaysApply: false
+---
+
+# API route conventions
+
+Every route handler under `app/api/v1/` should follow the pattern already
+established in `lib/server/api/auth-context.ts`, not reinvent it per-route.
+
+## Error handling
+
+- Wrap the whole handler body in `try { ... } catch (error) { return jsonError(error); }`.
+  `jsonError` already maps `ApiError` instances to their status code and logs +
+  500s anything else — this keeps every endpoint's error shape consistent
+  (`{ error: string }`), even for routes that "probably won't throw" today.
+- Throw `ApiError(status, message)` for expected failures (missing auth, not
+  found, bad input) instead of hand-rolling `NextResponse.json({ error }, { status })`
+  in multiple places.
+- Parse request bodies with `readJsonBody<T>(request)` (in `auth-context.ts`),
+  not raw `request.json()` — malformed JSON should be a 400, not an
+  unhandled `SyntaxError` that falls through to a generic 500.
+
+## Auth-scoped data
+
+- Any query filtered by "the current user" must use the `uid` from
+  `requireFirebaseClaims(request)` (the verified token), never a client-supplied
+  id/uid in the body or query string.
+
+## Input validation
+
+- Validate types and enforce reasonable length caps on any user-writable
+  field before it reaches D1 (see the `displayName` cap in
+  `app/api/v1/me/route.ts` for the pattern). Don't rely on D1 to reject bad
+  input — nothing stops an unbounded string today.
+- Locale params go through the existing `isLocale()`/`resolveCatalogLocale()`
+  allowlist — never pass a raw query param straight into a lookup.

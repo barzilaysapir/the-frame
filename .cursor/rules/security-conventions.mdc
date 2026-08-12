@@ -1,0 +1,43 @@
+---
+description: Security defaults for server code, auth, and dependencies
+alwaysApply: true
+---
+
+# Security conventions
+
+## Server-only code
+
+- Any module that touches D1 directly, verifies tokens, or otherwise should
+  never run client-side (`lib/server/**`) should start with `import "server-only";`.
+  This fails the build loudly if a future refactor accidentally imports it
+  into a client component, instead of silently leaking server logic (or
+  worse, secrets) into the client bundle.
+
+## Auth & authorization
+
+- Firebase ID tokens are verified via real JWKS signature checks
+  (`lib/server/auth/firebase-token.ts`) — never decode-only. Keep it that way.
+- User-scoped reads/writes (favorites, library, profile) must always key off
+  the verified token's `uid`, never a client-supplied id. See
+  `app/api/v1/me/**` for the pattern.
+- When the checkout/payment flow gets a real write endpoint: recompute price
+  server-side from `(routineSlug, planId)` against `lib/pricing.ts`/D1.
+  **Never** accept a price/amount field from the client request body.
+
+## SQL
+
+- Every D1 query goes through `.prepare(sql).bind(...)` with `?` placeholders.
+  Never string-interpolate a request-derived value into a query string.
+
+## Dependencies
+
+- Run `npm audit` periodically (or after adding a dependency) and patch
+  high-severity findings promptly, even dev-only ones (dev/preview servers
+  still proxy real requests through them).
+
+## Headers
+
+- Security headers (CSP, X-Frame-Options, HSTS, Permissions-Policy,
+  Referrer-Policy) live in `next.config.mjs`'s `headers()` — extend that
+  array rather than adding a second, competing source of truth in
+  `public/_headers`.
