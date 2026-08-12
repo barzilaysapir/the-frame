@@ -23,15 +23,15 @@
   "routines": {
     "levitating": {
       "technique": "Grounded weight shifts and performance",
-      "description": "An energetic jazz-funk combination focused on groove and performance — perfect for dancers who want to level up their stage expression."
+      "description": "An energetic Jazz Funk combination focused on groove and performance — ideal for dancers who want to sharpen their stage expression."
     },
     "kill-bill": {
       "technique": "Groove, polyrhythm, and floorwork",
-      "description": "A powerful hip-hop combination built on deep groove and sharp transitions, for dancers who want to go deeper with a strong technical focus."
+      "description": "A powerful Hip Hop combination built on deep groove and sharp transitions — for dancers who want a high technical emphasis."
     },
     "earned-it": {
-      "technique": "Line length, heel control, and performance",
-      "description": "A seductive, grounded heels combination that teaches heel control without sacrificing technique — with focus on posture, line, and performance."
+      "technique": "Line, heel control, and performance",
+      "description": "A seductive Heels combination that teaches heel control without sacrificing technique — including posture, line, and performance."
     },
     "levitating-maya-azulai": {
       "technique": "Grounded weight shifts and performance",
@@ -425,15 +425,15 @@
   "instructors": {
     "maya-azulai": {
       "name": "Maya Azulai",
-      "bio": "Teaches jazz funk — groove and performance."
+      "bio": "Teaches Jazz Funk — groove and performance."
     },
     "daniel-cohen": {
       "name": "Daniel Cohen",
-      "bio": "Teaches hip hop — groove, musicality, and clear breakdowns."
+      "bio": "Teaches Hip Hop — groove, musicality, and systematic breakdown."
     },
     "noa-sagi": {
       "name": "Noa Sagi",
-      "bio": "Teaches heels — heel control, line length, and performance."
+      "bio": "Teaches Heels — heel control, line, and performance."
     },
     "tali-mizrahi": {
       "name": "Tali Mizrahi",

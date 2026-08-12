@@ -36,4 +36,8 @@ Rules:
 - Catalog taxonomy labels when they are content (styles, levels, tags) for a locale
 - User-specific data (purchases, account library, auth profile beyond Firebase client session)
 
-Prefer `lib/server/catalog` (and `/api/v1/*`) for catalog reads. **Primary store is the shared app D1** (`DB` binding; database name `the-frame-catalog`), seeded from the mock catalog (`migrations/0002_catalog_seed.sql`). Users + purchases live in the same DB (`migrations/0003_users_and_purchases.sql`). In-memory mocks remain as a catalog fallback when the D1 binding is unavailable (e.g. plain `next dev`).
+Prefer `lib/server/catalog` (and `/api/v1/*`) for catalog reads. **Primary store is the shared app D1** (`DB` binding; database name `the-frame-catalog`), seeded from the mock catalog (`migrations/0002_catalog_seed.sql` + later additive migrations). Users + purchases live in the same DB (`migrations/0003_users_and_purchases.sql`).
+
+**Plain `next dev` already reads real local D1**, not the in-memory mock: `next.config.mjs` calls `initOpenNextCloudflareForDev()`, which gives `next dev` the same wrangler-backed local D1 SQLite state that `npm run preview` uses, and `npm run dev`'s `predev` hook applies any pending migrations first. The in-memory `mockCatalogRepository` (`lib/server/catalog/mock-repository.ts`) is only a last-resort fallback for when no local D1 state exists yet at all (fresh clone, or a CI build with no `.wrangler` dir) — it is **not** the everyday dev path.
+
+Because that in-memory fallback can still silently drift from the real D1 seed (e.g. an ad-hoc migration edits pricing/copy directly in SQL without updating `lib/routines.ts` / `mocks/content/*.json`), run `npm run verify:mock-db-parity` after editing catalog mocks or writing a new seed migration — it diffs `lib/routines.ts` + `lib/instructors.ts` + `mocks/content/{he,en}.json` against local D1 field-by-field and fails loudly on any mismatch.

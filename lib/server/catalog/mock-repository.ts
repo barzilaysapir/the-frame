@@ -1,7 +1,15 @@
 /**
- * In-memory catalog repository (same content as D1 seed).
- * Used only when the D1 binding is unavailable (e.g. plain `next dev`
- * without OpenNext/Wrangler). Prefer D1 in preview/production.
+ * In-memory catalog repository — a last-resort fallback, kept byte-for-byte
+ * in sync with the D1 seed content (verify with
+ * `npm run verify:mock-db-parity`).
+ *
+ * Plain `next dev` normally does **not** hit this: `next.config.mjs` calls
+ * `initOpenNextCloudflareForDev()`, which wires up wrangler's platform proxy
+ * so `next dev` reads the same local D1 SQLite state as `npm run preview`
+ * (`npm run predev` also applies any pending migrations first). This
+ * in-memory repo only kicks in when no local D1 state exists at all yet
+ * (fresh clone before the first `npm run db:migrate:local`) or a real D1
+ * error occurs — see `resolveCatalog()`.
  */
 import type { Locale } from "@/lib/i18n/config";
 import {

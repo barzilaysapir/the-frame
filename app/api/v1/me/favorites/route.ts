@@ -28,11 +28,13 @@ export async function GET(request: NextRequest) {
   try {
     const claims = await requireFirebaseClaims(request);
     const db = await requireAppDb();
-    await upsertUserFromClaims(db, claims);
-
     const locale = resolveCatalogLocale(
       request.nextUrl.searchParams.get("locale"),
     );
+    // Locale only applies on first insert (new user row); existing users
+    // keep whatever `locale_pref` they already have — see
+    // `upsertUserFromClaims`.
+    await upsertUserFromClaims(db, claims, locale);
     const [favorites, { repository, source }] = await Promise.all([
       listFavorites(db, claims.uid),
       resolveCatalog(),
@@ -66,7 +68,10 @@ export async function POST(request: NextRequest) {
   try {
     const claims = await requireFirebaseClaims(request);
     const db = await requireAppDb();
-    await upsertUserFromClaims(db, claims);
+    const locale = resolveCatalogLocale(
+      request.nextUrl.searchParams.get("locale"),
+    );
+    await upsertUserFromClaims(db, claims, locale);
 
     const body = (await request.json()) as { routineSlug?: unknown };
     if (typeof body.routineSlug !== "string" || !body.routineSlug) {
@@ -76,9 +81,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const locale = resolveCatalogLocale(
-      request.nextUrl.searchParams.get("locale"),
-    );
     const { repository } = await resolveCatalog();
     const routine = await repository.getRoutine(locale, body.routineSlug);
     if (!routine) {
