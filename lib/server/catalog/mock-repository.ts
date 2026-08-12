@@ -11,6 +11,7 @@
  * (fresh clone before the first `npm run db:migrate:local`) or a real D1
  * error occurs — see `resolveCatalog()`.
  */
+import "server-only";
 import type { Locale } from "@/lib/i18n/config";
 import {
   localizeInstructor,

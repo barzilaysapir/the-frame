@@ -1,3 +1,4 @@
+import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export type AppDb = CloudflareEnv["DB"];
