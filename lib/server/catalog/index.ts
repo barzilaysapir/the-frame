@@ -39,8 +39,11 @@ async function resolveCatalogUncached(): Promise<ResolvedCatalog> {
 
 /**
  * Prefer Cloudflare D1 (already seeded with the demo/mock catalog).
- * Fall back to the in-memory mock repo when the D1 binding is missing
- * (typical for plain `next dev` without Wrangler).
+ * Fall back to the in-memory mock repo when the D1 binding is missing or
+ * unseeded. In practice this rarely happens under plain `next dev` — see
+ * `mock-repository.ts` for why — but it's the safety net for a fresh clone
+ * that hasn't run `npm run db:migrate:local` yet, or a CI build with no
+ * local D1 state.
  *
  * Memoized per request (React `cache`) — `generateMetadata` and the page
  * component both call this, and without memoization each would resolve the
