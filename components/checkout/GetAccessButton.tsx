@@ -66,12 +66,13 @@ export function GetAccessButton({
         type="button"
         onClick={handleClick}
         disabled={busy || loading}
+        aria-busy={busy}
         className={cn(
           "flex w-full items-center justify-center rounded-full bg-neon-cta px-5 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110 disabled:opacity-60",
           className,
         )}
       >
-        {busy ? "…" : label}
+        {label}
       </button>
       {error ? (
         <p role="alert" className="mt-2 text-center text-xs text-frame-magenta">

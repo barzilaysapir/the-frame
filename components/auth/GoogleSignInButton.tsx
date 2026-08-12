@@ -75,13 +75,14 @@ export function GoogleSignInButton({
       type="button"
       onClick={handleClick}
       disabled={isSubmitting || !auth}
+      aria-busy={isSubmitting}
       className={cn(
         "flex w-full items-center justify-center gap-3 rounded-full border border-frame-border bg-white px-5 py-3 text-sm font-semibold text-frame-bg transition-opacity hover:opacity-90 disabled:opacity-50",
         className,
       )}
     >
       <GoogleMark className="h-5 w-5 shrink-0" />
-      {isSubmitting ? "…" : label}
+      {label}
     </button>
   );
 }
