@@ -5,7 +5,7 @@ import { locales } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticPaths = ["/", "/routines", "/instructors", "/about"];
+  const staticPaths = ["/", "/routines", "/instructors", "/styles", "/about"];
 
   const staticRoutes = locales.flatMap((locale) =>
     staticPaths.map((path) => ({
