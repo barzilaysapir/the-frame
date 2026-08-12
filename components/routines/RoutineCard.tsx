@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { SongCredit } from "@/components/SongCredit";
-import { RoutineFilterTag } from "@/components/RoutineFilterTag";
+import { RoutineFilterTag } from "@/components/routines/RoutineFilterTag";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage } from "@/lib/i18n/get-dictionary";

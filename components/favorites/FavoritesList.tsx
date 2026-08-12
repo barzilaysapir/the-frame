@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { RoutineCard } from "@/components/RoutineCard";
+import { RoutineCard } from "@/components/routines/RoutineCard";
 import { useAuth } from "@/components/AuthProvider";
 import { useFavorites } from "@/components/favorites/FavoritesProvider";
 import type { Locale } from "@/lib/i18n/config";
