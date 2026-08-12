@@ -1,7 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
+/** Merges class lists, resolving conflicting Tailwind utilities (last one wins). */
 export function cn(...inputs: ClassValue[]) {
-  return clsx(inputs);
+  return twMerge(clsx(inputs));
 }
 
 export function formatTime(seconds: number): string {

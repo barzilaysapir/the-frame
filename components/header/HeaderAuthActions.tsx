@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { UserAvatar } from "@/components/account/UserAvatar";
+import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -56,13 +57,13 @@ export function HeaderAuthActions({
       >
         {labels.login}
       </Link>
-      <Link
+      <Button
         href={localePath(locale, "/routines")}
-        className="group inline-flex items-center gap-1.5 rounded-full bg-neon-cta px-4 py-2 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
+        className="group gap-1.5 px-4 py-2"
       >
         {labels.getAccess}
         <ArrowLeft className="h-3.5 w-3.5 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-      </Link>
+      </Button>
     </>
   );
 }

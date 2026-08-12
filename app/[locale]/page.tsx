@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -37,13 +37,13 @@ export default async function HomePage({ params }: HomePageProps) {
           {dict.home.title}
         </h1>
         <p className="mt-5 max-w-xl text-frame-silver">{dict.home.subtitle}</p>
-        <Link
+        <Button
           href={localePath(locale, "/routine/levitating")}
-          className="group mt-9 inline-flex items-center gap-2 rounded-full bg-neon-cta px-6 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
+          className="group mt-9 px-6"
         >
           {dict.home.cta}
           <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-        </Link>
+        </Button>
       </div>
     </main>
   );
