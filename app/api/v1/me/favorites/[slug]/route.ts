@@ -4,6 +4,7 @@ import {
   requireAppDb,
   requireFirebaseClaims,
 } from "@/lib/server/api/auth-context";
+import { enforceWriteRateLimit } from "@/lib/server/api/rate-limit";
 import { removeFavorite } from "@/lib/server/users/repository";
 
 export const runtime = "nodejs";
@@ -15,6 +16,7 @@ export async function DELETE(
 ) {
   try {
     const claims = await requireFirebaseClaims(request);
+    await enforceWriteRateLimit(claims.uid);
     const db = await requireAppDb();
     const { slug } = await params;
     await removeFavorite(db, claims.uid, slug);

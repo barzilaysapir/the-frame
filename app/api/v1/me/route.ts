@@ -6,6 +6,7 @@ import {
   requireAppDb,
   requireFirebaseClaims,
 } from "@/lib/server/api/auth-context";
+import { enforceWriteRateLimit } from "@/lib/server/api/rate-limit";
 import {
   updateUserProfile,
   upsertUserFromClaims,
@@ -47,6 +48,7 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const claims = await requireFirebaseClaims(request);
+    await enforceWriteRateLimit(claims.uid);
     const db = await requireAppDb();
     // Ensure the row exists before patching (first-login race).
     await upsertUserFromClaims(db, claims);

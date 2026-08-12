@@ -5,6 +5,7 @@ import {
   requireAppDb,
   requireFirebaseClaims,
 } from "@/lib/server/api/auth-context";
+import { enforceWriteRateLimit } from "@/lib/server/api/rate-limit";
 import {
   resolveCatalog,
   resolveCatalogLocale,
@@ -68,6 +69,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const claims = await requireFirebaseClaims(request);
+    await enforceWriteRateLimit(claims.uid);
     const db = await requireAppDb();
     const locale = resolveCatalogLocale(
       request.nextUrl.searchParams.get("locale"),
