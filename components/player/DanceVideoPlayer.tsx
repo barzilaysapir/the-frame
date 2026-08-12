@@ -9,7 +9,15 @@ import {
   type ChangeEvent,
   type CSSProperties,
 } from "react";
-import { Play, Pause, Maximize, Minimize, FlipHorizontal2 } from "lucide-react";
+import {
+  Play,
+  Pause,
+  Maximize,
+  Minimize,
+  FlipHorizontal2,
+  Captions,
+  RotateCw,
+} from "lucide-react";
 import { cn, formatTime } from "@/lib/utils";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { ChapterMarkers } from "@/components/player/ChapterMarkers";
@@ -19,6 +27,13 @@ import type { PlayerChapter } from "@/components/player/types";
 
 export type { PlayerChapter } from "@/components/player/types";
 
+interface CaptionsTrack {
+  src: string;
+  srcLang: string;
+  label: string;
+  default?: boolean;
+}
+
 interface DanceVideoPlayerProps {
   src: string;
   poster?: string;
@@ -26,6 +41,13 @@ interface DanceVideoPlayerProps {
   chapters: PlayerChapter[];
   labels: Dictionary["player"];
   className?: string;
+  /**
+   * Optional VTT captions track. No mock/demo routine ships one today (real
+   * caption authoring is ongoing content cost, not a one-time code fix — see
+   * accessibility-priorities rule) — this just wires up the infrastructure
+   * so a real CMS-provided VTT URL lights up the CC button automatically.
+   */
+  captions?: CaptionsTrack;
 }
 
 export function DanceVideoPlayer({
@@ -35,10 +57,12 @@ export function DanceVideoPlayer({
   chapters,
   labels,
   className,
+  captions,
 }: DanceVideoPlayerProps) {
   const resolvedTitle = title ?? labels.defaultTitle;
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLTrackElement>(null);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
@@ -52,6 +76,10 @@ export function DanceVideoPlayer({
   const [playbackRate, setPlaybackRate] = useState<number>(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [captionsEnabled, setCaptionsEnabled] = useState(
+    Boolean(captions?.default),
+  );
 
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
@@ -82,19 +110,34 @@ export function DanceVideoPlayer({
     };
     const onTimeUpdate = () => setCurrentTime(video.currentTime);
     const onLoadedMetadata = () => setDuration(video.duration || 0);
+    const onError = () => {
+      setHasError(true);
+      setIsPlaying(false);
+    };
 
     video.addEventListener("play", onPlay);
     video.addEventListener("pause", onPause);
     video.addEventListener("timeupdate", onTimeUpdate);
     video.addEventListener("loadedmetadata", onLoadedMetadata);
+    video.addEventListener("error", onError);
 
     return () => {
       video.removeEventListener("play", onPlay);
       video.removeEventListener("pause", onPause);
       video.removeEventListener("timeupdate", onTimeUpdate);
       video.removeEventListener("loadedmetadata", onLoadedMetadata);
+      video.removeEventListener("error", onError);
     };
   }, []);
+
+  // Sync the <track>'s live TextTrack mode with the toggle — `default`/
+  // `src` attributes alone don't control visibility once the track is
+  // already loaded, only its `.track.mode` does.
+  useEffect(() => {
+    const track = trackRef.current?.track;
+    if (!track) return;
+    track.mode = captionsEnabled ? "showing" : "hidden";
+  }, [captionsEnabled, captions?.src]);
 
   useEffect(() => {
     const onFullscreenChange = () => {
@@ -143,6 +186,20 @@ export function DanceVideoPlayer({
 
   const toggleMirror = () => setIsMirrored((mirrored) => !mirrored);
 
+  const toggleCaptions = () => setCaptionsEnabled((enabled) => !enabled);
+
+  const handleRetry = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    setHasError(false);
+    video.load();
+    video.play().catch(() => {
+      // Autoplay can still be blocked after a manual retry click (e.g. no
+      // user-activation left in some browsers) — leave it paused rather
+      // than re-entering the error state for an unrelated reason.
+    });
+  };
+
   const setSpeed = (rate: number) => {
     const video = videoRef.current;
     if (!video) return;
@@ -190,10 +247,21 @@ export function DanceVideoPlayer({
           style={{ transform: isMirrored ? "scaleX(-1)" : "scaleX(1)" }}
           onClick={togglePlay}
           playsInline
-        />
+        >
+          {captions ? (
+            <track
+              ref={trackRef}
+              kind="captions"
+              src={captions.src}
+              srcLang={captions.srcLang}
+              label={captions.label}
+              default={captions.default}
+            />
+          ) : null}
+        </video>
 
         {/* Center play button, shown when paused */}
-        {!isPlaying && (
+        {!hasError && !isPlaying && (
           <button
             type="button"
             onClick={togglePlay}
@@ -219,6 +287,7 @@ export function DanceVideoPlayer({
         <div
           className={cn(
             "absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-3 pb-3 pt-10 transition-opacity duration-300 sm:px-4",
+            hasError && "hidden",
             areControlsVisible || !isPlaying
               ? "opacity-100"
               : "opacity-0 group-hover:opacity-100"
@@ -278,6 +347,27 @@ export function DanceVideoPlayer({
                 onChangeSpeed={setSpeed}
               />
 
+              {/* Captions toggle — only rendered when a track is actually
+                  available, since there's nothing to toggle otherwise */}
+              {captions ? (
+                <button
+                  type="button"
+                  onClick={toggleCaptions}
+                  aria-label={
+                    captionsEnabled ? labels.captionsOn : labels.captionsOff
+                  }
+                  aria-pressed={captionsEnabled}
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
+                    captionsEnabled
+                      ? "border-frame-cyan text-frame-cyan"
+                      : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
+                  )}
+                >
+                  <Captions className="h-4 w-4" />
+                </button>
+              ) : null}
+
               {/* Mirror toggle */}
               <button
                 type="button"
@@ -312,6 +402,26 @@ export function DanceVideoPlayer({
             </div>
           </div>
         </div>
+
+        {/* Playback error overlay — last in DOM order so it stacks above
+            the controls; replaces them entirely since seek/volume/speed
+            are meaningless with no loaded media. */}
+        {hasError && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/80 px-6 text-center">
+            <p className="font-display text-lg font-bold text-white">
+              {labels.videoErrorTitle}
+            </p>
+            <p className="text-sm text-frame-silver">{labels.videoErrorBody}</p>
+            <button
+              type="button"
+              onClick={handleRetry}
+              className="flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
+            >
+              <RotateCw className="h-4 w-4" />
+              {labels.retry}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
