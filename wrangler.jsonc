@@ -35,11 +35,6 @@
 			"service": "the-frame"
 		}
 	],
-	"images": {
-		// Enable image optimization
-		// see https://opennext.js.org/cloudflare/howtos/image
-		"binding": "IMAGES"
-	},
 	// Single app D1: catalog + users + purchases (physical name still the-frame-catalog).
 	"d1_databases": [
 		{
