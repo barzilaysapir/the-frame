@@ -65,7 +65,7 @@ export function FavoritesList({ locale, labels }: FavoritesListProps) {
           className="group mt-5 inline-flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
         >
           {labels.loginCta}
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+          <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
         </Link>
       </StateBox>
     );
@@ -88,7 +88,7 @@ export function FavoritesList({ locale, labels }: FavoritesListProps) {
           className="group mt-5 inline-flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
         >
           {labels.browseTutorials}
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+          <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
         </Link>
       </StateBox>
     );

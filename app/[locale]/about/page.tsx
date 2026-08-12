@@ -55,7 +55,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
           className="group inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
         >
           {dict.common.browseTutorials}
-          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
         </Link>
       </div>
     </main>

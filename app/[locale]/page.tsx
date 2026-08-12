@@ -42,7 +42,7 @@ export default async function HomePage({ params }: HomePageProps) {
           className="group mt-9 inline-flex items-center gap-2 rounded-full bg-neon-cta px-6 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
         >
           {dict.home.cta}
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+          <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
         </Link>
       </div>
     </main>
