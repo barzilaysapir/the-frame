@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import type { User } from "firebase/auth";
 import { useAuth } from "@/components/AuthProvider";
 import { UserAvatar } from "@/components/account/UserAvatar";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
@@ -12,16 +13,36 @@ interface ProfileFormProps {
 
 export function ProfileForm({ labels }: ProfileFormProps) {
   const { user, updateDisplayName } = useAuth();
-  const [displayName, setDisplayName] = useState(user?.displayName ?? "");
+  if (!user) return null;
+
+  // Keying on uid (instead of syncing displayName via an effect) remounts
+  // this with a fresh useState initializer whenever the signed-in user
+  // changes, so there's no cascading-render sync needed.
+  return (
+    <ProfileFormFields
+      key={user.uid}
+      user={user}
+      labels={labels}
+      updateDisplayName={updateDisplayName}
+    />
+  );
+}
+
+interface ProfileFormFieldsProps {
+  user: User;
+  labels: Dictionary["account"]["profile"];
+  updateDisplayName: (displayName: string) => Promise<void>;
+}
+
+function ProfileFormFields({
+  user,
+  labels,
+  updateDisplayName,
+}: ProfileFormFieldsProps) {
+  const [displayName, setDisplayName] = useState(user.displayName ?? "");
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setDisplayName(user?.displayName ?? "");
-  }, [user?.displayName]);
-
-  if (!user) return null;
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
