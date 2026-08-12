@@ -18,6 +18,8 @@ export function UserAvatar({ name, photoURL, className }: UserAvatarProps) {
       <img
         src={photoURL}
         alt={name}
+        width={48}
+        height={48}
         referrerPolicy="no-referrer"
         className={cn(
           "h-12 w-12 shrink-0 rounded-full border border-frame-border object-cover",
