@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import {
   jsonError,
+  readJsonBody,
   requireAppDb,
   requireFirebaseClaims,
 } from "@/lib/server/api/auth-context";
@@ -48,10 +49,10 @@ export async function PATCH(request: NextRequest) {
     // Ensure the row exists before patching (first-login race).
     await upsertUserFromClaims(db, claims);
 
-    const body = (await request.json()) as {
+    const body = await readJsonBody<{
       displayName?: unknown;
       localePref?: unknown;
-    };
+    }>(request);
 
     const patch: { displayName?: string; localePref?: Locale } = {};
     if (typeof body.displayName === "string") {

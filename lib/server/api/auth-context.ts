@@ -37,6 +37,14 @@ export async function requireFirebaseClaims(
   }
 }
 
+export async function readJsonBody<T>(request: Request): Promise<T> {
+  try {
+    return (await request.json()) as T;
+  } catch {
+    throw new ApiError(400, "Invalid JSON body");
+  }
+}
+
 export function jsonError(error: unknown) {
   if (error instanceof ApiError) {
     return NextResponse.json(
