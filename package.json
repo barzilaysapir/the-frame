@@ -11,6 +11,8 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepreview": "wrangler d1 migrations apply the-frame-catalog --local",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
@@ -44,6 +46,7 @@
     "sharp": "^0.35.3",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.3",
+    "vitest": "^4.1.10",
     "wrangler": "^4.121.0"
   }
 }
