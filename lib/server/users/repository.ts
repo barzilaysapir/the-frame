@@ -1,3 +1,4 @@
+import "server-only";
 import type { Locale } from "@/lib/i18n/config";
 import { isLocale } from "@/lib/i18n/config";
 import type { FirebaseIdTokenClaims } from "@/lib/server/auth/firebase-token";

@@ -1,3 +1,4 @@
+import "server-only";
 import type { Locale } from "@/lib/i18n/config";
 import type { CatalogRepository } from "@/lib/server/catalog/repository";
 import type {

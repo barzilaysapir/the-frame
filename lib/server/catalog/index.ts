@@ -1,3 +1,4 @@
+import "server-only";
 import { cache } from "react";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 import { getAppDb } from "@/lib/server/db";

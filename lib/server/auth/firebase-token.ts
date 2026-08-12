@@ -1,3 +1,4 @@
+import "server-only";
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from "jose";
 
 const FIREBASE_JWKS = createRemoteJWKSet(
