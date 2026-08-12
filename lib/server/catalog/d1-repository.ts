@@ -56,12 +56,16 @@ interface ChapterRow {
   label: string | null;
 }
 
-function parseTags(tagsJson: string): TagKey[] {
+function parseTags(tagsJson: string, routineSlug: string): TagKey[] {
   try {
     const parsed = JSON.parse(tagsJson) as unknown;
     if (!Array.isArray(parsed)) return [];
     return parsed.filter((item): item is TagKey => typeof item === "string");
-  } catch {
+  } catch (error) {
+    console.error(
+      `Malformed tags_json for routine "${routineSlug}" (length ${tagsJson.length}):`,
+      error,
+    );
     return [];
   }
 }
@@ -83,7 +87,7 @@ function mapRoutine(
     levelLabel: row.level_label ?? row.level,
     style: row.style as DanceStyleKey,
     styleLabel: row.style_label ?? row.style,
-    tags: parseTags(row.tags_json),
+    tags: parseTags(row.tags_json, row.slug),
     bpm: row.bpm,
     length: row.length,
     lengthLabel,

@@ -33,7 +33,11 @@ async function resolveCatalogUncached(): Promise<ResolvedCatalog> {
       repository: createD1CatalogRepository(db),
       source: "d1",
     };
-  } catch {
+  } catch (error) {
+    console.error(
+      "D1 catalog query failed; falling back to the in-memory mock catalog:",
+      error,
+    );
     return { repository: mockCatalogRepository, source: "mock" };
   }
 }
