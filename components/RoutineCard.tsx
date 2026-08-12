@@ -91,7 +91,7 @@ export function RoutineCard({
           </div>
           <span className="inline-flex items-center gap-1 text-sm font-semibold text-frame-cyan">
             {labels.viewRoutine}
-            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
           </span>
         </div>
       </Link>
