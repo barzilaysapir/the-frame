@@ -69,6 +69,14 @@ input[type="range"].frame-range::-moz-range-thumb {
   cursor: pointer;
 }
 
+/* The thumb's own :focus-visible can't be styled cross-browser for range
+   inputs, so style the track instead when the input itself has keyboard
+   focus — the `outline: none` above otherwise leaves keyboard users with
+   no visible indicator at all (WCAG 2.4.7). */
+input[type="range"].frame-range:focus-visible {
+  box-shadow: 0 0 0 2px #0f0f11, 0 0 0 4px rgba(34, 211, 238, 0.85);
+}
+
 /* Ambient glow around the video player frame — a box-shadow, not baked
    into the poster image, so it survives once a real video replaces the
    placeholder illustration (overflow-hidden on this same element clips
