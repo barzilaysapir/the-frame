@@ -4,10 +4,11 @@ import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Menu, X, ArrowLeft } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
-import { UserAvatar } from "@/components/account/UserAvatar";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { HeaderAuthActions } from "@/components/header/HeaderAuthActions";
+import { MobileMenuAuthActions } from "@/components/header/MobileMenuAuthActions";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -101,44 +102,14 @@ export function Header({ locale, labels }: HeaderProps) {
 
         <div className="hidden items-center gap-4 lg:flex">
           <LanguageSwitcher locale={locale} label={labels.language} />
-          {isAuthenticated ? (
-            <>
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="text-sm font-medium text-frame-silver transition-colors hover:text-white"
-              >
-                {labels.signOut}
-              </button>
-              <Link
-                href={localePath(locale, "/account")}
-                className="transition-opacity hover:opacity-90"
-                aria-label={labels.account}
-              >
-                <UserAvatar
-                  name={accountName}
-                  photoURL={user?.photoURL}
-                  className="h-9 w-9 text-sm"
-                />
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                href={localePath(locale, "/login")}
-                className="text-sm font-medium text-frame-silver transition-colors hover:text-white"
-              >
-                {labels.login}
-              </Link>
-              <Link
-                href={localePath(locale, "/routines")}
-                className="group inline-flex items-center gap-1.5 rounded-full bg-neon-cta px-4 py-2 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
-              >
-                {labels.getAccess}
-                <ArrowLeft className="h-3.5 w-3.5 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-              </Link>
-            </>
-          )}
+          <HeaderAuthActions
+            locale={locale}
+            labels={labels}
+            isAuthenticated={isAuthenticated}
+            accountName={accountName}
+            photoURL={user?.photoURL}
+            onSignOut={handleSignOut}
+          />
         </div>
 
         <button
@@ -177,41 +148,13 @@ export function Header({ locale, labels }: HeaderProps) {
                 <LanguageSwitcher locale={locale} label={labels.language} />
               </div>
               <div className="mt-2 flex flex-col gap-2 border-t border-frame-border/80 pt-4">
-                {isAuthenticated ? (
-                  <>
-                    <Link
-                      href={localePath(locale, "/account")}
-                      onClick={closeMenu}
-                      className="rounded-lg px-3 py-3 text-center text-base font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
-                    >
-                      {labels.account}
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={handleSignOut}
-                      className="rounded-full bg-neon-cta px-3 py-3 text-center text-base font-semibold text-frame-bg touch-manipulation hover:brightness-110"
-                    >
-                      {labels.signOut}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href={localePath(locale, "/login")}
-                      onClick={closeMenu}
-                      className="rounded-lg px-3 py-3 text-center text-base font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
-                    >
-                      {labels.login}
-                    </Link>
-                    <Link
-                      href={localePath(locale, "/routines")}
-                      onClick={closeMenu}
-                      className="rounded-full bg-neon-cta px-3 py-3 text-center text-base font-semibold text-frame-bg hover:brightness-110"
-                    >
-                      {labels.getAccess}
-                    </Link>
-                  </>
-                )}
+                <MobileMenuAuthActions
+                  locale={locale}
+                  labels={labels}
+                  isAuthenticated={isAuthenticated}
+                  onCloseMenu={closeMenu}
+                  onSignOut={handleSignOut}
+                />
               </div>
             </div>
           </nav>
