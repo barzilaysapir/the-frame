@@ -73,5 +73,3 @@ export function InstructorCard({
     </article>
   );
 }
-
-export default InstructorCard;

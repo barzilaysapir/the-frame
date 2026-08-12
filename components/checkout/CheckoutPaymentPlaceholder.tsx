@@ -87,5 +87,3 @@ export function CheckoutPaymentPlaceholder({
     </div>
   );
 }
-
-export default CheckoutPaymentPlaceholder;

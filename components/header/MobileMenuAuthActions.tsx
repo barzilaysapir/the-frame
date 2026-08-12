@@ -59,5 +59,3 @@ export function MobileMenuAuthActions({
     </>
   );
 }
-
-export default MobileMenuAuthActions;

@@ -107,5 +107,3 @@ export function CheckoutPlanOption({
     </div>
   );
 }
-
-export default CheckoutPlanOption;

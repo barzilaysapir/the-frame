@@ -140,5 +140,3 @@ export function EarlyBirdBanner({
     </div>
   );
 }
-
-export default EarlyBirdBanner;

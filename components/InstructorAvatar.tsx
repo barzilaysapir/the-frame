@@ -49,5 +49,3 @@ export function InstructorAvatar({ name, src, className }: InstructorAvatarProps
     </span>
   );
 }
-
-export default InstructorAvatar;

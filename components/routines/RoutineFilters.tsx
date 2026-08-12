@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { RoutineFilterGroup, type RoutineFilterChip } from "@/components/routines/RoutineFilterGroup";
 
-export interface RoutineFilterSection {
+interface RoutineFilterSection {
   label: string;
   chips: RoutineFilterChip[];
 }

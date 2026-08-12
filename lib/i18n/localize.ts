@@ -4,11 +4,6 @@
  * on routine/instructor payloads and keep this module as a thin adapter.
  */
 import type { Locale } from "@/lib/i18n/config";
-import {
-  formatMessage,
-  getDictionarySync,
-  type Dictionary,
-} from "@/lib/i18n/get-dictionary";
 import { getMockContent } from "@/mocks/get-content";
 import type { InstructorRecord } from "@/lib/instructors";
 import type {
@@ -27,14 +22,11 @@ export function localizeLevel(locale: Locale, level: LevelKey): string {
   return getMockContent(locale).levels[level];
 }
 
-export function localizeChapter(
-  locale: Locale,
-  chapterId: ChapterId,
-): string {
+function localizeChapter(locale: Locale, chapterId: ChapterId): string {
   return getMockContent(locale).chapters[chapterId];
 }
 
-export function localizeChapters(
+function localizeChapters(
   locale: Locale,
   chapters: VideoChapter[],
 ): Array<VideoChapter & { label: string }> {
@@ -88,34 +80,4 @@ export function localizeInstructor(
     role: content.styles[instructor.style],
     bio: copy?.bio ?? "",
   };
-}
-
-export function getPlayerLabels(locale: Locale): Dictionary["player"] {
-  return getDictionarySync(locale).player;
-}
-
-export function routineMetaTitle(
-  locale: Locale,
-  title: string,
-  styleKey: DanceStyleKey,
-): string {
-  const dict = getDictionarySync(locale);
-  return formatMessage(dict.routine.metaTitle, {
-    title,
-    style: getMockContent(locale).styles[styleKey],
-  });
-}
-
-export function routineMetaDescription(
-  locale: Locale,
-  title: string,
-  styleKey: DanceStyleKey,
-  instructorName: string,
-): string {
-  const dict = getDictionarySync(locale);
-  return formatMessage(dict.routine.metaDescription, {
-    title,
-    style: getMockContent(locale).styles[styleKey],
-    instructor: instructorName,
-  });
 }

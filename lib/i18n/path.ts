@@ -1,4 +1,4 @@
-import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 
 /** Build a locale-prefixed path, e.g. `/en/routines`. */
 export function localePath(locale: Locale, path = "/"): string {
@@ -17,10 +17,4 @@ export function swapLocalePath(pathname: string, nextLocale: Locale): string {
   }
   const rest = pathname.startsWith("/") ? pathname : `/${pathname}`;
   return localePath(nextLocale, rest === "/" ? "/" : rest);
-}
-
-export function getLocaleFromPathname(pathname: string): Locale {
-  const maybeLocale = pathname.split("/")[1];
-  if (maybeLocale && isLocale(maybeLocale)) return maybeLocale;
-  return defaultLocale;
 }
