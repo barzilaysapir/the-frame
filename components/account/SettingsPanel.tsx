@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -17,12 +18,19 @@ export function SettingsPanel({ labels, languageLabel }: SettingsPanelProps) {
   const params = useParams<{ locale: string }>();
   const locale = isLocale(params.locale) ? params.locale : "he";
   const { user, signOutUser } = useAuth();
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   if (!user) return null;
 
   const handleSignOut = async () => {
-    await signOutUser();
-    router.push(localePath(locale));
+    if (isSigningOut) return;
+    setIsSigningOut(true);
+    try {
+      await signOutUser();
+      router.push(localePath(locale));
+    } finally {
+      setIsSigningOut(false);
+    }
   };
 
   return (
@@ -67,7 +75,9 @@ export function SettingsPanel({ labels, languageLabel }: SettingsPanelProps) {
         <button
           type="button"
           onClick={handleSignOut}
-          className="mt-6 rounded-full border border-frame-border px-5 py-3 text-sm font-semibold text-white transition-colors hover:border-frame-magenta hover:text-frame-magenta"
+          disabled={isSigningOut}
+          aria-busy={isSigningOut}
+          className="mt-6 rounded-full border border-frame-border px-5 py-3 text-sm font-semibold text-white transition-colors hover:border-frame-magenta hover:text-frame-magenta disabled:opacity-50"
         >
           {labels.signOut}
         </button>
