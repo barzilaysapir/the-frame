@@ -11,6 +11,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
+import { getNavLinks } from "@/lib/nav-links";
 
 interface HeaderProps {
   locale: Locale;
@@ -24,13 +25,7 @@ export function Header({ locale, labels }: HeaderProps) {
   const isAuthenticated = Boolean(user);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const navLinks = [
-    { label: labels.tutorials, href: localePath(locale, "/routines") },
-    { label: labels.styles, href: localePath(locale, "/styles") },
-    { label: labels.teachers, href: localePath(locale, "/instructors") },
-    { label: labels.favorites, href: localePath(locale, "/favorites") },
-    { label: labels.about, href: localePath(locale, "/about") },
-  ];
+  const navLinks = getNavLinks(locale, labels);
 
   useEffect(() => {
     if (!isMenuOpen) return;
