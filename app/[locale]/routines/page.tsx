@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { RoutineCard } from "@/components/RoutineCard";
+import { RoutineCard } from "@/components/routines/RoutineCard";
 import { RoutineFilters } from "@/components/routines/RoutineFilters";
 import type { DanceStyleKey, LevelKey } from "@/lib/routines";
 import { routinesFilterHref } from "@/lib/routines";

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import { RoutineCard } from "@/components/RoutineCard";
+import { RoutineCard } from "@/components/routines/RoutineCard";
 import { useAuth } from "@/components/AuthProvider";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
