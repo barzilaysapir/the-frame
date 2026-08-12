@@ -156,5 +156,3 @@ function ProfileFormFields({
     </div>
   );
 }
-
-export default ProfileForm;

@@ -85,5 +85,3 @@ export function SettingsPanel({ labels, languageLabel }: SettingsPanelProps) {
     </div>
   );
 }
-
-export default SettingsPanel;

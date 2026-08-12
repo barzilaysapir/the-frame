@@ -98,5 +98,3 @@ export function RoutineCard({
     </article>
   );
 }
-
-export default RoutineCard;

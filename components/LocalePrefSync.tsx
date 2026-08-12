@@ -50,5 +50,3 @@ export function LocalePrefSync({ locale }: { locale: Locale }) {
 
   return null;
 }
-
-export default LocalePrefSync;

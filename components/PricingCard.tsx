@@ -79,5 +79,3 @@ export function PricingCard({
     </div>
   );
 }
-
-export default PricingCard;

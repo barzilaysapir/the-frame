@@ -95,5 +95,3 @@ export function SpeedMenu({ playbackRate, labels, onChangeSpeed }: SpeedMenuProp
     </div>
   );
 }
-
-export default SpeedMenu;

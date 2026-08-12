@@ -57,5 +57,3 @@ export function StyleCard({
     </Link>
   );
 }
-
-export default StyleCard;

@@ -39,7 +39,7 @@ function mapUser(row: UserRow): AppUser {
   };
 }
 
-export async function getUserByUid(
+async function getUserByUid(
   db: AppDb,
   firebaseUid: string,
 ): Promise<AppUser | null> {

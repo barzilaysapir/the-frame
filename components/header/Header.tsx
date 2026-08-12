@@ -163,5 +163,3 @@ export function Header({ locale, labels }: HeaderProps) {
     </header>
   );
 }
-
-export default Header;

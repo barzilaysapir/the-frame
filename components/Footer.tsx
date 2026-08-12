@@ -87,5 +87,3 @@ export function Footer({ locale, labels, footer }: FooterProps) {
     </footer>
   );
 }
-
-export default Footer;

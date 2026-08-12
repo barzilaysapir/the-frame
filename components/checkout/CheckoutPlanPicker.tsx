@@ -83,5 +83,3 @@ export function CheckoutPlanPicker({
     </fieldset>
   );
 }
-
-export default CheckoutPlanPicker;

@@ -7,7 +7,7 @@
 
 import type { DanceStyleKey } from "@/lib/routines";
 
-export type DanceStyle = DanceStyleKey;
+type DanceStyle = DanceStyleKey;
 
 export interface TeacherNameSeed {
   /** URL-safe id, e.g. "tali-mizrahi" */
@@ -231,19 +231,3 @@ export const SONG_NAME_BANK: SongSeed[] = [
   { slug: "boom-clap", title: "Boom Clap", artist: "Charli XCX", bpm: 100, length: "3:26", styles: ["voguing"] },
   { slug: "espresso", title: "Espresso", artist: "Sabrina Carpenter", bpm: 104, length: "2:55", styles: ["voguing"] },
 ];
-
-export function getTeacherSeedsByStyle(style: DanceStyle): TeacherNameSeed[] {
-  return TEACHER_NAME_BANK.filter((teacher) => teacher.style === style);
-}
-
-export function getSongSeedsByStyle(style: DanceStyle): SongSeed[] {
-  return SONG_NAME_BANK.filter((song) => song.styles.includes(style));
-}
-
-export function getSongSeedBySlug(slug: string): SongSeed | undefined {
-  return SONG_NAME_BANK.find((song) => song.slug === slug);
-}
-
-export function getTeacherSeedBySlug(slug: string): TeacherNameSeed | undefined {
-  return TEACHER_NAME_BANK.find((teacher) => teacher.slug === slug);
-}

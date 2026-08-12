@@ -90,5 +90,3 @@ export function AccountPageShell({
     </main>
   );
 }
-
-export default AccountPageShell;

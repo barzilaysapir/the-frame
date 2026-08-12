@@ -66,5 +66,3 @@ export function HeaderAuthActions({
     </>
   );
 }
-
-export default HeaderAuthActions;

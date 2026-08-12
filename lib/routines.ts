@@ -59,7 +59,7 @@ export interface RoutineRecord {
 const SAMPLE_VIDEO_SRC =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
-export const ROUTINES: RoutineRecord[] = [
+const ROUTINES: RoutineRecord[] = [
   // MOCK combinations for demo UI — songs/artists are placeholders (licensing TBD).
   {
     slug: "levitating",
@@ -2573,22 +2573,6 @@ export function getRoutineBySlug(slug: string): RoutineRecord | undefined {
 
 export function getRoutinesByInstructor(instructorSlug: string): RoutineRecord[] {
   return ROUTINES.filter((routine) => routine.instructorSlug === instructorSlug);
-}
-
-export function getRoutinesByStyle(style: string): RoutineRecord[] {
-  return ROUTINES.filter((routine) => routine.style === style);
-}
-
-export function getRoutinesByLevel(level: string): RoutineRecord[] {
-  return ROUTINES.filter((routine) => routine.level === level);
-}
-
-export function getAllRoutineStyles(): DanceStyleKey[] {
-  return [...new Set(ROUTINES.map((routine) => routine.style))];
-}
-
-export function getAllRoutineLevels(): LevelKey[] {
-  return [...new Set(ROUTINES.map((routine) => routine.level))];
 }
 
 export interface RoutinesFilterParams {

@@ -32,5 +32,3 @@ export function ChapterMarkers({
     </div>
   );
 }
-
-export default ChapterMarkers;

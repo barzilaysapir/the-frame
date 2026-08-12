@@ -426,5 +426,3 @@ export function DanceVideoPlayer({
     </div>
   );
 }
-
-export default DanceVideoPlayer;
