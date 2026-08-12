@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
+import { Button } from "@/components/ui/Button";
 import {
   getGoogleSignInErrorMessage,
   signInWithGoogle,
@@ -62,18 +63,14 @@ export function GetAccessButton({
 
   return (
     <div>
-      <button
-        type="button"
+      <Button
         onClick={handleClick}
         disabled={busy || loading}
         aria-busy={busy}
-        className={cn(
-          "flex w-full items-center justify-center rounded-full bg-neon-cta px-5 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110 disabled:opacity-60",
-          className,
-        )}
+        className={cn("w-full disabled:opacity-60", className)}
       >
         {label}
-      </button>
+      </Button>
       {error ? (
         <p role="alert" className="mt-2 text-center text-xs text-frame-magenta">
           {error}

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { getDictionarySync } from "@/lib/i18n/get-dictionary";
 
 export default function NotFound() {
@@ -17,19 +17,13 @@ export default function NotFound() {
         </h1>
         <p className="mt-4 max-w-md text-frame-silver">{dict.notFound.body}</p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/he"
-            className="group inline-flex items-center gap-2 rounded-full bg-neon-cta px-6 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
-          >
+          <Button href="/he" className="group px-6">
             {dict.common.home}
             <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-          </Link>
-          <Link
-            href="/he/routines"
-            className="rounded-full border border-frame-border px-6 py-3 text-sm font-semibold text-frame-silver transition-colors hover:border-white/40 hover:text-white"
-          >
+          </Button>
+          <Button href="/he/routines" variant="secondary" className="px-6">
             {dict.common.browseTutorials}
-          </Link>
+          </Button>
         </div>
       </div>
     </main>

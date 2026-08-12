@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { RoutineCard } from "@/components/routines/RoutineCard";
 import { useAuth } from "@/components/AuthProvider";
 import { useFavorites } from "@/components/favorites/FavoritesProvider";
+import { Button } from "@/components/ui/Button";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 
@@ -60,13 +60,10 @@ export function FavoritesList({ locale, labels }: FavoritesListProps) {
           {labels.loggedOutTitle}
         </h2>
         <p className="mt-2 text-frame-silver">{labels.loggedOutBody}</p>
-        <Link
-          href={localePath(locale, "/login")}
-          className="group mt-5 inline-flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
-        >
+        <Button href={localePath(locale, "/login")} className="group mt-5 py-2.5">
           {labels.loginCta}
           <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-        </Link>
+        </Button>
       </StateBox>
     );
   }
@@ -83,13 +80,10 @@ export function FavoritesList({ locale, labels }: FavoritesListProps) {
     return (
       <StateBox>
         <p className="text-frame-silver">{labels.empty}</p>
-        <Link
-          href={localePath(locale, "/routines")}
-          className="group mt-5 inline-flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
-        >
+        <Button href={localePath(locale, "/routines")} className="group mt-5 py-2.5">
           {labels.browseTutorials}
           <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-        </Link>
+        </Button>
       </StateBox>
     );
   }

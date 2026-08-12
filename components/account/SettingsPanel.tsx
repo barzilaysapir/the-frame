@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Button } from "@/components/ui/Button";
 import { isLocale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -72,15 +73,15 @@ export function SettingsPanel({ labels, languageLabel }: SettingsPanelProps) {
             </dd>
           </div>
         </dl>
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           onClick={handleSignOut}
           disabled={isSigningOut}
           aria-busy={isSigningOut}
-          className="mt-6 rounded-full border border-frame-border px-5 py-3 text-sm font-semibold text-white transition-colors hover:border-frame-magenta hover:text-frame-magenta disabled:opacity-50"
+          className="mt-6"
         >
           {labels.signOut}
-        </button>
+        </Button>
       </section>
     </div>
   );

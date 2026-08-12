@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { User } from "firebase/auth";
 import { useAuth } from "@/components/AuthProvider";
 import { UserAvatar } from "@/components/account/UserAvatar";
+import { Button } from "@/components/ui/Button";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -136,13 +137,9 @@ function ProfileFormFields({
           </div>
         ) : null}
 
-        <button
-          type="submit"
-          disabled={isSaving}
-          className="rounded-full bg-neon-cta px-5 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={isSaving}>
           {isSaving ? labels.saving : labels.save}
-        </button>
+        </Button>
 
         {message ? (
           <p className="text-sm font-medium text-frame-cyan">{message}</p>

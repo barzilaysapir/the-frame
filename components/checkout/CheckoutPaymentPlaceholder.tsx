@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { Button } from "@/components/ui/Button";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -68,13 +69,9 @@ export function CheckoutPaymentPlaceholder({
               {user.displayName || user.email || user.phoneNumber}
             </span>
           </p>
-          <button
-            type="button"
-            disabled
-            className="flex w-full cursor-not-allowed items-center justify-center rounded-full bg-neon-cta px-5 py-3 text-sm font-semibold text-frame-bg opacity-50"
-          >
+          <Button disabled className="w-full cursor-not-allowed">
             {labels.payCta}
-          </button>
+          </Button>
           <p className="text-xs text-frame-muted">{labels.paySoon}</p>
         </div>
       )}

@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { RoutineCard } from "@/components/routines/RoutineCard";
 import { useAuth } from "@/components/AuthProvider";
+import { Button } from "@/components/ui/Button";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -86,13 +86,13 @@ export function AccountLibrary({ locale, labels }: AccountLibraryProps) {
     return (
       <div className="rounded-2xl border border-frame-border bg-frame-panel p-8 text-center">
         <p className="text-frame-silver">{labels.empty}</p>
-        <Link
+        <Button
           href={localePath(locale, "/routines")}
-          className="group mt-5 inline-flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
+          className="group mt-5 py-2.5"
         >
           {labels.browseTutorials}
           <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-        </Link>
+        </Button>
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -29,13 +30,12 @@ export function MobileMenuAuthActions({
         >
           {labels.account}
         </Link>
-        <button
-          type="button"
+        <Button
           onClick={onSignOut}
-          className="rounded-full bg-neon-cta px-3 py-3 text-center text-base font-semibold text-frame-bg touch-manipulation hover:brightness-110"
+          className="px-3 py-3 text-base touch-manipulation"
         >
           {labels.signOut}
-        </button>
+        </Button>
       </>
     );
   }
@@ -49,13 +49,13 @@ export function MobileMenuAuthActions({
       >
         {labels.login}
       </Link>
-      <Link
+      <Button
         href={localePath(locale, "/routines")}
         onClick={onCloseMenu}
-        className="rounded-full bg-neon-cta px-3 py-3 text-center text-base font-semibold text-frame-bg hover:brightness-110"
+        className="px-3 py-3 text-base"
       >
         {labels.getAccess}
-      </Link>
+      </Button>
     </>
   );
 }

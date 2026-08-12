@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { useAuth } from "@/components/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { Button } from "@/components/ui/Button";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { toIsraeliE164 } from "@/lib/phone";
 import { cn } from "@/lib/utils";
@@ -171,13 +172,13 @@ export default function LoginPage() {
                   onChange={(event) => setPhoneNumber(event.target.value)}
                   className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-white placeholder:text-frame-muted focus:border-frame-cyan focus:outline-none"
                 />
-                <button
+                <Button
                   type="submit"
                   disabled={isSubmitting || !phoneNumber}
-                  className="mt-1 rounded-full bg-neon-cta px-5 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110 disabled:opacity-50"
+                  className="mt-1"
                 >
                   {isSubmitting ? labels.sendingCode : labels.sendCode}
-                </button>
+                </Button>
               </form>
             ) : (
               <form onSubmit={handleVerifyCode} className="flex flex-col gap-3">
@@ -195,13 +196,13 @@ export default function LoginPage() {
                   onChange={(event) => setCode(event.target.value)}
                   className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-center text-lg tracking-[0.5em] text-white placeholder:tracking-normal placeholder:text-frame-muted focus:border-frame-cyan focus:outline-none"
                 />
-                <button
+                <Button
                   type="submit"
                   disabled={isSubmitting || code.length < 4}
-                  className="mt-1 rounded-full bg-neon-cta px-5 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110 disabled:opacity-50"
+                  className="mt-1"
                 >
                   {isSubmitting ? labels.verifying : labels.verifyCode}
-                </button>
+                </Button>
                 <button
                   type="button"
                   onClick={() => {
