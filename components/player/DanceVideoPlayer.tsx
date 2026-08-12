@@ -7,28 +7,17 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type CSSProperties,
 } from "react";
-import {
-  Play,
-  Pause,
-  Volume2,
-  Volume1,
-  VolumeX,
-  Maximize,
-  Minimize,
-  FlipHorizontal2,
-  Gauge,
-} from "lucide-react";
+import { Play, Pause, Maximize, Minimize, FlipHorizontal2 } from "lucide-react";
 import { cn, formatTime } from "@/lib/utils";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { ChapterMarkers } from "@/components/player/ChapterMarkers";
+import { VolumeControl } from "@/components/player/VolumeControl";
+import { SpeedMenu } from "@/components/player/SpeedMenu";
+import type { PlayerChapter } from "@/components/player/types";
 
-export interface PlayerChapter {
-  id: string;
-  label: string;
-  time: number;
-}
-
-const PLAYBACK_SPEEDS = [0.5, 0.75, 1, 1.25] as const;
+export type { PlayerChapter } from "@/components/player/types";
 
 interface DanceVideoPlayerProps {
   src: string;
@@ -62,10 +51,7 @@ export function DanceVideoPlayer({
   const [isMirrored, setIsMirrored] = useState(false);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(true);
-  const speedMenuRef = useRef<HTMLDivElement>(null);
-  const speedButtonRef = useRef<HTMLButtonElement>(null);
 
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
@@ -109,31 +95,6 @@ export function DanceVideoPlayer({
       video.removeEventListener("loadedmetadata", onLoadedMetadata);
     };
   }, []);
-
-  // Close the speed menu on an outside click or Escape (returning focus to
-  // its trigger), matching standard menu-dismissal behavior.
-  useEffect(() => {
-    if (!showSpeedMenu) return;
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (!speedMenuRef.current?.contains(event.target as Node)) {
-        setShowSpeedMenu(false);
-      }
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setShowSpeedMenu(false);
-        speedButtonRef.current?.focus();
-      }
-    };
-
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [showSpeedMenu]);
 
   useEffect(() => {
     const onFullscreenChange = () => {
@@ -187,7 +148,6 @@ export function DanceVideoPlayer({
     if (!video) return;
     video.playbackRate = rate;
     setPlaybackRate(rate);
-    setShowSpeedMenu(false);
   };
 
   const jumpToChapter = (chapter: PlayerChapter) => {
@@ -208,9 +168,7 @@ export function DanceVideoPlayer({
     }
   };
 
-  const VolumeIcon = isMuted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
-  const volumePercent = isMuted ? 0 : volume * 100;
 
   return (
     <div
@@ -250,9 +208,7 @@ export function DanceVideoPlayer({
 
         {/* Mirrored indicator badge */}
         {isMirrored && (
-          <span
-            className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm"
-          >
+          <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
             {labels.mirrored}
           </span>
         )}
@@ -268,30 +224,17 @@ export function DanceVideoPlayer({
               : "opacity-0 group-hover:opacity-100"
           )}
         >
-          {/* Chapter / timeline markers */}
-          <div className="mb-3 flex flex-nowrap gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {chapters.map((chapter) => (
-              <button
-                key={chapter.id}
-                type="button"
-                onClick={() => jumpToChapter(chapter)}
-                className={cn(
-                  "shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors sm:text-xs",
-                  activeChapterId === chapter.id
-                    ? "border-frame-magenta bg-frame-magenta/15 text-frame-magenta"
-                    : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
-                )}
-              >
-                {chapter.label}
-              </button>
-            ))}
-          </div>
+          <ChapterMarkers
+            chapters={chapters}
+            activeChapterId={activeChapterId}
+            onJumpToChapter={jumpToChapter}
+          />
 
           {/* Seek bar */}
           <input
             type="range"
             className="frame-range w-full cursor-pointer"
-            style={{ "--range-progress": `${progressPercent}%` } as React.CSSProperties}
+            style={{ "--range-progress": `${progressPercent}%` } as CSSProperties}
             min={0}
             max={duration || 0}
             step={0.01}
@@ -315,27 +258,13 @@ export function DanceVideoPlayer({
                 )}
               </button>
 
-              <div className="hidden items-center gap-1.5 sm:flex">
-                <button
-                  type="button"
-                  onClick={toggleMute}
-                  aria-label={isMuted ? labels.unmute : labels.mute}
-                  className="flex h-8 w-8 items-center justify-center text-frame-silver transition-colors hover:text-white"
-                >
-                  <VolumeIcon className="h-4 w-4" />
-                </button>
-                <input
-                  type="range"
-                  className="frame-range w-16 cursor-pointer"
-                  style={{ "--range-progress": `${volumePercent}%` } as React.CSSProperties}
-                  min={0}
-                  max={1}
-                  step={0.05}
-                  value={isMuted ? 0 : volume}
-                  onChange={handleVolumeChange}
-                  aria-label={labels.volume}
-                />
-              </div>
+              <VolumeControl
+                volume={volume}
+                isMuted={isMuted}
+                labels={labels}
+                onToggleMute={toggleMute}
+                onVolumeChange={handleVolumeChange}
+              />
 
               <span className="text-xs font-medium tabular-nums text-white/80">
                 {formatTime(currentTime)} / {formatTime(duration)}
@@ -343,51 +272,11 @@ export function DanceVideoPlayer({
             </div>
 
             <div className="flex items-center gap-1.5 sm:gap-2">
-              {/* Playback speed */}
-              <div className="relative" ref={speedMenuRef}>
-                <button
-                  type="button"
-                  ref={speedButtonRef}
-                  onClick={() => setShowSpeedMenu((open) => !open)}
-                  aria-label={labels.speed}
-                  aria-haspopup="menu"
-                  aria-expanded={showSpeedMenu}
-                  className={cn(
-                    "flex h-8 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold transition-colors",
-                    showSpeedMenu
-                      ? "border-frame-magenta text-frame-magenta"
-                      : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
-                  )}
-                >
-                  <Gauge className="h-3.5 w-3.5" />
-                  {playbackRate}x
-                </button>
-                {showSpeedMenu && (
-                  <div
-                    role="menu"
-                    aria-label={labels.speed}
-                    className="absolute bottom-10 right-0 z-10 flex flex-col overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
-                  >
-                    {PLAYBACK_SPEEDS.map((speed) => (
-                      <button
-                        key={speed}
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={playbackRate === speed}
-                        onClick={() => setSpeed(speed)}
-                        className={cn(
-                          "px-4 py-2 text-start text-xs font-medium whitespace-nowrap transition-colors hover:bg-white/5",
-                          playbackRate === speed
-                            ? "text-frame-magenta"
-                            : "text-white/80"
-                        )}
-                      >
-                        {speed}x{speed === 1 ? ` · ${labels.normalSpeed}` : ""}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <SpeedMenu
+                playbackRate={playbackRate}
+                labels={labels}
+                onChangeSpeed={setSpeed}
+              />
 
               {/* Mirror toggle */}
               <button
