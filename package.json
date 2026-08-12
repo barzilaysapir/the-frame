@@ -11,6 +11,8 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "typecheck:scripts": "tsc --noEmit -p scripts/tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepreview": "wrangler d1 migrations apply the-frame-catalog --local",
