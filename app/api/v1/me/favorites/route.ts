@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   jsonError,
+  readJsonBody,
   requireAppDb,
   requireFirebaseClaims,
 } from "@/lib/server/api/auth-context";
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
     );
     await upsertUserFromClaims(db, claims, locale);
 
-    const body = (await request.json()) as { routineSlug?: unknown };
+    const body = await readJsonBody<{ routineSlug?: unknown }>(request);
     if (typeof body.routineSlug !== "string" || !body.routineSlug) {
       return NextResponse.json(
         { error: "routineSlug is required" },
