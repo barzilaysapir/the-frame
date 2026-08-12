@@ -1,6 +1,9 @@
 import "server-only";
 import type { Locale } from "@/lib/i18n/config";
-import type { CatalogRepository } from "@/lib/server/catalog/repository";
+import type {
+  CatalogRepository,
+  RoutineFilters,
+} from "@/lib/server/catalog/repository";
 import type {
   CatalogInstructor,
   CatalogRoutine,
@@ -123,7 +126,14 @@ async function fetchChaptersForSlug(
 
 /**
  * Chapters for *all* routines in one round trip, grouped by slug. Avoids an
- * N+1 query per routine when listing the full catalog (100+ rows).
+ * N+1 query per routine when listing the catalog (100+ rows).
+ *
+ * Deliberately unscoped by slug (not `WHERE routine_slug IN (...)`): D1 caps
+ * bound parameters per statement at 100, so an IN-list sized to the routine
+ * count would break once the catalog itself reaches ~100 rows (it already
+ * has). The chapters table is small regardless of how the routines query is
+ * filtered, so one flat query bound only to `locale` stays well under the
+ * limit and the caller just looks up the slugs it needs from the map.
  */
 async function fetchChaptersForAllRoutines(
   db: AppDb,
@@ -171,9 +181,32 @@ const ROUTINE_SELECT = `
 
 export function createD1CatalogRepository(db: AppDb): CatalogRepository {
   return {
-    async listRoutines(locale) {
+    async listRoutines(locale, filters?: RoutineFilters) {
+      const conditions: string[] = [];
+      const params: string[] = [locale, locale, locale, locale];
+
+      if (filters?.instructor) {
+        conditions.push("r.instructor_slug = ?");
+        params.push(filters.instructor);
+      }
+      if (filters?.style) {
+        conditions.push("r.style = ?");
+        params.push(filters.style);
+      }
+      if (filters?.level) {
+        conditions.push("r.level = ?");
+        params.push(filters.level);
+      }
+
+      const whereClause = conditions.length
+        ? ` WHERE ${conditions.join(" AND ")}`
+        : "";
+
       const [result, chaptersBySlug] = await Promise.all([
-        db.prepare(ROUTINE_SELECT).bind(locale, locale, locale, locale).all<RoutineRow>(),
+        db
+          .prepare(`${ROUTINE_SELECT}${whereClause}`)
+          .bind(...params)
+          .all<RoutineRow>(),
         fetchChaptersForAllRoutines(db, locale),
       ]);
 
