@@ -7,6 +7,7 @@ import { SOCIAL_LINKS, SOCIAL_PLATFORM_NAMES, type SocialPlatform } from "@/lib/
 import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
+import { getNavLinks } from "@/lib/nav-links";
 
 interface FooterProps {
   locale: Locale;
@@ -22,12 +23,7 @@ const SOCIAL_ICONS: Record<SocialPlatform, ComponentType<{ className?: string }>
 
 export function Footer({ locale, labels, footer }: FooterProps) {
   const year = new Date().getFullYear();
-
-  const navLinks = [
-    { label: labels.tutorials, href: localePath(locale, "/routines") },
-    { label: labels.teachers, href: localePath(locale, "/instructors") },
-    { label: labels.about, href: localePath(locale, "/about") },
-  ];
+  const navLinks = getNavLinks(locale, labels);
 
   return (
     <footer className="border-t border-frame-border/80 bg-frame-bg">
