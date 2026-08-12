@@ -1,0 +1,41 @@
+---
+description: How to prioritize accessibility work on a visual (dance-tutorial) product
+alwaysApply: true
+---
+
+# Accessibility priorities
+
+The core product — dance tutorial videos — is inherently visual, and that's fine.
+Don't invest in things that try to make the *demonstration itself* non-visual
+(e.g. full audio-description tracks narrating every movement). That's genuinely
+low ROI for this product.
+
+But most accessibility work isn't about the video content — it's about the
+generic site shell around it, and that part is high-value regardless of how
+visual the product is:
+
+## Always do (cheap, high-value, no excuse to skip)
+
+- Forms, checkout, navigation, buttons, focus states, ARIA semantics — these
+  are the same generic UI patterns any site has. A screen-reader or
+  keyboard-only user still needs to sign up, browse the catalog, and pay.
+  Missing focus indicators, unlabeled buttons, wrong ARIA roles, etc. are just
+  bugs, not "accessibility we chose to skip."
+- These are near-free to fix (usually a few lines per instance) — treat them
+  like any other bug, not an optional investment.
+
+## Deprioritize until there's real demand/budget
+
+- Real video captions/subtitles (actual VTT content authoring, not just the
+  `<track>` wiring) is an ongoing content-production cost, not a one-time code
+  fix. Fair to deprioritize until there's real user demand or content budget
+  for it — don't build this out speculatively.
+- Note captions also have a non-accessibility business case (dancers watching
+  with sound off, or wanting counts as text) — worth revisiting if that
+  demand shows up, independent of accessibility framing.
+
+## Also worth remembering
+
+- Legal exposure (ADA/WCAG-style claims) targets exactly the generic-UI gaps
+  above, regardless of how visual the core product is — another reason not to
+  skip the cheap stuff.
