@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { EarlyBirdBanner } from "@/components/EarlyBirdBanner";
-import { DanceVideoPlayer } from "@/components/DanceVideoPlayer";
+import { DanceVideoPlayer } from "@/components/player/DanceVideoPlayer";
 import { RoutineBreakdown, type RoutineDetail } from "@/components/routines/RoutineBreakdown";
 import { PricingCard } from "@/components/PricingCard";
 import { MobileStickyCta } from "@/components/MobileStickyCta";
