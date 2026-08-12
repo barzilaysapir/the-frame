@@ -27,11 +27,13 @@ export async function GET(request: NextRequest) {
   try {
     const claims = await requireFirebaseClaims(request);
     const db = await requireAppDb();
-    await upsertUserFromClaims(db, claims);
-
     const locale = resolveCatalogLocale(
       request.nextUrl.searchParams.get("locale"),
     );
+    // Locale only applies on first insert (new user row); existing users
+    // keep whatever `locale_pref` they already have — see
+    // `upsertUserFromClaims`.
+    await upsertUserFromClaims(db, claims, locale);
     const [purchases, { repository, source }] = await Promise.all([
       listPaidPurchases(db, claims.uid),
       resolveCatalog(),

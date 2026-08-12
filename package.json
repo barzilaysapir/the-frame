@@ -20,19 +20,16 @@
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload -- --keep-vars"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "^0.8.13",
     "clsx": "^2.1.1",
     "firebase": "^12.17.1",
     "jose": "^6.2.8",
     "lucide-react": "^0.462.0",
-    "negotiator": "^1.0.0",
     "next": "^16.3.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
     "@opennextjs/cloudflare": "^1.20.2",
-    "@types/negotiator": "^0.6.4",
     "@types/node": "^20.14.10",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
