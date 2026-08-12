@@ -64,6 +64,8 @@ export function DanceVideoPlayer({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(true);
+  const speedMenuRef = useRef<HTMLDivElement>(null);
+  const speedButtonRef = useRef<HTMLButtonElement>(null);
 
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
@@ -107,6 +109,31 @@ export function DanceVideoPlayer({
       video.removeEventListener("loadedmetadata", onLoadedMetadata);
     };
   }, []);
+
+  // Close the speed menu on an outside click or Escape (returning focus to
+  // its trigger), matching standard menu-dismissal behavior.
+  useEffect(() => {
+    if (!showSpeedMenu) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (!speedMenuRef.current?.contains(event.target as Node)) {
+        setShowSpeedMenu(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShowSpeedMenu(false);
+        speedButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [showSpeedMenu]);
 
   useEffect(() => {
     const onFullscreenChange = () => {
@@ -317,11 +344,13 @@ export function DanceVideoPlayer({
 
             <div className="flex items-center gap-1.5 sm:gap-2">
               {/* Playback speed */}
-              <div className="relative">
+              <div className="relative" ref={speedMenuRef}>
                 <button
                   type="button"
+                  ref={speedButtonRef}
                   onClick={() => setShowSpeedMenu((open) => !open)}
                   aria-label={labels.speed}
+                  aria-haspopup="menu"
                   aria-expanded={showSpeedMenu}
                   className={cn(
                     "flex h-8 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold transition-colors",
@@ -334,11 +363,17 @@ export function DanceVideoPlayer({
                   {playbackRate}x
                 </button>
                 {showSpeedMenu && (
-                  <div className="absolute bottom-10 right-0 z-10 flex flex-col overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl">
+                  <div
+                    role="menu"
+                    aria-label={labels.speed}
+                    className="absolute bottom-10 right-0 z-10 flex flex-col overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
+                  >
                     {PLAYBACK_SPEEDS.map((speed) => (
                       <button
                         key={speed}
                         type="button"
+                        role="menuitemradio"
+                        aria-checked={playbackRate === speed}
                         onClick={() => setSpeed(speed)}
                         className={cn(
                           "px-4 py-2 text-start text-xs font-medium whitespace-nowrap transition-colors hover:bg-white/5",
