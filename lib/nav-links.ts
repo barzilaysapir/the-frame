@@ -21,10 +21,6 @@ export function getNavLinks(
     { label: labels.tutorials, href: localePath(locale, "/routines") },
     { label: labels.styles, href: localePath(locale, "/styles") },
     { label: labels.teachers, href: localePath(locale, "/instructors") },
-    {
-      label: labels.externalCourses,
-      href: localePath(locale, "/external-courses"),
-    },
     { label: labels.favorites, href: localePath(locale, "/favorites") },
     { label: labels.about, href: localePath(locale, "/about") },
   ];
