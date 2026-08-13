@@ -2573,13 +2573,13 @@ export const ROUTINES: RoutineRecord[] = [
  * per-routine cover assignment is re-run.
  */
 export const STYLE_COVER_POSTERS: Record<DanceStyleKey, string> = {
-  "jazz-funk": "/routine-poster-midnight-static.png",
-  "hip-hop": "/routine-poster-block-party.png",
-  heels: "/routine-poster-penthouse-heels.png",
-  jazz: "/routine-poster-amber-stage.png",
-  afro: "/routine-poster-afro-sunburst.png",
-  dancehall: "/routine-poster-dancehall-bounce.png",
-  voguing: "/routine-poster-ballroom-runway.png",
+  "jazz-funk": "/routine-posters/routine-poster-midnight-static.png",
+  "hip-hop": "/routine-posters/routine-poster-block-party.png",
+  heels: "/routine-posters/routine-poster-penthouse-heels.png",
+  jazz: "/routine-posters/routine-poster-amber-stage.png",
+  afro: "/routine-posters/routine-poster-afro-sunburst.png",
+  dancehall: "/routine-posters/routine-poster-dancehall-bounce.png",
+  voguing: "/routine-posters/routine-poster-ballroom-runway.png",
 };
 
 export function getAllRoutines(): RoutineRecord[] {
