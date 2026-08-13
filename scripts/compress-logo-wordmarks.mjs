@@ -34,10 +34,12 @@ const WORDMARKS = [
   ],
 ];
 
-// Source is already ~689x165; keep the aspect ratio but cap width at 480 —
-// plenty of headroom for retina at the header/footer display sizes (the
-// existing icon mark next to it renders at 24-36px tall).
-const TARGET_WIDTH = 480;
+// Source is already ~689x165. Both current usages (Header.tsx, Footer.tsx)
+// render this at h-6 (24px tall, ~100px wide) — `images.unoptimized: true`
+// in next.config.mjs means whatever we ship downloads as-is, no runtime
+// resizing. 240px wide covers 2x retina at that display size with some
+// headroom for a slightly larger future usage; no reason to ship more.
+const TARGET_WIDTH = 240;
 
 async function compressWordmark(srcPath, destFilename) {
   const destPath = path.join(ROOT, "public", destFilename);

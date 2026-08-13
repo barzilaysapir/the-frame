@@ -82,8 +82,8 @@ export function Header({ locale, labels }: HeaderProps) {
             <Image
               src="/logo-wordmark-light-silver.png"
               alt="The Frame"
-              width={480}
-              height={115}
+              width={240}
+              height={57}
               className="h-6 w-auto"
               priority
             />
