@@ -38,10 +38,10 @@ export default async function HomePage({ params }: HomePageProps) {
         </h1>
         <p className="mt-5 max-w-xl text-frame-silver">{dict.home.subtitle}</p>
         <Button
-          href={localePath(locale, "/routine/levitating")}
+          href={localePath(locale, "/routines")}
           className="group mt-9 px-6"
         >
-          {dict.home.cta}
+          {dict.common.browseTutorials}
           <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
         </Button>
       </div>
