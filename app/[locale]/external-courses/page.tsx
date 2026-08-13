@@ -42,9 +42,6 @@ export default async function ExternalCoursesPage({
           {dict.externalCourses.title}
         </h1>
         <p className="mt-4 text-frame-silver">{dict.externalCourses.subtitle}</p>
-        <p className="mt-3 text-sm text-frame-muted">
-          {dict.externalCourses.disclosure}
-        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
