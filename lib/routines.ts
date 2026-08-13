@@ -73,7 +73,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Dua Lipa",
     bpm: "103 BPM",
     length: "3:23",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-midnight-static.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -98,7 +98,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "SZA",
     bpm: "89 BPM",
     length: "2:33",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-street-cypher.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -123,7 +123,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "The Weeknd",
     bpm: "120 BPM",
     length: "4:10",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-penthouse-heels.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -148,7 +148,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Dua Lipa",
     bpm: "103 BPM",
     length: "3:23",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-midnight-static.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -173,7 +173,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Dua Lipa",
     bpm: "124 BPM",
     length: "3:03",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-amber-loft.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -198,7 +198,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Dua Lipa",
     bpm: "147 BPM",
     length: "3:13",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-midnight-static.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -223,7 +223,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Lizzo",
     bpm: "109 BPM",
     length: "3:11",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-concrete-groove.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -248,7 +248,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Lizzo",
     bpm: "96 BPM",
     length: "2:39",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-concrete-groove.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -273,7 +273,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Miley Cyrus",
     bpm: "118 BPM",
     length: "3:20",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-concrete-groove.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -298,7 +298,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "SZA",
     bpm: "120 BPM",
     length: "3:01",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-city-lights-funk.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -323,7 +323,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "The Weeknd",
     bpm: "171 BPM",
     length: "3:20",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-midnight-static.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -348,7 +348,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Doja Cat",
     bpm: "130 BPM",
     length: "3:30",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-city-lights-funk.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -373,7 +373,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Doja Cat ft. SZA",
     bpm: "111 BPM",
     length: "3:28",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-amber-loft.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -398,7 +398,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Doja Cat",
     bpm: "128 BPM",
     length: "2:52",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-city-lights-funk.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -423,7 +423,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Drake",
     bpm: "93 BPM",
     length: "3:30",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-city-lights-funk.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -448,7 +448,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Harry Styles",
     bpm: "174 BPM",
     length: "2:47",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-city-lights-funk.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -473,7 +473,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Taylor Swift",
     bpm: "97 BPM",
     length: "3:20",
-    poster: "/routine-poster-midnight-static.png",
+    poster: "/routine-posters/routine-poster-midnight-static.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -498,7 +498,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Lizzo",
     bpm: "109 BPM",
     length: "3:11",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-street-cypher.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -523,7 +523,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "SZA",
     bpm: "89 BPM",
     length: "2:33",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-street-cypher.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -548,7 +548,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Metro Boomin, The Weeknd, 21 Savage",
     bpm: "98 BPM",
     length: "3:41",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-warehouse-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -573,7 +573,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Jack Harlow",
     bpm: "107 BPM",
     length: "2:53",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-neon-nights.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -598,7 +598,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Lil Nas X & Jack Harlow",
     bpm: "150 BPM",
     length: "3:32",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-warehouse-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -623,7 +623,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Drake",
     bpm: "77 BPM",
     length: "3:18",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-warehouse-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -648,7 +648,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Drake",
     bpm: "93 BPM",
     length: "3:30",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-street-cypher.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -673,7 +673,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Megan Thee Stallion",
     bpm: "127 BPM",
     length: "2:35",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-neon-nights.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -698,7 +698,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Megan Thee Stallion",
     bpm: "123 BPM",
     length: "2:51",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-warehouse-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -723,7 +723,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Missy Elliott",
     bpm: "100 BPM",
     length: "3:53",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-street-cypher.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -748,7 +748,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Missy Elliott",
     bpm: "100 BPM",
     length: "3:23",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-warehouse-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -773,7 +773,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Travis Scott",
     bpm: "155 BPM",
     length: "5:12",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-block-party.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -798,7 +798,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Kendrick Lamar",
     bpm: "150 BPM",
     length: "2:57",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-warehouse-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -823,7 +823,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Kendrick Lamar",
     bpm: "140 BPM",
     length: "3:05",
-    poster: "/routine-poster-neon-nights.png",
+    poster: "/routine-posters/routine-poster-neon-nights.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -848,7 +848,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "SZA",
     bpm: "89 BPM",
     length: "2:33",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-neon-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -873,7 +873,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "SZA",
     bpm: "77 BPM",
     length: "3:21",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-city-glam.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -898,7 +898,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "SZA",
     bpm: "120 BPM",
     length: "3:01",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-city-glam.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -923,7 +923,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "The Weeknd",
     bpm: "120 BPM",
     length: "4:10",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-penthouse-heels.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -948,7 +948,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "The Weeknd",
     bpm: "67 BPM",
     length: "4:20",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-neon-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -973,7 +973,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Metro Boomin, The Weeknd, 21 Savage",
     bpm: "98 BPM",
     length: "3:41",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-city-glam.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -998,7 +998,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Doja Cat",
     bpm: "130 BPM",
     length: "3:30",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-neon-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1023,7 +1023,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Doja Cat ft. SZA",
     bpm: "111 BPM",
     length: "3:28",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-penthouse-heels.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1048,7 +1048,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Ciara",
     bpm: "67 BPM",
     length: "4:00",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-velvet-heels.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1073,7 +1073,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Ciara",
     bpm: "65 BPM",
     length: "4:36",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-neon-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1098,7 +1098,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Tinashe",
     bpm: "100 BPM",
     length: "3:33",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-neon-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1123,7 +1123,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Kehlani",
     bpm: "100 BPM",
     length: "3:17",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-neon-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1148,7 +1148,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Cassie",
     bpm: "130 BPM",
     length: "3:34",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-neon-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1173,7 +1173,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Aaliyah",
     bpm: "75 BPM",
     length: "4:04",
-    poster: "/routine-poster-velvet-heels.png",
+    poster: "/routine-posters/routine-poster-neon-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1198,7 +1198,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Adele",
     bpm: "62 BPM",
     length: "3:44",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-spotlight-lyrical.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1223,7 +1223,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Adele",
     bpm: "105 BPM",
     length: "3:48",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-velvet-curtain.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1248,7 +1248,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Sam Smith",
     bpm: "79 BPM",
     length: "2:53",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-jazz-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1273,7 +1273,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Sam Smith ft. Kim Petras",
     bpm: "131 BPM",
     length: "2:36",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-spotlight-lyrical.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1298,7 +1298,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Billie Eilish",
     bpm: "79 BPM",
     length: "3:20",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-jazz-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1323,7 +1323,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Billie Eilish",
     bpm: "87 BPM",
     length: "4:58",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-velvet-curtain.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1348,7 +1348,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "H.E.R. ft. Daniel Caesar",
     bpm: "68 BPM",
     length: "3:29",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-jazz-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1373,7 +1373,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Lewis Capaldi",
     bpm: "110 BPM",
     length: "3:02",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-amber-stage.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1398,7 +1398,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Ariana Grande",
     bpm: "55 BPM",
     length: "2:41",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-amber-stage.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1423,7 +1423,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Jorja Smith",
     bpm: "100 BPM",
     length: "3:29",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-velvet-curtain.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1448,7 +1448,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Alicia Keys",
     bpm: "94 BPM",
     length: "3:48",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-amber-stage.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1473,7 +1473,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "John Legend",
     bpm: "63 BPM",
     length: "4:29",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-spotlight-lyrical.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1498,7 +1498,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Daniel Caesar ft. Kali Uchis",
     bpm: "85 BPM",
     length: "4:08",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-jazz-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1523,7 +1523,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Snoh Aalegra",
     bpm: "88 BPM",
     length: "3:07",
-    poster: "/routine-poster-jazz-glow.png",
+    poster: "/routine-posters/routine-poster-jazz-glow.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1548,7 +1548,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Jorja Smith",
     bpm: "100 BPM",
     length: "3:29",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-afro-rhythm.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1573,7 +1573,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Tems",
     bpm: "100 BPM",
     length: "3:14",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-afro-rhythm.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1598,7 +1598,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Burna Boy",
     bpm: "103 BPM",
     length: "3:15",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-afro-rhythm.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1623,7 +1623,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Burna Boy",
     bpm: "105 BPM",
     length: "3:33",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-tribal-energy.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1648,7 +1648,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Wizkid ft. Tems",
     bpm: "103 BPM",
     length: "4:08",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-tribal-energy.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1673,7 +1673,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Wizkid",
     bpm: "100 BPM",
     length: "3:47",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-afro-sunburst.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1698,7 +1698,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Davido",
     bpm: "102 BPM",
     length: "4:07",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-afro-groove.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1723,7 +1723,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Davido ft. Musa Keys",
     bpm: "107 BPM",
     length: "2:58",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-tribal-energy.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1748,7 +1748,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Rema",
     bpm: "107 BPM",
     length: "3:39",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-tribal-energy.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1773,7 +1773,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Rema",
     bpm: "104 BPM",
     length: "3:17",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-afro-sunburst.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1798,7 +1798,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "CKay",
     bpm: "108 BPM",
     length: "2:47",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-afro-rhythm.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1823,7 +1823,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Tems",
     bpm: "105 BPM",
     length: "3:47",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-afro-rhythm.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1848,7 +1848,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Fireboy DML",
     bpm: "103 BPM",
     length: "2:52",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-afro-sunburst.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1873,7 +1873,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Ayra Starr",
     bpm: "103 BPM",
     length: "2:50",
-    poster: "/routine-poster-afro-sunburst.png",
+    poster: "/routine-posters/routine-poster-afro-sunburst.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1898,7 +1898,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Asake",
     bpm: "103 BPM",
     length: "2:53",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-island-heat.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1923,7 +1923,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "KiDi",
     bpm: "105 BPM",
     length: "3:20",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-dancehall-bounce.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1948,7 +1948,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Sean Paul",
     bpm: "98 BPM",
     length: "3:24",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-dancehall-block.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1973,7 +1973,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Sean Paul",
     bpm: "95 BPM",
     length: "3:36",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-dancehall-block.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -1998,7 +1998,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Popcaan",
     bpm: "101 BPM",
     length: "3:20",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-dancehall-block.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2023,7 +2023,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Popcaan",
     bpm: "100 BPM",
     length: "3:12",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-dancehall-block.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2048,7 +2048,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Shenseea",
     bpm: "100 BPM",
     length: "3:03",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-dancehall-block.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2073,7 +2073,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Shenseea",
     bpm: "98 BPM",
     length: "3:07",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-island-heat.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2098,7 +2098,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Konshens",
     bpm: "105 BPM",
     length: "3:05",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-island-heat.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2123,7 +2123,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Vybz Kartel",
     bpm: "100 BPM",
     length: "3:12",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-dancehall-block.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2148,7 +2148,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Spice",
     bpm: "103 BPM",
     length: "2:58",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-island-heat.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2173,7 +2173,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Skillibeng",
     bpm: "100 BPM",
     length: "2:40",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-carnival-vibes.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2198,7 +2198,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Alkaline",
     bpm: "98 BPM",
     length: "3:10",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-dancehall-block.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2223,7 +2223,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Dexta Daps",
     bpm: "95 BPM",
     length: "3:36",
-    poster: "/routine-poster-dancehall-block.png",
+    poster: "/routine-posters/routine-poster-carnival-vibes.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2248,7 +2248,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Justin Timberlake",
     bpm: "113 BPM",
     length: "3:56",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-house-of-style.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2273,7 +2273,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Sam Smith ft. Kim Petras",
     bpm: "131 BPM",
     length: "2:36",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-ballroom-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2298,7 +2298,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Davido ft. Musa Keys",
     bpm: "107 BPM",
     length: "2:58",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-ballroom-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2323,7 +2323,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Rema",
     bpm: "107 BPM",
     length: "3:39",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-voguing-spotlight.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2348,7 +2348,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Ayra Starr",
     bpm: "103 BPM",
     length: "2:50",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-house-of-style.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2373,7 +2373,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Amaarae",
     bpm: "100 BPM",
     length: "2:37",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-voguing-spotlight.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2398,7 +2398,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Shenseea",
     bpm: "100 BPM",
     length: "3:03",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-house-of-style.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2423,7 +2423,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Beyoncé",
     bpm: "115 BPM",
     length: "4:38",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-vogue-glam.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2448,7 +2448,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Beyoncé",
     bpm: "115 BPM",
     length: "3:26",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-voguing-spotlight.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2473,7 +2473,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Rihanna",
     bpm: "87 BPM",
     length: "4:36",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-vogue-glam.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2498,7 +2498,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Rihanna",
     bpm: "123 BPM",
     length: "4:33",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-ballroom-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2523,7 +2523,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Ariana Grande",
     bpm: "140 BPM",
     length: "2:58",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-ballroom-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },
@@ -2548,7 +2548,7 @@ export const ROUTINES: RoutineRecord[] = [
     artist: "Ariana Grande",
     bpm: "128 BPM",
     length: "3:34",
-    poster: "/routine-poster-voguing-spotlight.png",
+    poster: "/routine-posters/routine-poster-ballroom-runway.png",
     videoSrc: SAMPLE_VIDEO_SRC,
     chapters: [
       { id: "full-performance", time: 0 },

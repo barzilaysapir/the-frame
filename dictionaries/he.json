@@ -7,7 +7,6 @@
     "tutorials": "ספרייה",
     "styles": "סגנונות",
     "teachers": "מורים",
-    "externalCourses": "קורסים נוספים",
     "favorites": "מועדפים",
     "about": "אודות",
     "login": "התחברות",
@@ -40,6 +39,7 @@
     "resultMany": "{count} תוצאות",
     "empty": "אין קומבינציות להצגה בספרייה כרגע.",
     "viewRoutine": "צפו בקומבינציה",
+    "loadingMore": "טוען עוד…",
     "taughtBy": "בהנחיית {name}",
     "favoriteAdd": "הוספה למועדפים",
     "favoriteRemove": "הסרה מהמועדפים"
@@ -71,7 +71,6 @@
   },
   "externalCourses": {
     "title": "קורסים נוספים",
-    "subtitle": "קורסים נוספים שצילמנו ב-The Frame, מעולמות קצת שונים מהקומבינציות הראשיות — כמו מתיחות וחימום.",
     "comingSoonBadge": "בקרוב",
     "comingSoonNote": "הקורס הזה בהפקה ויעלה בקרוב ל-The Frame.",
     "providerPrefix": "מבית {provider}",

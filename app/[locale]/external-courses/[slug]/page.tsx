@@ -78,7 +78,7 @@ export default async function ExternalCourseDetailPage({
 
       <div className="relative z-10 mx-auto max-w-3xl px-4 pb-16 text-center sm:px-6">
         <Link
-          href={localePath(locale, "/external-courses")}
+          href={localePath(locale, "/routines")}
           className="group inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
         >
           {dict.externalCourses.back}

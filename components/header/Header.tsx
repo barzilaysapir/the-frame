@@ -71,7 +71,7 @@ export function Header({ locale, labels }: HeaderProps) {
           aria-label="The Frame by Barzilay"
         >
           <Image
-            src="/logo-mark.png"
+            src="/logos/logo-mark.png"
             alt=""
             width={36}
             height={36}
@@ -80,7 +80,7 @@ export function Header({ locale, labels }: HeaderProps) {
           />
           <span className="flex flex-col leading-none">
             <Image
-              src="/logo-wordmark-light-silver.png"
+              src="/logos/logo-wordmark-light-silver.png"
               alt="The Frame"
               width={240}
               height={57}

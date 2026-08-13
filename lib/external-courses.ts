@@ -11,7 +11,7 @@ export interface ExternalCourseRecord {
   slug: string;
   /** MOCK creator/series name — replace with the real one when ready. */
   provider: string;
-  /** Display-only price string. */
+  /** Display-only price string, in ILS (₪) — this is an Israel-only business, same as routine pricing. */
   priceDisplay: string;
   /** Controls display order; lower sorts first. */
   sortOrder: number;
@@ -23,37 +23,37 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
   {
     slug: "steez-academy-hiphop-foundations",
     provider: "Steez Academy",
-    priceDisplay: "$29/mo",
+    priceDisplay: "₪99/mo",
     sortOrder: 0,
   },
   {
     slug: "urban-motion-jazzfunk-intensive",
     provider: "Urban Motion Studio",
-    priceDisplay: "$149 one-time",
+    priceDisplay: "₪449 one-time",
     sortOrder: 1,
   },
   {
     slug: "heels-and-heart-confidence-course",
     provider: "Heels & Heart",
-    priceDisplay: "$39/mo",
+    priceDisplay: "₪129/mo",
     sortOrder: 2,
   },
   {
     slug: "movement-lab-contemporary-lines",
     provider: "The Movement Lab",
-    priceDisplay: "$59/mo",
+    priceDisplay: "₪179/mo",
     sortOrder: 3,
   },
   {
     slug: "rhythm-collective-afrobeats-bootcamp",
     provider: "Rhythm Collective",
-    priceDisplay: "$25/mo",
+    priceDisplay: "₪89/mo",
     sortOrder: 4,
   },
   {
     slug: "dancehall-society-vibes-101",
     provider: "Dancehall Society",
-    priceDisplay: "$19/mo",
+    priceDisplay: "₪69/mo",
     sortOrder: 5,
   },
 ];

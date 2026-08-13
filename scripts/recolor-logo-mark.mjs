@@ -19,7 +19,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
 
-const TARGET_PATH = path.join(ROOT, "public", "logo-mark.png");
+const TARGET_PATH = path.join(ROOT, "public", "logos", "logo-mark.png");
 // frame-silver (#C9C9CE) — matches logo-wordmark-light-silver.png's fill.
 const TARGET_RGB = { r: 0xc9, g: 0xc9, b: 0xce };
 

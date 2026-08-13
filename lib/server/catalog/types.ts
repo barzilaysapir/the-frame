@@ -74,6 +74,12 @@ export interface CatalogItemResponse<T> {
   item: T;
 }
 
+/** `CatalogListResponse` plus pagination metadata — used by paginated list endpoints (e.g. `/api/v1/routines` for the library's infinite scroll). */
+export interface CatalogPaginatedListResponse<T> extends CatalogListResponse<T> {
+  total: number;
+  hasMore: boolean;
+}
+
 export interface CatalogHealthResponse {
   ok: true;
   service: "the-frame-catalog";
