@@ -1,0 +1,33 @@
+import { NextRequest, NextResponse } from "next/server";
+import {
+  resolveCatalog,
+  resolveCatalogLocale,
+} from "@/lib/server/catalog";
+import { jsonError } from "@/lib/server/api/auth-context";
+import type {
+  CatalogExternalCourse,
+  CatalogListResponse,
+} from "@/lib/server/catalog/types";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+export async function GET(request: NextRequest) {
+  try {
+    const locale = resolveCatalogLocale(
+      request.nextUrl.searchParams.get("locale"),
+    );
+    const { repository, source } = await resolveCatalog();
+    const items = await repository.listExternalCourses(locale);
+
+    const body: CatalogListResponse<CatalogExternalCourse> = {
+      locale,
+      source,
+      items,
+    };
+
+    return NextResponse.json(body);
+  } catch (error) {
+    return jsonError(error);
+  }
+}

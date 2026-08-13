@@ -7,6 +7,7 @@
     "tutorials": "ספרייה",
     "styles": "סגנונות",
     "teachers": "מורים",
+    "externalCourses": "קורסים נוספים",
     "favorites": "מועדפים",
     "about": "אודות",
     "login": "התחברות",
@@ -63,6 +64,16 @@
     "routineOne": "קומבינציה אחת",
     "routineMany": "{count} קומבינציות",
     "browseAria": "עיינו בקומבינציות בסגנון {name}"
+  },
+  "externalCourses": {
+    "title": "קורסים נוספים",
+    "subtitle": "קורסים נוספים שצילמנו ב-The Frame, מעולמות קצת שונים מהקומבינציות הראשיות — כמו מתיחות וחימום.",
+    "comingSoonBadge": "בקרוב",
+    "comingSoonNote": "הקורס הזה בהפקה ויעלה בקרוב ל-The Frame.",
+    "providerPrefix": "מבית {provider}",
+    "cta": "לצפייה בקורס",
+    "linkAria": "{title} מבית {provider}",
+    "back": "חזרה לקורסים נוספים"
   },
   "about": {
     "metaTitle": "אודות",

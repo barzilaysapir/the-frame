@@ -113,3 +113,49 @@ describe("mockCatalogRepository.listInstructors / getInstructor", () => {
     expect(instructor).toBeNull();
   });
 });
+
+describe("mockCatalogRepository.listExternalCourses", () => {
+  it("returns a non-empty, localized external course list", async () => {
+    const courses = await mockCatalogRepository.listExternalCourses("en");
+    expect(courses.length).toBeGreaterThan(0);
+    expect(
+      courses.every(
+        (course) =>
+          course.title.length > 0 &&
+          course.slug.length > 0 &&
+          course.provider.length > 0 &&
+          course.priceDisplay.length > 0,
+      ),
+    ).toBe(true);
+  });
+
+  it("returns locale-specific titles for en vs he", async () => {
+    const [en, he] = await Promise.all([
+      mockCatalogRepository.listExternalCourses("en"),
+      mockCatalogRepository.listExternalCourses("he"),
+    ]);
+
+    expect(en.length).toBe(he.length);
+    expect(en[0].title).not.toBe(he[0].title);
+    expect(en[0].slug).toBe(he[0].slug);
+  });
+});
+
+describe("mockCatalogRepository.getExternalCourse", () => {
+  it("returns the course matching a known slug", async () => {
+    const all = await mockCatalogRepository.listExternalCourses("en");
+    const { slug } = all[0];
+
+    const course = await mockCatalogRepository.getExternalCourse("en", slug);
+
+    expect(course?.slug).toBe(slug);
+  });
+
+  it("returns null for an unknown slug", async () => {
+    const course = await mockCatalogRepository.getExternalCourse(
+      "en",
+      "definitely-not-a-real-slug",
+    );
+    expect(course).toBeNull();
+  });
+});

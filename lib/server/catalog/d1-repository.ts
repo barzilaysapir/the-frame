@@ -5,6 +5,7 @@ import type {
   RoutineFilters,
 } from "@/lib/server/catalog/repository";
 import type {
+  CatalogExternalCourse,
   CatalogInstructor,
   CatalogRoutine,
   CatalogChapter,
@@ -16,6 +17,7 @@ import type {
   LevelKey,
   TagKey,
 } from "@/lib/routines";
+import { mockCatalogRepository } from "@/lib/server/catalog/mock-repository";
 
 interface RoutineRow {
   slug: string;
@@ -54,6 +56,15 @@ interface ChapterRow {
   chapter_id: string;
   time_seconds: number;
   label: string | null;
+}
+
+interface ExternalCourseRow {
+  slug: string;
+  provider: string;
+  price_display: string;
+  title: string | null;
+  tagline: string | null;
+  description: string | null;
 }
 
 function parseTags(tagsJson: string, routineSlug: string): TagKey[] {
@@ -100,6 +111,17 @@ function mapRoutine(
       original: row.price_original,
       earlyBird: row.price_early_bird,
     },
+  };
+}
+
+function mapExternalCourse(row: ExternalCourseRow): CatalogExternalCourse {
+  return {
+    slug: row.slug,
+    title: row.title ?? row.slug,
+    provider: row.provider,
+    tagline: row.tagline ?? "",
+    description: row.description ?? "",
+    priceDisplay: row.price_display,
   };
 }
 
@@ -296,6 +318,64 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
         routineCount: Number(row.routine_count ?? 0),
       };
       return instructor;
+    },
+
+    async listExternalCourses(locale) {
+      // Newer catalog entity than routines/instructors: `resolveCatalog()`
+      // only probes the `routines` table to decide d1-vs-mock, so an
+      // environment whose D1 hasn't had migration 0012 applied yet (remote
+      // migrations are a manual `npm run db:migrate:remote` step, unlike
+      // local dev's automatic `predev`/`prepreview` hooks) would otherwise
+      // 500 here instead of just missing this one catalog slice. Fall back
+      // to the mock list so the page still renders.
+      try {
+        const result = await db
+          .prepare(
+            `SELECT
+               ec.slug, ec.provider, ec.price_display,
+               eci.title, eci.tagline, eci.description
+             FROM external_courses ec
+             LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+             ORDER BY ec.sort_order ASC`,
+          )
+          .bind(locale)
+          .all<ExternalCourseRow>();
+
+        return ((result.results ?? []) as ExternalCourseRow[]).map(
+          mapExternalCourse,
+        );
+      } catch (error) {
+        console.error(
+          "D1 external_courses query failed; falling back to the in-memory mock list:",
+          error,
+        );
+        return mockCatalogRepository.listExternalCourses(locale);
+      }
+    },
+
+    async getExternalCourse(locale, slug) {
+      try {
+        const row = await db
+          .prepare(
+            `SELECT
+               ec.slug, ec.provider, ec.price_display,
+               eci.title, eci.tagline, eci.description
+             FROM external_courses ec
+             LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+             WHERE ec.slug = ?`,
+          )
+          .bind(locale, slug)
+          .first<ExternalCourseRow>();
+
+        if (!row) return null;
+        return mapExternalCourse(row);
+      } catch (error) {
+        console.error(
+          "D1 external_courses query failed; falling back to the in-memory mock lookup:",
+          error,
+        );
+        return mockCatalogRepository.getExternalCourse(locale, slug);
+      }
     },
   };
 }

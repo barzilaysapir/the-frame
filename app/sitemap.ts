@@ -1,11 +1,19 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
+import { getAllExternalCourses } from "@/lib/external-courses";
 import { getAllRoutines } from "@/lib/routines";
 import { locales } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticPaths = ["/", "/routines", "/instructors", "/styles", "/about"];
+  const staticPaths = [
+    "/",
+    "/routines",
+    "/instructors",
+    "/styles",
+    "/external-courses",
+    "/about",
+  ];
 
   const staticRoutes = locales.flatMap((locale) =>
     staticPaths.map((path) => ({
@@ -21,5 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   );
 
-  return [...staticRoutes, ...routineRoutes];
+  const externalCourseRoutes = locales.flatMap((locale) =>
+    getAllExternalCourses().map((course) => ({
+      url: `${SITE_URL}${localePath(locale, `/external-courses/${course.slug}`)}`,
+      lastModified: new Date(),
+    })),
+  );
+
+  return [...staticRoutes, ...routineRoutes, ...externalCourseRoutes];
 }

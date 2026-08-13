@@ -5,6 +5,7 @@
  */
 import type { Locale } from "@/lib/i18n/config";
 import { getMockContent } from "@/mocks/get-content";
+import type { ExternalCourseRecord } from "@/lib/external-courses";
 import type { InstructorRecord } from "@/lib/instructors";
 import type {
   ChapterId,
@@ -79,5 +80,26 @@ export function localizeInstructor(
     name: copy?.name ?? instructor.slug,
     role: content.styles[instructor.style],
     bio: copy?.bio ?? "",
+  };
+}
+
+export function localizeExternalCourse(
+  locale: Locale,
+  course: ExternalCourseRecord,
+): {
+  title: string;
+  tagline: string;
+  description: string;
+} {
+  const content = getMockContent(locale);
+  const copy =
+    content.externalCourses[
+      course.slug as keyof typeof content.externalCourses
+    ];
+
+  return {
+    title: copy?.title ?? course.slug,
+    tagline: copy?.tagline ?? "",
+    description: copy?.description ?? "",
   };
 }
