@@ -56,5 +56,3 @@ export function AccountNav({ locale, labels }: AccountNavProps) {
     </nav>
   );
 }
-
-export default AccountNav;

@@ -13,7 +13,9 @@ import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
 import { getCachedInstructor, getCachedRoutine } from "@/lib/server/catalog";
 
-export const dynamic = "force-dynamic";
+// Seed-catalog data changes rarely (via migrations, not user writes) — cache
+// the rendered page for 5 minutes instead of refetching D1 on every request.
+export const revalidate = 300;
 
 interface RoutinePageProps {
   params: Promise<{ locale: string; slug: string }>;

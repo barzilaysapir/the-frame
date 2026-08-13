@@ -41,5 +41,3 @@ export function SongCredit({ songName, artist, size = "card" }: SongCreditProps)
     </TitleTag>
   );
 }
-
-export default SongCredit;

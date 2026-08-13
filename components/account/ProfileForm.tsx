@@ -4,6 +4,8 @@ import { useState, type FormEvent } from "react";
 import type { User } from "firebase/auth";
 import { useAuth } from "@/components/AuthProvider";
 import { UserAvatar } from "@/components/account/UserAvatar";
+import { Button } from "@/components/ui/Button";
+import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -74,7 +76,7 @@ function ProfileFormFields({
   };
 
   return (
-    <div className="rounded-2xl border border-frame-border bg-frame-panel p-6 sm:p-8">
+    <Panel className="p-6 sm:p-8">
       <div className="flex items-center gap-4">
         <UserAvatar
           name={user.displayName || labels.title}
@@ -136,13 +138,9 @@ function ProfileFormFields({
           </div>
         ) : null}
 
-        <button
-          type="submit"
-          disabled={isSaving}
-          className="rounded-full bg-neon-cta px-5 py-3 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={isSaving}>
           {isSaving ? labels.saving : labels.save}
-        </button>
+        </Button>
 
         {message ? (
           <p className="text-sm font-medium text-frame-cyan">{message}</p>
@@ -153,8 +151,6 @@ function ProfileFormFields({
           </p>
         ) : null}
       </form>
-    </div>
+    </Panel>
   );
 }
-
-export default ProfileForm;

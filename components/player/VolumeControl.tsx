@@ -48,5 +48,3 @@ export function VolumeControl({
     </div>
   );
 }
-
-export default VolumeControl;

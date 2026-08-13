@@ -18,9 +18,8 @@
     "language": "Language"
   },
   "home": {
-    "title": "Learn the combo, frame by frame.",
-    "subtitle": "Premium dance teachers for dancers who want to own one combination deeply — mirrored, slowed down, and broken into counts.",
-    "cta": "Watch a sample combination"
+    "title": "frame by frame.",
+    "subtitle": "Learn to dance at the time, place, and pace that suits you —"
   },
   "tutorials": {
     "title": "Library",
@@ -187,6 +186,11 @@
     "title": "This page wasn’t found",
     "body": "The link may be wrong or the page was removed. Head home or browse the library."
   },
+  "error": {
+    "title": "Something went wrong",
+    "body": "The page hit a snag while loading. You can try again or head home.",
+    "retry": "Try again"
+  },
   "routine": {
     "metaTitle": "{title} — {style} combination",
     "metaDescription": "Learn '{title}', a {style} combination with {instructor}. Full breakdown, mirrored practice, and slowed counts included.",
@@ -217,7 +221,8 @@
   },
   "common": {
     "browseTutorials": "Browse the library",
-    "home": "Back to home"
+    "home": "Back to home",
+    "loading": "Loading…"
   },
   "footer": {
     "rights": "All rights reserved.",

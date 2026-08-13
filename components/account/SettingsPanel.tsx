@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Button } from "@/components/ui/Button";
+import { Panel } from "@/components/ui/Panel";
 import { isLocale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -35,7 +37,7 @@ export function SettingsPanel({ labels, languageLabel }: SettingsPanelProps) {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-frame-border bg-frame-panel p-6 sm:p-8">
+      <Panel as="section" className="p-6 sm:p-8">
         <h2 className="font-display text-xl font-black text-white">
           {labels.languageTitle}
         </h2>
@@ -43,9 +45,9 @@ export function SettingsPanel({ labels, languageLabel }: SettingsPanelProps) {
         <div className="mt-4">
           <LanguageSwitcher locale={locale} label={languageLabel} />
         </div>
-      </section>
+      </Panel>
 
-      <section className="rounded-2xl border border-frame-border bg-frame-panel p-6 sm:p-8">
+      <Panel as="section" className="p-6 sm:p-8">
         <h2 className="font-display text-xl font-black text-white">
           {labels.sessionTitle}
         </h2>
@@ -72,18 +74,16 @@ export function SettingsPanel({ labels, languageLabel }: SettingsPanelProps) {
             </dd>
           </div>
         </dl>
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           onClick={handleSignOut}
           disabled={isSigningOut}
           aria-busy={isSigningOut}
-          className="mt-6 rounded-full border border-frame-border px-5 py-3 text-sm font-semibold text-white transition-colors hover:border-frame-magenta hover:text-frame-magenta disabled:opacity-50"
+          className="mt-6"
         >
           {labels.signOut}
-        </button>
-      </section>
+        </Button>
+      </Panel>
     </div>
   );
 }
-
-export default SettingsPanel;

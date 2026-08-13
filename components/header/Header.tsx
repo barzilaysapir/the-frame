@@ -79,10 +79,15 @@ export function Header({ locale, labels }: HeaderProps) {
             priority
           />
           <span className="flex flex-col leading-none">
-            <span className="font-logo text-3xl leading-none text-white">
-              The Frame
-            </span>
-            <span className="text-[10px] font-medium uppercase tracking-widest2 text-frame-muted">
+            <Image
+              src="/logo-wordmark-light-silver.png"
+              alt="The Frame"
+              width={240}
+              height={57}
+              className="h-6 w-auto"
+              priority
+            />
+            <span className="mt-1 text-[9px] font-medium uppercase tracking-widest2 text-frame-muted">
               by Barzilay
             </span>
           </span>
@@ -163,5 +168,3 @@ export function Header({ locale, labels }: HeaderProps) {
     </header>
   );
 }
-
-export default Header;

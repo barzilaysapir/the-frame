@@ -31,5 +31,3 @@ export function RoutineBreakdown({ details, heading }: RoutineBreakdownProps) {
     </section>
   );
 }
-
-export default RoutineBreakdown;

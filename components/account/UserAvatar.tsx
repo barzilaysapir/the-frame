@@ -40,5 +40,3 @@ export function UserAvatar({ name, photoURL, className }: UserAvatarProps) {
     </span>
   );
 }
-
-export default UserAvatar;

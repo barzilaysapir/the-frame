@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { SongCredit } from "@/components/SongCredit";
 import { RoutineFilterTag } from "@/components/routines/RoutineFilterTag";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
+import { Panel } from "@/components/ui/Panel";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -33,7 +34,7 @@ export function RoutineCard({
   const href = localePath(locale, `/routine/${routine.slug}`);
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-frame-border bg-frame-panel transition-colors hover:border-frame-cyan/60">
+    <Panel as="article" variant="interactive" className="group overflow-hidden">
       <div className="relative aspect-video w-full overflow-hidden">
         <Link href={href} className="absolute inset-0 block">
           <Image
@@ -95,8 +96,6 @@ export function RoutineCard({
           </span>
         </div>
       </Link>
-    </article>
+    </Panel>
   );
 }
-
-export default RoutineCard;

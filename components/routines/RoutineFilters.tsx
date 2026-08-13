@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { RoutineFilterGroup, type RoutineFilterChip } from "@/components/routines/RoutineFilterGroup";
+import { Panel } from "@/components/ui/Panel";
 
-export interface RoutineFilterSection {
+interface RoutineFilterSection {
   label: string;
   chips: RoutineFilterChip[];
 }
@@ -24,9 +25,10 @@ export function RoutineFilters({
   clearHref,
 }: RoutineFiltersProps) {
   return (
-    <section
+    <Panel
+      as="section"
       aria-label={ariaLabel}
-      className="mb-10 overflow-hidden rounded-2xl border border-frame-border bg-frame-panel/40"
+      className="mb-10 overflow-hidden bg-frame-panel/40"
     >
       <div className="divide-y divide-frame-border">
         {sections.map((section) => (
@@ -47,6 +49,6 @@ export function RoutineFilters({
           </Link>
         </div>
       ) : null}
-    </section>
+    </Panel>
   );
 }

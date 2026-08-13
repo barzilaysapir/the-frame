@@ -24,6 +24,7 @@ import { ChapterMarkers } from "@/components/player/ChapterMarkers";
 import { VolumeControl } from "@/components/player/VolumeControl";
 import { SpeedMenu } from "@/components/player/SpeedMenu";
 import type { PlayerChapter } from "@/components/player/types";
+import { Button } from "@/components/ui/Button";
 
 export type { PlayerChapter } from "@/components/player/types";
 
@@ -412,19 +413,13 @@ export function DanceVideoPlayer({
               {labels.videoErrorTitle}
             </p>
             <p className="text-sm text-frame-silver">{labels.videoErrorBody}</p>
-            <button
-              type="button"
-              onClick={handleRetry}
-              className="flex items-center gap-2 rounded-full bg-neon-cta px-5 py-2.5 text-sm font-semibold text-frame-bg transition-[filter] hover:brightness-110"
-            >
+            <Button onClick={handleRetry} className="py-2.5">
               <RotateCw className="h-4 w-4" />
               {labels.retry}
-            </button>
+            </Button>
           </div>
         )}
       </div>
     </div>
   );
 }
-
-export default DanceVideoPlayer;

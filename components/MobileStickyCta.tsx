@@ -39,5 +39,3 @@ export function MobileStickyCta({
     </div>
   );
 }
-
-export default MobileStickyCta;
