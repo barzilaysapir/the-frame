@@ -60,7 +60,7 @@ async function compressAvatar(filename) {
 }
 
 async function compressPoster(filename) {
-  const filePath = path.join(ROOT, "public", filename);
+  const filePath = path.join(ROOT, "public", "routine-posters", filename);
   const before = fs.statSync(filePath).size;
   const buffer = await sharp(filePath)
     .resize(960, 640, { fit: "cover" })
