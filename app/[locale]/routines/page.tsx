@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ExternalCourseCard } from "@/components/ExternalCourseCard";
-import { RoutineFilters } from "@/components/routines/RoutineFilters";
+import { RoutineFilters, type RoutineFilterSection } from "@/components/routines/RoutineFilters";
 import { RoutineInfiniteGrid } from "@/components/routines/RoutineInfiniteGrid";
 import type { DanceStyleKey, LevelKey } from "@/lib/routines";
 import { routinesFilterHref } from "@/lib/routines";
-import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
-import { isLocale } from "@/lib/i18n/config";
+import { formatMessage, getDictionary, type Dictionary } from "@/lib/i18n/get-dictionary";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 import { resolveCatalog } from "@/lib/server/catalog";
+import type { CatalogInstructor, CatalogRoutine } from "@/lib/server/catalog/types";
 
 // NOTE: this route reads `searchParams` (filter chips below), which opts the
 // whole page into dynamic rendering in Next's non-Cache-Components model —
@@ -45,6 +46,127 @@ export async function generateMetadata({
   };
 }
 
+interface BuildFilterSectionsArgs {
+  dict: Dictionary;
+  instructors: CatalogInstructor[];
+  styles: DanceStyleKey[];
+  levels: LevelKey[];
+  allRoutines: CatalogRoutine[];
+  selectedInstructors: string[];
+  selectedStyles: string[];
+  selectedLevels: string[];
+  locale: Locale;
+}
+
+function toggleSelection(selected: string[], value: string): string[] {
+  return selected.includes(value)
+    ? selected.filter((item) => item !== value)
+    : [...selected, value];
+}
+
+function multiSelectTriggerLabel(dict: Dictionary, selectedLabels: string[]): string {
+  if (selectedLabels.length === 0) return dict.tutorials.filterAll;
+  if (selectedLabels.length === 1) return selectedLabels[0];
+  return formatMessage(dict.tutorials.filterSelectedCount, {
+    count: selectedLabels.length,
+  });
+}
+
+function buildFilterSections({
+  dict,
+  instructors,
+  styles,
+  levels,
+  allRoutines,
+  selectedInstructors,
+  selectedStyles,
+  selectedLevels,
+  locale,
+}: BuildFilterSectionsArgs): RoutineFilterSection[] {
+  const teacherOptions = instructors.map((instructor) => ({
+    label: instructor.name,
+    active: selectedInstructors.includes(instructor.slug),
+    href: routinesFilterHref({
+      instructor: toggleSelection(selectedInstructors, instructor.slug),
+      style: selectedStyles,
+      level: selectedLevels,
+      locale,
+    }),
+  }));
+
+  const styleOptions = styles.map((item) => ({
+    label: allRoutines.find((routine) => routine.style === item)?.styleLabel ?? item,
+    active: selectedStyles.includes(item),
+    href: routinesFilterHref({
+      instructor: selectedInstructors,
+      style: toggleSelection(selectedStyles, item),
+      level: selectedLevels,
+      locale,
+    }),
+  }));
+
+  const levelOptions = levels.map((item) => ({
+    label: allRoutines.find((routine) => routine.level === item)?.levelLabel ?? item,
+    active: selectedLevels.includes(item),
+    href: routinesFilterHref({
+      instructor: selectedInstructors,
+      style: selectedStyles,
+      level: toggleSelection(selectedLevels, item),
+      locale,
+    }),
+  }));
+
+  return [
+    {
+      type: "multiselect",
+      label: dict.tutorials.filterTeacher,
+      options: teacherOptions,
+      allHref: routinesFilterHref({ style: selectedStyles, level: selectedLevels, locale }),
+      allLabel: dict.tutorials.filterAll,
+      triggerLabel: multiSelectTriggerLabel(
+        dict,
+        teacherOptions.filter((option) => option.active).map((option) => option.label),
+      ),
+      showSearch: true,
+      searchPlaceholder: dict.tutorials.filterTeacherSearchPlaceholder,
+      searchAriaLabel: dict.tutorials.filterTeacherSearch,
+      noMatchesLabel: dict.tutorials.filterTeacherNoMatches,
+    },
+    {
+      type: "multiselect",
+      label: dict.tutorials.filterStyle,
+      options: styleOptions,
+      allHref: routinesFilterHref({
+        instructor: selectedInstructors,
+        level: selectedLevels,
+        locale,
+      }),
+      allLabel: dict.tutorials.filterAll,
+      triggerLabel: multiSelectTriggerLabel(
+        dict,
+        styleOptions.filter((option) => option.active).map((option) => option.label),
+      ),
+      showSearch: false,
+    },
+    {
+      type: "multiselect",
+      label: dict.tutorials.filterLevel,
+      options: levelOptions,
+      allHref: routinesFilterHref({
+        instructor: selectedInstructors,
+        style: selectedStyles,
+        locale,
+      }),
+      allLabel: dict.tutorials.filterAll,
+      triggerLabel: multiSelectTriggerLabel(
+        dict,
+        levelOptions.filter((option) => option.active).map((option) => option.label),
+      ),
+      showSearch: false,
+    },
+  ];
+}
+
 export default async function RoutinesPage({
   params,
   searchParams,
@@ -70,24 +192,23 @@ export default async function RoutinesPage({
   const styles = [...new Set(allRoutines.map((routine) => routine.style))];
   const levels = [...new Set(allRoutines.map((routine) => routine.level))];
 
-  const filters = {
-    instructor: instructorSlug,
-    style: style as DanceStyleKey | undefined,
-    level: level as LevelKey | undefined,
-    locale,
-  };
+  const selectedInstructors = instructorSlug
+    ? instructorSlug.split(",").filter(Boolean)
+    : [];
+  const selectedStyles = style ? style.split(",").filter(Boolean) : [];
+  const selectedLevels = level ? level.split(",").filter(Boolean) : [];
 
   let routines = allRoutines;
-  if (filters.instructor) {
-    routines = routines.filter(
-      (routine) => routine.instructorSlug === filters.instructor,
+  if (selectedInstructors.length > 0) {
+    routines = routines.filter((routine) =>
+      selectedInstructors.includes(routine.instructorSlug),
     );
   }
-  if (filters.style) {
-    routines = routines.filter((routine) => routine.style === filters.style);
+  if (selectedStyles.length > 0) {
+    routines = routines.filter((routine) => selectedStyles.includes(routine.style));
   }
-  if (filters.level) {
-    routines = routines.filter((routine) => routine.level === filters.level);
+  if (selectedLevels.length > 0) {
+    routines = routines.filter((routine) => selectedLevels.includes(routine.level));
   }
 
   const instructorNameBySlug = Object.fromEntries(
@@ -95,7 +216,7 @@ export default async function RoutinesPage({
   );
 
   const hasActiveFilters = Boolean(
-    filters.instructor || filters.style || filters.level,
+    selectedInstructors.length > 0 || selectedStyles.length > 0 || selectedLevels.length > 0,
   );
 
   const total = routines.length;
@@ -124,103 +245,30 @@ export default async function RoutinesPage({
         clearLabel={dict.tutorials.clearFilters}
         hasActiveFilters={hasActiveFilters}
         clearHref={localePath(locale, "/routines")}
-        sections={[
-          {
-            label: dict.tutorials.filterTeacher,
-            chips: [
-              {
-                label: dict.tutorials.filterAll,
-                href: routinesFilterHref({
-                  style: filters.style,
-                  level: filters.level,
-                  locale,
-                }),
-                active: !filters.instructor,
-              },
-              ...instructors.map((instructor) => ({
-                label: instructor.name,
-                href: routinesFilterHref({
-                  instructor: instructor.slug,
-                  style: filters.style,
-                  level: filters.level,
-                  locale,
-                }),
-                active: filters.instructor === instructor.slug,
-              })),
-            ],
-          },
-          {
-            label: dict.tutorials.filterStyle,
-            chips: [
-              {
-                label: dict.tutorials.filterAll,
-                href: routinesFilterHref({
-                  instructor: filters.instructor,
-                  level: filters.level,
-                  locale,
-                }),
-                active: !filters.style,
-              },
-              ...styles.map((item) => {
-                const label =
-                  allRoutines.find((routine) => routine.style === item)
-                    ?.styleLabel ?? item;
-                return {
-                  label,
-                  href: routinesFilterHref({
-                    instructor: filters.instructor,
-                    style: item,
-                    level: filters.level,
-                    locale,
-                  }),
-                  active: filters.style === item,
-                };
-              }),
-            ],
-          },
-          {
-            label: dict.tutorials.filterLevel,
-            chips: [
-              {
-                label: dict.tutorials.filterAll,
-                href: routinesFilterHref({
-                  instructor: filters.instructor,
-                  style: filters.style,
-                  locale,
-                }),
-                active: !filters.level,
-              },
-              ...levels.map((item) => {
-                const label =
-                  allRoutines.find((routine) => routine.level === item)
-                    ?.levelLabel ?? item;
-                return {
-                  label,
-                  href: routinesFilterHref({
-                    instructor: filters.instructor,
-                    style: filters.style,
-                    level: item,
-                    locale,
-                  }),
-                  active: filters.level === item,
-                };
-              }),
-            ],
-          },
-        ]}
+        sections={buildFilterSections({
+          dict,
+          instructors,
+          styles,
+          levels,
+          allRoutines,
+          selectedInstructors,
+          selectedStyles,
+          selectedLevels,
+          locale,
+        })}
       />
 
       {firstPage.length > 0 ? (
         <RoutineInfiniteGrid
-          key={`${filters.instructor ?? ""}|${filters.style ?? ""}|${filters.level ?? ""}`}
+          key={`${instructorSlug ?? ""}|${style ?? ""}|${level ?? ""}`}
           initialRoutines={firstPage}
           initialHasMore={hasMoreInitial}
           locale={locale}
           pageSize={PAGE_SIZE}
           filters={{
-            instructor: filters.instructor,
-            style: filters.style,
-            level: filters.level,
+            instructor: instructorSlug,
+            style,
+            level,
           }}
           instructorNameBySlug={instructorNameBySlug}
           labels={{

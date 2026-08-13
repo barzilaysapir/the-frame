@@ -2564,6 +2564,24 @@ export const ROUTINES: RoutineRecord[] = [
   },
 ];
 
+/**
+ * Cover photo for the /styles browse page card, one per style — intentionally
+ * decoupled from each routine's own `poster` (which is now varied per-class,
+ * see scripts/assign-routine-covers.mjs). Without this, the styles page fell
+ * back to whichever routine happened to sort first alphabetically by slug
+ * within its style, an arbitrary pick that silently changes any time the
+ * per-routine cover assignment is re-run.
+ */
+export const STYLE_COVER_POSTERS: Record<DanceStyleKey, string> = {
+  "jazz-funk": "/routine-posters/routine-poster-midnight-static.png",
+  "hip-hop": "/routine-posters/routine-poster-block-party.png",
+  heels: "/routine-posters/routine-poster-penthouse-heels.png",
+  jazz: "/routine-posters/routine-poster-amber-stage.png",
+  afro: "/routine-posters/routine-poster-afro-sunburst.png",
+  dancehall: "/routine-posters/routine-poster-dancehall-bounce.png",
+  voguing: "/routine-posters/routine-poster-ballroom-runway.png",
+};
+
 export function getAllRoutines(): RoutineRecord[] {
   return ROUTINES;
 }
@@ -2577,10 +2595,15 @@ export function getRoutinesByInstructor(instructorSlug: string): RoutineRecord[]
 }
 
 export interface RoutinesFilterParams {
-  instructor?: string;
-  style?: string;
-  level?: string;
+  /** A single slug/key, or several for the multi-select filters (joined as `a,b,c` in the URL). */
+  instructor?: string | string[];
+  style?: string | string[];
+  level?: string | string[];
   locale?: Locale;
+}
+
+function joinFilterValue(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value.filter(Boolean).join(",") : value;
 }
 
 /** Build a locale-aware tutorials catalog URL from the active filters. */
@@ -2591,9 +2614,12 @@ export function routinesFilterHref({
   locale = "he",
 }: RoutinesFilterParams): string {
   const params = new URLSearchParams();
-  if (instructor) params.set("instructor", instructor);
-  if (style) params.set("style", style);
-  if (level) params.set("level", level);
+  const instructorValue = joinFilterValue(instructor);
+  const styleValue = joinFilterValue(style);
+  const levelValue = joinFilterValue(level);
+  if (instructorValue) params.set("instructor", instructorValue);
+  if (styleValue) params.set("style", styleValue);
+  if (levelValue) params.set("level", levelValue);
   const query = params.toString();
   const base = localePath(locale, "/routines");
   return query ? `${base}?${query}` : base;

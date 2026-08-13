@@ -21,8 +21,8 @@ function chipClass(active: boolean) {
 
 export function RoutineFilterGroup({ label, chips }: RoutineFilterGroupProps) {
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-5">
-      <p className="w-14 shrink-0 text-xs font-semibold text-frame-muted">{label}</p>
+    <div className="flex items-center gap-2.5">
+      <p className="shrink-0 text-xs font-semibold text-frame-muted">{label}</p>
       <div className="-mx-1.5 flex flex-wrap gap-0.5" role="list">
         {chips.map((chip) => (
           <Link

@@ -6,9 +6,16 @@ import type {
 } from "@/lib/server/catalog/types";
 
 export interface RoutineFilters {
+  /** Comma-joined slugs/keys for multi-select filters (e.g. "hip-hop,salsa"); a single value is also valid. */
   instructor?: string;
   style?: string;
   level?: string;
+}
+
+/** Splits a comma-joined filter value (e.g. from a URL param) into its individual values. */
+export function splitFilterValues(value?: string): string[] {
+  if (!value) return [];
+  return value.split(",").filter(Boolean);
 }
 
 export interface RoutinePagination {
