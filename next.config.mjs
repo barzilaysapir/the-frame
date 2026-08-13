@@ -47,8 +47,19 @@ function buildCsp() {
     `base-uri 'self'`,
     `form-action 'self'`,
     `frame-ancestors 'self'`,
-    `upgrade-insecure-requests`,
   ];
+  // Rewrites every http:// sub-resource request on the page to https:// before
+  // it's sent. The real site is HTTPS-only (Cloudflare) so this is a safe
+  // no-op there — but in dev the server only speaks plain HTTP, and browsers
+  // exempt `localhost` from the rewrite (treated as secure regardless of
+  // scheme) while NOT exempting a LAN IP (e.g. testing on a phone via
+  // `http://10.0.0.14:3000`). There, every CSS/JS/font/image request got
+  // silently rewritten to https:// and failed at the TLS handshake — the
+  // page loaded but rendered as unstyled raw HTML, with the failed requests
+  // never even reaching Node's HTTP parser (so nothing showed in server logs).
+  if (process.env.NODE_ENV !== "development") {
+    directives.push(`upgrade-insecure-requests`);
+  }
   return directives.join("; ");
 }
 
