@@ -35,14 +35,14 @@ export function Footer({ locale, labels, footer }: FooterProps) {
           aria-label="The Frame by Barzilay"
         >
           <Image
-            src="/logo-mark.png"
+            src="/logos/logo-mark.png"
             alt=""
             width={24}
             height={24}
             className="h-6 w-6 opacity-80"
           />
           <Image
-            src="/logo-wordmark-light-silver.png"
+            src="/logos/logo-wordmark-light-silver.png"
             alt="The Frame"
             width={240}
             height={57}

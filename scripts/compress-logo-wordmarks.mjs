@@ -42,7 +42,7 @@ const WORDMARKS = [
 const TARGET_WIDTH = 240;
 
 async function compressWordmark(srcPath, destFilename) {
-  const destPath = path.join(ROOT, "public", destFilename);
+  const destPath = path.join(ROOT, "public", "logos", destFilename);
   const before = fs.statSync(srcPath).size;
   const buffer = await sharp(srcPath)
     .resize(TARGET_WIDTH, null, { withoutEnlargement: true })
