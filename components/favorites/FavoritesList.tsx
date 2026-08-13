@@ -5,6 +5,7 @@ import { RoutineCard } from "@/components/routines/RoutineCard";
 import { useAuth } from "@/components/AuthProvider";
 import { useFavorites } from "@/components/favorites/FavoritesProvider";
 import { Button } from "@/components/ui/Button";
+import { Panel } from "@/components/ui/Panel";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 
@@ -26,11 +27,7 @@ interface FavoritesListProps {
 }
 
 function StateBox({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-frame-border bg-frame-panel p-8 text-center">
-      {children}
-    </div>
-  );
+  return <Panel className="p-8 text-center">{children}</Panel>;
 }
 
 export function FavoritesList({ locale, labels }: FavoritesListProps) {
