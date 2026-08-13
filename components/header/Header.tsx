@@ -84,10 +84,10 @@ export function Header({ locale, labels }: HeaderProps) {
               alt="The Frame"
               width={480}
               height={115}
-              className="h-8 w-auto"
+              className="h-6 w-auto"
               priority
             />
-            <span className="mt-1 text-[10px] font-medium uppercase tracking-widest2 text-frame-muted">
+            <span className="mt-1 text-[9px] font-medium uppercase tracking-widest2 text-frame-muted">
               by Barzilay
             </span>
           </span>
