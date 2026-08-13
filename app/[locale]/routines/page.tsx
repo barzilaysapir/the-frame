@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ExternalCourseCard } from "@/components/ExternalCourseCard";
 import { RoutineCard } from "@/components/routines/RoutineCard";
 import { RoutineFilters } from "@/components/routines/RoutineFilters";
 import type { DanceStyleKey, LevelKey } from "@/lib/routines";
@@ -53,9 +54,10 @@ export default async function RoutinesPage({
     level,
   } = await searchParams;
 
-  const [allRoutines, instructors] = await Promise.all([
+  const [allRoutines, instructors, externalCourses] = await Promise.all([
     repository.listRoutines(locale),
     repository.listInstructors(locale),
+    repository.listExternalCourses(locale),
   ]);
 
   const styles = [...new Set(allRoutines.map((routine) => routine.style))];
@@ -220,6 +222,35 @@ export default async function RoutinesPage({
       ) : (
         <p className="text-frame-silver">{dict.tutorials.empty}</p>
       )}
+
+      {externalCourses.length > 0 ? (
+        <section className="mt-16 border-t border-frame-border pt-12">
+          <div className="mb-8 max-w-2xl">
+            <h2 className="font-display text-3xl font-black text-white sm:text-4xl">
+              {dict.externalCourses.title}
+            </h2>
+            <p className="mt-3 text-frame-silver">
+              {dict.externalCourses.subtitle}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {externalCourses.map((course) => (
+              <ExternalCourseCard
+                key={course.slug}
+                course={course}
+                locale={locale}
+                labels={{
+                  comingSoonBadge: dict.externalCourses.comingSoonBadge,
+                  providerPrefix: dict.externalCourses.providerPrefix,
+                  cta: dict.externalCourses.cta,
+                  linkAria: dict.externalCourses.linkAria,
+                }}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }
