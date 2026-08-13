@@ -18,6 +18,10 @@
 			"custom_domain": true
 		}
 	],
+	// Fallback so the Worker is reachable at https://the-frame.<subdomain>.workers.dev
+	// even while the custom domain above has no DNS record attached (confirmed via
+	// `nslookup`: NXDOMAIN as of 2026-08-13 — a separate, pre-existing issue).
+	"workers_dev": true,
 	"compatibility_date": "2026-08-04",
 	"compatibility_flags": [
 		"nodejs_compat",
