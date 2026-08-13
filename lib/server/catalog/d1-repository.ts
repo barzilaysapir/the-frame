@@ -3,6 +3,7 @@ import type { Locale } from "@/lib/i18n/config";
 import type {
   CatalogRepository,
   RoutineFilters,
+  RoutinePagination,
 } from "@/lib/server/catalog/repository";
 import type {
   CatalogExternalCourse,
@@ -189,6 +190,33 @@ async function fetchChaptersForAllRoutines(
   return bySlug;
 }
 
+/** Shared WHERE-clause builder for `listRoutines`/`countRoutines` so the two never drift apart. */
+function buildRoutineWhereClause(filters?: RoutineFilters): {
+  whereClause: string;
+  params: string[];
+} {
+  const conditions: string[] = [];
+  const params: string[] = [];
+
+  if (filters?.instructor) {
+    conditions.push("r.instructor_slug = ?");
+    params.push(filters.instructor);
+  }
+  if (filters?.style) {
+    conditions.push("r.style = ?");
+    params.push(filters.style);
+  }
+  if (filters?.level) {
+    conditions.push("r.level = ?");
+    params.push(filters.level);
+  }
+
+  return {
+    whereClause: conditions.length ? ` WHERE ${conditions.join(" AND ")}` : "",
+    params,
+  };
+}
+
 const ROUTINE_SELECT = `
   SELECT
     r.slug, r.title, r.song_name, r.artist, r.instructor_slug, r.level, r.style,
@@ -207,32 +235,30 @@ const ROUTINE_SELECT = `
 
 export function createD1CatalogRepository(db: AppDb): CatalogRepository {
   return {
-    async listRoutines(locale, filters?: RoutineFilters) {
-      const conditions: string[] = [];
-      const params: string[] = [locale, locale, locale, locale];
-
-      if (filters?.instructor) {
-        conditions.push("r.instructor_slug = ?");
-        params.push(filters.instructor);
+    async listRoutines(
+      locale,
+      filters?: RoutineFilters,
+      pagination?: RoutinePagination,
+    ) {
+      const { whereClause, params } = buildRoutineWhereClause(filters);
+      // `r.slug` (the primary key) gives a stable, deterministic order —
+      // required so LIMIT/OFFSET pages don't skip or repeat rows across
+      // successive infinite-scroll requests.
+      let query = `${ROUTINE_SELECT}${whereClause} ORDER BY r.slug ASC`;
+      const bindParams: Array<string | number> = [
+        locale,
+        locale,
+        locale,
+        locale,
+        ...params,
+      ];
+      if (pagination) {
+        query += ` LIMIT ? OFFSET ?`;
+        bindParams.push(pagination.limit, pagination.offset);
       }
-      if (filters?.style) {
-        conditions.push("r.style = ?");
-        params.push(filters.style);
-      }
-      if (filters?.level) {
-        conditions.push("r.level = ?");
-        params.push(filters.level);
-      }
-
-      const whereClause = conditions.length
-        ? ` WHERE ${conditions.join(" AND ")}`
-        : "";
 
       const [result, chaptersBySlug] = await Promise.all([
-        db
-          .prepare(`${ROUTINE_SELECT}${whereClause}`)
-          .bind(...params)
-          .all<RoutineRow>(),
+        db.prepare(query).bind(...bindParams).all<RoutineRow>(),
         fetchChaptersForAllRoutines(db, locale),
       ]);
 
@@ -240,6 +266,15 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
       return rows.map((row: RoutineRow) =>
         mapRoutine(row, chaptersBySlug.get(row.slug) ?? []),
       );
+    },
+
+    async countRoutines(filters?: RoutineFilters) {
+      const { whereClause, params } = buildRoutineWhereClause(filters);
+      const row = await db
+        .prepare(`SELECT COUNT(*) AS count FROM routines r${whereClause}`)
+        .bind(...params)
+        .first<{ count: number }>();
+      return Number(row?.count ?? 0);
     },
 
     async getRoutine(locale, slug) {

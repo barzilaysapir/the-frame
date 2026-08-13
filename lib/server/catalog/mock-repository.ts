@@ -30,10 +30,12 @@ import {
   getAllRoutines,
   getRoutineBySlug,
   getRoutinesByInstructor,
+  type RoutineRecord,
 } from "@/lib/routines";
 import type {
   CatalogRepository,
   RoutineFilters,
+  RoutinePagination,
 } from "@/lib/server/catalog/repository";
 import type {
   CatalogExternalCourse,
@@ -113,19 +115,38 @@ function toCatalogExternalCourse(
   };
 }
 
+function filterRoutineRecords(
+  records: RoutineRecord[],
+  filters?: RoutineFilters,
+): RoutineRecord[] {
+  return records.filter((routine) => {
+    if (filters?.instructor && routine.instructorSlug !== filters.instructor) {
+      return false;
+    }
+    if (filters?.style && routine.style !== filters.style) return false;
+    if (filters?.level && routine.level !== filters.level) return false;
+    return true;
+  });
+}
+
 export const mockCatalogRepository: CatalogRepository = {
-  async listRoutines(locale, filters?: RoutineFilters) {
-    return getAllRoutines()
-      .filter((routine) => {
-        if (filters?.instructor && routine.instructorSlug !== filters.instructor) {
-          return false;
-        }
-        if (filters?.style && routine.style !== filters.style) return false;
-        if (filters?.level && routine.level !== filters.level) return false;
-        return true;
-      })
+  async listRoutines(
+    locale,
+    filters?: RoutineFilters,
+    pagination?: RoutinePagination,
+  ) {
+    const filtered = filterRoutineRecords(getAllRoutines(), filters);
+    const paged = pagination
+      ? filtered.slice(pagination.offset, pagination.offset + pagination.limit)
+      : filtered;
+
+    return paged
       .map((routine) => toCatalogRoutine(locale, routine.slug))
       .filter((item): item is CatalogRoutine => item !== null);
+  },
+
+  async countRoutines(filters?: RoutineFilters) {
+    return filterRoutineRecords(getAllRoutines(), filters).length;
   },
 
   async getRoutine(locale, slug) {
