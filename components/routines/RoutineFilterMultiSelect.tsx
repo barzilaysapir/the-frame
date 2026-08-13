@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import * as Popover from "@radix-ui/react-popover";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -40,43 +41,8 @@ export function RoutineFilterMultiSelect({
 }: RoutineFilterMultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const containerRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const listId = useId();
 
   const hasActive = options.some((option) => option.active);
-
-  // Close on an outside click or Escape (returning focus to the trigger),
-  // matching the SpeedMenu dismissal pattern used by the video player.
-  useEffect(() => {
-    if (!isOpen) return;
-    if (showSearch) inputRef.current?.focus();
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (!containerRef.current?.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-        buttonRef.current?.focus();
-      }
-    };
-
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [isOpen, showSearch]);
-
-  const openMenu = () => {
-    setQuery("");
-    setIsOpen(true);
-  };
 
   const normalizedQuery = showSearch ? query.trim().toLowerCase() : "";
   const filteredOptions = normalizedQuery
@@ -86,35 +52,44 @@ export function RoutineFilterMultiSelect({
   return (
     <div className="flex items-center gap-2.5">
       <p className="shrink-0 text-xs font-semibold text-frame-muted">{label}</p>
-      <div className="relative inline-block" ref={containerRef}>
-        <button
-          type="button"
-          ref={buttonRef}
-          onClick={() => (isOpen ? setIsOpen(false) : openMenu())}
-          aria-haspopup="listbox"
-          aria-expanded={isOpen}
-          aria-controls={listId}
-          className={cn(
-            "flex min-w-[8.5rem] items-center justify-between gap-2 rounded-full border py-1.5 ps-4 pe-3 text-sm font-medium transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70",
-            hasActive
-              ? "border-frame-cyan/70 bg-frame-cyan/15 text-frame-cyan"
-              : "border-frame-border bg-frame-bg/60 text-frame-silver hover:border-white/40 hover:text-white",
-          )}
-        >
-          <span className="truncate">{triggerLabel}</span>
-          <ChevronDown
-            aria-hidden="true"
-            className={cn("h-4 w-4 shrink-0 transition-transform", isOpen && "rotate-180")}
-          />
-        </button>
+      <Popover.Root
+        open={isOpen}
+        onOpenChange={(open) => {
+          setIsOpen(open);
+          if (open) setQuery("");
+        }}
+      >
+        <Popover.Trigger asChild>
+          <button
+            type="button"
+            className={cn(
+              "flex min-w-[8.5rem] items-center justify-between gap-2 rounded-full border py-1.5 ps-4 pe-3 text-sm font-medium transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70",
+              hasActive
+                ? "border-frame-cyan/70 bg-frame-cyan/15 text-frame-cyan"
+                : "border-frame-border bg-frame-bg/60 text-frame-silver hover:border-white/40 hover:text-white",
+            )}
+          >
+            <span className="truncate">{triggerLabel}</span>
+            <ChevronDown
+              aria-hidden="true"
+              className={cn("h-4 w-4 shrink-0 transition-transform", isOpen && "rotate-180")}
+            />
+          </button>
+        </Popover.Trigger>
 
-        {isOpen ? (
-          <div
-            // Floating-popover tier: must outrank ordinary page chrome (e.g. the
-            // z-10 tag badges on routine cards below), which is why this isn't
-            // sharing that same z-10 despite both being "just a small overlay."
-            className="absolute start-0 z-30 mt-2 w-64 overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
+        {/*
+         * Portaled straight to document.body: this popover no longer has to
+         * out-rank arbitrary page content (routine card badges, etc.) via
+         * z-index gymnastics — it simply isn't a descendant of any of it.
+         * Radix also gives us collision-aware positioning, focus trap/return,
+         * and outside-click + Escape dismissal for free.
+         */}
+        <Popover.Portal>
+          <Popover.Content
+            align="start"
+            sideOffset={8}
+            className="z-30 w-64 overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
           >
             {showSearch ? (
               <div className="relative border-b border-frame-border p-2">
@@ -123,7 +98,7 @@ export function RoutineFilterMultiSelect({
                   className="pointer-events-none absolute start-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-frame-muted"
                 />
                 <input
-                  ref={inputRef}
+                  autoFocus
                   type="text"
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
@@ -133,12 +108,7 @@ export function RoutineFilterMultiSelect({
                 />
               </div>
             ) : null}
-            <ul
-              role="listbox"
-              aria-multiselectable="true"
-              id={listId}
-              className="max-h-60 overflow-y-auto py-1"
-            >
+            <ul role="listbox" aria-multiselectable="true" className="max-h-60 overflow-y-auto py-1">
               <li role="none">
                 <Link
                   href={allHref}
@@ -185,9 +155,9 @@ export function RoutineFilterMultiSelect({
                 ))
               )}
             </ul>
-          </div>
-        ) : null}
-      </div>
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
     </div>
   );
 }
