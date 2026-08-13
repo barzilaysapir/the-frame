@@ -2564,6 +2564,24 @@ export const ROUTINES: RoutineRecord[] = [
   },
 ];
 
+/**
+ * Cover photo for the /styles browse page card, one per style — intentionally
+ * decoupled from each routine's own `poster` (which is now varied per-class,
+ * see scripts/assign-routine-covers.mjs). Without this, the styles page fell
+ * back to whichever routine happened to sort first alphabetically by slug
+ * within its style, an arbitrary pick that silently changes any time the
+ * per-routine cover assignment is re-run.
+ */
+export const STYLE_COVER_POSTERS: Record<DanceStyleKey, string> = {
+  "jazz-funk": "/routine-poster-midnight-static.png",
+  "hip-hop": "/routine-poster-block-party.png",
+  heels: "/routine-poster-penthouse-heels.png",
+  jazz: "/routine-poster-amber-stage.png",
+  afro: "/routine-poster-afro-sunburst.png",
+  dancehall: "/routine-poster-dancehall-bounce.png",
+  voguing: "/routine-poster-ballroom-runway.png",
+};
+
 export function getAllRoutines(): RoutineRecord[] {
   return ROUTINES;
 }

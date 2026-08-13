@@ -4,6 +4,7 @@ import { StyleCard } from "@/components/StyleCard";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { resolveCatalog } from "@/lib/server/catalog";
+import { STYLE_COVER_POSTERS } from "@/lib/routines";
 
 // Seed-catalog data changes rarely (via migrations, not user writes) — cache
 // the rendered page for 5 minutes instead of refetching D1 on every request.
@@ -50,7 +51,7 @@ export default async function StylesPage({ params }: StylesPageProps) {
       styleCounts.set(routine.style, {
         style: routine.style,
         label: routine.styleLabel,
-        poster: routine.poster,
+        poster: STYLE_COVER_POSTERS[routine.style] ?? routine.poster,
         count: 1,
       });
     }
