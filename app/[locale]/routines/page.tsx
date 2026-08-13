@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RoutineCard } from "@/components/routines/RoutineCard";
-import { RoutineFilters } from "@/components/routines/RoutineFilters";
+import { RoutineFilters, type RoutineFilterSection } from "@/components/routines/RoutineFilters";
 import type { DanceStyleKey, LevelKey } from "@/lib/routines";
 import { routinesFilterHref } from "@/lib/routines";
-import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
-import { isLocale } from "@/lib/i18n/config";
+import { formatMessage, getDictionary, type Dictionary } from "@/lib/i18n/get-dictionary";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 import { resolveCatalog } from "@/lib/server/catalog";
+import type { CatalogInstructor, CatalogRoutine } from "@/lib/server/catalog/types";
 
 // NOTE: this route reads `searchParams` (filter chips below), which opts the
 // whole page into dynamic rendering in Next's non-Cache-Components model —
@@ -37,6 +38,138 @@ export async function generateMetadata({
   };
 }
 
+interface BuildFilterSectionsArgs {
+  dict: Dictionary;
+  instructors: CatalogInstructor[];
+  styles: DanceStyleKey[];
+  levels: LevelKey[];
+  allRoutines: CatalogRoutine[];
+  selectedInstructors: string[];
+  filters: {
+    style?: DanceStyleKey;
+    level?: LevelKey;
+  };
+  locale: Locale;
+}
+
+function buildFilterSections({
+  dict,
+  instructors,
+  styles,
+  levels,
+  allRoutines,
+  selectedInstructors,
+  filters,
+  locale,
+}: BuildFilterSectionsArgs): RoutineFilterSection[] {
+  const allTeachersHref = routinesFilterHref({
+    style: filters.style,
+    level: filters.level,
+    locale,
+  });
+  const teacherOptions = instructors.map((instructor) => {
+    const active = selectedInstructors.includes(instructor.slug);
+    const nextSelection = active
+      ? selectedInstructors.filter((slug) => slug !== instructor.slug)
+      : [...selectedInstructors, instructor.slug];
+    return {
+      label: instructor.name,
+      active,
+      href: routinesFilterHref({
+        instructor: nextSelection,
+        style: filters.style,
+        level: filters.level,
+        locale,
+      }),
+    };
+  });
+  const selectedInstructorNames = instructors
+    .filter((instructor) => selectedInstructors.includes(instructor.slug))
+    .map((instructor) => instructor.name);
+  const teacherTriggerLabel =
+    selectedInstructorNames.length === 0
+      ? dict.tutorials.filterAll
+      : selectedInstructorNames.length === 1
+        ? selectedInstructorNames[0]
+        : formatMessage(dict.tutorials.filterTeacherSelectedCount, {
+            count: selectedInstructorNames.length,
+          });
+
+  return [
+    {
+      type: "multiselect",
+      label: dict.tutorials.filterTeacher,
+      options: teacherOptions,
+      allHref: allTeachersHref,
+      allLabel: dict.tutorials.filterAll,
+      triggerLabel: teacherTriggerLabel,
+      searchPlaceholder: dict.tutorials.filterTeacherSearchPlaceholder,
+      searchAriaLabel: dict.tutorials.filterTeacherSearch,
+      noMatchesLabel: dict.tutorials.filterTeacherNoMatches,
+    },
+    {
+      type: "chips",
+      label: dict.tutorials.filterStyle,
+      chips: [
+        {
+          label: dict.tutorials.filterAll,
+          href: routinesFilterHref({
+            instructor: selectedInstructors,
+            level: filters.level,
+            locale,
+          }),
+          active: !filters.style,
+        },
+        ...styles.map((item) => {
+          const label =
+            allRoutines.find((routine) => routine.style === item)?.styleLabel ??
+            item;
+          return {
+            label,
+            href: routinesFilterHref({
+              instructor: selectedInstructors,
+              style: item,
+              level: filters.level,
+              locale,
+            }),
+            active: filters.style === item,
+          };
+        }),
+      ],
+    },
+    {
+      type: "chips",
+      label: dict.tutorials.filterLevel,
+      chips: [
+        {
+          label: dict.tutorials.filterAll,
+          href: routinesFilterHref({
+            instructor: selectedInstructors,
+            style: filters.style,
+            locale,
+          }),
+          active: !filters.level,
+        },
+        ...levels.map((item) => {
+          const label =
+            allRoutines.find((routine) => routine.level === item)?.levelLabel ??
+            item;
+          return {
+            label,
+            href: routinesFilterHref({
+              instructor: selectedInstructors,
+              style: filters.style,
+              level: item,
+              locale,
+            }),
+            active: filters.level === item,
+          };
+        }),
+      ],
+    },
+  ];
+}
+
 export default async function RoutinesPage({
   params,
   searchParams,
@@ -61,17 +194,20 @@ export default async function RoutinesPage({
   const styles = [...new Set(allRoutines.map((routine) => routine.style))];
   const levels = [...new Set(allRoutines.map((routine) => routine.level))];
 
+  const selectedInstructors = instructorSlug
+    ? instructorSlug.split(",").filter(Boolean)
+    : [];
+
   const filters = {
-    instructor: instructorSlug,
     style: style as DanceStyleKey | undefined,
     level: level as LevelKey | undefined,
     locale,
   };
 
   let routines = allRoutines;
-  if (filters.instructor) {
-    routines = routines.filter(
-      (routine) => routine.instructorSlug === filters.instructor,
+  if (selectedInstructors.length > 0) {
+    routines = routines.filter((routine) =>
+      selectedInstructors.includes(routine.instructorSlug),
     );
   }
   if (filters.style) {
@@ -86,7 +222,7 @@ export default async function RoutinesPage({
   );
 
   const hasActiveFilters = Boolean(
-    filters.instructor || filters.style || filters.level,
+    selectedInstructors.length > 0 || filters.style || filters.level,
   );
 
   const resultLabel =
@@ -111,90 +247,16 @@ export default async function RoutinesPage({
         clearLabel={dict.tutorials.clearFilters}
         hasActiveFilters={hasActiveFilters}
         clearHref={localePath(locale, "/routines")}
-        sections={[
-          {
-            label: dict.tutorials.filterTeacher,
-            chips: [
-              {
-                label: dict.tutorials.filterAll,
-                href: routinesFilterHref({
-                  style: filters.style,
-                  level: filters.level,
-                  locale,
-                }),
-                active: !filters.instructor,
-              },
-              ...instructors.map((instructor) => ({
-                label: instructor.name,
-                href: routinesFilterHref({
-                  instructor: instructor.slug,
-                  style: filters.style,
-                  level: filters.level,
-                  locale,
-                }),
-                active: filters.instructor === instructor.slug,
-              })),
-            ],
-          },
-          {
-            label: dict.tutorials.filterStyle,
-            chips: [
-              {
-                label: dict.tutorials.filterAll,
-                href: routinesFilterHref({
-                  instructor: filters.instructor,
-                  level: filters.level,
-                  locale,
-                }),
-                active: !filters.style,
-              },
-              ...styles.map((item) => {
-                const label =
-                  allRoutines.find((routine) => routine.style === item)
-                    ?.styleLabel ?? item;
-                return {
-                  label,
-                  href: routinesFilterHref({
-                    instructor: filters.instructor,
-                    style: item,
-                    level: filters.level,
-                    locale,
-                  }),
-                  active: filters.style === item,
-                };
-              }),
-            ],
-          },
-          {
-            label: dict.tutorials.filterLevel,
-            chips: [
-              {
-                label: dict.tutorials.filterAll,
-                href: routinesFilterHref({
-                  instructor: filters.instructor,
-                  style: filters.style,
-                  locale,
-                }),
-                active: !filters.level,
-              },
-              ...levels.map((item) => {
-                const label =
-                  allRoutines.find((routine) => routine.level === item)
-                    ?.levelLabel ?? item;
-                return {
-                  label,
-                  href: routinesFilterHref({
-                    instructor: filters.instructor,
-                    style: filters.style,
-                    level: item,
-                    locale,
-                  }),
-                  active: filters.level === item,
-                };
-              }),
-            ],
-          },
-        ]}
+        sections={buildFilterSections({
+          dict,
+          instructors,
+          styles,
+          levels,
+          allRoutines,
+          selectedInstructors,
+          filters,
+          locale,
+        })}
       />
 
       {routines.length > 0 ? (

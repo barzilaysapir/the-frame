@@ -2577,7 +2577,8 @@ export function getRoutinesByInstructor(instructorSlug: string): RoutineRecord[]
 }
 
 export interface RoutinesFilterParams {
-  instructor?: string;
+  /** A single slug, or several for the multi-select teacher filter (joined as `a,b,c` in the URL). */
+  instructor?: string | string[];
   style?: string;
   level?: string;
   locale?: Locale;
@@ -2591,7 +2592,10 @@ export function routinesFilterHref({
   locale = "he",
 }: RoutinesFilterParams): string {
   const params = new URLSearchParams();
-  if (instructor) params.set("instructor", instructor);
+  const instructorValue = Array.isArray(instructor)
+    ? instructor.filter(Boolean).join(",")
+    : instructor;
+  if (instructorValue) params.set("instructor", instructorValue);
   if (style) params.set("style", style);
   if (level) params.set("level", level);
   const query = params.toString();

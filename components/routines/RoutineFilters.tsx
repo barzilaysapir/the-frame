@@ -1,11 +1,24 @@
 import Link from "next/link";
 import { RoutineFilterGroup, type RoutineFilterChip } from "@/components/routines/RoutineFilterGroup";
+import {
+  RoutineFilterMultiSelect,
+  type RoutineFilterMultiSelectOption,
+} from "@/components/routines/RoutineFilterMultiSelect";
 import { Panel } from "@/components/ui/Panel";
 
-interface RoutineFilterSection {
-  label: string;
-  chips: RoutineFilterChip[];
-}
+export type RoutineFilterSection =
+  | { type: "chips"; label: string; chips: RoutineFilterChip[] }
+  | {
+      type: "multiselect";
+      label: string;
+      options: RoutineFilterMultiSelectOption[];
+      allHref: string;
+      allLabel: string;
+      triggerLabel: string;
+      searchPlaceholder: string;
+      searchAriaLabel: string;
+      noMatchesLabel: string;
+    };
 
 interface RoutineFiltersProps {
   sections: RoutineFilterSection[];
@@ -33,7 +46,20 @@ export function RoutineFilters({
       <div className="divide-y divide-frame-border">
         {sections.map((section) => (
           <div key={section.label} className="px-4 py-3.5 sm:px-5 sm:py-4">
-            <RoutineFilterGroup label={section.label} chips={section.chips} />
+            {section.type === "multiselect" ? (
+              <RoutineFilterMultiSelect
+                label={section.label}
+                options={section.options}
+                allHref={section.allHref}
+                allLabel={section.allLabel}
+                triggerLabel={section.triggerLabel}
+                searchPlaceholder={section.searchPlaceholder}
+                searchAriaLabel={section.searchAriaLabel}
+                noMatchesLabel={section.noMatchesLabel}
+              />
+            ) : (
+              <RoutineFilterGroup label={section.label} chips={section.chips} />
+            )}
           </div>
         ))}
       </div>
