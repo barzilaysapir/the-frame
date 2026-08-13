@@ -41,9 +41,13 @@ export function Footer({ locale, labels, footer }: FooterProps) {
             height={24}
             className="h-6 w-6 opacity-80"
           />
-          <span className="font-logo text-xl leading-none text-white">
-            The Frame
-          </span>
+          <Image
+            src="/logo-wordmark-light-silver.png"
+            alt="The Frame"
+            width={480}
+            height={115}
+            className="h-6 w-auto"
+          />
         </Link>
 
         <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
