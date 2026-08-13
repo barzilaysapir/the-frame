@@ -110,7 +110,12 @@ export function RoutineFilterMultiSelect({
         </button>
 
         {isOpen ? (
-          <div className="absolute start-0 z-10 mt-2 w-64 overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl">
+          <div
+            // Floating-popover tier: must outrank ordinary page chrome (e.g. the
+            // z-10 tag badges on routine cards below), which is why this isn't
+            // sharing that same z-10 despite both being "just a small overlay."
+            className="absolute start-0 z-30 mt-2 w-64 overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
+          >
             {showSearch ? (
               <div className="relative border-b border-frame-border p-2">
                 <Search

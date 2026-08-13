@@ -73,7 +73,9 @@ export function SpeedMenu({ playbackRate, labels, onChangeSpeed }: SpeedMenuProp
         <div
           role="menu"
           aria-label={labels.speed}
-          className="absolute bottom-10 right-0 z-10 flex flex-col overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
+          // Same floating-popover tier as RoutineFilterMultiSelect's dropdown —
+          // must outrank ordinary page chrome, not just match its neighbors' z-10.
+          className="absolute bottom-10 right-0 z-30 flex flex-col overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
         >
           {PLAYBACK_SPEEDS.map((speed) => (
             <button
