@@ -32,10 +32,11 @@ import {
   getRoutinesByInstructor,
   type RoutineRecord,
 } from "@/lib/routines";
-import type {
-  CatalogRepository,
-  RoutineFilters,
-  RoutinePagination,
+import {
+  splitFilterValues,
+  type CatalogRepository,
+  type RoutineFilters,
+  type RoutinePagination,
 } from "@/lib/server/catalog/repository";
 import type {
   CatalogExternalCourse,
@@ -119,12 +120,14 @@ function filterRoutineRecords(
   records: RoutineRecord[],
   filters?: RoutineFilters,
 ): RoutineRecord[] {
+  const instructors = splitFilterValues(filters?.instructor);
+  const styles = splitFilterValues(filters?.style);
+  const levels = splitFilterValues(filters?.level);
+
   return records.filter((routine) => {
-    if (filters?.instructor && routine.instructorSlug !== filters.instructor) {
-      return false;
-    }
-    if (filters?.style && routine.style !== filters.style) return false;
-    if (filters?.level && routine.level !== filters.level) return false;
+    if (instructors.length > 0 && !instructors.includes(routine.instructorSlug)) return false;
+    if (styles.length > 0 && !styles.includes(routine.style)) return false;
+    if (levels.length > 0 && !levels.includes(routine.level)) return false;
     return true;
   });
 }

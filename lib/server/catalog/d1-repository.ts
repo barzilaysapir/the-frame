@@ -1,9 +1,10 @@
 import "server-only";
 import type { Locale } from "@/lib/i18n/config";
-import type {
-  CatalogRepository,
-  RoutineFilters,
-  RoutinePagination,
+import {
+  splitFilterValues,
+  type CatalogRepository,
+  type RoutineFilters,
+  type RoutinePagination,
 } from "@/lib/server/catalog/repository";
 import type {
   CatalogExternalCourse,
@@ -198,18 +199,16 @@ function buildRoutineWhereClause(filters?: RoutineFilters): {
   const conditions: string[] = [];
   const params: string[] = [];
 
-  if (filters?.instructor) {
-    conditions.push("r.instructor_slug = ?");
-    params.push(filters.instructor);
+  function pushInClause(column: string, rawValue?: string) {
+    const values = splitFilterValues(rawValue);
+    if (values.length === 0) return;
+    conditions.push(`${column} IN (${values.map(() => "?").join(", ")})`);
+    params.push(...values);
   }
-  if (filters?.style) {
-    conditions.push("r.style = ?");
-    params.push(filters.style);
-  }
-  if (filters?.level) {
-    conditions.push("r.level = ?");
-    params.push(filters.level);
-  }
+
+  pushInClause("r.instructor_slug", filters?.instructor);
+  pushInClause("r.style", filters?.style);
+  pushInClause("r.level", filters?.level);
 
   return {
     whereClause: conditions.length ? ` WHERE ${conditions.join(" AND ")}` : "",

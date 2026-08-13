@@ -2577,10 +2577,15 @@ export function getRoutinesByInstructor(instructorSlug: string): RoutineRecord[]
 }
 
 export interface RoutinesFilterParams {
-  instructor?: string;
-  style?: string;
-  level?: string;
+  /** A single slug/key, or several for the multi-select filters (joined as `a,b,c` in the URL). */
+  instructor?: string | string[];
+  style?: string | string[];
+  level?: string | string[];
   locale?: Locale;
+}
+
+function joinFilterValue(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value.filter(Boolean).join(",") : value;
 }
 
 /** Build a locale-aware tutorials catalog URL from the active filters. */
@@ -2591,9 +2596,12 @@ export function routinesFilterHref({
   locale = "he",
 }: RoutinesFilterParams): string {
   const params = new URLSearchParams();
-  if (instructor) params.set("instructor", instructor);
-  if (style) params.set("style", style);
-  if (level) params.set("level", level);
+  const instructorValue = joinFilterValue(instructor);
+  const styleValue = joinFilterValue(style);
+  const levelValue = joinFilterValue(level);
+  if (instructorValue) params.set("instructor", instructorValue);
+  if (styleValue) params.set("style", styleValue);
+  if (levelValue) params.set("level", levelValue);
   const query = params.toString();
   const base = localePath(locale, "/routines");
   return query ? `${base}?${query}` : base;
