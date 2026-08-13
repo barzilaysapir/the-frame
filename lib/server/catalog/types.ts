@@ -58,7 +58,6 @@ export interface CatalogExternalCourse {
   tagline: string;
   description: string;
   priceDisplay: string;
-  affiliateUrl: string;
 }
 
 export type CatalogSource = "d1" | "mock";

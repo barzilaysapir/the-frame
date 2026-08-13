@@ -67,11 +67,13 @@
   },
   "externalCourses": {
     "title": "More courses",
-    "subtitle": "Courses from other platforms and creators we recommend, taught outside The Frame.",
-    "sponsoredBadge": "Partner",
+    "subtitle": "Extra courses filmed at The Frame, from a slightly different world than our core combinations — think stretching and warm-ups.",
+    "comingSoonBadge": "Coming soon",
+    "comingSoonNote": "This course is in production and will be available on The Frame soon.",
     "providerPrefix": "by {provider}",
     "cta": "View course",
-    "linkAria": "{title} by {provider} — opens in a new tab"
+    "linkAria": "{title} by {provider}",
+    "back": "Back to more courses"
   },
   "about": {
     "metaTitle": "About",

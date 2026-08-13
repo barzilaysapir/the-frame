@@ -67,11 +67,13 @@
   },
   "externalCourses": {
     "title": "קורסים נוספים",
-    "subtitle": "קורסים מומלצים מפלטפורמות ויוצרים אחרים, הנלמדים מחוץ ל-The Frame.",
-    "sponsoredBadge": "שותף",
+    "subtitle": "קורסים נוספים שצילמנו ב-The Frame, מעולמות קצת שונים מהקומבינציות הראשיות — כמו מתיחות וחימום.",
+    "comingSoonBadge": "בקרוב",
+    "comingSoonNote": "הקורס הזה בהפקה ויעלה בקרוב ל-The Frame.",
     "providerPrefix": "מבית {provider}",
     "cta": "לצפייה בקורס",
-    "linkAria": "{title} מבית {provider} — נפתח בכרטיסייה חדשה"
+    "linkAria": "{title} מבית {provider}",
+    "back": "חזרה לקורסים נוספים"
   },
   "about": {
     "metaTitle": "אודות",

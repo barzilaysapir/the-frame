@@ -1,65 +1,59 @@
 /**
- * External course types + **temporary in-memory mock partner listings**.
- * These are affiliate/paid courses hosted by third-party providers, not
- * content produced by The Frame — replace with real partner data (and real
- * affiliate links) when partnerships are confirmed.
+ * "More courses" types + **temporary in-memory mock listings**.
+ * These are additional courses filmed/produced by The Frame that live on
+ * this site (own instructors, own hosting) but are kept in a separate
+ * section from the main routines catalog because they're a different kind
+ * of content — e.g. stretching/warm-up series instead of song combinations.
+ * Not third-party/affiliate — replace with real course records when ready.
  */
 
 export interface ExternalCourseRecord {
   slug: string;
-  /** MOCK provider name — replace with the real partner's brand name. */
+  /** MOCK creator/series name — replace with the real one when ready. */
   provider: string;
-  /** Display-only price string; billing happens on the provider's site. */
+  /** Display-only price string. */
   priceDisplay: string;
-  /** Placeholder — replace with the provider's real affiliate/tracking link. */
-  affiliateUrl: string;
   /** Controls display order; lower sorts first. */
   sortOrder: number;
 }
 
 /** @textScraped scripts/verify-mock-db-parity.ts may later locate this array by its literal `export const EXTERNAL_COURSES...` source text — keep it exported. */
 export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
-  // MOCK partner courses for demo UI — replace with real affiliate listings when ready.
+  // MOCK course listings for demo UI — replace with real course records when ready.
   {
     slug: "steez-academy-hiphop-foundations",
     provider: "Steez Academy",
     priceDisplay: "$29/mo",
-    affiliateUrl: "https://example.com/steez-academy?ref=theframe",
     sortOrder: 0,
   },
   {
     slug: "urban-motion-jazzfunk-intensive",
     provider: "Urban Motion Studio",
     priceDisplay: "$149 one-time",
-    affiliateUrl: "https://example.com/urban-motion?ref=theframe",
     sortOrder: 1,
   },
   {
     slug: "heels-and-heart-confidence-course",
     provider: "Heels & Heart",
     priceDisplay: "$39/mo",
-    affiliateUrl: "https://example.com/heels-and-heart?ref=theframe",
     sortOrder: 2,
   },
   {
     slug: "movement-lab-contemporary-lines",
     provider: "The Movement Lab",
     priceDisplay: "$59/mo",
-    affiliateUrl: "https://example.com/movement-lab?ref=theframe",
     sortOrder: 3,
   },
   {
     slug: "rhythm-collective-afrobeats-bootcamp",
     provider: "Rhythm Collective",
     priceDisplay: "$25/mo",
-    affiliateUrl: "https://example.com/rhythm-collective?ref=theframe",
     sortOrder: 4,
   },
   {
     slug: "dancehall-society-vibes-101",
     provider: "Dancehall Society",
     priceDisplay: "$19/mo",
-    affiliateUrl: "https://example.com/dancehall-society?ref=theframe",
     sortOrder: 5,
   },
 ];

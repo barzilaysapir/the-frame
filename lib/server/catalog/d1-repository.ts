@@ -62,7 +62,6 @@ interface ExternalCourseRow {
   slug: string;
   provider: string;
   price_display: string;
-  affiliate_url: string;
   title: string | null;
   tagline: string | null;
   description: string | null;
@@ -123,7 +122,6 @@ function mapExternalCourse(row: ExternalCourseRow): CatalogExternalCourse {
     tagline: row.tagline ?? "",
     description: row.description ?? "",
     priceDisplay: row.price_display,
-    affiliateUrl: row.affiliate_url,
   };
 }
 
@@ -334,7 +332,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
         const result = await db
           .prepare(
             `SELECT
-               ec.slug, ec.provider, ec.price_display, ec.affiliate_url,
+               ec.slug, ec.provider, ec.price_display,
                eci.title, eci.tagline, eci.description
              FROM external_courses ec
              LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
@@ -352,6 +350,31 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           error,
         );
         return mockCatalogRepository.listExternalCourses(locale);
+      }
+    },
+
+    async getExternalCourse(locale, slug) {
+      try {
+        const row = await db
+          .prepare(
+            `SELECT
+               ec.slug, ec.provider, ec.price_display,
+               eci.title, eci.tagline, eci.description
+             FROM external_courses ec
+             LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+             WHERE ec.slug = ?`,
+          )
+          .bind(locale, slug)
+          .first<ExternalCourseRow>();
+
+        if (!row) return null;
+        return mapExternalCourse(row);
+      } catch (error) {
+        console.error(
+          "D1 external_courses query failed; falling back to the in-memory mock lookup:",
+          error,
+        );
+        return mockCatalogRepository.getExternalCourse(locale, slug);
       }
     },
   };

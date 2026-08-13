@@ -1,12 +1,16 @@
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { Panel } from "@/components/ui/Panel";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
+import type { Locale } from "@/lib/i18n/config";
+import { localePath } from "@/lib/i18n/path";
 import type { CatalogExternalCourse } from "@/lib/server/catalog/types";
 
 interface ExternalCourseCardProps {
   course: CatalogExternalCourse;
+  locale: Locale;
   labels: {
-    sponsoredBadge: string;
+    comingSoonBadge: string;
     providerPrefix: string;
     cta: string;
     linkAria: string;
@@ -15,14 +19,13 @@ interface ExternalCourseCardProps {
 
 export function ExternalCourseCard({
   course,
+  locale,
   labels,
 }: ExternalCourseCardProps) {
   return (
     <Panel
-      as="a"
-      href={course.affiliateUrl}
-      target="_blank"
-      rel="noopener noreferrer sponsored"
+      as={Link}
+      href={localePath(locale, `/external-courses/${course.slug}`)}
       aria-label={formatMessage(labels.linkAria, {
         title: course.title,
         provider: course.provider,
@@ -31,7 +34,7 @@ export function ExternalCourseCard({
       className="group flex flex-col p-6"
     >
       <span className="inline-flex w-fit items-center rounded-full border border-frame-border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-frame-silver">
-        {labels.sponsoredBadge}
+        {labels.comingSoonBadge}
       </span>
 
       <h3 className="mt-4 font-display text-xl font-black text-white">
@@ -49,9 +52,9 @@ export function ExternalCourseCard({
         <span className="text-sm font-semibold text-white">
           {course.priceDisplay}
         </span>
-        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
+        <span className="inline-flex items-center gap-1 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
           {labels.cta}
-          <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <ArrowLeft className="h-3.5 w-3.5 shrink-0 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
         </span>
       </div>
     </Panel>

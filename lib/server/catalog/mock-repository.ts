@@ -110,7 +110,6 @@ function toCatalogExternalCourse(
     tagline: localized.tagline,
     description: localized.description,
     priceDisplay: course.priceDisplay,
-    affiliateUrl: course.affiliateUrl,
   };
 }
 
@@ -147,5 +146,9 @@ export const mockCatalogRepository: CatalogRepository = {
     return getAllExternalCourses()
       .map((course) => toCatalogExternalCourse(locale, course.slug))
       .filter((item): item is CatalogExternalCourse => item !== null);
+  },
+
+  async getExternalCourse(locale, slug) {
+    return toCatalogExternalCourse(locale, slug);
   },
 };

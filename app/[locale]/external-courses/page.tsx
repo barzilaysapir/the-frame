@@ -49,8 +49,9 @@ export default async function ExternalCoursesPage({
           <ExternalCourseCard
             key={course.slug}
             course={course}
+            locale={locale}
             labels={{
-              sponsoredBadge: dict.externalCourses.sponsoredBadge,
+              comingSoonBadge: dict.externalCourses.comingSoonBadge,
               providerPrefix: dict.externalCourses.providerPrefix,
               cta: dict.externalCourses.cta,
               linkAria: dict.externalCourses.linkAria,

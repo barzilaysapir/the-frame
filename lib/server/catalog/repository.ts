@@ -23,4 +23,8 @@ export interface CatalogRepository {
     slug: string,
   ): Promise<CatalogInstructor | null>;
   listExternalCourses(locale: Locale): Promise<CatalogExternalCourse[]>;
+  getExternalCourse(
+    locale: Locale,
+    slug: string,
+  ): Promise<CatalogExternalCourse | null>;
 }
