@@ -7,7 +7,7 @@
     "tutorials": "ספרייה",
     "styles": "סגנונות",
     "teachers": "מורים",
-    "externalCourses": "קורסים חיצוניים",
+    "externalCourses": "קורסים נוספים",
     "favorites": "מועדפים",
     "about": "אודות",
     "login": "התחברות",
@@ -66,7 +66,7 @@
     "browseAria": "עיינו בקומבינציות בסגנון {name}"
   },
   "externalCourses": {
-    "title": "קורסים חיצוניים",
+    "title": "קורסים נוספים",
     "subtitle": "קורסים מומלצים מפלטפורמות ויוצרים אחרים, הנלמדים מחוץ ל-The Frame.",
     "sponsoredBadge": "שותף",
     "providerPrefix": "מבית {provider}",
