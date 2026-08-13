@@ -17,6 +17,7 @@ import type {
   LevelKey,
   TagKey,
 } from "@/lib/routines";
+import { mockCatalogRepository } from "@/lib/server/catalog/mock-repository";
 
 interface RoutineRow {
   slug: string;
@@ -322,21 +323,36 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
     },
 
     async listExternalCourses(locale) {
-      const result = await db
-        .prepare(
-          `SELECT
-             ec.slug, ec.provider, ec.price_display, ec.affiliate_url,
-             eci.title, eci.tagline, eci.description
-           FROM external_courses ec
-           LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
-           ORDER BY ec.sort_order ASC`,
-        )
-        .bind(locale)
-        .all<ExternalCourseRow>();
+      // Newer catalog entity than routines/instructors: `resolveCatalog()`
+      // only probes the `routines` table to decide d1-vs-mock, so an
+      // environment whose D1 hasn't had migration 0012 applied yet (remote
+      // migrations are a manual `npm run db:migrate:remote` step, unlike
+      // local dev's automatic `predev`/`prepreview` hooks) would otherwise
+      // 500 here instead of just missing this one catalog slice. Fall back
+      // to the mock list so the page still renders.
+      try {
+        const result = await db
+          .prepare(
+            `SELECT
+               ec.slug, ec.provider, ec.price_display, ec.affiliate_url,
+               eci.title, eci.tagline, eci.description
+             FROM external_courses ec
+             LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+             ORDER BY ec.sort_order ASC`,
+          )
+          .bind(locale)
+          .all<ExternalCourseRow>();
 
-      return ((result.results ?? []) as ExternalCourseRow[]).map(
-        mapExternalCourse,
-      );
+        return ((result.results ?? []) as ExternalCourseRow[]).map(
+          mapExternalCourse,
+        );
+      } catch (error) {
+        console.error(
+          "D1 external_courses query failed; falling back to the in-memory mock list:",
+          error,
+        );
+        return mockCatalogRepository.listExternalCourses(locale);
+      }
     },
   };
 }
