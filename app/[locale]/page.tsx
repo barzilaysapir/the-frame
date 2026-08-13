@@ -32,7 +32,7 @@ export default async function HomePage({ params }: HomePageProps) {
   return (
     <main className="relative overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
-      <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl flex-col items-center justify-center px-4 py-24 text-center sm:px-6">
         <p className="max-w-xl text-frame-silver">{dict.home.subtitle}</p>
         <h1 className="mt-5 text-balance font-display text-6xl font-black leading-[0.98] text-white sm:text-7xl">
           {dict.home.title}
