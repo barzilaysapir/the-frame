@@ -47,25 +47,13 @@
 	// ISR/data-cache incremental cache for catalog `revalidate`d routes (see
 	// open-next.config.ts). R2 isn't enabled on this account, so this uses
 	// Workers KV — see https://opennext.js.org/cloudflare/caching.
+	//
+	// No Durable Object queue binding here (deliberately) — see the comment
+	// in open-next.config.ts for why it was dropped.
 	"kv_namespaces": [
 		{
 			"binding": "NEXT_INC_CACHE_KV",
 			"id": "63dd1b68c52d4367bd9526fb90c31b0a"
-		}
-	],
-	// Durable Object queue that de-dupes/schedules time-based ISR revalidations.
-	"durable_objects": {
-		"bindings": [
-			{
-				"name": "NEXT_CACHE_DO_QUEUE",
-				"class_name": "DOQueueHandler"
-			}
-		]
-	},
-	"migrations": [
-		{
-			"tag": "v1",
-			"new_sqlite_classes": ["DOQueueHandler"]
 		}
 	],
 	// Guards the /me* write endpoints (see lib/server/api/rate-limit.ts) against
