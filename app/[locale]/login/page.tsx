@@ -10,6 +10,7 @@ import {
 import { useAuth } from "@/components/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { Button } from "@/components/ui/Button";
+import { Panel } from "@/components/ui/Panel";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { toIsraeliE164 } from "@/lib/phone";
 import { cn } from "@/lib/utils";
@@ -137,11 +138,11 @@ export default function LoginPage() {
         </p>
 
         {!isConfigured ? (
-          <div className="mt-8 rounded-2xl border border-frame-border bg-frame-panel p-6 text-center text-sm text-frame-silver">
+          <Panel className="mt-8 p-6 text-center text-sm text-frame-silver">
             {labels.unavailable}
-          </div>
+          </Panel>
         ) : (
-          <div className="mt-8 rounded-2xl border border-frame-border bg-frame-panel p-6">
+          <Panel className="mt-8 p-6">
             <GoogleSignInButton
               label={labels.continueGoogle}
               errors={labels.errors}
@@ -225,7 +226,7 @@ export default function LoginPage() {
                 {error}
               </p>
             ) : null}
-          </div>
+          </Panel>
         )}
 
         <div ref={recaptchaContainerRef} id="recaptcha-container" />

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Instagram } from "lucide-react";
 import { InstructorAvatar } from "@/components/InstructorAvatar";
+import { Panel } from "@/components/ui/Panel";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
 import { routinesFilterHref } from "@/lib/routines";
@@ -23,7 +24,7 @@ export function InstructorCard({
   labels,
 }: InstructorCardProps) {
   return (
-    <article className="group relative rounded-2xl border border-frame-border bg-frame-panel p-6 transition-colors hover:border-frame-cyan/60">
+    <Panel as="article" variant="interactive" className="group relative p-6">
       <Link
         href={routinesFilterHref({ instructor: instructor.slug, locale })}
         className="absolute inset-0 z-0 rounded-2xl"
@@ -70,6 +71,6 @@ export function InstructorCard({
           </p>
         ) : null}
       </div>
-    </article>
+    </Panel>
   );
 }

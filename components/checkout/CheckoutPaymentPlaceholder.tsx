@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { Button } from "@/components/ui/Button";
+import { Panel } from "@/components/ui/Panel";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -29,14 +30,12 @@ export function CheckoutPaymentPlaceholder({
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-frame-border bg-frame-panel p-6 text-sm text-frame-silver">
-        {labels.loading}
-      </div>
+      <Panel className="p-6 text-sm text-frame-silver">{labels.loading}</Panel>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-frame-border bg-frame-panel p-6">
+    <Panel className="p-6">
       <h2 className="font-display text-2xl font-black text-white">
         {labels.paymentTitle}
       </h2>
@@ -81,6 +80,6 @@ export function CheckoutPaymentPlaceholder({
           {error}
         </p>
       ) : null}
-    </div>
+    </Panel>
   );
 }

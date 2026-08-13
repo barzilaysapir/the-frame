@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Panel } from "@/components/ui/Panel";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
 import { routinesFilterHref, type DanceStyleKey } from "@/lib/routines";
@@ -28,10 +29,12 @@ export function StyleCard({
   labels,
 }: StyleCardProps) {
   return (
-    <Link
+    <Panel
+      as={Link}
       href={routinesFilterHref({ style, locale })}
       aria-label={formatMessage(labels.browseAria, { name: label })}
-      className="group block overflow-hidden rounded-2xl border border-frame-border bg-frame-panel transition-colors hover:border-frame-cyan/60"
+      variant="interactive"
+      className="group block overflow-hidden"
     >
       <div className="relative aspect-video w-full overflow-hidden">
         <Image
@@ -54,6 +57,6 @@ export function StyleCard({
           </p>
         ) : null}
       </div>
-    </Link>
+    </Panel>
   );
 }

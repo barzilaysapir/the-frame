@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { RoutineCard } from "@/components/routines/RoutineCard";
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/Button";
+import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -28,6 +29,10 @@ interface AccountLibraryProps {
     favoriteAdd: string;
     favoriteRemove: string;
   };
+}
+
+function StateBox({ children }: { children: React.ReactNode }) {
+  return <Panel className="p-8 text-center">{children}</Panel>;
 }
 
 export function AccountLibrary({ locale, labels }: AccountLibraryProps) {
@@ -68,23 +73,23 @@ export function AccountLibrary({ locale, labels }: AccountLibraryProps) {
 
   if (items === null) {
     return (
-      <div className="rounded-2xl border border-frame-border bg-frame-panel p-8 text-center">
+      <StateBox>
         <p className="text-frame-silver">{labels.loading}</p>
-      </div>
+      </StateBox>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-frame-border bg-frame-panel p-8 text-center">
+      <StateBox>
         <p className="text-frame-silver">{error}</p>
-      </div>
+      </StateBox>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-frame-border bg-frame-panel p-8 text-center">
+      <StateBox>
         <p className="text-frame-silver">{labels.empty}</p>
         <Button
           href={localePath(locale, "/routines")}
@@ -93,7 +98,7 @@ export function AccountLibrary({ locale, labels }: AccountLibraryProps) {
           {labels.browseTutorials}
           <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
         </Button>
-      </div>
+      </StateBox>
     );
   }
 
