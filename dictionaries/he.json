@@ -35,6 +35,7 @@
     "resultMany": "{count} תוצאות",
     "empty": "אין קומבינציות להצגה בספרייה כרגע.",
     "viewRoutine": "צפו בקומבינציה",
+    "loadingMore": "טוען עוד…",
     "taughtBy": "בהנחיית {name}",
     "favoriteAdd": "הוספה למועדפים",
     "favoriteRemove": "הסרה מהמועדפים"
@@ -63,6 +64,15 @@
     "routineOne": "קומבינציה אחת",
     "routineMany": "{count} קומבינציות",
     "browseAria": "עיינו בקומבינציות בסגנון {name}"
+  },
+  "externalCourses": {
+    "title": "קורסים נוספים",
+    "comingSoonBadge": "בקרוב",
+    "comingSoonNote": "הקורס הזה בהפקה ויעלה בקרוב ל-The Frame.",
+    "providerPrefix": "מבית {provider}",
+    "cta": "לצפייה בקורס",
+    "linkAria": "{title} מבית {provider}",
+    "back": "חזרה לקורסים נוספים"
   },
   "about": {
     "metaTitle": "אודות",

@@ -3,8 +3,10 @@ import type { Locale } from "@/lib/i18n/config";
 import type {
   CatalogRepository,
   RoutineFilters,
+  RoutinePagination,
 } from "@/lib/server/catalog/repository";
 import type {
+  CatalogExternalCourse,
   CatalogInstructor,
   CatalogRoutine,
   CatalogChapter,
@@ -16,6 +18,7 @@ import type {
   LevelKey,
   TagKey,
 } from "@/lib/routines";
+import { mockCatalogRepository } from "@/lib/server/catalog/mock-repository";
 
 interface RoutineRow {
   slug: string;
@@ -54,6 +57,15 @@ interface ChapterRow {
   chapter_id: string;
   time_seconds: number;
   label: string | null;
+}
+
+interface ExternalCourseRow {
+  slug: string;
+  provider: string;
+  price_display: string;
+  title: string | null;
+  tagline: string | null;
+  description: string | null;
 }
 
 function parseTags(tagsJson: string, routineSlug: string): TagKey[] {
@@ -100,6 +112,17 @@ function mapRoutine(
       original: row.price_original,
       earlyBird: row.price_early_bird,
     },
+  };
+}
+
+function mapExternalCourse(row: ExternalCourseRow): CatalogExternalCourse {
+  return {
+    slug: row.slug,
+    title: row.title ?? row.slug,
+    provider: row.provider,
+    tagline: row.tagline ?? "",
+    description: row.description ?? "",
+    priceDisplay: row.price_display,
   };
 }
 
@@ -167,6 +190,33 @@ async function fetchChaptersForAllRoutines(
   return bySlug;
 }
 
+/** Shared WHERE-clause builder for `listRoutines`/`countRoutines` so the two never drift apart. */
+function buildRoutineWhereClause(filters?: RoutineFilters): {
+  whereClause: string;
+  params: string[];
+} {
+  const conditions: string[] = [];
+  const params: string[] = [];
+
+  if (filters?.instructor) {
+    conditions.push("r.instructor_slug = ?");
+    params.push(filters.instructor);
+  }
+  if (filters?.style) {
+    conditions.push("r.style = ?");
+    params.push(filters.style);
+  }
+  if (filters?.level) {
+    conditions.push("r.level = ?");
+    params.push(filters.level);
+  }
+
+  return {
+    whereClause: conditions.length ? ` WHERE ${conditions.join(" AND ")}` : "",
+    params,
+  };
+}
+
 const ROUTINE_SELECT = `
   SELECT
     r.slug, r.title, r.song_name, r.artist, r.instructor_slug, r.level, r.style,
@@ -185,32 +235,30 @@ const ROUTINE_SELECT = `
 
 export function createD1CatalogRepository(db: AppDb): CatalogRepository {
   return {
-    async listRoutines(locale, filters?: RoutineFilters) {
-      const conditions: string[] = [];
-      const params: string[] = [locale, locale, locale, locale];
-
-      if (filters?.instructor) {
-        conditions.push("r.instructor_slug = ?");
-        params.push(filters.instructor);
+    async listRoutines(
+      locale,
+      filters?: RoutineFilters,
+      pagination?: RoutinePagination,
+    ) {
+      const { whereClause, params } = buildRoutineWhereClause(filters);
+      // `r.slug` (the primary key) gives a stable, deterministic order —
+      // required so LIMIT/OFFSET pages don't skip or repeat rows across
+      // successive infinite-scroll requests.
+      let query = `${ROUTINE_SELECT}${whereClause} ORDER BY r.slug ASC`;
+      const bindParams: Array<string | number> = [
+        locale,
+        locale,
+        locale,
+        locale,
+        ...params,
+      ];
+      if (pagination) {
+        query += ` LIMIT ? OFFSET ?`;
+        bindParams.push(pagination.limit, pagination.offset);
       }
-      if (filters?.style) {
-        conditions.push("r.style = ?");
-        params.push(filters.style);
-      }
-      if (filters?.level) {
-        conditions.push("r.level = ?");
-        params.push(filters.level);
-      }
-
-      const whereClause = conditions.length
-        ? ` WHERE ${conditions.join(" AND ")}`
-        : "";
 
       const [result, chaptersBySlug] = await Promise.all([
-        db
-          .prepare(`${ROUTINE_SELECT}${whereClause}`)
-          .bind(...params)
-          .all<RoutineRow>(),
+        db.prepare(query).bind(...bindParams).all<RoutineRow>(),
         fetchChaptersForAllRoutines(db, locale),
       ]);
 
@@ -218,6 +266,15 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
       return rows.map((row: RoutineRow) =>
         mapRoutine(row, chaptersBySlug.get(row.slug) ?? []),
       );
+    },
+
+    async countRoutines(filters?: RoutineFilters) {
+      const { whereClause, params } = buildRoutineWhereClause(filters);
+      const row = await db
+        .prepare(`SELECT COUNT(*) AS count FROM routines r${whereClause}`)
+        .bind(...params)
+        .first<{ count: number }>();
+      return Number(row?.count ?? 0);
     },
 
     async getRoutine(locale, slug) {
@@ -296,6 +353,64 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
         routineCount: Number(row.routine_count ?? 0),
       };
       return instructor;
+    },
+
+    async listExternalCourses(locale) {
+      // Newer catalog entity than routines/instructors: `resolveCatalog()`
+      // only probes the `routines` table to decide d1-vs-mock, so an
+      // environment whose D1 hasn't had migration 0012 applied yet (remote
+      // migrations are a manual `npm run db:migrate:remote` step, unlike
+      // local dev's automatic `predev`/`prepreview` hooks) would otherwise
+      // 500 here instead of just missing this one catalog slice. Fall back
+      // to the mock list so the page still renders.
+      try {
+        const result = await db
+          .prepare(
+            `SELECT
+               ec.slug, ec.provider, ec.price_display,
+               eci.title, eci.tagline, eci.description
+             FROM external_courses ec
+             LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+             ORDER BY ec.sort_order ASC`,
+          )
+          .bind(locale)
+          .all<ExternalCourseRow>();
+
+        return ((result.results ?? []) as ExternalCourseRow[]).map(
+          mapExternalCourse,
+        );
+      } catch (error) {
+        console.error(
+          "D1 external_courses query failed; falling back to the in-memory mock list:",
+          error,
+        );
+        return mockCatalogRepository.listExternalCourses(locale);
+      }
+    },
+
+    async getExternalCourse(locale, slug) {
+      try {
+        const row = await db
+          .prepare(
+            `SELECT
+               ec.slug, ec.provider, ec.price_display,
+               eci.title, eci.tagline, eci.description
+             FROM external_courses ec
+             LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+             WHERE ec.slug = ?`,
+          )
+          .bind(locale, slug)
+          .first<ExternalCourseRow>();
+
+        if (!row) return null;
+        return mapExternalCourse(row);
+      } catch (error) {
+        console.error(
+          "D1 external_courses query failed; falling back to the in-memory mock lookup:",
+          error,
+        );
+        return mockCatalogRepository.getExternalCourse(locale, slug);
+      }
     },
   };
 }

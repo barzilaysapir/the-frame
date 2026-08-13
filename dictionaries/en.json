@@ -35,6 +35,7 @@
     "resultMany": "{count} results",
     "empty": "No combinations to show in the library right now.",
     "viewRoutine": "View combination",
+    "loadingMore": "Loading more…",
     "taughtBy": "Taught by {name}",
     "favoriteAdd": "Add to favorites",
     "favoriteRemove": "Remove from favorites"
@@ -63,6 +64,15 @@
     "routineOne": "1 combination",
     "routineMany": "{count} combinations",
     "browseAria": "Browse {name} combinations"
+  },
+  "externalCourses": {
+    "title": "More courses",
+    "comingSoonBadge": "Coming soon",
+    "comingSoonNote": "This course is in production and will be available on The Frame soon.",
+    "providerPrefix": "by {provider}",
+    "cta": "View course",
+    "linkAria": "{title} by {provider}",
+    "back": "Back to more courses"
   },
   "about": {
     "metaTitle": "About",

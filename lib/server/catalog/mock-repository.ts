@@ -14,9 +14,14 @@
 import "server-only";
 import type { Locale } from "@/lib/i18n/config";
 import {
+  localizeExternalCourse,
   localizeInstructor,
   localizeRoutine,
 } from "@/lib/i18n/localize";
+import {
+  getAllExternalCourses,
+  getExternalCourseBySlug,
+} from "@/lib/external-courses";
 import {
   getAllInstructors,
   getInstructorBySlug,
@@ -25,12 +30,15 @@ import {
   getAllRoutines,
   getRoutineBySlug,
   getRoutinesByInstructor,
+  type RoutineRecord,
 } from "@/lib/routines";
 import type {
   CatalogRepository,
   RoutineFilters,
+  RoutinePagination,
 } from "@/lib/server/catalog/repository";
 import type {
+  CatalogExternalCourse,
   CatalogInstructor,
   CatalogRoutine,
 } from "@/lib/server/catalog/types";
@@ -88,19 +96,57 @@ function toCatalogInstructor(
   };
 }
 
+function toCatalogExternalCourse(
+  locale: Locale,
+  slug: string,
+): CatalogExternalCourse | null {
+  const course = getExternalCourseBySlug(slug);
+  if (!course) return null;
+
+  const localized = localizeExternalCourse(locale, course);
+
+  return {
+    slug: course.slug,
+    title: localized.title,
+    provider: course.provider,
+    tagline: localized.tagline,
+    description: localized.description,
+    priceDisplay: course.priceDisplay,
+  };
+}
+
+function filterRoutineRecords(
+  records: RoutineRecord[],
+  filters?: RoutineFilters,
+): RoutineRecord[] {
+  return records.filter((routine) => {
+    if (filters?.instructor && routine.instructorSlug !== filters.instructor) {
+      return false;
+    }
+    if (filters?.style && routine.style !== filters.style) return false;
+    if (filters?.level && routine.level !== filters.level) return false;
+    return true;
+  });
+}
+
 export const mockCatalogRepository: CatalogRepository = {
-  async listRoutines(locale, filters?: RoutineFilters) {
-    return getAllRoutines()
-      .filter((routine) => {
-        if (filters?.instructor && routine.instructorSlug !== filters.instructor) {
-          return false;
-        }
-        if (filters?.style && routine.style !== filters.style) return false;
-        if (filters?.level && routine.level !== filters.level) return false;
-        return true;
-      })
+  async listRoutines(
+    locale,
+    filters?: RoutineFilters,
+    pagination?: RoutinePagination,
+  ) {
+    const filtered = filterRoutineRecords(getAllRoutines(), filters);
+    const paged = pagination
+      ? filtered.slice(pagination.offset, pagination.offset + pagination.limit)
+      : filtered;
+
+    return paged
       .map((routine) => toCatalogRoutine(locale, routine.slug))
       .filter((item): item is CatalogRoutine => item !== null);
+  },
+
+  async countRoutines(filters?: RoutineFilters) {
+    return filterRoutineRecords(getAllRoutines(), filters).length;
   },
 
   async getRoutine(locale, slug) {
@@ -115,5 +161,15 @@ export const mockCatalogRepository: CatalogRepository = {
 
   async getInstructor(locale, slug) {
     return toCatalogInstructor(locale, slug);
+  },
+
+  async listExternalCourses(locale) {
+    return getAllExternalCourses()
+      .map((course) => toCatalogExternalCourse(locale, course.slug))
+      .filter((item): item is CatalogExternalCourse => item !== null);
+  },
+
+  async getExternalCourse(locale, slug) {
+    return toCatalogExternalCourse(locale, slug);
   },
 };

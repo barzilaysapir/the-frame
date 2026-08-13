@@ -43,16 +43,73 @@ const EXISTING_INSTRUCTOR_BY_STYLE: Record<string, string> = {
   heels: "noa-sagi",
 };
 
-/** One shared poster per style — existing 3 double up, 4 new ones are generated separately. */
-const POSTER_BY_STYLE: Record<StyleKey, string> = {
-  "jazz-funk": "/routine-poster-midnight-static.png",
-  "hip-hop": "/routine-poster-neon-nights.png",
-  heels: "/routine-poster-velvet-heels.png",
-  jazz: "/routine-poster-jazz-glow.png",
-  afro: "/routine-poster-afro-sunburst.png",
-  dancehall: "/routine-poster-dancehall-block.png",
-  commercial: "/routine-poster-commercial-spotlight.png",
+/**
+ * 4 distinct cover photos per style (not just one shared per style — see
+ * scripts/assign-routine-covers.mjs, which fixed the initial ~14-15x repeat
+ * this produced). Each routine picks a pool entry deterministically from a
+ * hash of its slug, so re-running this generator would no longer collapse
+ * an entire style onto one repeated stock photo.
+ */
+const POSTER_POOL_BY_STYLE: Record<StyleKey, string[]> = {
+  "jazz-funk": [
+    "/routine-posters/routine-poster-midnight-static.png",
+    "/routine-posters/routine-poster-concrete-groove.png",
+    "/routine-posters/routine-poster-amber-loft.png",
+    "/routine-posters/routine-poster-city-lights-funk.png",
+  ],
+  "hip-hop": [
+    "/routine-posters/routine-poster-neon-nights.png",
+    "/routine-posters/routine-poster-street-cypher.png",
+    "/routine-posters/routine-poster-warehouse-glow.png",
+    "/routine-posters/routine-poster-block-party.png",
+  ],
+  heels: [
+    "/routine-posters/routine-poster-velvet-heels.png",
+    "/routine-posters/routine-poster-neon-runway.png",
+    "/routine-posters/routine-poster-penthouse-heels.png",
+    "/routine-posters/routine-poster-city-glam.png",
+  ],
+  jazz: [
+    "/routine-posters/routine-poster-jazz-glow.png",
+    "/routine-posters/routine-poster-spotlight-lyrical.png",
+    "/routine-posters/routine-poster-amber-stage.png",
+    "/routine-posters/routine-poster-velvet-curtain.png",
+  ],
+  afro: [
+    "/routine-posters/routine-poster-afro-sunburst.png",
+    "/routine-posters/routine-poster-afro-rhythm.png",
+    "/routine-posters/routine-poster-tribal-energy.png",
+    "/routine-posters/routine-poster-afro-groove.png",
+  ],
+  dancehall: [
+    "/routine-posters/routine-poster-dancehall-block.png",
+    "/routine-posters/routine-poster-dancehall-bounce.png",
+    "/routine-posters/routine-poster-carnival-vibes.png",
+    "/routine-posters/routine-poster-island-heat.png",
+  ],
+  // "commercial" was renamed to "voguing" post-launch (migrations/0010) —
+  // its pool already uses the renamed voguing filenames.
+  commercial: [
+    "/routine-posters/routine-poster-voguing-spotlight.png",
+    "/routine-posters/routine-poster-ballroom-runway.png",
+    "/routine-posters/routine-poster-vogue-glam.png",
+    "/routine-posters/routine-poster-house-of-style.png",
+  ],
 };
+
+/** Stable djb2 string hash — deterministic per slug, not RNG-based. */
+function hashString(value: string): number {
+  let hash = 5381;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 33 + value.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+function coverForRoutine(slug: string, style: StyleKey): string {
+  const pool = POSTER_POOL_BY_STYLE[style];
+  return pool[hashString(slug) % pool.length];
+}
 
 /** How many *new* instructors to pick from the name bank, per style (existing 3 add +1 each). */
 const NEW_INSTRUCTOR_COUNT_BY_STYLE: Record<StyleKey, number> = {
@@ -350,7 +407,7 @@ function generateRoutines(newInstructors: GeneratedInstructor[]): GeneratedRouti
         artist: song.artist,
         bpm: `${song.bpm} BPM`,
         length: song.length,
-        poster: POSTER_BY_STYLE[style],
+        poster: coverForRoutine(slug, style),
         videoSrc: SAMPLE_VIDEO_SRC,
         chapters: buildChapters(song.length),
         checkoutHref: `/checkout/${slug}`,

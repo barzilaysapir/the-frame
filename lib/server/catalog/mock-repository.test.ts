@@ -75,6 +75,56 @@ describe("mockCatalogRepository.listRoutines", () => {
     });
     expect(filtered).toEqual([]);
   });
+
+  it("paginates with limit/offset, covering every item exactly once", async () => {
+    const all = await mockCatalogRepository.listRoutines("en");
+    const pageSize = 3;
+    const pages: string[] = [];
+
+    for (let offset = 0; offset < all.length; offset += pageSize) {
+      const page = await mockCatalogRepository.listRoutines("en", undefined, {
+        limit: pageSize,
+        offset,
+      });
+      expect(page.length).toBeLessThanOrEqual(pageSize);
+      pages.push(...page.map((routine) => routine.slug));
+    }
+
+    expect(pages).toEqual(all.map((routine) => routine.slug));
+  });
+
+  it("respects filters together with pagination", async () => {
+    const all = await mockCatalogRepository.listRoutines("en");
+    const { style } = all[0];
+
+    const filteredAll = await mockCatalogRepository.listRoutines("en", { style });
+    const firstPage = await mockCatalogRepository.listRoutines(
+      "en",
+      { style },
+      { limit: 1, offset: 0 },
+    );
+
+    expect(firstPage.length).toBe(Math.min(1, filteredAll.length));
+    expect(firstPage.every((routine) => routine.style === style)).toBe(true);
+  });
+});
+
+describe("mockCatalogRepository.countRoutines", () => {
+  it("matches the length of an unfiltered listRoutines call", async () => {
+    const all = await mockCatalogRepository.listRoutines("en");
+    const count = await mockCatalogRepository.countRoutines();
+    expect(count).toBe(all.length);
+  });
+
+  it("matches the length of a filtered listRoutines call", async () => {
+    const all = await mockCatalogRepository.listRoutines("en");
+    const { level } = all[0];
+
+    const filtered = await mockCatalogRepository.listRoutines("en", { level });
+    const count = await mockCatalogRepository.countRoutines({ level });
+
+    expect(count).toBe(filtered.length);
+  });
 });
 
 describe("mockCatalogRepository.getRoutine", () => {
@@ -111,5 +161,51 @@ describe("mockCatalogRepository.listInstructors / getInstructor", () => {
       "definitely-not-a-real-slug",
     );
     expect(instructor).toBeNull();
+  });
+});
+
+describe("mockCatalogRepository.listExternalCourses", () => {
+  it("returns a non-empty, localized external course list", async () => {
+    const courses = await mockCatalogRepository.listExternalCourses("en");
+    expect(courses.length).toBeGreaterThan(0);
+    expect(
+      courses.every(
+        (course) =>
+          course.title.length > 0 &&
+          course.slug.length > 0 &&
+          course.provider.length > 0 &&
+          course.priceDisplay.length > 0,
+      ),
+    ).toBe(true);
+  });
+
+  it("returns locale-specific titles for en vs he", async () => {
+    const [en, he] = await Promise.all([
+      mockCatalogRepository.listExternalCourses("en"),
+      mockCatalogRepository.listExternalCourses("he"),
+    ]);
+
+    expect(en.length).toBe(he.length);
+    expect(en[0].title).not.toBe(he[0].title);
+    expect(en[0].slug).toBe(he[0].slug);
+  });
+});
+
+describe("mockCatalogRepository.getExternalCourse", () => {
+  it("returns the course matching a known slug", async () => {
+    const all = await mockCatalogRepository.listExternalCourses("en");
+    const { slug } = all[0];
+
+    const course = await mockCatalogRepository.getExternalCourse("en", slug);
+
+    expect(course?.slug).toBe(slug);
+  });
+
+  it("returns null for an unknown slug", async () => {
+    const course = await mockCatalogRepository.getExternalCourse(
+      "en",
+      "definitely-not-a-real-slug",
+    );
+    expect(course).toBeNull();
   });
 });

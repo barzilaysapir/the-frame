@@ -51,6 +51,15 @@ export interface CatalogInstructor {
   routineCount: number;
 }
 
+export interface CatalogExternalCourse {
+  slug: string;
+  title: string;
+  provider: string;
+  tagline: string;
+  description: string;
+  priceDisplay: string;
+}
+
 export type CatalogSource = "d1" | "mock";
 
 export interface CatalogListResponse<T> {
@@ -63,6 +72,12 @@ export interface CatalogItemResponse<T> {
   locale: Locale;
   source: CatalogSource;
   item: T;
+}
+
+/** `CatalogListResponse` plus pagination metadata — used by paginated list endpoints (e.g. `/api/v1/routines` for the library's infinite scroll). */
+export interface CatalogPaginatedListResponse<T> extends CatalogListResponse<T> {
+  total: number;
+  hasMore: boolean;
 }
 
 export interface CatalogHealthResponse {
