@@ -45,11 +45,23 @@ interface BuildFilterSectionsArgs {
   levels: LevelKey[];
   allRoutines: CatalogRoutine[];
   selectedInstructors: string[];
-  filters: {
-    style?: DanceStyleKey;
-    level?: LevelKey;
-  };
+  selectedStyles: string[];
+  selectedLevels: string[];
   locale: Locale;
+}
+
+function toggleSelection(selected: string[], value: string): string[] {
+  return selected.includes(value)
+    ? selected.filter((item) => item !== value)
+    : [...selected, value];
+}
+
+function multiSelectTriggerLabel(dict: Dictionary, selectedLabels: string[]): string {
+  if (selectedLabels.length === 0) return dict.tutorials.filterAll;
+  if (selectedLabels.length === 1) return selectedLabels[0];
+  return formatMessage(dict.tutorials.filterSelectedCount, {
+    count: selectedLabels.length,
+  });
 }
 
 function buildFilterSections({
@@ -59,113 +71,90 @@ function buildFilterSections({
   levels,
   allRoutines,
   selectedInstructors,
-  filters,
+  selectedStyles,
+  selectedLevels,
   locale,
 }: BuildFilterSectionsArgs): RoutineFilterSection[] {
-  const allTeachersHref = routinesFilterHref({
-    style: filters.style,
-    level: filters.level,
-    locale,
-  });
-  const teacherOptions = instructors.map((instructor) => {
-    const active = selectedInstructors.includes(instructor.slug);
-    const nextSelection = active
-      ? selectedInstructors.filter((slug) => slug !== instructor.slug)
-      : [...selectedInstructors, instructor.slug];
-    return {
-      label: instructor.name,
-      active,
-      href: routinesFilterHref({
-        instructor: nextSelection,
-        style: filters.style,
-        level: filters.level,
-        locale,
-      }),
-    };
-  });
-  const selectedInstructorNames = instructors
-    .filter((instructor) => selectedInstructors.includes(instructor.slug))
-    .map((instructor) => instructor.name);
-  const teacherTriggerLabel =
-    selectedInstructorNames.length === 0
-      ? dict.tutorials.filterAll
-      : selectedInstructorNames.length === 1
-        ? selectedInstructorNames[0]
-        : formatMessage(dict.tutorials.filterTeacherSelectedCount, {
-            count: selectedInstructorNames.length,
-          });
+  const teacherOptions = instructors.map((instructor) => ({
+    label: instructor.name,
+    active: selectedInstructors.includes(instructor.slug),
+    href: routinesFilterHref({
+      instructor: toggleSelection(selectedInstructors, instructor.slug),
+      style: selectedStyles,
+      level: selectedLevels,
+      locale,
+    }),
+  }));
+
+  const styleOptions = styles.map((item) => ({
+    label: allRoutines.find((routine) => routine.style === item)?.styleLabel ?? item,
+    active: selectedStyles.includes(item),
+    href: routinesFilterHref({
+      instructor: selectedInstructors,
+      style: toggleSelection(selectedStyles, item),
+      level: selectedLevels,
+      locale,
+    }),
+  }));
+
+  const levelOptions = levels.map((item) => ({
+    label: allRoutines.find((routine) => routine.level === item)?.levelLabel ?? item,
+    active: selectedLevels.includes(item),
+    href: routinesFilterHref({
+      instructor: selectedInstructors,
+      style: selectedStyles,
+      level: toggleSelection(selectedLevels, item),
+      locale,
+    }),
+  }));
 
   return [
     {
       type: "multiselect",
       label: dict.tutorials.filterTeacher,
       options: teacherOptions,
-      allHref: allTeachersHref,
+      allHref: routinesFilterHref({ style: selectedStyles, level: selectedLevels, locale }),
       allLabel: dict.tutorials.filterAll,
-      triggerLabel: teacherTriggerLabel,
+      triggerLabel: multiSelectTriggerLabel(
+        dict,
+        teacherOptions.filter((option) => option.active).map((option) => option.label),
+      ),
+      showSearch: true,
       searchPlaceholder: dict.tutorials.filterTeacherSearchPlaceholder,
       searchAriaLabel: dict.tutorials.filterTeacherSearch,
       noMatchesLabel: dict.tutorials.filterTeacherNoMatches,
     },
     {
-      type: "chips",
+      type: "multiselect",
       label: dict.tutorials.filterStyle,
-      chips: [
-        {
-          label: dict.tutorials.filterAll,
-          href: routinesFilterHref({
-            instructor: selectedInstructors,
-            level: filters.level,
-            locale,
-          }),
-          active: !filters.style,
-        },
-        ...styles.map((item) => {
-          const label =
-            allRoutines.find((routine) => routine.style === item)?.styleLabel ??
-            item;
-          return {
-            label,
-            href: routinesFilterHref({
-              instructor: selectedInstructors,
-              style: item,
-              level: filters.level,
-              locale,
-            }),
-            active: filters.style === item,
-          };
-        }),
-      ],
+      options: styleOptions,
+      allHref: routinesFilterHref({
+        instructor: selectedInstructors,
+        level: selectedLevels,
+        locale,
+      }),
+      allLabel: dict.tutorials.filterAll,
+      triggerLabel: multiSelectTriggerLabel(
+        dict,
+        styleOptions.filter((option) => option.active).map((option) => option.label),
+      ),
+      showSearch: false,
     },
     {
-      type: "chips",
+      type: "multiselect",
       label: dict.tutorials.filterLevel,
-      chips: [
-        {
-          label: dict.tutorials.filterAll,
-          href: routinesFilterHref({
-            instructor: selectedInstructors,
-            style: filters.style,
-            locale,
-          }),
-          active: !filters.level,
-        },
-        ...levels.map((item) => {
-          const label =
-            allRoutines.find((routine) => routine.level === item)?.levelLabel ??
-            item;
-          return {
-            label,
-            href: routinesFilterHref({
-              instructor: selectedInstructors,
-              style: filters.style,
-              level: item,
-              locale,
-            }),
-            active: filters.level === item,
-          };
-        }),
-      ],
+      options: levelOptions,
+      allHref: routinesFilterHref({
+        instructor: selectedInstructors,
+        style: selectedStyles,
+        locale,
+      }),
+      allLabel: dict.tutorials.filterAll,
+      triggerLabel: multiSelectTriggerLabel(
+        dict,
+        levelOptions.filter((option) => option.active).map((option) => option.label),
+      ),
+      showSearch: false,
     },
   ];
 }
@@ -197,12 +186,8 @@ export default async function RoutinesPage({
   const selectedInstructors = instructorSlug
     ? instructorSlug.split(",").filter(Boolean)
     : [];
-
-  const filters = {
-    style: style as DanceStyleKey | undefined,
-    level: level as LevelKey | undefined,
-    locale,
-  };
+  const selectedStyles = style ? style.split(",").filter(Boolean) : [];
+  const selectedLevels = level ? level.split(",").filter(Boolean) : [];
 
   let routines = allRoutines;
   if (selectedInstructors.length > 0) {
@@ -210,11 +195,11 @@ export default async function RoutinesPage({
       selectedInstructors.includes(routine.instructorSlug),
     );
   }
-  if (filters.style) {
-    routines = routines.filter((routine) => routine.style === filters.style);
+  if (selectedStyles.length > 0) {
+    routines = routines.filter((routine) => selectedStyles.includes(routine.style));
   }
-  if (filters.level) {
-    routines = routines.filter((routine) => routine.level === filters.level);
+  if (selectedLevels.length > 0) {
+    routines = routines.filter((routine) => selectedLevels.includes(routine.level));
   }
 
   const instructorBySlug = new Map(
@@ -222,7 +207,7 @@ export default async function RoutinesPage({
   );
 
   const hasActiveFilters = Boolean(
-    selectedInstructors.length > 0 || filters.style || filters.level,
+    selectedInstructors.length > 0 || selectedStyles.length > 0 || selectedLevels.length > 0,
   );
 
   const resultLabel =
@@ -254,7 +239,8 @@ export default async function RoutinesPage({
           levels,
           allRoutines,
           selectedInstructors,
-          filters,
+          selectedStyles,
+          selectedLevels,
           locale,
         })}
       />

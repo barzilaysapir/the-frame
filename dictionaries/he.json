@@ -30,7 +30,7 @@
     "filterStyle": "סגנון",
     "filterLevel": "רמה",
     "filterAll": "הכל",
-    "filterTeacherSelectedCount": "{count} מורים נבחרו",
+    "filterSelectedCount": "{count} נבחרו",
     "filterTeacherSearch": "חיפוש מורים",
     "filterTeacherSearchPlaceholder": "חיפוש מורים…",
     "filterTeacherNoMatches": "לא נמצאו מורים",

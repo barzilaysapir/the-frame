@@ -15,9 +15,10 @@ export type RoutineFilterSection =
       allHref: string;
       allLabel: string;
       triggerLabel: string;
-      searchPlaceholder: string;
-      searchAriaLabel: string;
-      noMatchesLabel: string;
+      showSearch?: boolean;
+      searchPlaceholder?: string;
+      searchAriaLabel?: string;
+      noMatchesLabel?: string;
     };
 
 interface RoutineFiltersProps {
@@ -53,6 +54,7 @@ export function RoutineFilters({
                 allHref={section.allHref}
                 allLabel={section.allLabel}
                 triggerLabel={section.triggerLabel}
+                showSearch={section.showSearch}
                 searchPlaceholder={section.searchPlaceholder}
                 searchAriaLabel={section.searchAriaLabel}
                 noMatchesLabel={section.noMatchesLabel}

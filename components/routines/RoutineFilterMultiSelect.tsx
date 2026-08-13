@@ -18,11 +18,13 @@ interface RoutineFilterMultiSelectProps {
   /** href with this filter dimension cleared entirely. */
   allHref: string;
   allLabel: string;
-  /** Precomputed summary shown on the closed trigger (e.g. "All", a single name, or "{n} teachers"). */
+  /** Precomputed summary shown on the closed trigger (e.g. "All", a single name, or "{n} selected"). */
   triggerLabel: string;
-  searchPlaceholder: string;
-  searchAriaLabel: string;
-  noMatchesLabel: string;
+  /** Shows a search box above the option list. Defaults to true; set false for short option lists (style/level). */
+  showSearch?: boolean;
+  searchPlaceholder?: string;
+  searchAriaLabel?: string;
+  noMatchesLabel?: string;
 }
 
 export function RoutineFilterMultiSelect({
@@ -31,6 +33,7 @@ export function RoutineFilterMultiSelect({
   allHref,
   allLabel,
   triggerLabel,
+  showSearch = true,
   searchPlaceholder,
   searchAriaLabel,
   noMatchesLabel,
@@ -48,7 +51,7 @@ export function RoutineFilterMultiSelect({
   // matching the SpeedMenu dismissal pattern used by the video player.
   useEffect(() => {
     if (!isOpen) return;
-    inputRef.current?.focus();
+    if (showSearch) inputRef.current?.focus();
 
     const onPointerDown = (event: PointerEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) {
@@ -68,14 +71,14 @@ export function RoutineFilterMultiSelect({
       document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, showSearch]);
 
   const openMenu = () => {
     setQuery("");
     setIsOpen(true);
   };
 
-  const normalizedQuery = query.trim().toLowerCase();
+  const normalizedQuery = showSearch ? query.trim().toLowerCase() : "";
   const filteredOptions = normalizedQuery
     ? options.filter((option) => option.label.toLowerCase().includes(normalizedQuery))
     : options;
@@ -108,21 +111,23 @@ export function RoutineFilterMultiSelect({
 
         {isOpen ? (
           <div className="absolute start-0 z-10 mt-2 w-64 overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl">
-            <div className="relative border-b border-frame-border p-2">
-              <Search
-                aria-hidden="true"
-                className="pointer-events-none absolute start-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-frame-muted"
-              />
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={searchPlaceholder}
-                aria-label={searchAriaLabel}
-                className="w-full rounded-lg bg-transparent py-1.5 ps-7 pe-2 text-sm text-white placeholder:text-frame-muted focus:outline-none"
-              />
-            </div>
+            {showSearch ? (
+              <div className="relative border-b border-frame-border p-2">
+                <Search
+                  aria-hidden="true"
+                  className="pointer-events-none absolute start-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-frame-muted"
+                />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder={searchPlaceholder}
+                  aria-label={searchAriaLabel}
+                  className="w-full rounded-lg bg-transparent py-1.5 ps-7 pe-2 text-sm text-white placeholder:text-frame-muted focus:outline-none"
+                />
+              </div>
+            ) : null}
             <ul
               role="listbox"
               aria-multiselectable="true"

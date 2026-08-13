@@ -30,7 +30,7 @@
     "filterStyle": "Style",
     "filterLevel": "Level",
     "filterAll": "All",
-    "filterTeacherSelectedCount": "{count} teachers selected",
+    "filterSelectedCount": "{count} selected",
     "filterTeacherSearch": "Search teachers",
     "filterTeacherSearchPlaceholder": "Search teachers…",
     "filterTeacherNoMatches": "No teachers found",
