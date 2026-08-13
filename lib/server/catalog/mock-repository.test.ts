@@ -113,3 +113,31 @@ describe("mockCatalogRepository.listInstructors / getInstructor", () => {
     expect(instructor).toBeNull();
   });
 });
+
+describe("mockCatalogRepository.listExternalCourses", () => {
+  it("returns a non-empty, localized external course list", async () => {
+    const courses = await mockCatalogRepository.listExternalCourses("en");
+    expect(courses.length).toBeGreaterThan(0);
+    expect(
+      courses.every(
+        (course) =>
+          course.title.length > 0 &&
+          course.slug.length > 0 &&
+          course.provider.length > 0 &&
+          course.priceDisplay.length > 0 &&
+          course.affiliateUrl.length > 0,
+      ),
+    ).toBe(true);
+  });
+
+  it("returns locale-specific titles for en vs he", async () => {
+    const [en, he] = await Promise.all([
+      mockCatalogRepository.listExternalCourses("en"),
+      mockCatalogRepository.listExternalCourses("he"),
+    ]);
+
+    expect(en.length).toBe(he.length);
+    expect(en[0].title).not.toBe(he[0].title);
+    expect(en[0].slug).toBe(he[0].slug);
+  });
+});

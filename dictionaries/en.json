@@ -7,6 +7,7 @@
     "tutorials": "Library",
     "styles": "Styles",
     "teachers": "Teachers",
+    "externalCourses": "External courses",
     "favorites": "Favorites",
     "about": "About",
     "login": "Log in",
@@ -63,6 +64,15 @@
     "routineOne": "1 combination",
     "routineMany": "{count} combinations",
     "browseAria": "Browse {name} combinations"
+  },
+  "externalCourses": {
+    "title": "External courses",
+    "subtitle": "Courses from other platforms and creators we recommend, taught outside The Frame.",
+    "disclosure": "Some of these are affiliate links — booking through them may earn us a commission at no extra cost to you.",
+    "sponsoredBadge": "Partner",
+    "providerPrefix": "by {provider}",
+    "cta": "View course",
+    "linkAria": "{title} by {provider} — opens in a new tab"
   },
   "about": {
     "metaTitle": "About",

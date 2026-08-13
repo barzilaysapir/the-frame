@@ -1,5 +1,6 @@
 import type { Locale } from "@/lib/i18n/config";
 import type {
+  CatalogExternalCourse,
   CatalogInstructor,
   CatalogRoutine,
 } from "@/lib/server/catalog/types";
@@ -21,4 +22,5 @@ export interface CatalogRepository {
     locale: Locale,
     slug: string,
   ): Promise<CatalogInstructor | null>;
+  listExternalCourses(locale: Locale): Promise<CatalogExternalCourse[]>;
 }

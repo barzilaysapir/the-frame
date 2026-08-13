@@ -7,6 +7,7 @@
     "tutorials": "ספרייה",
     "styles": "סגנונות",
     "teachers": "מורים",
+    "externalCourses": "קורסים חיצוניים",
     "favorites": "מועדפים",
     "about": "אודות",
     "login": "התחברות",
@@ -63,6 +64,15 @@
     "routineOne": "קומבינציה אחת",
     "routineMany": "{count} קומבינציות",
     "browseAria": "עיינו בקומבינציות בסגנון {name}"
+  },
+  "externalCourses": {
+    "title": "קורסים חיצוניים",
+    "subtitle": "קורסים מפלטפורמות ויוצרים אחרים שאנחנו מומלצים, שנלמדים מחוץ ל-The Frame.",
+    "disclosure": "חלק מהקישורים כאן הם קישורי שותפים — הזמנה דרכם עשויה להקנות לנו עמלה, בלי עלות נוספת עבורכם.",
+    "sponsoredBadge": "שותף",
+    "providerPrefix": "מבית {provider}",
+    "cta": "לצפייה בקורס",
+    "linkAria": "{title} מבית {provider} — נפתח בכרטיסייה חדשה"
   },
   "about": {
     "metaTitle": "אודות",

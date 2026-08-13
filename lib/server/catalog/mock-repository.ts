@@ -14,9 +14,14 @@
 import "server-only";
 import type { Locale } from "@/lib/i18n/config";
 import {
+  localizeExternalCourse,
   localizeInstructor,
   localizeRoutine,
 } from "@/lib/i18n/localize";
+import {
+  getAllExternalCourses,
+  getExternalCourseBySlug,
+} from "@/lib/external-courses";
 import {
   getAllInstructors,
   getInstructorBySlug,
@@ -31,6 +36,7 @@ import type {
   RoutineFilters,
 } from "@/lib/server/catalog/repository";
 import type {
+  CatalogExternalCourse,
   CatalogInstructor,
   CatalogRoutine,
 } from "@/lib/server/catalog/types";
@@ -88,6 +94,26 @@ function toCatalogInstructor(
   };
 }
 
+function toCatalogExternalCourse(
+  locale: Locale,
+  slug: string,
+): CatalogExternalCourse | null {
+  const course = getExternalCourseBySlug(slug);
+  if (!course) return null;
+
+  const localized = localizeExternalCourse(locale, course);
+
+  return {
+    slug: course.slug,
+    title: localized.title,
+    provider: course.provider,
+    tagline: localized.tagline,
+    description: localized.description,
+    priceDisplay: course.priceDisplay,
+    affiliateUrl: course.affiliateUrl,
+  };
+}
+
 export const mockCatalogRepository: CatalogRepository = {
   async listRoutines(locale, filters?: RoutineFilters) {
     return getAllRoutines()
@@ -115,5 +141,11 @@ export const mockCatalogRepository: CatalogRepository = {
 
   async getInstructor(locale, slug) {
     return toCatalogInstructor(locale, slug);
+  },
+
+  async listExternalCourses(locale) {
+    return getAllExternalCourses()
+      .map((course) => toCatalogExternalCourse(locale, course.slug))
+      .filter((item): item is CatalogExternalCourse => item !== null);
   },
 };

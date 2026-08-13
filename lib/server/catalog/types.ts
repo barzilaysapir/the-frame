@@ -51,6 +51,16 @@ export interface CatalogInstructor {
   routineCount: number;
 }
 
+export interface CatalogExternalCourse {
+  slug: string;
+  title: string;
+  provider: string;
+  tagline: string;
+  description: string;
+  priceDisplay: string;
+  affiliateUrl: string;
+}
+
 export type CatalogSource = "d1" | "mock";
 
 export interface CatalogListResponse<T> {

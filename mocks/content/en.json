@@ -495,5 +495,37 @@
       "name": "Guy Ravid",
       "bio": "Teaches Voguing — sharp movement and precise timing."
     }
+  },
+  "externalCourses": {
+    "steez-academy-hiphop-foundations": {
+      "title": "Hip-Hop Foundations",
+      "tagline": "8-week beginner hip-hop program, fully online",
+      "description": "A structured 8-week hip-hop foundations course covering grooves, isolations, and freestyle basics, with weekly feedback."
+    },
+    "urban-motion-jazzfunk-intensive": {
+      "title": "Jazz-Funk Intensive",
+      "tagline": "6-class intensive with choreography breakdowns",
+      "description": "A focused jazz-funk intensive with six full-length choreography breakdowns from touring instructors."
+    },
+    "heels-and-heart-confidence-course": {
+      "title": "Heels Confidence Course",
+      "tagline": "Heel control, walks, and floorwork for every level",
+      "description": "A heels-focused course building control, walks, and floorwork from the ground up, with modules for every level."
+    },
+    "movement-lab-contemporary-lines": {
+      "title": "Contemporary Lines & Technique",
+      "tagline": "Technique-driven contemporary training",
+      "description": "A technique-driven contemporary program focused on line, control, and expressive movement quality."
+    },
+    "rhythm-collective-afrobeats-bootcamp": {
+      "title": "Afrobeats Bootcamp",
+      "tagline": "High-energy afrobeats fundamentals",
+      "description": "A high-energy afrobeats bootcamp covering core grooves, isolations, and combo drilling."
+    },
+    "dancehall-society-vibes-101": {
+      "title": "Dancehall Vibes 101",
+      "tagline": "Foundational dancehall bounce and vibe",
+      "description": "An entry-level dancehall course building bounce, vibe, and musicality for total beginners."
+    }
   }
 }
