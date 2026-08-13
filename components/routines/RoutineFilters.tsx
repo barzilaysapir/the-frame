@@ -44,26 +44,25 @@ export function RoutineFilters({
       aria-label={ariaLabel}
       className="mb-10 overflow-hidden bg-frame-panel/40"
     >
-      <div className="divide-y divide-frame-border">
-        {sections.map((section) => (
-          <div key={section.label} className="px-4 py-3.5 sm:px-5 sm:py-4">
-            {section.type === "multiselect" ? (
-              <RoutineFilterMultiSelect
-                label={section.label}
-                options={section.options}
-                allHref={section.allHref}
-                allLabel={section.allLabel}
-                triggerLabel={section.triggerLabel}
-                showSearch={section.showSearch}
-                searchPlaceholder={section.searchPlaceholder}
-                searchAriaLabel={section.searchAriaLabel}
-                noMatchesLabel={section.noMatchesLabel}
-              />
-            ) : (
-              <RoutineFilterGroup label={section.label} chips={section.chips} />
-            )}
-          </div>
-        ))}
+      <div className="flex flex-wrap items-center gap-x-8 gap-y-3 px-4 py-3.5 sm:px-5 sm:py-4">
+        {sections.map((section) =>
+          section.type === "multiselect" ? (
+            <RoutineFilterMultiSelect
+              key={section.label}
+              label={section.label}
+              options={section.options}
+              allHref={section.allHref}
+              allLabel={section.allLabel}
+              triggerLabel={section.triggerLabel}
+              showSearch={section.showSearch}
+              searchPlaceholder={section.searchPlaceholder}
+              searchAriaLabel={section.searchAriaLabel}
+              noMatchesLabel={section.noMatchesLabel}
+            />
+          ) : (
+            <RoutineFilterGroup key={section.label} label={section.label} chips={section.chips} />
+          ),
+        )}
       </div>
 
       {hasActiveFilters ? (

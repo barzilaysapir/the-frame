@@ -84,8 +84,8 @@ export function RoutineFilterMultiSelect({
     : options;
 
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-5">
-      <p className="w-14 shrink-0 text-xs font-semibold text-frame-muted">{label}</p>
+    <div className="flex items-center gap-2.5">
+      <p className="shrink-0 text-xs font-semibold text-frame-muted">{label}</p>
       <div className="relative inline-block" ref={containerRef}>
         <button
           type="button"
@@ -95,7 +95,7 @@ export function RoutineFilterMultiSelect({
           aria-expanded={isOpen}
           aria-controls={listId}
           className={cn(
-            "flex w-full items-center justify-between gap-2 rounded-full border py-1.5 ps-4 pe-3 text-sm font-medium transition-colors sm:w-56",
+            "flex min-w-[8.5rem] items-center justify-between gap-2 rounded-full border py-1.5 ps-4 pe-3 text-sm font-medium transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70",
             hasActive
               ? "border-frame-cyan/70 bg-frame-cyan/15 text-frame-cyan"
