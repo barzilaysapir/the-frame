@@ -9,7 +9,12 @@ import { isLocale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 import { resolveCatalog } from "@/lib/server/catalog";
 
-export const dynamic = "force-dynamic";
+// NOTE: this route reads `searchParams` (filter chips below), which opts the
+// whole page into dynamic rendering in Next's non-Cache-Components model —
+// `revalidate` has no effect here today. Left in place (harmless) since it's
+// the correct fix if this page's filtering ever moves off server-side
+// searchParams; the other catalog pages below don't have this constraint.
+export const revalidate = 300;
 
 interface RoutinesPageProps {
   params: Promise<{ locale: string }>;
