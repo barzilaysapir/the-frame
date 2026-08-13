@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ExternalCourseCard } from "@/components/ExternalCourseCard";
-import { RoutineCard } from "@/components/routines/RoutineCard";
 import { RoutineFilters } from "@/components/routines/RoutineFilters";
+import { RoutineInfiniteGrid } from "@/components/routines/RoutineInfiniteGrid";
 import type { DanceStyleKey, LevelKey } from "@/lib/routines";
 import { routinesFilterHref } from "@/lib/routines";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
@@ -16,6 +16,13 @@ import { resolveCatalog } from "@/lib/server/catalog";
 // the correct fix if this page's filtering ever moves off server-side
 // searchParams; the other catalog pages below don't have this constraint.
 export const revalidate = 300;
+
+// Initial/per-scroll page size for the library's infinite scroll. The first
+// page is sliced in-memory from the already-fetched full (unfiltered) list
+// below — cheap at today's catalog size and avoids an extra DB round trip on
+// first load. Further pages are fetched by the client from
+// `/api/v1/routines`, which does real LIMIT/OFFSET pagination in SQL.
+const PAGE_SIZE = 12;
 
 interface RoutinesPageProps {
   params: Promise<{ locale: string }>;
@@ -83,20 +90,24 @@ export default async function RoutinesPage({
     routines = routines.filter((routine) => routine.level === filters.level);
   }
 
-  const instructorBySlug = new Map(
-    instructors.map((instructor) => [instructor.slug, instructor]),
+  const instructorNameBySlug = Object.fromEntries(
+    instructors.map((instructor) => [instructor.slug, instructor.name]),
   );
 
   const hasActiveFilters = Boolean(
     filters.instructor || filters.style || filters.level,
   );
 
+  const total = routines.length;
+  const firstPage = routines.slice(0, PAGE_SIZE);
+  const hasMoreInitial = total > firstPage.length;
+
   const resultLabel =
-    routines.length === 0
+    total === 0
       ? dict.tutorials.resultNone
-      : routines.length === 1
+      : total === 1
         ? dict.tutorials.resultOne
-        : formatMessage(dict.tutorials.resultMany, { count: routines.length });
+        : formatMessage(dict.tutorials.resultMany, { count: total });
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -199,26 +210,27 @@ export default async function RoutinesPage({
         ]}
       />
 
-      {routines.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {routines.map((routine, index) => (
-            <RoutineCard
-              key={routine.slug}
-              routine={routine}
-              locale={locale}
-              instructorName={
-                instructorBySlug.get(routine.instructorSlug)?.name
-              }
-              priority={index < 3}
-              labels={{
-                viewRoutine: dict.tutorials.viewRoutine,
-                taughtBy: dict.tutorials.taughtBy,
-                favoriteAdd: dict.tutorials.favoriteAdd,
-                favoriteRemove: dict.tutorials.favoriteRemove,
-              }}
-            />
-          ))}
-        </div>
+      {firstPage.length > 0 ? (
+        <RoutineInfiniteGrid
+          key={`${filters.instructor ?? ""}|${filters.style ?? ""}|${filters.level ?? ""}`}
+          initialRoutines={firstPage}
+          initialHasMore={hasMoreInitial}
+          locale={locale}
+          pageSize={PAGE_SIZE}
+          filters={{
+            instructor: filters.instructor,
+            style: filters.style,
+            level: filters.level,
+          }}
+          instructorNameBySlug={instructorNameBySlug}
+          labels={{
+            viewRoutine: dict.tutorials.viewRoutine,
+            taughtBy: dict.tutorials.taughtBy,
+            favoriteAdd: dict.tutorials.favoriteAdd,
+            favoriteRemove: dict.tutorials.favoriteRemove,
+            loadingMore: dict.tutorials.loadingMore,
+          }}
+        />
       ) : (
         <p className="text-frame-silver">{dict.tutorials.empty}</p>
       )}

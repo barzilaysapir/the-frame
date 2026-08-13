@@ -11,11 +11,19 @@ export interface RoutineFilters {
   level?: string;
 }
 
+export interface RoutinePagination {
+  limit: number;
+  offset: number;
+}
+
 export interface CatalogRepository {
   listRoutines(
     locale: Locale,
     filters?: RoutineFilters,
+    pagination?: RoutinePagination,
   ): Promise<CatalogRoutine[]>;
+  /** Count of routines matching `filters`, ignoring pagination — powers the library's infinite-scroll `hasMore`/result-count UI. */
+  countRoutines(filters?: RoutineFilters): Promise<number>;
   getRoutine(locale: Locale, slug: string): Promise<CatalogRoutine | null>;
   listInstructors(locale: Locale): Promise<CatalogInstructor[]>;
   getInstructor(
