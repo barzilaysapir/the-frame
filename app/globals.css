@@ -4,6 +4,13 @@
 
 html {
   scroll-behavior: smooth;
+  /* Reserve the vertical scrollbar's gutter permanently so page/loading-state
+     height changes never toggle the scrollbar on/off — that toggle shifts
+     the whole layout horizontally by the scrollbar's width. scrollbar-gutter
+     is the modern fix; overflow-y is a fallback for browsers that don't
+     support it yet, since it also always reserves the same space. */
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
 }
 
 body {
