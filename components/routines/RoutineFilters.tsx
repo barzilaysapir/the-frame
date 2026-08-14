@@ -65,9 +65,9 @@ export function RoutineFilters({
         )}
       </div>
 
-      {hasActiveFilters ? (
-        <div className="flex items-center justify-between gap-4 rounded-b-2xl border-t border-frame-border bg-frame-bg/40 px-4 py-3 sm:px-5">
-          <p className="text-sm text-frame-silver">{resultLabel}</p>
+      <div className="flex items-center justify-between gap-4 rounded-b-2xl border-t border-frame-border bg-frame-bg/40 px-4 py-3 sm:px-5">
+        <p className="text-sm text-frame-silver">{resultLabel}</p>
+        {hasActiveFilters ? (
           <button
             type="button"
             onClick={onClear}
@@ -75,8 +75,8 @@ export function RoutineFilters({
           >
             {clearLabel}
           </button>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </Panel>
   );
 }
