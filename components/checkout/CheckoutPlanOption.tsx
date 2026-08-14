@@ -8,6 +8,7 @@ export interface CheckoutPlanCopy {
   description: string;
   priceNote: string;
   guarantees: string[];
+  breakdown?: string[];
 }
 
 interface CheckoutPlanOptionProps {
@@ -90,6 +91,15 @@ export function CheckoutPlanOption({
           className="border-t border-frame-border/70 px-4 pb-4 pt-3"
         >
           <p className="text-xs text-frame-silver">{copy.description}</p>
+          {copy.breakdown && copy.breakdown.length > 0 ? (
+            <ul className="mt-3 space-y-1.5 border-s-2 border-frame-border ps-3">
+              {copy.breakdown.map((item) => (
+                <li key={item} className="text-xs text-frame-silver">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          ) : null}
           <ul className="mt-3 space-y-2">
             {copy.guarantees.map((item) => (
               <li

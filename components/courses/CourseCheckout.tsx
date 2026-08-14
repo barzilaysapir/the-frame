@@ -20,21 +20,11 @@ interface CourseCheckoutProps {
   continueGoogleLabel: string;
 }
 
-function withCreditCount<T extends Record<string, unknown>>(
-  copy: T,
-  count: number,
-): T {
-  const result = { ...copy };
-  for (const [key, value] of Object.entries(copy)) {
-    if (typeof value === "string") {
-      (result as Record<string, unknown>)[key] = formatMessage(value, { count });
-    } else if (Array.isArray(value)) {
-      (result as Record<string, unknown>)[key] = value.map((item) =>
-        typeof item === "string" ? formatMessage(item, { count }) : item,
-      );
-    }
-  }
-  return result;
+function fill(
+  template: string,
+  values: Record<string, string | number>,
+): string {
+  return formatMessage(template, values);
 }
 
 export function CourseCheckout({
@@ -49,8 +39,27 @@ export function CourseCheckout({
 }: CourseCheckoutProps) {
   const [plan, setPlan] = useState<CoursePlanId>("course");
   const bundle = courseCreditsBundlePricing(priceIls);
+  const vars = {
+    count: bundle.extraCredits,
+    creditPrice: bundle.creditPrice,
+    coursePrice: priceIls,
+    creditsList: bundle.creditsList,
+    saved: bundle.saved,
+  };
+  const credits = labels.plans.courseCredits;
+  const creditsCopy = {
+    title: fill(credits.title, vars),
+    description: fill(credits.description, vars),
+    priceNote: fill(credits.priceNote, vars),
+    paymentBody: fill(credits.paymentBody, vars),
+    breakdown: [
+      fill(credits.lineCourse, vars),
+      fill(credits.lineCredits, vars),
+      fill(credits.lineDiscount, vars),
+    ],
+    guarantees: credits.guarantees.map((item) => fill(item, vars)),
+  };
   const singleCopy = labels.plans.course;
-  const creditsCopy = withCreditCount(labels.plans.courseCredits, bundle.extraCredits);
 
   return (
     <div className="space-y-8">
@@ -61,6 +70,9 @@ export function CourseCheckout({
         <p className="mt-1 text-sm text-frame-silver">
           {taughtByLabel}{" "}
           <span className="font-medium text-white">{instructorName}</span>
+        </p>
+        <p className="mt-4 text-sm leading-relaxed text-frame-silver">
+          {fill(labels.creditExplainer, { creditPrice: bundle.creditPrice })}
         </p>
       </div>
 

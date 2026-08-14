@@ -24,6 +24,10 @@ export function courseCreditsBundlePricing(coursePriceIls: number) {
   );
   return {
     extraCredits: COURSE_BUNDLE_EXTRA_CREDITS,
+    creditPrice: COMBINATION_CREDIT_PRICE,
+    creditsList,
+    creditsSale,
+    saved: creditsList - creditsSale,
     original: coursePriceIls + creditsList,
     sale: coursePriceIls + creditsSale,
   };

@@ -88,7 +88,7 @@
     "signInCta": "Sign in with Google",
     "loadingVideo": "Loading video…",
     "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
-    "pricingNote": "This course, or this course plus credits · choose at checkout",
+    "pricingNote": "This course, or the course plus combination credits · choose at checkout",
     "paymentBody": "One-time payment for access to this course.",
     "guarantees": [
       "Access to every lesson in this course",
@@ -179,7 +179,8 @@
     "subtitle": "Choose a plan and complete payment.",
     "backToRoutine": "Back to combination",
     "backToCourse": "Back to course",
-    "courseSubtitle": "Choose a plan and complete payment.",
+    "courseSubtitle": "The course alone, or the course plus combination credits.",
+    "creditExplainer": "A credit unlocks one combination in the library. One credit costs ₪{creditPrice} — the same as buying that combination on its own.",
     "loading": "Loading…",
     "paymentTitle": "Payment",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
@@ -216,25 +217,27 @@
       },
       "course": {
         "title": "This course only",
-        "description": "One-time access to this course",
-        "priceNote": "one-time",
-        "paymentBody": "One-time payment for access to this course.",
+        "description": "Pay for this course. No combination credits included.",
+        "priceNote": "course only",
+        "paymentBody": "One-time payment for this course.",
         "guarantees": [
-          "Access to every lesson in this course",
+          "Every lesson in this course",
           "Watch on any device",
           "7-day money-back guarantee"
         ]
       },
       "courseCredits": {
-        "title": "This course + {count} credits",
-        "description": "This course, plus {count} combination credits at list price — cheaper because you buy them together",
-        "priceNote": "bulk discount · one-time",
-        "paymentBody": "One-time payment for this course plus {count} combination credits. Each credit is worth a combination’s list price; the discount is for buying several at once.",
+        "title": "Course + {count} combination credits",
+        "description": "This course, and {count} credits you can spend later on combinations in the library.",
+        "priceNote": "save ₪{saved}",
+        "paymentBody": "One-time payment for the course plus {count} combination credits.",
+        "lineCourse": "This course — ₪{coursePrice}",
+        "lineCredits": "{count} credits × ₪{creditPrice} — ₪{creditsList}",
+        "lineDiscount": "Pack price for {count} credits — save ₪{saved}",
         "guarantees": [
-          "Access to every lesson in this course",
-          "{count} extra credits toward combinations on The Frame",
-          "Each credit is worth a combination’s list price",
-          "Discount for buying extra credits in one purchase",
+          "Every lesson in this course",
+          "{count} credits, each worth one combination (₪{creditPrice})",
+          "Credits stay cheaper when you buy several together",
           "7-day money-back guarantee"
         ]
       }
