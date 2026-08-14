@@ -17,6 +17,7 @@ import {
   localizeExternalCourse,
   localizeExternalCourseLessonTitle,
   localizeInstructor,
+  localizeLevel,
   localizeRoutine,
   localizeStyle,
 } from "@/lib/i18n/localize";
@@ -118,6 +119,8 @@ function toCatalogExternalCourse(
     coverImage: course.coverImage,
     style: course.style ?? null,
     styleLabel: course.style ? localizeStyle(locale, course.style) : null,
+    level: course.level ?? null,
+    levelLabel: course.level ? localizeLevel(locale, course.level) : null,
     lessons: (course.lessons ?? []).map((lesson) => ({
       id: lesson.id,
       title: localizeExternalCourseLessonTitle(locale, course.slug, lesson.id),

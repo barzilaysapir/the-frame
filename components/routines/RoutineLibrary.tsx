@@ -192,8 +192,6 @@ export function RoutineLibrary({
                   priority={index < 3}
                   labels={{
                     externalCourseTag: dict.externalCourses.tag,
-                    comingSoonBadge: dict.externalCourses.comingSoonBadge,
-                    availableBadge: dict.externalCourses.availableBadge,
                     taughtBy: dict.tutorials.taughtBy,
                     cta: dict.externalCourses.cta,
                     linkAria: dict.externalCourses.linkAria,

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { CourseTags } from "@/components/courses/CourseTags";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
 import type { Locale } from "@/lib/i18n/config";
@@ -13,6 +14,7 @@ interface CourseComingSoonProps {
     comingSoonNote: string;
     taughtBy: string;
     back: string;
+    externalCourseTag: string;
   };
 }
 
@@ -25,7 +27,13 @@ export function CourseComingSoon({
     <main className="relative overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
       <div className="relative z-10 mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
-        <span className="inline-flex w-fit items-center rounded-full border border-frame-border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-frame-silver">
+        <CourseTags
+          course={course}
+          locale={locale}
+          externalCourseLabel={labels.externalCourseTag}
+          className="justify-center"
+        />
+        <span className="mx-auto mt-4 inline-flex w-fit items-center rounded-full border border-frame-border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-frame-silver">
           {labels.comingSoonBadge}
         </span>
         <h1 className="mt-5 text-balance font-display text-5xl font-black leading-[0.98] text-white sm:text-6xl">
