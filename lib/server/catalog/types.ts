@@ -64,6 +64,7 @@ export interface CatalogExternalCourse {
   tagline: string;
   description: string;
   priceDisplay: string;
+  coverImage: string;
   lessons: CatalogExternalCourseLesson[];
 }
 

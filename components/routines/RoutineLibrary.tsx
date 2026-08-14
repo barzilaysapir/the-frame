@@ -198,9 +198,11 @@ export function RoutineLibrary({
                   key={item.course.slug}
                   course={item.course}
                   locale={locale}
+                  priority={index < 3}
                   labels={{
                     externalCourseTag: dict.externalCourses.tag,
                     comingSoonBadge: dict.externalCourses.comingSoonBadge,
+                    availableBadge: dict.externalCourses.availableBadge,
                     providerPrefix: dict.externalCourses.providerPrefix,
                     cta: dict.externalCourses.cta,
                     linkAria: dict.externalCourses.linkAria,

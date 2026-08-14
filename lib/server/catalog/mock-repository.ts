@@ -114,6 +114,7 @@ function toCatalogExternalCourse(
     tagline: localized.tagline,
     description: localized.description,
     priceDisplay: course.priceDisplay,
+    coverImage: course.coverImage,
     lessons: (course.lessons ?? []).map((lesson) => ({
       id: lesson.id,
       title: localizeExternalCourseLessonTitle(locale, course.slug, lesson.id),

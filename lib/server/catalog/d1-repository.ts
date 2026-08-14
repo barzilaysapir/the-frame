@@ -64,6 +64,7 @@ interface ExternalCourseRow {
   slug: string;
   provider: string;
   price_display: string;
+  cover_image: string;
   title: string | null;
   tagline: string | null;
   description: string | null;
@@ -132,6 +133,7 @@ function mapExternalCourse(
     tagline: row.tagline ?? "",
     description: row.description ?? "",
     priceDisplay: row.price_display,
+    coverImage: row.cover_image,
     lessons,
   };
 }
@@ -430,7 +432,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           db
             .prepare(
               `SELECT
-                 ec.slug, ec.provider, ec.price_display,
+                 ec.slug, ec.provider, ec.price_display, ec.cover_image,
                  eci.title, eci.tagline, eci.description
                FROM external_courses ec
                LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
@@ -460,7 +462,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           db
             .prepare(
               `SELECT
-                 ec.slug, ec.provider, ec.price_display,
+                 ec.slug, ec.provider, ec.price_display, ec.cover_image,
                  eci.title, eci.tagline, eci.description
                FROM external_courses ec
                LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
