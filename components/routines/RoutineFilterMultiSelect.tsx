@@ -186,16 +186,26 @@ export function RoutineFilterMultiSelect({
                   type="button"
                   onClick={() => onToggle(option.value)}
                   aria-label={optionRemoveAriaLabel(option.label)}
-                  className="inline-flex max-w-[7rem] shrink-0 items-center gap-1 rounded-full bg-frame-cyan/20 ps-2.5 pe-1.5 py-1 text-xs font-medium text-frame-cyan transition-colors hover:bg-frame-cyan/30"
+                  title={option.label}
+                  className="group inline-flex max-w-[7rem] shrink-0 items-center gap-1 rounded-full bg-frame-cyan/20 ps-2.5 pe-1.5 py-1 text-xs font-medium text-frame-cyan transition-colors hover:bg-frame-cyan/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70"
                 >
                   <span className="truncate">{option.label}</span>
-                  <X aria-hidden="true" className="h-3 w-3 shrink-0" />
+                  <X
+                    aria-hidden="true"
+                    className="h-3 w-3 shrink-0 text-frame-cyan/70 transition-colors group-hover:text-white"
+                  />
                 </button>
               ))}
               {hiddenChipCount > 0 ? (
-                <span className="shrink-0 rounded-full bg-frame-cyan/10 px-2 py-1 text-xs font-medium text-frame-cyan">
-                  +{hiddenChipCount}
-                </span>
+                <Popover.Trigger asChild>
+                  <button
+                    type="button"
+                    aria-label={label}
+                    className="shrink-0 rounded-full bg-frame-cyan/10 px-2 py-1 text-xs font-medium text-frame-cyan transition-colors hover:bg-frame-cyan/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70"
+                  >
+                    +{hiddenChipCount}
+                  </button>
+                </Popover.Trigger>
               ) : null}
               <Popover.Trigger asChild>
                 <button
