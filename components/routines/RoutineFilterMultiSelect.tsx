@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { Check, ChevronDown, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,15 @@ export interface RoutineFilterMultiSelectOption {
   active: boolean;
 }
 
-const MAX_VISIBLE_CHIPS = 1;
+// Matches gap-1.5. Reserve is a conservative estimate for the "+N" badge —
+// fixed rather than measured, so its own (count-dependent) width can't
+// change how many chips get counted as fitting in the first place.
+const CHIP_GAP_PX = 6;
+const OVERFLOW_BADGE_RESERVE_PX = 44;
+
+// useLayoutEffect warns on the server (no DOM to measure); this component
+// is server-rendered on first load, so fall back to useEffect there.
+const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 interface RoutineFilterMultiSelectProps {
   label: string;
@@ -48,12 +56,51 @@ export function RoutineFilterMultiSelect({
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const idPrefix = useId();
   const listRef = useRef<HTMLUListElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const measureRowRef = useRef<HTMLDivElement>(null);
 
   const selectedOptions = options.filter((option) => option.active);
   const hasActive = selectedOptions.length > 0;
-  // Caps the trigger to one line regardless of selection count, so this
-  // filter never grows taller than its siblings in the grid row.
-  const visibleChips = selectedOptions.slice(0, MAX_VISIBLE_CHIPS);
+  const [visibleChipCount, setVisibleChipCount] = useState(selectedOptions.length);
+
+  // Fits as many chips as the row's actual measured width allows (any
+  // remainder collapses into a "+N" badge) instead of a fixed count, so a
+  // lone wide filter shows more and a cramped one shows fewer — while never
+  // growing taller than its siblings, since the row itself stays one line.
+  useIsomorphicLayoutEffect(() => {
+    const row = rowRef.current;
+    const measureRow = measureRowRef.current;
+    if (!row || !measureRow || selectedOptions.length === 0) {
+      setVisibleChipCount(0);
+      return;
+    }
+
+    function recompute() {
+      const available = row!.clientWidth;
+      const chevron = measureRow!.querySelector<HTMLElement>('[data-measure="chevron"]');
+      let used = (chevron?.offsetWidth ?? 32) + CHIP_GAP_PX;
+      const chipNodes = Array.from(
+        measureRow!.querySelectorAll<HTMLElement>('[data-measure="chip"]'),
+      );
+
+      let count = 0;
+      for (let i = 0; i < chipNodes.length; i++) {
+        const width = chipNodes[i].offsetWidth + CHIP_GAP_PX;
+        const reserve = i < chipNodes.length - 1 ? OVERFLOW_BADGE_RESERVE_PX : 0;
+        if (count > 0 && used + width + reserve > available) break;
+        used += width;
+        count++;
+      }
+      setVisibleChipCount(Math.max(count, 1));
+    }
+
+    recompute();
+    const observer = new ResizeObserver(recompute);
+    observer.observe(row);
+    return () => observer.disconnect();
+  }, [selectedOptions]);
+
+  const visibleChips = selectedOptions.slice(0, visibleChipCount);
   const hiddenChipCount = selectedOptions.length - visibleChips.length;
 
   const normalizedQuery = showSearch ? query.trim().toLowerCase() : "";
@@ -123,6 +170,7 @@ export function RoutineFilterMultiSelect({
           popover aligned to the whole (fixed-height) row. */}
       <Popover.Anchor asChild>
         <div
+          ref={rowRef}
           className={cn(
             "flex w-full items-center gap-1.5 border py-1 ps-1 pe-1 transition-colors",
             hasActive
@@ -179,6 +227,23 @@ export function RoutineFilterMultiSelect({
           )}
         </div>
       </Popover.Anchor>
+
+      {/* Off-flow clone used only to measure how many chips actually fit. */}
+      <div ref={measureRowRef} aria-hidden="true" className="invisible absolute start-0 top-0 -z-10 flex gap-1.5">
+        {selectedOptions.map((option) => (
+          <span
+            key={option.value}
+            data-measure="chip"
+            className="inline-flex max-w-[7rem] shrink-0 items-center gap-1 rounded-full ps-2.5 pe-1.5 py-1 text-xs font-medium"
+          >
+            <span className="truncate">{option.label}</span>
+            <span className="h-3 w-3 shrink-0" />
+          </span>
+        ))}
+        <span data-measure="chevron" className="shrink-0 rounded-full p-1.5">
+          <span className="block h-4 w-4" />
+        </span>
+      </div>
 
       {/* Portaled to document.body so it isn't clipped by page content and gets Radix's collision-aware positioning + focus/dismiss handling for free. */}
       <Popover.Portal>
