@@ -6,7 +6,7 @@ import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { RoutineFilterTag } from "@/components/routines/RoutineFilterTag";
 import { Panel } from "@/components/ui/Panel";
 import type { Locale } from "@/lib/i18n/config";
-import { localePath } from "@/lib/i18n/path";
+import { formatMessage } from "@/lib/i18n/get-dictionary";
 import type { CatalogRoutine } from "@/lib/server/catalog/types";
 
 interface LibraryCardProps {
@@ -91,7 +91,6 @@ export function LibraryCard({
                 className="pointer-events-auto"
               />
             ) : null}
-            {typeLabel ? <span className={typeTagClass}>{typeLabel}</span> : null}
           </div>
           {favorite ? (
             <FavoriteButton
@@ -102,6 +101,11 @@ export function LibraryCard({
             />
           ) : null}
         </div>
+        {typeLabel ? (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-end p-4">
+            <span className={typeTagClass}>{typeLabel}</span>
+          </div>
+        ) : null}
       </div>
 
       <Link href={href} className="block p-5">
