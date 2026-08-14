@@ -32,6 +32,7 @@
     "filterStylePlaceholder": "Choose style",
     "filterLevelPlaceholder": "Choose level",
     "filterRemoveOption": "Remove {name}",
+    "filterClearOne": "Clear",
     "filterTeacherSearch": "Search teachers",
     "filterTeacherSearchPlaceholder": "Search teachers…",
     "filterTeacherNoMatches": "No teachers found",

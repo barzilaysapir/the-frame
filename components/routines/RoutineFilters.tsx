@@ -12,6 +12,8 @@ export type RoutineFilterSection =
       label: string;
       options: RoutineFilterMultiSelectOption[];
       onToggle: (value: string) => void;
+      onClear: () => void;
+      clearLabel: string;
       placeholder: string;
       optionRemoveAriaLabel: (optionLabel: string) => string;
       showSearch?: boolean;
@@ -48,6 +50,8 @@ export function RoutineFilters({
               label={section.label}
               options={section.options}
               onToggle={section.onToggle}
+              onClear={section.onClear}
+              clearLabel={section.clearLabel}
               placeholder={section.placeholder}
               optionRemoveAriaLabel={section.optionRemoveAriaLabel}
               showSearch={section.showSearch}

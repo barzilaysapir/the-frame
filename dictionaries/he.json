@@ -32,6 +32,7 @@
     "filterStylePlaceholder": "בחר סגנון",
     "filterLevelPlaceholder": "בחר רמה",
     "filterRemoveOption": "הסרת {name}",
+    "filterClearOne": "נקה",
     "filterTeacherSearch": "חיפוש מורים",
     "filterTeacherSearchPlaceholder": "חיפוש מורים…",
     "filterTeacherNoMatches": "לא נמצאו מורים",

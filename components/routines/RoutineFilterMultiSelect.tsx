@@ -27,6 +27,9 @@ interface RoutineFilterMultiSelectProps {
   options: RoutineFilterMultiSelectOption[];
   /** Toggles a single option on/off within the current selection. */
   onToggle: (value: string) => void;
+  /** Clears this filter dimension entirely. */
+  onClear: () => void;
+  clearLabel: string;
   placeholder: string;
   optionRemoveAriaLabel: (optionLabel: string) => string;
   /** Shows a search box above the option list. Defaults to true; set false for short option lists (style/level). */
@@ -40,6 +43,8 @@ export function RoutineFilterMultiSelect({
   label,
   options,
   onToggle,
+  onClear,
+  clearLabel,
   placeholder,
   optionRemoveAriaLabel,
   showSearch = true,
@@ -235,27 +240,52 @@ export function RoutineFilterMultiSelect({
               scroll position, drifting aria-activedescendant ids, etc.). */}
           <Command label={label} className="flex flex-col bg-transparent">
             {showSearch ? (
-              <div className="relative border-b border-frame-border p-2">
-                <Search
-                  aria-hidden="true"
-                  className="pointer-events-none absolute start-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-frame-muted"
-                />
-                <Command.Input
-                  autoFocus
-                  value={query}
-                  onValueChange={setQuery}
-                  onKeyDown={(event) => {
-                    // Standard tag-input convention: an empty search
-                    // backspaces the last-selected chip instead of doing
-                    // nothing. Arrow/Enter/Escape are handled by cmdk itself.
-                    if (event.key === "Backspace" && query === "" && selectedOptions.length > 0) {
-                      onToggle(selectedOptions[selectedOptions.length - 1].value);
-                    }
-                  }}
-                  placeholder={searchPlaceholder}
-                  aria-label={searchAriaLabel}
-                  className="w-full rounded-lg bg-transparent py-1.5 ps-7 pe-2 text-sm text-white placeholder:text-frame-muted focus:outline-none"
-                />
+              <div className="flex items-center gap-2 border-b border-frame-border p-2">
+                <div className="relative flex-1">
+                  <Search
+                    aria-hidden="true"
+                    className="pointer-events-none absolute start-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-frame-muted"
+                  />
+                  <Command.Input
+                    autoFocus
+                    value={query}
+                    onValueChange={setQuery}
+                    onKeyDown={(event) => {
+                      // Standard tag-input convention: an empty search
+                      // backspaces the last-selected chip instead of doing
+                      // nothing. Arrow/Enter/Escape are handled by cmdk itself.
+                      if (
+                        event.key === "Backspace" &&
+                        query === "" &&
+                        selectedOptions.length > 0
+                      ) {
+                        onToggle(selectedOptions[selectedOptions.length - 1].value);
+                      }
+                    }}
+                    placeholder={searchPlaceholder}
+                    aria-label={searchAriaLabel}
+                    className="w-full rounded-lg bg-transparent py-1.5 ps-7 pe-2 text-sm text-white placeholder:text-frame-muted focus:outline-none"
+                  />
+                </div>
+                {hasActive ? (
+                  <button
+                    type="button"
+                    onClick={onClear}
+                    className="shrink-0 text-xs font-medium text-frame-cyan transition-colors hover:text-white"
+                  >
+                    {clearLabel}
+                  </button>
+                ) : null}
+              </div>
+            ) : hasActive ? (
+              <div className="flex items-center justify-end border-b border-frame-border px-3 py-1.5">
+                <button
+                  type="button"
+                  onClick={onClear}
+                  className="text-xs font-medium text-frame-cyan transition-colors hover:text-white"
+                >
+                  {clearLabel}
+                </button>
               </div>
             ) : null}
             <Command.List className="max-h-60 overflow-y-auto py-1">
