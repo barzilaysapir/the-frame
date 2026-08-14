@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Command } from "cmdk";
 import * as Popover from "@radix-ui/react-popover";
 import { Check, ChevronDown, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -48,15 +49,13 @@ export function RoutineFilterMultiSelect({
 }: RoutineFilterMultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const idPrefix = useId();
-  const listRef = useRef<HTMLUListElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
   const measureRowRef = useRef<HTMLDivElement>(null);
   // Snapshot of value -> position, selected options first, taken once when
   // the dropdown opens. Toggling options afterward doesn't recompute this,
   // so nothing moves out from under the cursor mid-session (that reordering
-  // was what caused the whole page to jump scroll position earlier).
+  // was what caused the whole page to jump scroll position earlier). Only
+  // matters while the search is empty — cmdk takes over ranking once you type.
   const [openOrder, setOpenOrder] = useState<Map<string, number>>(new Map());
 
   const selectedOptions = options.filter((option) => option.active);
@@ -103,66 +102,14 @@ export function RoutineFilterMultiSelect({
   const visibleChips = selectedOptions.slice(0, visibleChipCount);
   const hiddenChipCount = selectedOptions.length - visibleChips.length;
 
-  const normalizedQuery = showSearch ? query.trim().toLowerCase() : "";
-  const matchingOptions = normalizedQuery
-    ? options.filter((option) => option.label.toLowerCase().includes(normalizedQuery))
-    : options;
-  const filteredOptions = [...matchingOptions].sort(
+  const orderedOptions = [...options].sort(
     (a, b) => (openOrder.get(a.value) ?? Infinity) - (openOrder.get(b.value) ?? Infinity),
   );
-  const navCount = filteredOptions.length;
-
-  useEffect(() => {
-    if (!isOpen) return;
-    listRef.current
-      ?.querySelector(`[data-nav-index="${highlightedIndex}"]`)
-      ?.scrollIntoView({ block: "nearest" });
-  }, [highlightedIndex, isOpen]);
-
-  function activateHighlighted() {
-    const option = filteredOptions[highlightedIndex];
-    if (option) onToggle(option.value);
-  }
-
-  function handleSearchKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    switch (event.key) {
-      case "ArrowDown":
-        event.preventDefault();
-        setHighlightedIndex((index) => Math.min(index + 1, navCount - 1));
-        break;
-      case "ArrowUp":
-        event.preventDefault();
-        setHighlightedIndex((index) => Math.max(index - 1, 0));
-        break;
-      case "Home":
-        event.preventDefault();
-        setHighlightedIndex(0);
-        break;
-      case "End":
-        event.preventDefault();
-        setHighlightedIndex(navCount - 1);
-        break;
-      case "Enter":
-        event.preventDefault();
-        activateHighlighted();
-        break;
-      case "Backspace":
-        // Standard tag-input convention: an empty search backspaces the
-        // last-selected chip instead of doing nothing.
-        if (query === "" && selectedOptions.length > 0) {
-          onToggle(selectedOptions[selectedOptions.length - 1].value);
-        }
-        break;
-      default:
-        break;
-    }
-  }
 
   function handleOpenChange(open: boolean) {
     setIsOpen(open);
     if (open) {
       setQuery("");
-      setHighlightedIndex(0);
       setOpenOrder(
         new Map(
           [...options]
@@ -281,73 +228,64 @@ export function RoutineFilterMultiSelect({
           sideOffset={8}
           className="z-30 w-[var(--radix-popover-trigger-width)] min-w-[12rem] overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
         >
-          {showSearch ? (
-            <div className="relative border-b border-frame-border p-2">
-              <Search
-                aria-hidden="true"
-                className="pointer-events-none absolute start-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-frame-muted"
-              />
-              <input
-                autoFocus
-                type="text"
-                role="combobox"
-                aria-haspopup="listbox"
-                aria-expanded="true"
-                aria-controls={`${idPrefix}-listbox`}
-                aria-activedescendant={`${idPrefix}-option-${highlightedIndex}`}
-                value={query}
-                onChange={(event) => {
-                  setQuery(event.target.value);
-                  setHighlightedIndex(0);
-                }}
-                onKeyDown={handleSearchKeyDown}
-                placeholder={searchPlaceholder}
-                aria-label={searchAriaLabel}
-                className="w-full rounded-lg bg-transparent py-1.5 ps-7 pe-2 text-sm text-white placeholder:text-frame-muted focus:outline-none"
-              />
-            </div>
-          ) : null}
-          <ul
-            ref={listRef}
-            id={`${idPrefix}-listbox`}
-            role="listbox"
-            aria-multiselectable="true"
-            className="max-h-60 overflow-y-auto py-1"
-          >
-            {filteredOptions.length === 0 ? (
-              <li className="px-3 py-2 text-sm text-frame-muted" role="none">
+          {/* cmdk owns the search filtering, arrow/Enter keyboard navigation,
+              and combobox ARIA wiring (activedescendant, roles) — all
+              hand-rolled here before, and the source of most of the bugs
+              chased earlier in the session (a re-sort dragging the page's
+              scroll position, drifting aria-activedescendant ids, etc.). */}
+          <Command label={label} className="flex flex-col bg-transparent">
+            {showSearch ? (
+              <div className="relative border-b border-frame-border p-2">
+                <Search
+                  aria-hidden="true"
+                  className="pointer-events-none absolute start-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-frame-muted"
+                />
+                <Command.Input
+                  autoFocus
+                  value={query}
+                  onValueChange={setQuery}
+                  onKeyDown={(event) => {
+                    // Standard tag-input convention: an empty search
+                    // backspaces the last-selected chip instead of doing
+                    // nothing. Arrow/Enter/Escape are handled by cmdk itself.
+                    if (event.key === "Backspace" && query === "" && selectedOptions.length > 0) {
+                      onToggle(selectedOptions[selectedOptions.length - 1].value);
+                    }
+                  }}
+                  placeholder={searchPlaceholder}
+                  aria-label={searchAriaLabel}
+                  className="w-full rounded-lg bg-transparent py-1.5 ps-7 pe-2 text-sm text-white placeholder:text-frame-muted focus:outline-none"
+                />
+              </div>
+            ) : null}
+            <Command.List className="max-h-60 overflow-y-auto py-1">
+              <Command.Empty className="px-3 py-2 text-sm text-frame-muted">
                 {noMatchesLabel}
-              </li>
-            ) : (
-              filteredOptions.map((option, index) => (
-                <li key={option.value} role="none">
-                  <button
-                    type="button"
-                    id={`${idPrefix}-option-${index}`}
-                    data-nav-index={index}
-                    onClick={() => onToggle(option.value)}
-                    onMouseEnter={() => setHighlightedIndex(index)}
-                    role="option"
-                    aria-selected={option.active}
+              </Command.Empty>
+              {orderedOptions.map((option) => (
+                <Command.Item
+                  key={option.value}
+                  value={option.value}
+                  keywords={[option.label]}
+                  onSelect={() => onToggle(option.value)}
+                  className={cn(
+                    "flex cursor-pointer items-center gap-2 px-3 py-2 text-start text-sm transition-colors",
+                    "data-[selected=true]:bg-white/10",
+                    option.active ? "text-frame-cyan" : "text-white/80",
+                  )}
+                >
+                  <Check
+                    aria-hidden="true"
                     className={cn(
-                      "flex w-full items-center gap-2 px-3 py-2 text-start text-sm transition-colors",
-                      highlightedIndex === index && "bg-white/10",
-                      option.active ? "text-frame-cyan" : "text-white/80",
+                      "h-3.5 w-3.5 shrink-0",
+                      option.active ? "opacity-100" : "opacity-0",
                     )}
-                  >
-                    <Check
-                      aria-hidden="true"
-                      className={cn(
-                        "h-3.5 w-3.5 shrink-0",
-                        option.active ? "opacity-100" : "opacity-0",
-                      )}
-                    />
-                    <span className="truncate">{option.label}</span>
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
+                  />
+                  <span className="truncate">{option.label}</span>
+                </Command.Item>
+              ))}
+            </Command.List>
+          </Command>
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
