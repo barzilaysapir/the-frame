@@ -28,6 +28,7 @@ export function courseCreditsBundlePricing(coursePriceIls: number) {
     creditsList,
     creditsSale,
     saved: creditsList - creditsSale,
+    discountPercent: Math.round(COURSE_CREDIT_BUNDLE_DISCOUNT * 100),
     original: coursePriceIls + creditsList,
     sale: coursePriceIls + creditsSale,
   };

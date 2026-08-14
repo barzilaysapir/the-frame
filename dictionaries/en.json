@@ -229,11 +229,11 @@
       "courseCredits": {
         "title": "Course + {count} credits",
         "description": "This course, plus {count} credits (1 credit = ₪1). Catalog prices can change; the discount is only on this credit pack.",
-        "priceNote": "save ₪{saved} on credits",
+        "priceNote": "{percent}% off credits",
         "paymentBody": "One-time payment for the course plus {count} credits at a pack discount. 1 credit = ₪1. Future class and course prices are not locked.",
         "lineCourse": "This course — ₪{coursePrice}",
         "lineCredits": "{count} credits — ₪{creditsList}",
-        "lineDiscount": "Discount on this credit pack — save ₪{saved}",
+        "lineDiscount": "{percent}% off this credit pack",
         "guarantees": [
           "Every lesson in this course",
           "{count} credits (1 credit = ₪1)",

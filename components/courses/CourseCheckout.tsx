@@ -45,6 +45,7 @@ export function CourseCheckout({
     coursePrice: priceIls,
     creditsList: bundle.creditsList,
     saved: bundle.saved,
+    percent: bundle.discountPercent,
   };
   const credits = labels.plans.courseCredits;
   const creditsCopy = {

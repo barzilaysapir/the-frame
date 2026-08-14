@@ -446,7 +446,8 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           db
             .prepare(
               `SELECT
-                 ec.slug, ec.provider, ec.price_display, ec.cover_image, ec.style, ec.level,
+                 ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level,
+                 COALESCE(NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
                  si.label AS style_label,
                  li.label AS level_label
@@ -480,7 +481,8 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           db
             .prepare(
               `SELECT
-                 ec.slug, ec.provider, ec.price_display, ec.cover_image, ec.style, ec.level,
+                 ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level,
+                 COALESCE(NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
                  si.label AS style_label,
                  li.label AS level_label
