@@ -278,6 +278,7 @@
   },
   "common": {
     "browseTutorials": "Browse the library",
+    "backToLibrary": "Back to the library",
     "home": "Back to home",
     "loading": "Loading…"
   },

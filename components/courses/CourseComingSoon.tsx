@@ -26,7 +26,15 @@ export function CourseComingSoon({
   return (
     <main className="relative overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
-      <div className="relative z-10 mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
+      <div className="relative z-10 mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:py-16">
+        <Link
+          href={localePath(locale, "/routines")}
+          className="group mb-8 inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5 rtl:rotate-180" />
+          {labels.back}
+        </Link>
+        <div className="py-8 text-center sm:py-14">
         <CourseTags
           course={course}
           locale={locale}
@@ -52,13 +60,7 @@ export function CourseComingSoon({
           {course.priceDisplay}
         </p>
         <p className="mt-2 text-sm text-frame-muted">{labels.comingSoonNote}</p>
-        <Link
-          href={localePath(locale, "/routines")}
-          className="group mt-10 inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
-        >
-          {labels.back}
-          <ArrowLeft className="h-3.5 w-3.5 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-        </Link>
+        </div>
       </div>
     </main>
   );
