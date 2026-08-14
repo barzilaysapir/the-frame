@@ -227,13 +227,14 @@
       },
       "courseCredits": {
         "title": "This course + {count} credits",
-        "description": "This course, plus {count} combination credits at launch price",
-        "priceNote": "launch price · one-time",
-        "paymentBody": "One-time payment for this course plus {count} combination credits at launch price.",
+        "description": "This course, plus {count} combination credits at list price — cheaper because you buy them together",
+        "priceNote": "bulk discount · one-time",
+        "paymentBody": "One-time payment for this course plus {count} combination credits. Each credit is worth a combination’s list price; the discount is for buying several at once.",
         "guarantees": [
           "Access to every lesson in this course",
           "{count} extra credits toward combinations on The Frame",
-          "Credits use the launch combination price",
+          "Each credit is worth a combination’s list price",
+          "Discount for buying extra credits in one purchase",
           "7-day money-back guarantee"
         ]
       }

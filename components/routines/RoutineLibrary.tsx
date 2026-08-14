@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { ExternalCourseCard } from "@/components/ExternalCourseCard";
+import { LibraryCard } from "@/components/routines/LibraryCard";
 import { RoutineCard } from "@/components/routines/RoutineCard";
 import { RoutineFilters, type RoutineFilterSection } from "@/components/routines/RoutineFilters";
 import { useInfiniteReveal } from "@/components/routines/useInfiniteReveal";
@@ -10,6 +10,7 @@ import type { LibraryItem } from "@/components/routines/libraryItem";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage, getDictionarySync } from "@/lib/i18n/get-dictionary";
 import { localizeLevel, localizeStyle } from "@/lib/i18n/localize";
+import { localePath } from "@/lib/i18n/path";
 import type { DanceStyleKey, LevelKey } from "@/lib/routines";
 import type { CatalogInstructor } from "@/lib/server/catalog/types";
 
@@ -185,17 +186,20 @@ export function RoutineLibrary({
                   }}
                 />
               ) : (
-                <ExternalCourseCard
+                <LibraryCard
                   key={item.course.slug}
-                  course={item.course}
+                  href={localePath(locale, `/external-courses/${item.course.slug}`)}
+                  poster={item.course.coverImage}
+                  title={item.course.title}
+                  instructorName={item.course.provider}
                   locale={locale}
+                  style={item.course.style}
+                  level={item.course.level}
+                  typeLabel={dict.externalCourses.tag}
+                  priceDisplay={item.course.priceDisplay}
+                  cta={dict.externalCourses.cta}
+                  taughtBy={dict.tutorials.taughtBy}
                   priority={index < 3}
-                  labels={{
-                    externalCourseTag: dict.externalCourses.tag,
-                    taughtBy: dict.tutorials.taughtBy,
-                    cta: dict.externalCourses.cta,
-                    linkAria: dict.externalCourses.linkAria,
-                  }}
                 />
               ),
             )}
