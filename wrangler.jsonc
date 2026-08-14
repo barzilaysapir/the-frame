@@ -49,8 +49,10 @@
 		}
 	],
 	// ISR/data-cache incremental cache for catalog `revalidate`d routes (see
-	// open-next.config.ts). R2 isn't enabled on this account, so this uses
-	// Workers KV — see https://opennext.js.org/cloudflare/caching.
+	// open-next.config.ts). Kept on Workers KV rather than R2 even now that
+	// R2 is enabled (see r2_buckets below) for the video-lesson bucket — no
+	// reason to migrate a working cache layer for an unrelated feature. See
+	// https://opennext.js.org/cloudflare/caching.
 	//
 	// No Durable Object queue binding here (deliberately) — see the comment
 	// in open-next.config.ts for why it was dropped.
@@ -58,6 +60,16 @@
 		{
 			"binding": "NEXT_INC_CACHE_KV",
 			"id": "63dd1b68c52d4367bd9526fb90c31b0a"
+		}
+	],
+	// Private bucket for real (non-mock) external-course video lessons —
+	// gated behind Firebase login via a signed short-lived playback URL, see
+	// lib/server/course-videos.ts. Public access must stay disabled on this
+	// bucket; the app is the only thing that ever reads from it.
+	"r2_buckets": [
+		{
+			"binding": "COURSE_VIDEOS",
+			"bucket_name": "the-frame-class-videos"
 		}
 	],
 	// Guards the /me* write endpoints (see lib/server/api/rate-limit.ts) against

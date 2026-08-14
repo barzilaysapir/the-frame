@@ -1,0 +1,94 @@
+import { NextRequest, NextResponse } from "next/server";
+import { resolveCatalog } from "@/lib/server/catalog";
+import {
+  getCourseVideosBucket,
+  parseRangeHeader,
+  verifyLessonPlaybackSignature,
+} from "@/lib/server/course-videos";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+interface RouteParams {
+  params: Promise<{ slug: string; lessonId: string }>;
+}
+
+/**
+ * Streams one lesson's video from the private R2 bucket, gated by a signed
+ * `exp`/`sig` query pair (minted by `.../playback-url`) rather than a
+ * Firebase Bearer token — a native <video src> request can't carry a custom
+ * Authorization header, so the signature *is* the auth here. Honors Range
+ * requests so the browser can seek without downloading the whole file.
+ */
+export async function GET(request: NextRequest, { params }: RouteParams) {
+  const { slug, lessonId } = await params;
+  const { searchParams } = request.nextUrl;
+
+  const isValid = await verifyLessonPlaybackSignature(
+    slug,
+    lessonId,
+    searchParams.get("exp"),
+    searchParams.get("sig"),
+  );
+  if (!isValid) {
+    return NextResponse.json(
+      { error: "Invalid or expired playback link" },
+      { status: 403 },
+    );
+  }
+
+  const { repository } = await resolveCatalog();
+  const source = await repository.getExternalCourseLessonSource(
+    slug,
+    lessonId,
+  );
+  if (!source) {
+    return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
+  }
+
+  const bucket = await getCourseVideosBucket();
+  if (!bucket) {
+    return NextResponse.json(
+      { error: "Video storage unavailable" },
+      { status: 503 },
+    );
+  }
+
+  const range = parseRangeHeader(request.headers.get("range"));
+  const object = await bucket.get(
+    source.r2Key,
+    range ? { range } : undefined,
+  );
+  if (!object) {
+    return NextResponse.json({ error: "Video not found" }, { status: 404 });
+  }
+
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  if (!headers.get("content-type")) {
+    headers.set("content-type", "video/mp4");
+  }
+  headers.set("accept-ranges", "bytes");
+  headers.set("etag", object.httpEtag);
+  // Playback URLs are per-viewer and short-lived — never let a shared cache
+  // (browser or CDN) retain the video body past this request.
+  headers.set("cache-control", "private, max-age=0, no-store");
+
+  if (range && object.range) {
+    const resolved = object.range;
+    const start = "offset" in resolved && resolved.offset !== undefined
+      ? resolved.offset
+      : object.size - ("suffix" in resolved ? resolved.suffix : 0);
+    const length = "length" in resolved && resolved.length !== undefined
+      ? resolved.length
+      : object.size - start;
+    const end = start + length - 1;
+
+    headers.set("content-range", `bytes ${start}-${end}/${object.size}`);
+    headers.set("content-length", String(length));
+    return new NextResponse(object.body, { status: 206, headers });
+  }
+
+  headers.set("content-length", String(object.size));
+  return new NextResponse(object.body, { status: 200, headers });
+}

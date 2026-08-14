@@ -11,6 +11,7 @@ interface ExternalCourseCardProps {
   locale: Locale;
   labels: {
     comingSoonBadge: string;
+    availableBadge: string;
     providerPrefix: string;
     cta: string;
     linkAria: string;
@@ -22,6 +23,8 @@ export function ExternalCourseCard({
   locale,
   labels,
 }: ExternalCourseCardProps) {
+  const hasLessons = course.lessons.length > 0;
+
   return (
     <Panel
       as={Link}
@@ -34,7 +37,7 @@ export function ExternalCourseCard({
       className="group flex flex-col p-6"
     >
       <span className="inline-flex w-fit items-center rounded-full border border-frame-border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-frame-silver">
-        {labels.comingSoonBadge}
+        {hasLessons ? labels.availableBadge : labels.comingSoonBadge}
       </span>
 
       <h3 className="mt-4 font-display text-xl font-black text-white">
