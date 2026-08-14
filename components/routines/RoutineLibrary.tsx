@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import { RoutineCard } from "@/components/routines/RoutineCard";
 import { RoutineFilters, type RoutineFilterSection } from "@/components/routines/RoutineFilters";
+import { useInfiniteReveal } from "@/components/routines/useInfiniteReveal";
+import { useRoutineFilters } from "@/components/routines/useRoutineFilters";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage, getDictionarySync } from "@/lib/i18n/get-dictionary";
 import { localizeLevel } from "@/lib/i18n/localize";
-import { routinesFilterHref, type DanceStyleKey, type LevelKey } from "@/lib/routines";
+import type { DanceStyleKey, LevelKey } from "@/lib/routines";
 import type { CatalogInstructor, CatalogRoutine } from "@/lib/server/catalog/types";
 
 interface RoutineLibraryProps {
@@ -19,12 +21,6 @@ interface RoutineLibraryProps {
   initialStyles: string[];
   initialLevels: string[];
   pageSize: number;
-}
-
-function toggleSelection(selected: string[], value: string): string[] {
-  return selected.includes(value)
-    ? selected.filter((item) => item !== value)
-    : [...selected, value];
 }
 
 /** Filters/paginates the already-fetched catalog client-side, instead of navigating per click. */
@@ -41,97 +37,68 @@ export function RoutineLibrary({
 }: RoutineLibraryProps) {
   const dict = getDictionarySync(locale);
 
-  const [selectedInstructors, setSelectedInstructors] = useState(initialInstructors);
-  const [selectedStyles, setSelectedStyles] = useState(initialStyles);
-  const [selectedLevels, setSelectedLevels] = useState(initialLevels);
-  const [visibleCount, setVisibleCount] = useState(pageSize);
+  const filters = useRoutineFilters({
+    locale,
+    allRoutines,
+    initialInstructors,
+    initialStyles,
+    initialLevels,
+  });
+  const { visibleCount, hasMore, sentinelRef, reset: resetVisibleCount } = useInfiniteReveal(
+    filters.filteredRoutines.length,
+    pageSize,
+  );
+
+  // Any filter change starts pagination over — composed here rather than
+  // inside either hook, since neither needs to know the other exists.
+  function toggleInstructor(value: string) {
+    filters.toggleInstructor(value);
+    resetVisibleCount();
+  }
+  function toggleStyle(value: string) {
+    filters.toggleStyle(value);
+    resetVisibleCount();
+  }
+  function toggleLevel(value: string) {
+    filters.toggleLevel(value);
+    resetVisibleCount();
+  }
+  function clearInstructors() {
+    filters.clearInstructors();
+    resetVisibleCount();
+  }
+  function clearStyles() {
+    filters.clearStyles();
+    resetVisibleCount();
+  }
+  function clearLevels() {
+    filters.clearLevels();
+    resetVisibleCount();
+  }
+  function clearAll() {
+    filters.clearAll();
+    resetVisibleCount();
+  }
 
   const instructorNameBySlug = useMemo(
     () => Object.fromEntries(instructors.map((instructor) => [instructor.slug, instructor.name])),
     [instructors],
   );
 
-  const filteredRoutines = useMemo(() => {
-    let routines = allRoutines;
-    if (selectedInstructors.length > 0) {
-      routines = routines.filter((routine) =>
-        selectedInstructors.includes(routine.instructorSlug),
-      );
-    }
-    if (selectedStyles.length > 0) {
-      routines = routines.filter((routine) => selectedStyles.includes(routine.style));
-    }
-    if (selectedLevels.length > 0) {
-      routines = routines.filter((routine) => selectedLevels.includes(routine.level));
-    }
-    return routines;
-  }, [allRoutines, selectedInstructors, selectedStyles, selectedLevels]);
-
-  // Raw History API, not next/navigation's router — a router-driven update
-  // would re-invoke the Server Component, the exact round-trip this avoids.
-  useEffect(() => {
-    const href = routinesFilterHref({
-      instructor: selectedInstructors,
-      style: selectedStyles,
-      level: selectedLevels,
-      locale,
-    });
-    window.history.replaceState(null, "", href);
-  }, [selectedInstructors, selectedStyles, selectedLevels, locale]);
-
-  const visibleRoutines = filteredRoutines.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredRoutines.length;
-
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel || !hasMore) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setVisibleCount((count) => Math.min(count + pageSize, filteredRoutines.length));
-        }
-      },
-      { rootMargin: "600px 0px" },
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [hasMore, pageSize, filteredRoutines.length]);
-
-  function toggleInstructor(value: string) {
-    setSelectedInstructors((prev) => toggleSelection(prev, value));
-    setVisibleCount(pageSize);
-  }
-  function toggleStyle(value: string) {
-    setSelectedStyles((prev) => toggleSelection(prev, value));
-    setVisibleCount(pageSize);
-  }
-  function toggleLevel(value: string) {
-    setSelectedLevels((prev) => toggleSelection(prev, value));
-    setVisibleCount(pageSize);
-  }
-  function clearAll() {
-    setSelectedInstructors([]);
-    setSelectedStyles([]);
-    setSelectedLevels([]);
-    setVisibleCount(pageSize);
-  }
-
   const teacherOptions = instructors.map((instructor) => ({
     label: instructor.name,
     value: instructor.slug,
-    active: selectedInstructors.includes(instructor.slug),
+    active: filters.selectedInstructors.includes(instructor.slug),
   }));
   const styleOptions = styles.map((item) => ({
     label: allRoutines.find((routine) => routine.style === item)?.styleLabel ?? item,
     value: item,
-    active: selectedStyles.includes(item),
+    active: filters.selectedStyles.includes(item),
   }));
   const levelOptions = levels.map((item) => ({
     label: localizeLevel(locale, item),
     value: item,
-    active: selectedLevels.includes(item),
+    active: filters.selectedLevels.includes(item),
   }));
 
   const optionRemoveAriaLabel = (name: string) =>
@@ -143,10 +110,7 @@ export function RoutineLibrary({
       label: dict.tutorials.filterTeacher,
       options: teacherOptions,
       onToggle: toggleInstructor,
-      onClear: () => {
-        setSelectedInstructors([]);
-        setVisibleCount(pageSize);
-      },
+      onClear: clearInstructors,
       clearLabel: dict.tutorials.filterClearOne,
       placeholder: dict.tutorials.filterTeacherPlaceholder,
       optionRemoveAriaLabel,
@@ -160,10 +124,7 @@ export function RoutineLibrary({
       label: dict.tutorials.filterStyle,
       options: styleOptions,
       onToggle: toggleStyle,
-      onClear: () => {
-        setSelectedStyles([]);
-        setVisibleCount(pageSize);
-      },
+      onClear: clearStyles,
       clearLabel: dict.tutorials.filterClearOne,
       placeholder: dict.tutorials.filterStylePlaceholder,
       optionRemoveAriaLabel,
@@ -174,10 +135,7 @@ export function RoutineLibrary({
       label: dict.tutorials.filterLevel,
       options: levelOptions,
       onToggle: toggleLevel,
-      onClear: () => {
-        setSelectedLevels([]);
-        setVisibleCount(pageSize);
-      },
+      onClear: clearLevels,
       clearLabel: dict.tutorials.filterClearOne,
       placeholder: dict.tutorials.filterLevelPlaceholder,
       optionRemoveAriaLabel,
@@ -185,10 +143,7 @@ export function RoutineLibrary({
     },
   ];
 
-  const hasActiveFilters =
-    selectedInstructors.length > 0 || selectedStyles.length > 0 || selectedLevels.length > 0;
-
-  const total = filteredRoutines.length;
+  const total = filters.filteredRoutines.length;
   const resultLabel =
     total === 0
       ? dict.tutorials.resultNone
@@ -196,13 +151,15 @@ export function RoutineLibrary({
         ? dict.tutorials.resultOne
         : formatMessage(dict.tutorials.resultMany, { count: total });
 
+  const visibleRoutines = filters.filteredRoutines.slice(0, visibleCount);
+
   return (
     <>
       <RoutineFilters
         ariaLabel={dict.tutorials.filterAria}
         resultLabel={resultLabel}
         clearLabel={dict.tutorials.clearFilters}
-        hasActiveFilters={hasActiveFilters}
+        hasActiveFilters={filters.hasActiveFilters}
         onClear={clearAll}
         sections={sections}
       />
