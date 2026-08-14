@@ -67,6 +67,8 @@ export interface CatalogExternalCourse {
   description: string;
   priceDisplay: string;
   coverImage: string;
+  style: DanceStyleKey | null;
+  styleLabel: string | null;
   lessons: CatalogExternalCourseLesson[];
 }
 

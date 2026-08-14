@@ -70,7 +70,9 @@
     "subtitle": "Browse the library by style and dive into the one you want to learn.",
     "routineOne": "1 combination",
     "routineMany": "{count} combinations",
-    "browseAria": "Browse {name} combinations"
+    "browseAria": "Browse {name} classes",
+    "courseOne": "1 course",
+    "courseMany": "{count} courses"
   },
   "externalCourses": {
     "tag": "External course",

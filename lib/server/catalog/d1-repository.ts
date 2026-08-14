@@ -65,9 +65,11 @@ interface ExternalCourseRow {
   provider: string;
   price_display: string;
   cover_image: string;
+  style: string | null;
   title: string | null;
   tagline: string | null;
   description: string | null;
+  style_label: string | null;
 }
 
 interface ExternalCourseLessonRow {
@@ -135,6 +137,8 @@ function mapExternalCourse(
     description: row.description ?? "",
     priceDisplay: row.price_display,
     coverImage: row.cover_image,
+    style: (row.style as DanceStyleKey | null) ?? null,
+    styleLabel: row.style ? (row.style_label ?? row.style) : null,
     lessons,
   };
 }
@@ -438,13 +442,15 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           db
             .prepare(
               `SELECT
-                 ec.slug, ec.provider, ec.price_display, ec.cover_image,
-                 eci.title, eci.tagline, eci.description
+                 ec.slug, ec.provider, ec.price_display, ec.cover_image, ec.style,
+                 eci.title, eci.tagline, eci.description,
+                 si.label AS style_label
                FROM external_courses ec
                LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+               LEFT JOIN style_i18n si ON si.style_key = ec.style AND si.locale = ?
                ORDER BY ec.sort_order ASC`,
             )
-            .bind(locale)
+            .bind(locale, locale)
             .all<ExternalCourseRow>(),
           fetchLessonsForAllExternalCourses(db, locale),
         ]);
@@ -468,13 +474,15 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           db
             .prepare(
               `SELECT
-                 ec.slug, ec.provider, ec.price_display, ec.cover_image,
-                 eci.title, eci.tagline, eci.description
+                 ec.slug, ec.provider, ec.price_display, ec.cover_image, ec.style,
+                 eci.title, eci.tagline, eci.description,
+                 si.label AS style_label
                FROM external_courses ec
                LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+               LEFT JOIN style_i18n si ON si.style_key = ec.style AND si.locale = ?
                WHERE ec.slug = ?`,
             )
-            .bind(locale, slug)
+            .bind(locale, locale, slug)
             .first<ExternalCourseRow>(),
           fetchLessonsForSlug(db, locale, slug),
         ]);

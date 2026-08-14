@@ -9,9 +9,9 @@ import { useRoutineFilters } from "@/components/routines/useRoutineFilters";
 import type { LibraryItem } from "@/components/routines/libraryItem";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage, getDictionarySync } from "@/lib/i18n/get-dictionary";
-import { localizeLevel } from "@/lib/i18n/localize";
+import { localizeLevel, localizeStyle } from "@/lib/i18n/localize";
 import type { DanceStyleKey, LevelKey } from "@/lib/routines";
-import type { CatalogInstructor, CatalogRoutine } from "@/lib/server/catalog/types";
+import type { CatalogInstructor } from "@/lib/server/catalog/types";
 
 interface RoutineLibraryProps {
   locale: Locale;
@@ -87,22 +87,13 @@ export function RoutineLibrary({
     [instructors],
   );
 
-  const routinesForLabels = useMemo(
-    () =>
-      allItems.reduce<CatalogRoutine[]>((acc, item) => {
-        if (item.kind === "routine") acc.push(item.routine);
-        return acc;
-      }, []),
-    [allItems],
-  );
-
   const teacherOptions = instructors.map((instructor) => ({
     label: instructor.name,
     value: instructor.slug,
     active: filters.selectedInstructors.includes(instructor.slug),
   }));
   const styleOptions = styles.map((item) => ({
-    label: routinesForLabels.find((routine) => routine.style === item)?.styleLabel ?? item,
+    label: localizeStyle(locale, item),
     value: item,
     active: filters.selectedStyles.includes(item),
   }));

@@ -7,6 +7,7 @@ import { CourseComingSoon } from "@/components/courses/CourseComingSoon";
 import { CourseMobileStickyCta } from "@/components/courses/CourseMobileStickyCta";
 import { CoursePurchaseCard } from "@/components/courses/CoursePurchaseCard";
 import { CourseWatch } from "@/components/courses/CourseWatch";
+import { RoutineFilterTag } from "@/components/routines/RoutineFilterTag";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -77,6 +78,15 @@ export default async function ExternalCourseDetailPage({
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <section className="mb-8 max-w-3xl">
+              {course.style ? (
+                <div className="mb-4">
+                  <RoutineFilterTag
+                    value={course.style}
+                    variant="style"
+                    locale={locale}
+                  />
+                </div>
+              ) : null}
               <h1 className="text-balance font-display text-4xl font-black leading-[0.98] text-white sm:text-5xl">
                 {course.title}
               </h1>

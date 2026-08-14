@@ -70,7 +70,9 @@
     "subtitle": "עברו על הספרייה לפי סגנון, ובחרו לאיזה מהם לצלול.",
     "routineOne": "קומבינציה אחת",
     "routineMany": "{count} קומבינציות",
-    "browseAria": "עיינו בקומבינציות בסגנון {name}"
+    "browseAria": "עיינו בשיעורים בסגנון {name}",
+    "courseOne": "קורס אחד",
+    "courseMany": "{count} קורסים"
   },
   "externalCourses": {
     "tag": "קורס חיצוני",

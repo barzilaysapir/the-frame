@@ -9,30 +9,26 @@ interface StyleCardProps {
   style: DanceStyleKey;
   label: string;
   poster: string;
-  routineCount: number;
+  countLabel: string;
   locale: Locale;
   priority?: boolean;
-  labels: {
-    routineOne: string;
-    routineMany: string;
-    browseAria: string;
-  };
+  browseAria: string;
 }
 
 export function StyleCard({
   style,
   label,
   poster,
-  routineCount,
+  countLabel,
   locale,
   priority = false,
-  labels,
+  browseAria,
 }: StyleCardProps) {
   return (
     <Panel
       as={Link}
       href={routinesFilterHref({ style, locale })}
-      aria-label={formatMessage(labels.browseAria, { name: label })}
+      aria-label={formatMessage(browseAria, { name: label })}
       variant="interactive"
       className="group block overflow-hidden"
     >
@@ -49,13 +45,9 @@ export function StyleCard({
       </div>
       <div className="p-6">
         <h3 className="font-display text-xl font-black text-white">{label}</h3>
-        {routineCount > 0 ? (
-          <p className="mt-5 border-t border-frame-border pt-4 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
-            {routineCount === 1
-              ? labels.routineOne
-              : formatMessage(labels.routineMany, { count: routineCount })}
-          </p>
-        ) : null}
+        <p className="mt-5 border-t border-frame-border pt-4 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
+          {countLabel}
+        </p>
       </div>
     </Panel>
   );

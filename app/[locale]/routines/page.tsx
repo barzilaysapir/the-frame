@@ -57,7 +57,12 @@ export default async function RoutinesPage({ params, searchParams }: RoutinesPag
     repository.listExternalCourses(locale),
   ]);
 
-  const styles = [...new Set(allRoutines.map((routine) => routine.style))];
+  const styles = [
+    ...new Set([
+      ...allRoutines.map((routine) => routine.style),
+      ...externalCourses.flatMap((course) => (course.style ? [course.style] : [])),
+    ]),
+  ];
   // Fixed, always-shown, canonically ordered — not derived from which
   // routines currently exist, so a level with 0 routines today still shows.
   const levels = LEVEL_ORDER;
