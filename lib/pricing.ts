@@ -8,13 +8,14 @@ export const MONTHLY_SUBSCRIPTION = {
 } as const;
 export type CheckoutPlanId = "rental" | "subscription";
 
-/** One combination credit is worth the combination list price (ILS). */
-export const COMBINATION_CREDIT_PRICE = 59;
+/** 1 credit = ₪1. A combination’s list price is how many credits it costs. */
+export const COMBINATION_LIST_PRICE = 59;
+export const COMBINATION_CREDIT_PRICE = 1;
 
-/** Extra combination credits bundled with a course. */
-export const COURSE_BUNDLE_EXTRA_CREDITS = 3;
+/** Credits bundled with a course: three combinations’ worth, at ₪1 per credit. */
+export const COURSE_BUNDLE_EXTRA_CREDITS = 3 * COMBINATION_LIST_PRICE;
 
-/** Discount on the credits pack only, for buying several at once (not launch pricing). */
+/** Discount on the credits pack only, for buying several at once. */
 export const COURSE_CREDIT_BUNDLE_DISCOUNT = 0.2;
 
 export function courseCreditsBundlePricing(coursePriceIls: number) {

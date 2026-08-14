@@ -72,7 +72,7 @@ export function CourseCheckout({
           <span className="font-medium text-white">{instructorName}</span>
         </p>
         <p className="mt-4 text-sm leading-relaxed text-frame-silver">
-          {fill(labels.creditExplainer, { creditPrice: bundle.creditPrice })}
+          {labels.creditExplainer}
         </p>
       </div>
 

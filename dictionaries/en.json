@@ -180,7 +180,7 @@
     "backToRoutine": "Back to combination",
     "backToCourse": "Back to course",
     "courseSubtitle": "The course alone, or the course plus combination credits.",
-    "creditExplainer": "A credit unlocks one combination in the library. One credit costs ₪{creditPrice} — the same as buying that combination on its own.",
+    "creditExplainer": "1 credit = ₪1. Spend credits on combinations in the library.",
     "loading": "Loading…",
     "paymentTitle": "Payment",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
@@ -227,17 +227,17 @@
         ]
       },
       "courseCredits": {
-        "title": "Course + {count} combination credits",
-        "description": "This course, and {count} credits you can spend later on combinations in the library.",
+        "title": "Course + {count} credits",
+        "description": "This course, plus credits for combinations in the library. 1 credit = ₪1.",
         "priceNote": "save ₪{saved}",
-        "paymentBody": "One-time payment for the course plus {count} combination credits.",
+        "paymentBody": "One-time payment for the course plus {count} credits (1 credit = ₪1).",
         "lineCourse": "This course — ₪{coursePrice}",
-        "lineCredits": "{count} credits × ₪{creditPrice} — ₪{creditsList}",
-        "lineDiscount": "Pack price for {count} credits — save ₪{saved}",
+        "lineCredits": "{count} credits — ₪{creditsList}",
+        "lineDiscount": "Buying credits together — save ₪{saved}",
         "guarantees": [
           "Every lesson in this course",
-          "{count} credits, each worth one combination (₪{creditPrice})",
-          "Credits stay cheaper when you buy several together",
+          "{count} credits (1 credit = ₪1)",
+          "Credits are cheaper when you buy more at once",
           "7-day money-back guarantee"
         ]
       }
