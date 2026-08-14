@@ -143,11 +143,6 @@ export function RoutineLibrary({
       label: dict.tutorials.filterTeacher,
       options: teacherOptions,
       onToggle: toggleInstructor,
-      onClear: () => {
-        setSelectedInstructors([]);
-        setVisibleCount(pageSize);
-      },
-      allLabel: dict.tutorials.filterAll,
       placeholder: dict.tutorials.filterTeacherPlaceholder,
       optionRemoveAriaLabel,
       showSearch: true,
@@ -160,11 +155,6 @@ export function RoutineLibrary({
       label: dict.tutorials.filterStyle,
       options: styleOptions,
       onToggle: toggleStyle,
-      onClear: () => {
-        setSelectedStyles([]);
-        setVisibleCount(pageSize);
-      },
-      allLabel: dict.tutorials.filterAll,
       placeholder: dict.tutorials.filterStylePlaceholder,
       optionRemoveAriaLabel,
       showSearch: false,
@@ -174,11 +164,6 @@ export function RoutineLibrary({
       label: dict.tutorials.filterLevel,
       options: levelOptions,
       onToggle: toggleLevel,
-      onClear: () => {
-        setSelectedLevels([]);
-        setVisibleCount(pageSize);
-      },
-      allLabel: dict.tutorials.filterAll,
       placeholder: dict.tutorials.filterLevelPlaceholder,
       optionRemoveAriaLabel,
       showSearch: false,
