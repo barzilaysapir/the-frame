@@ -149,52 +149,65 @@ export function RoutineFilterMultiSelect({
         event.preventDefault();
         activateHighlighted();
         break;
+      case "Backspace":
+        // Standard tag-input convention: an empty search backspaces the
+        // last-selected chip instead of doing nothing.
+        if (query === "" && selectedOptions.length > 0) {
+          onToggle(selectedOptions[selectedOptions.length - 1].value);
+        }
+        break;
       default:
         break;
     }
   }
 
+  function handleOpenChange(open: boolean) {
+    setIsOpen(open);
+    if (open) {
+      setQuery("");
+      setHighlightedIndex(0);
+    }
+  }
+
   return (
-    <Popover.Root
-      open={isOpen}
-      onOpenChange={(open) => {
-        setIsOpen(open);
-        if (open) {
-          setQuery("");
-          setHighlightedIndex(0);
-        }
-      }}
-    >
+    <Popover.Root open={isOpen} onOpenChange={handleOpenChange}>
       {/* Anchor, not just Trigger: the small chevron trigger button below isn't
           a stable position reference on its own — anchoring here keeps the
           popover aligned to the whole (fixed-height) row. */}
       <Popover.Anchor asChild>
         <div
           ref={rowRef}
+          // Only when the click lands on the row's own background (not a
+          // chip, the X, the badge, or the chevron — all of which stop it
+          // reaching here) — so the empty space also opens the dropdown
+          // without stealing clicks meant for those.
+          onClick={(event) => {
+            if (event.target === event.currentTarget) handleOpenChange(!isOpen);
+          }}
           className={cn(
             "flex w-full items-center gap-1.5 border py-1 ps-1 pe-1 transition-colors",
             hasActive
-              ? "rounded-full border-frame-cyan/70 bg-frame-cyan/15"
+              ? "cursor-pointer rounded-full border-frame-cyan/70 bg-frame-cyan/15"
               : "rounded-full border-frame-border bg-frame-bg/60 hover:border-white/40",
           )}
         >
           {hasActive ? (
             <>
               {visibleChips.map((option) => (
-                <button
+                <span
                   key={option.value}
-                  type="button"
-                  onClick={() => onToggle(option.value)}
-                  aria-label={optionRemoveAriaLabel(option.label)}
-                  title={option.label}
-                  className="group inline-flex max-w-[7rem] shrink-0 items-center gap-1 rounded-full bg-frame-cyan/20 ps-2.5 pe-1.5 py-1 text-xs font-medium text-frame-cyan transition-colors hover:bg-frame-cyan/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70"
+                  className="inline-flex max-w-[7rem] shrink-0 items-center gap-0.5 rounded-full bg-frame-cyan/20 ps-2.5 pe-1 py-1 text-xs font-medium text-frame-cyan"
                 >
                   <span className="truncate">{option.label}</span>
-                  <X
-                    aria-hidden="true"
-                    className="h-3 w-3 shrink-0 text-frame-cyan/70 transition-colors group-hover:text-white"
-                  />
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => onToggle(option.value)}
+                    aria-label={optionRemoveAriaLabel(option.label)}
+                    className="shrink-0 rounded-full p-1 text-frame-cyan/70 transition-colors hover:bg-frame-cyan/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70"
+                  >
+                    <X aria-hidden="true" className="h-3 w-3" />
+                  </button>
+                </span>
               ))}
               {hiddenChipCount > 0 ? (
                 <Popover.Trigger asChild>
@@ -244,10 +257,12 @@ export function RoutineFilterMultiSelect({
           <span
             key={option.value}
             data-measure="chip"
-            className="inline-flex max-w-[7rem] shrink-0 items-center gap-1 rounded-full ps-2.5 pe-1.5 py-1 text-xs font-medium"
+            className="inline-flex max-w-[7rem] shrink-0 items-center gap-0.5 rounded-full ps-2.5 pe-1 py-1 text-xs font-medium"
           >
             <span className="truncate">{option.label}</span>
-            <span className="h-3 w-3 shrink-0" />
+            <span className="block shrink-0 rounded-full p-1">
+              <span className="block h-3 w-3" />
+            </span>
           </span>
         ))}
         <span data-measure="chevron" className="shrink-0 rounded-full p-1.5">
@@ -272,6 +287,7 @@ export function RoutineFilterMultiSelect({
                 autoFocus
                 type="text"
                 role="combobox"
+                aria-haspopup="listbox"
                 aria-expanded="true"
                 aria-controls={`${idPrefix}-listbox`}
                 aria-activedescendant={`${idPrefix}-option-${highlightedIndex}`}
