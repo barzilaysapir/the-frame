@@ -533,7 +533,11 @@
       "tagline": "",
       "description": "",
       "lessons": {
-        "warmup": { "title": "Warm-up" }
+        "warmup": { "title": "Warm-up" },
+        "head-neck": { "title": "Head & neck" },
+        "shoulder-blades": { "title": "Shoulder blades" },
+        "shoulder-blades-physio-exercise": { "title": "Shoulder blades physio exercise" },
+        "spine-abs": { "title": "Spine & abs" }
       }
     }
   }

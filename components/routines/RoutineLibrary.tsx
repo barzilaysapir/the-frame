@@ -203,7 +203,7 @@ export function RoutineLibrary({
                     externalCourseTag: dict.externalCourses.tag,
                     comingSoonBadge: dict.externalCourses.comingSoonBadge,
                     availableBadge: dict.externalCourses.availableBadge,
-                    providerPrefix: dict.externalCourses.providerPrefix,
+                    taughtBy: dict.tutorials.taughtBy,
                     cta: dict.externalCourses.cta,
                     linkAria: dict.externalCourses.linkAria,
                   }}

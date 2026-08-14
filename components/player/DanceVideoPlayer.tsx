@@ -21,6 +21,7 @@ import {
 import { cn, formatTime } from "@/lib/utils";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { ChapterMarkers } from "@/components/player/ChapterMarkers";
+import { PlayerTitlePoster } from "@/components/player/PlayerTitlePoster";
 import { VolumeControl } from "@/components/player/VolumeControl";
 import { SpeedMenu } from "@/components/player/SpeedMenu";
 import type { PlayerChapter } from "@/components/player/types";
@@ -260,6 +261,11 @@ export function DanceVideoPlayer({
             />
           ) : null}
         </video>
+
+        <PlayerTitlePoster
+          title={resolvedTitle}
+          show={!poster && !isPlaying && !hasError}
+        />
 
         {/* Center play button, shown when paused */}
         {!hasError && !isPlaying && (

@@ -69,7 +69,11 @@
 	"r2_buckets": [
 		{
 			"binding": "COURSE_VIDEOS",
-			"bucket_name": "the-frame-class-videos"
+			"bucket_name": "the-frame-class-videos",
+			// Real lesson files live in the remote bucket; local Miniflare R2
+			// is empty, so next/wrangler local dev must proxy reads remotely
+			// (D1 stays local — do not set remote on the DB binding).
+			"remote": true
 		}
 	],
 	// Guards the /me* write endpoints (see lib/server/api/rate-limit.ts) against

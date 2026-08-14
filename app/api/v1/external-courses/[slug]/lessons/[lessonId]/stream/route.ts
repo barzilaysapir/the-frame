@@ -13,6 +13,23 @@ interface RouteParams {
   params: Promise<{ slug: string; lessonId: string }>;
 }
 
+function copyR2HttpMetadata(
+  headers: Headers,
+  metadata: R2HTTPMetadata | undefined,
+) {
+  if (!metadata) return;
+  if (metadata.contentType) headers.set("content-type", metadata.contentType);
+  if (metadata.contentLanguage) {
+    headers.set("content-language", metadata.contentLanguage);
+  }
+  if (metadata.contentDisposition) {
+    headers.set("content-disposition", metadata.contentDisposition);
+  }
+  if (metadata.contentEncoding) {
+    headers.set("content-encoding", metadata.contentEncoding);
+  }
+}
+
 /**
  * Streams one lesson's video from the private R2 bucket, gated by a signed
  * `exp`/`sig` query pair (minted by `.../playback-url`) rather than a
@@ -64,7 +81,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 
   const headers = new Headers();
-  object.writeHttpMetadata(headers);
+  // Do not call `object.writeHttpMetadata(headers)` in next/dev: Miniflare's
+  // R2 proxy tries to serialize the undici/Next Headers object with devalue
+  // and throws `DevalueError: Cannot stringify arbitrary non-POJOs`.
+  copyR2HttpMetadata(headers, object.httpMetadata);
   if (!headers.get("content-type")) {
     headers.set("content-type", "video/mp4");
   }

@@ -533,7 +533,11 @@
       "tagline": "",
       "description": "",
       "lessons": {
-        "warmup": { "title": "חימום" }
+        "warmup": { "title": "חימום" },
+        "head-neck": { "title": "ראש וצוואר" },
+        "shoulder-blades": { "title": "שכמות" },
+        "shoulder-blades-physio-exercise": { "title": "תרגיל פיזיותרפיה לשכמות" },
+        "spine-abs": { "title": "עמוד שדרה ובטן" }
       }
     }
   }

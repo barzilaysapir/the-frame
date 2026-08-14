@@ -16,7 +16,7 @@ interface ExternalCourseCardProps {
     externalCourseTag: string;
     comingSoonBadge: string;
     availableBadge: string;
-    providerPrefix: string;
+    taughtBy: string;
     cta: string;
     linkAria: string;
   };
@@ -67,7 +67,7 @@ export function ExternalCourseCard({
           {course.title}
         </h3>
         <p className="mt-1 text-sm text-frame-silver">
-          {formatMessage(labels.providerPrefix, { provider: course.provider })}
+          {formatMessage(labels.taughtBy, { name: course.provider })}
         </p>
 
         {course.tagline ? (

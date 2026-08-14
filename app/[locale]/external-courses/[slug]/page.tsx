@@ -60,8 +60,8 @@ export default async function ExternalCourseDetailPage({
           {course.title}
         </h1>
         <p className="mt-3 text-sm text-frame-silver">
-          {formatMessage(dict.externalCourses.providerPrefix, {
-            provider: course.provider,
+          {formatMessage(dict.tutorials.taughtBy, {
+            name: course.provider,
           })}
         </p>
 
