@@ -11,6 +11,8 @@ export interface RoutineFilterMultiSelectOption {
   active: boolean;
 }
 
+const MAX_VISIBLE_CHIPS = 1;
+
 interface RoutineFilterMultiSelectProps {
   label: string;
   options: RoutineFilterMultiSelectOption[];
@@ -49,6 +51,10 @@ export function RoutineFilterMultiSelect({
 
   const selectedOptions = options.filter((option) => option.active);
   const hasActive = selectedOptions.length > 0;
+  // Caps the trigger to one line regardless of selection count, so this
+  // filter never grows taller than its siblings in the grid row.
+  const visibleChips = selectedOptions.slice(0, MAX_VISIBLE_CHIPS);
+  const hiddenChipCount = selectedOptions.length - visibleChips.length;
 
   const normalizedQuery = showSearch ? query.trim().toLowerCase() : "";
   const filteredOptions = normalizedQuery
@@ -112,33 +118,37 @@ export function RoutineFilterMultiSelect({
         }
       }}
     >
-      {/* Anchor, not just Trigger: the trigger button (the chevron below) shifts
-          around as chips wrap to multiple lines, which would otherwise make the
-          popover position itself off that moving target instead of the stable
-          container. */}
+      {/* Anchor, not just Trigger: the small chevron trigger button below isn't
+          a stable position reference on its own — anchoring here keeps the
+          popover aligned to the whole (fixed-height) row. */}
       <Popover.Anchor asChild>
         <div
           className={cn(
-            "flex w-full flex-wrap items-center gap-1.5 border py-1 ps-1 pe-1 transition-colors",
+            "flex w-full items-center gap-1.5 border py-1 ps-1 pe-1 transition-colors",
             hasActive
-              ? "rounded-2xl border-frame-cyan/70 bg-frame-cyan/15"
+              ? "rounded-full border-frame-cyan/70 bg-frame-cyan/15"
               : "rounded-full border-frame-border bg-frame-bg/60 hover:border-white/40",
           )}
         >
           {hasActive ? (
             <>
-              {selectedOptions.map((option) => (
+              {visibleChips.map((option) => (
                 <button
                   key={option.value}
                   type="button"
                   onClick={() => onToggle(option.value)}
                   aria-label={optionRemoveAriaLabel(option.label)}
-                  className="inline-flex max-w-[9rem] items-center gap-1 rounded-full bg-frame-cyan/20 ps-2.5 pe-1.5 py-1 text-xs font-medium text-frame-cyan transition-colors hover:bg-frame-cyan/30"
+                  className="inline-flex max-w-[7rem] shrink-0 items-center gap-1 rounded-full bg-frame-cyan/20 ps-2.5 pe-1.5 py-1 text-xs font-medium text-frame-cyan transition-colors hover:bg-frame-cyan/30"
                 >
                   <span className="truncate">{option.label}</span>
                   <X aria-hidden="true" className="h-3 w-3 shrink-0" />
                 </button>
               ))}
+              {hiddenChipCount > 0 ? (
+                <span className="shrink-0 rounded-full bg-frame-cyan/10 px-2 py-1 text-xs font-medium text-frame-cyan">
+                  +{hiddenChipCount}
+                </span>
+              ) : null}
               <Popover.Trigger asChild>
                 <button
                   type="button"
@@ -175,7 +185,7 @@ export function RoutineFilterMultiSelect({
         <Popover.Content
           align="start"
           sideOffset={8}
-          className="z-30 w-64 overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
+          className="z-30 w-[var(--radix-popover-trigger-width)] min-w-[12rem] overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
         >
           {showSearch ? (
             <div className="relative border-b border-frame-border p-2">

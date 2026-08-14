@@ -9,3 +9,4 @@ INSERT INTO level_i18n (level_key, locale, label) VALUES
 
 UPDATE level_i18n SET label = 'רמה פתוחה' WHERE level_key = 'all-levels' AND locale = 'he';
 UPDATE level_i18n SET label = 'Open level' WHERE level_key = 'all-levels' AND locale = 'en';
+UPDATE level_i18n SET label = 'מתקדמים' WHERE level_key = 'advanced' AND locale = 'he';
