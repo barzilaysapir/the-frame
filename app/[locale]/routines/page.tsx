@@ -64,12 +64,9 @@ function toggleSelection(selected: string[], value: string): string[] {
     : [...selected, value];
 }
 
-function multiSelectTriggerLabel(dict: Dictionary, selectedLabels: string[]): string {
-  if (selectedLabels.length === 0) return dict.tutorials.filterAll;
-  if (selectedLabels.length === 1) return selectedLabels[0];
-  return formatMessage(dict.tutorials.filterSelectedCount, {
-    count: selectedLabels.length,
-  });
+function multiSelectTriggerLabel(selectedLabels: string[], placeholder: string): string {
+  if (selectedLabels.length === 0) return placeholder;
+  return selectedLabels.join(", ");
 }
 
 function buildFilterSections({
@@ -124,8 +121,8 @@ function buildFilterSections({
       allHref: routinesFilterHref({ style: selectedStyles, level: selectedLevels, locale }),
       allLabel: dict.tutorials.filterAll,
       triggerLabel: multiSelectTriggerLabel(
-        dict,
         teacherOptions.filter((option) => option.active).map((option) => option.label),
+        dict.tutorials.filterTeacherPlaceholder,
       ),
       showSearch: true,
       searchPlaceholder: dict.tutorials.filterTeacherSearchPlaceholder,
@@ -143,8 +140,8 @@ function buildFilterSections({
       }),
       allLabel: dict.tutorials.filterAll,
       triggerLabel: multiSelectTriggerLabel(
-        dict,
         styleOptions.filter((option) => option.active).map((option) => option.label),
+        dict.tutorials.filterStylePlaceholder,
       ),
       showSearch: false,
     },
@@ -159,8 +156,8 @@ function buildFilterSections({
       }),
       allLabel: dict.tutorials.filterAll,
       triggerLabel: multiSelectTriggerLabel(
-        dict,
         levelOptions.filter((option) => option.active).map((option) => option.label),
+        dict.tutorials.filterLevelPlaceholder,
       ),
       showSearch: false,
     },
