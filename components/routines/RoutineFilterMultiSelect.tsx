@@ -196,7 +196,7 @@ export function RoutineFilterMultiSelect({
               {visibleChips.map((option) => (
                 <span
                   key={option.value}
-                  className="inline-flex max-w-[7rem] shrink-0 items-center gap-0.5 rounded-full bg-frame-cyan/20 ps-2.5 pe-1 py-1 text-xs font-medium text-frame-cyan"
+                  className="inline-flex max-w-[7rem] shrink-0 cursor-default items-center gap-0.5 rounded-full bg-frame-cyan/20 ps-2.5 pe-1 py-1 text-xs font-medium text-frame-cyan"
                 >
                   <span className="truncate">{option.label}</span>
                   <button
