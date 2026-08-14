@@ -53,22 +53,27 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
       {
         id: "warmup",
         r2Key: "external-courses/gisha-gmisha/foundations/warmup.mp4",
+        allowMirror: false,
       },
       {
         id: "head-neck",
         r2Key: "external-courses/gisha-gmisha/foundations/head-neck.mp4",
+        allowMirror: false,
       },
       {
         id: "shoulder-blades",
         r2Key: "external-courses/gisha-gmisha/foundations/shoulder-blades.mp4",
+        allowMirror: false,
       },
       {
         id: "shoulder-blades-physio-exercise",
         r2Key: "external-courses/gisha-gmisha/foundations/shoulder-blades-physio-exercise.mp4",
+        allowMirror: false,
       },
       {
         id: "spine-abs",
         r2Key: "external-courses/gisha-gmisha/foundations/spine-abs.mp4",
+        allowMirror: false,
       },
     ],
   },

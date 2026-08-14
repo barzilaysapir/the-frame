@@ -288,8 +288,9 @@ export function DanceVideoPlayer({
           </button>
         )}
 
-        {/* Mirrored indicator badge */}
-        {isMirrored && (
+        {/* Mirrored indicator badge — also shown when the flip control is
+            hidden because the footage is already mirrored in edit. */}
+        {(isMirrored || !showMirror) && (
           <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
             {labels.mirrored}
           </span>

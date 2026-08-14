@@ -45,14 +45,12 @@ export function CourseLessonPlayer({
   const [signInBusy, setSignInBusy] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
 
-  // Signed-out visitors never reach the player render branch below (that
-  // check runs before the playbackUrl/fetchFailed checks), so there's no
-  // need to eagerly clear stale state here on sign-out — only on sign-in
-  // is there anything to fetch.
   useEffect(() => {
     if (!user) return;
 
     let cancelled = false;
+    setPlaybackUrl(null);
+    setFetchFailed(false);
     (async () => {
       try {
         const res = await fetchWithAuth(
