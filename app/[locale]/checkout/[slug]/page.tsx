@@ -117,7 +117,6 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
           labels={dict.checkout}
           loginErrors={dict.login.errors}
           continueGoogleLabel={dict.login.continueGoogle}
-          paymentBody={dict.externalCourses.paymentBody}
         />
       </div>
     </main>

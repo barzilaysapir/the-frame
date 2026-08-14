@@ -2,9 +2,8 @@
 
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { CheckoutPlanId } from "@/lib/pricing";
 
-interface PlanCopy {
+export interface CheckoutPlanCopy {
   title: string;
   description: string;
   priceNote: string;
@@ -12,12 +11,12 @@ interface PlanCopy {
 }
 
 interface CheckoutPlanOptionProps {
-  id: CheckoutPlanId;
+  id: string;
   selected: boolean;
-  onSelect: (id: CheckoutPlanId) => void;
+  onSelect: (id: string) => void;
   price: number;
   originalPrice?: number;
-  copy: PlanCopy;
+  copy: CheckoutPlanCopy;
 }
 
 /** Compact plan row; the selected plan stays expanded with details. */

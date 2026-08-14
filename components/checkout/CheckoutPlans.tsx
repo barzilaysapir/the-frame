@@ -51,14 +51,22 @@ export function CheckoutPlans({
 
       <CheckoutPlanPicker
         selected={plan}
-        onSelect={setPlan}
+        onSelect={(id) => setPlan(id as CheckoutPlanId)}
         chooseLabel={labels.plans.chooseLabel}
-        rentalPrice={rentalPrice}
-        rentalOriginalPrice={rentalOriginalPrice}
-        subscriptionPrice={MONTHLY_SUBSCRIPTION.earlyBird}
-        subscriptionOriginalPrice={MONTHLY_SUBSCRIPTION.original}
-        rentalCopy={labels.plans.rental}
-        subscriptionCopy={labels.plans.subscription}
+        plans={[
+          {
+            id: "rental",
+            price: rentalPrice,
+            originalPrice: rentalOriginalPrice,
+            copy: labels.plans.rental,
+          },
+          {
+            id: "subscription",
+            price: MONTHLY_SUBSCRIPTION.earlyBird,
+            originalPrice: MONTHLY_SUBSCRIPTION.original,
+            copy: labels.plans.subscription,
+          },
+        ]}
       />
 
       <CheckoutPaymentPlaceholder

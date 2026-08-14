@@ -88,7 +88,7 @@
     "signInCta": "Sign in with Google",
     "loadingVideo": "Loading video…",
     "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
-    "pricingNote": "One-time payment · access to this course",
+    "pricingNote": "This course, or this course plus credits · choose at checkout",
     "paymentBody": "One-time payment for access to this course.",
     "guarantees": [
       "Access to every lesson in this course",
@@ -179,7 +179,7 @@
     "subtitle": "Choose a plan and complete payment.",
     "backToRoutine": "Back to combination",
     "backToCourse": "Back to course",
-    "courseSubtitle": "Complete payment to unlock this course.",
+    "courseSubtitle": "Choose a plan and complete payment.",
     "loading": "Loading…",
     "paymentTitle": "Payment",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
@@ -211,6 +211,29 @@
           "Access to every combination on the site",
           "New releases included while subscribed",
           "Cancel anytime",
+          "7-day money-back guarantee"
+        ]
+      },
+      "course": {
+        "title": "This course only",
+        "description": "One-time access to this course",
+        "priceNote": "one-time",
+        "paymentBody": "One-time payment for access to this course.",
+        "guarantees": [
+          "Access to every lesson in this course",
+          "Watch on any device",
+          "7-day money-back guarantee"
+        ]
+      },
+      "courseCredits": {
+        "title": "This course + {count} credits",
+        "description": "This course, plus {count} combination credits at launch price",
+        "priceNote": "launch price · one-time",
+        "paymentBody": "One-time payment for this course plus {count} combination credits at launch price.",
+        "guarantees": [
+          "Access to every lesson in this course",
+          "{count} extra credits toward combinations on The Frame",
+          "Credits use the launch combination price",
           "7-day money-back guarantee"
         ]
       }
