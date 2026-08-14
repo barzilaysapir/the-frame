@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { RoutineFilterGroup, type RoutineFilterChip } from "@/components/routines/RoutineFilterGroup";
 import {
   RoutineFilterMultiSelect,
@@ -12,9 +11,11 @@ export type RoutineFilterSection =
       type: "multiselect";
       label: string;
       options: RoutineFilterMultiSelectOption[];
-      allHref: string;
-      allLabel: string;
-      triggerLabel: string;
+      onToggle: (value: string) => void;
+      onClear: () => void;
+      clearLabel: string;
+      placeholder: string;
+      optionRemoveAriaLabel: (optionLabel: string) => string;
       showSearch?: boolean;
       searchPlaceholder?: string;
       searchAriaLabel?: string;
@@ -27,7 +28,7 @@ interface RoutineFiltersProps {
   clearLabel: string;
   ariaLabel: string;
   hasActiveFilters: boolean;
-  clearHref: string;
+  onClear: () => void;
 }
 
 export function RoutineFilters({
@@ -36,26 +37,23 @@ export function RoutineFilters({
   clearLabel,
   ariaLabel,
   hasActiveFilters,
-  clearHref,
+  onClear,
 }: RoutineFiltersProps) {
   return (
     <Panel as="section" aria-label={ariaLabel} className="mb-10 bg-frame-panel/40">
-      {/* NOTE: the panel intentionally has no `overflow-hidden` — the filter
-          dropdowns below render absolutely-positioned popovers that must be
-          able to escape this container's bounds.
-          `auto-fit`/`minmax` (rather than a fixed breakpoint) sizes each
-          filter to the actual available width: as many as fit per row share
-          it evenly, and a lone filter on its own row stretches to fill it. */}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-x-6 gap-y-3 px-4 py-3.5 sm:px-5 sm:py-4">
+      {/* No overflow-hidden here — the dropdowns below need to escape this container's bounds. */}
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] items-start gap-x-6 gap-y-3 px-4 py-3.5 sm:px-5 sm:py-4">
         {sections.map((section) =>
           section.type === "multiselect" ? (
             <RoutineFilterMultiSelect
               key={section.label}
               label={section.label}
               options={section.options}
-              allHref={section.allHref}
-              allLabel={section.allLabel}
-              triggerLabel={section.triggerLabel}
+              onToggle={section.onToggle}
+              onClear={section.onClear}
+              clearLabel={section.clearLabel}
+              placeholder={section.placeholder}
+              optionRemoveAriaLabel={section.optionRemoveAriaLabel}
               showSearch={section.showSearch}
               searchPlaceholder={section.searchPlaceholder}
               searchAriaLabel={section.searchAriaLabel}
@@ -67,17 +65,18 @@ export function RoutineFilters({
         )}
       </div>
 
-      {hasActiveFilters ? (
-        <div className="flex items-center justify-between gap-4 rounded-b-2xl border-t border-frame-border bg-frame-bg/40 px-4 py-3 sm:px-5">
-          <p className="text-sm text-frame-silver">{resultLabel}</p>
-          <Link
-            href={clearHref}
+      <div className="flex items-center justify-between gap-4 rounded-b-2xl border-t border-frame-border bg-frame-bg/40 px-4 py-3 sm:px-5">
+        <p className="text-sm text-frame-silver">{resultLabel}</p>
+        {hasActiveFilters ? (
+          <button
+            type="button"
+            onClick={onClear}
             className="text-sm font-semibold text-frame-cyan transition-colors hover:text-white"
           >
             {clearLabel}
-          </Link>
-        </div>
-      ) : null}
+          </button>
+        ) : null}
+      </div>
     </Panel>
   );
 }

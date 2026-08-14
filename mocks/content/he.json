@@ -10,9 +10,10 @@
     "voguing": "ווגינג"
   },
   "levels": {
+    "beginner": "מתחילים",
     "intermediate": "בינוני",
-    "advanced": "מתקדם",
-    "all-levels": "כל הרמות"
+    "advanced": "מתקדמים",
+    "all-levels": "רמה פתוחה"
   },
   "chapters": {
     "full-performance": "הופעה מלאה",

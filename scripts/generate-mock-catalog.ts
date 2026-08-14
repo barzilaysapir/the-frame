@@ -27,10 +27,10 @@ type StyleKey =
   | "afro"
   | "dancehall"
   | "commercial";
-type LevelKey = "intermediate" | "advanced" | "all-levels";
+type LevelKey = "beginner" | "intermediate" | "advanced" | "all-levels";
 type Gender = "f" | "m";
 
-const LEVELS: LevelKey[] = ["intermediate", "advanced", "all-levels"];
+const LEVELS: LevelKey[] = ["beginner", "intermediate", "advanced", "all-levels"];
 const TECHNIQUE_TAGS = ["performance", "groove", "musicality", "body-control"] as const;
 
 const SAMPLE_VIDEO_SRC =
