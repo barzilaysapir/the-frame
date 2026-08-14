@@ -26,23 +26,7 @@ function toggleSelection(selected: string[], value: string): string[] {
     : [...selected, value];
 }
 
-function selectedTriggerLabel(
-  options: { label: string; active: boolean }[],
-  placeholder: string,
-): string {
-  const activeLabels = options.filter((option) => option.active).map((option) => option.label);
-  return activeLabels.length === 0 ? placeholder : activeLabels.join(", ");
-}
-
-/**
- * Owns filtering + pagination for the /routines library entirely client-side.
- * The full catalog (~100 routines) is fetched once by the server page; every
- * filter toggle here is a local state update, not a Next.js navigation — the
- * old href-per-option design re-ran the whole server component (dictionary +
- * D1 queries) on every click, which is what made filtering feel slow. The URL
- * is still kept in sync (via the raw History API, bypassing Next's router)
- * so links stay shareable/bookmarkable without paying for a round-trip.
- */
+/** Filters/paginates the already-fetched catalog client-side, instead of navigating per click. */
 export function RoutineLibrary({
   locale,
   allRoutines,
@@ -82,6 +66,8 @@ export function RoutineLibrary({
     return routines;
   }, [allRoutines, selectedInstructors, selectedStyles, selectedLevels]);
 
+  // Raw History API, not next/navigation's router — a router-driven update
+  // would re-invoke the Server Component, the exact round-trip this avoids.
   useEffect(() => {
     const href = routinesFilterHref({
       instructor: selectedInstructors,
@@ -147,6 +133,9 @@ export function RoutineLibrary({
     active: selectedLevels.includes(item),
   }));
 
+  const optionRemoveAriaLabel = (name: string) =>
+    formatMessage(dict.tutorials.filterRemoveOption, { name });
+
   const sections: RoutineFilterSection[] = [
     {
       type: "multiselect",
@@ -158,7 +147,8 @@ export function RoutineLibrary({
         setVisibleCount(pageSize);
       },
       allLabel: dict.tutorials.filterAll,
-      triggerLabel: selectedTriggerLabel(teacherOptions, dict.tutorials.filterTeacherPlaceholder),
+      placeholder: dict.tutorials.filterTeacherPlaceholder,
+      optionRemoveAriaLabel,
       showSearch: true,
       searchPlaceholder: dict.tutorials.filterTeacherSearchPlaceholder,
       searchAriaLabel: dict.tutorials.filterTeacherSearch,
@@ -174,7 +164,8 @@ export function RoutineLibrary({
         setVisibleCount(pageSize);
       },
       allLabel: dict.tutorials.filterAll,
-      triggerLabel: selectedTriggerLabel(styleOptions, dict.tutorials.filterStylePlaceholder),
+      placeholder: dict.tutorials.filterStylePlaceholder,
+      optionRemoveAriaLabel,
       showSearch: false,
     },
     {
@@ -187,7 +178,8 @@ export function RoutineLibrary({
         setVisibleCount(pageSize);
       },
       allLabel: dict.tutorials.filterAll,
-      triggerLabel: selectedTriggerLabel(levelOptions, dict.tutorials.filterLevelPlaceholder),
+      placeholder: dict.tutorials.filterLevelPlaceholder,
+      optionRemoveAriaLabel,
       showSearch: false,
     },
   ];
@@ -234,6 +226,13 @@ export function RoutineLibrary({
             ))}
           </div>
           {hasMore ? <div ref={sentinelRef} aria-hidden="true" className="h-1" /> : null}
+          {/* Announces newly-revealed cards to screen readers as visibleCount grows. */}
+          <p aria-live="polite" className="sr-only">
+            {formatMessage(dict.tutorials.libraryLoadedStatus, {
+              shown: visibleRoutines.length,
+              total,
+            })}
+          </p>
         </>
       ) : (
         <p className="text-frame-silver">{dict.tutorials.empty}</p>

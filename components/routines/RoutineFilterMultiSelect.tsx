@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface RoutineFilterMultiSelectOption {
@@ -19,8 +19,8 @@ interface RoutineFilterMultiSelectProps {
   /** Clears this filter dimension entirely. */
   onClear: () => void;
   allLabel: string;
-  /** Precomputed summary shown on the closed trigger (a placeholder, a single name, or the selected names joined). */
-  triggerLabel: string;
+  placeholder: string;
+  optionRemoveAriaLabel: (optionLabel: string) => string;
   /** Shows a search box above the option list. Defaults to true; set false for short option lists (style/level). */
   showSearch?: boolean;
   searchPlaceholder?: string;
@@ -34,7 +34,8 @@ export function RoutineFilterMultiSelect({
   onToggle,
   onClear,
   allLabel,
-  triggerLabel,
+  placeholder,
+  optionRemoveAriaLabel,
   showSearch = true,
   searchPlaceholder,
   searchAriaLabel,
@@ -43,18 +44,13 @@ export function RoutineFilterMultiSelect({
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  const hasActive = options.some((option) => option.active);
+  const selectedOptions = options.filter((option) => option.active);
+  const hasActive = selectedOptions.length > 0;
 
   const normalizedQuery = showSearch ? query.trim().toLowerCase() : "";
   const filteredOptions = normalizedQuery
     ? options.filter((option) => option.label.toLowerCase().includes(normalizedQuery))
     : options;
-  // Selected options surface at the top so an open dropdown makes the
-  // current selection obvious at a glance; stable sort keeps each group's
-  // relative order otherwise unchanged.
-  const sortedOptions = [...filteredOptions].sort(
-    (a, b) => Number(b.active) - Number(a.active),
-  );
 
   return (
     <Popover.Root
@@ -64,33 +60,59 @@ export function RoutineFilterMultiSelect({
         if (open) setQuery("");
       }}
     >
-      <Popover.Trigger asChild>
-        <button
-          type="button"
-          aria-label={label}
-          className={cn(
-            "flex w-full items-center justify-between gap-2 rounded-full border py-1.5 ps-4 pe-3 text-sm font-medium transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70",
-            hasActive
-              ? "border-frame-cyan/70 bg-frame-cyan/15 text-frame-cyan"
-              : "border-frame-border bg-frame-bg/60 text-frame-silver hover:border-white/40 hover:text-white",
-          )}
-        >
-          <span className="truncate">{triggerLabel}</span>
-          <ChevronDown
-            aria-hidden="true"
-            className={cn("h-4 w-4 shrink-0 transition-transform", isOpen && "rotate-180")}
-          />
-        </button>
-      </Popover.Trigger>
+      <div
+        className={cn(
+          "flex w-full flex-wrap items-center gap-1.5 rounded-full border py-1 ps-1 pe-1 transition-colors",
+          hasActive
+            ? "border-frame-cyan/70 bg-frame-cyan/15"
+            : "border-frame-border bg-frame-bg/60 hover:border-white/40",
+        )}
+      >
+        {hasActive ? (
+          <>
+            {selectedOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => onToggle(option.value)}
+                aria-label={optionRemoveAriaLabel(option.label)}
+                className="inline-flex max-w-[9rem] items-center gap-1 rounded-full bg-frame-cyan/20 ps-2.5 pe-1.5 py-1 text-xs font-medium text-frame-cyan transition-colors hover:bg-frame-cyan/30"
+              >
+                <span className="truncate">{option.label}</span>
+                <X aria-hidden="true" className="h-3 w-3 shrink-0" />
+              </button>
+            ))}
+            <Popover.Trigger asChild>
+              <button
+                type="button"
+                aria-label={label}
+                className="ms-auto shrink-0 rounded-full p-1.5 text-frame-cyan transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70"
+              >
+                <ChevronDown
+                  aria-hidden="true"
+                  className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")}
+                />
+              </button>
+            </Popover.Trigger>
+          </>
+        ) : (
+          <Popover.Trigger asChild>
+            <button
+              type="button"
+              aria-label={label}
+              className="flex w-full items-center justify-between gap-2 px-3 py-1 text-start text-sm font-medium text-frame-silver transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70"
+            >
+              <span className="truncate">{placeholder}</span>
+              <ChevronDown
+                aria-hidden="true"
+                className={cn("h-4 w-4 shrink-0 transition-transform", isOpen && "rotate-180")}
+              />
+            </button>
+          </Popover.Trigger>
+        )}
+      </div>
 
-      {/*
-       * Portaled straight to document.body: this popover no longer has to
-       * out-rank arbitrary page content (routine card badges, etc.) via
-       * z-index gymnastics — it simply isn't a descendant of any of it.
-       * Radix also gives us collision-aware positioning, focus trap/return,
-       * and outside-click + Escape dismissal for free.
-       */}
+      {/* Portaled to document.body so it isn't clipped by page content and gets Radix's collision-aware positioning + focus/dismiss handling for free. */}
       <Popover.Portal>
         <Popover.Content
           align="start"
@@ -133,12 +155,12 @@ export function RoutineFilterMultiSelect({
                 {allLabel}
               </button>
             </li>
-            {sortedOptions.length === 0 ? (
+            {filteredOptions.length === 0 ? (
               <li className="px-3 py-2 text-sm text-frame-muted" role="none">
                 {noMatchesLabel}
               </li>
             ) : (
-              sortedOptions.map((option) => (
+              filteredOptions.map((option) => (
                 <li key={option.value} role="none">
                   <button
                     type="button"

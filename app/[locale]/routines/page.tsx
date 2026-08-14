@@ -73,6 +73,9 @@ export default async function RoutinesPage({ params, searchParams }: RoutinesPag
       </div>
 
       <RoutineLibrary
+        // Forces a remount when an external link (e.g. a style tag on a
+        // RoutineCard) lands on this page with a different filter preset.
+        key={`${instructorSlug ?? ""}|${style ?? ""}|${level ?? ""}`}
         locale={locale}
         allRoutines={allRoutines}
         instructors={instructors}
