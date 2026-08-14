@@ -20,13 +20,18 @@ export function SpeedMenu({ playbackRate, labels, onChangeSpeed }: SpeedMenuProp
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen} dir="ltr">
+    <DropdownMenu.Root
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      dir="ltr"
+      modal={false}
+    >
       <DropdownMenu.Trigger asChild>
         <button
           type="button"
           aria-label={labels.speed}
           className={cn(
-            "flex h-8 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold transition-colors",
+            "flex h-8 w-[4.25rem] shrink-0 items-center justify-center gap-1 rounded-full border px-2.5 text-xs font-semibold tabular-nums transition-colors",
             isOpen
               ? "border-frame-magenta text-frame-magenta"
               : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
@@ -38,11 +43,10 @@ export function SpeedMenu({ playbackRate, labels, onChangeSpeed }: SpeedMenuProp
       </DropdownMenu.Trigger>
 
       {/*
-       * Portaled to document.body, same as RoutineFilterMultiSelect: this menu
-       * doesn't need to out-rank neighboring player-UI z-index values because
-       * it isn't a descendant of any of it. `dir="ltr"` on the Root pins the
-       * flyout to the trigger's right edge regardless of locale, matching the
-       * player controls bar (which is always LTR).
+       * `modal={false}` skips Radix's body scroll-lock (padding-right / overflow
+       * hidden), which was shifting the whole player chrome when the menu opened.
+       * Portaled to document.body so the flyout isn't clipped by overflow-hidden
+       * on the player. `dir="ltr"` pins it to the trigger regardless of locale.
        */}
       <DropdownMenu.Portal>
         <DropdownMenu.Content

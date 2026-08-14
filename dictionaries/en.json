@@ -85,7 +85,14 @@
     "signInPrompt": "Sign in to watch this lesson.",
     "signInCta": "Sign in with Google",
     "loadingVideo": "Loading video…",
-    "videoUnavailable": "Couldn't load this video. Try refreshing the page."
+    "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
+    "pricingNote": "One-time payment · access to this course",
+    "paymentBody": "One-time payment for access to this course.",
+    "guarantees": [
+      "Access to every lesson in this course",
+      "Watch on any device",
+      "7-day money-back guarantee"
+    ]
   },
   "about": {
     "metaTitle": "About",
@@ -169,6 +176,8 @@
     "title": "Start learning",
     "subtitle": "Choose a plan and complete payment.",
     "backToRoutine": "Back to combination",
+    "backToCourse": "Back to course",
+    "courseSubtitle": "Complete payment to unlock this course.",
     "loading": "Loading…",
     "paymentTitle": "Payment",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",

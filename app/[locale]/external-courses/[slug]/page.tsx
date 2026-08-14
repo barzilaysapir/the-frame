@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
-import { CourseLessonPlayer } from "@/components/CourseLessonPlayer";
+import { CourseComingSoon } from "@/components/courses/CourseComingSoon";
+import { CourseMobileStickyCta } from "@/components/courses/CourseMobileStickyCta";
+import { CoursePurchaseCard } from "@/components/courses/CoursePurchaseCard";
+import { CourseWatch } from "@/components/courses/CourseWatch";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
-import { resolveCatalog } from "@/lib/server/catalog";
+import { parsePriceIls } from "@/lib/pricing";
+import { getCachedExternalCourse } from "@/lib/server/catalog";
 
-// Seed-catalog data changes rarely (via migrations, not user writes) — cache
-// the rendered page for 5 minutes instead of refetching D1 on every request.
 export const revalidate = 300;
 
 interface ExternalCourseDetailPageProps {
@@ -22,8 +25,7 @@ export async function generateMetadata({
   const { locale: localeParam, slug } = await params;
   if (!isLocale(localeParam)) return {};
 
-  const { repository } = await resolveCatalog();
-  const course = await repository.getExternalCourse(localeParam, slug);
+  const course = await getCachedExternalCourse(localeParam, slug);
   if (!course) return {};
 
   return {
@@ -40,87 +42,111 @@ export default async function ExternalCourseDetailPage({
   const locale = localeParam;
   const dict = await getDictionary(locale);
 
-  const { repository } = await resolveCatalog();
-  const course = await repository.getExternalCourse(locale, slug);
+  const course = await getCachedExternalCourse(locale, slug);
   if (!course) notFound();
 
   const hasLessons = course.lessons.length > 0;
 
+  if (!hasLessons) {
+    return (
+      <CourseComingSoon
+        course={course}
+        locale={locale}
+        labels={{
+          comingSoonBadge: dict.externalCourses.comingSoonBadge,
+          comingSoonNote: dict.externalCourses.comingSoonNote,
+          taughtBy: dict.tutorials.taughtBy,
+          back: dict.externalCourses.back,
+        }}
+      />
+    );
+  }
+
+  const priceIls = parsePriceIls(course.priceDisplay);
+  const checkoutHref = localePath(locale, `/checkout/${course.slug}`);
+  const purchaseLabels = {
+    pricingNote: dict.externalCourses.pricingNote,
+    getAccessNow: dict.routine.getAccessNow,
+    secureNote: dict.routine.secureNote,
+    guarantees: dict.externalCourses.guarantees,
+  };
+
   return (
-    <main className="relative overflow-hidden">
-      <div className="neon-glow" aria-hidden="true" />
-      <div className="relative z-10 mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
-        <span className="inline-flex w-fit items-center rounded-full border border-frame-border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-frame-silver">
-          {hasLessons
-            ? dict.externalCourses.availableBadge
-            : dict.externalCourses.comingSoonBadge}
-        </span>
+    <>
+      <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8 lg:pb-16">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <section className="mb-8 max-w-3xl">
+              <h1 className="text-balance font-display text-4xl font-black leading-[0.98] text-white sm:text-5xl">
+                {course.title}
+              </h1>
+              <p className="mt-3 text-sm text-frame-silver">
+                {formatMessage(dict.tutorials.taughtBy, {
+                  name: course.provider,
+                })}
+              </p>
+              {course.tagline ? (
+                <p className="mt-4 text-lg text-frame-silver">{course.tagline}</p>
+              ) : null}
+              {course.description ? (
+                <p className="mt-3 text-frame-silver">{course.description}</p>
+              ) : null}
+            </section>
 
-        <h1 className="mt-5 text-balance font-display text-5xl font-black leading-[0.98] text-white sm:text-6xl">
-          {course.title}
-        </h1>
-        <p className="mt-3 text-sm text-frame-silver">
-          {formatMessage(dict.tutorials.taughtBy, {
-            name: course.provider,
-          })}
-        </p>
+            <Suspense
+              fallback={
+                <div className="aspect-video w-full rounded-2xl border border-frame-border bg-black/40" />
+              }
+            >
+              <CourseWatch
+                courseSlug={course.slug}
+                lessons={course.lessons}
+                playerLabels={dict.player}
+                loginErrors={dict.login.errors}
+                lessonsHeading={dict.externalCourses.lessonsHeading}
+                playerChrome={{
+                  signInPrompt: dict.externalCourses.signInPrompt,
+                  signInCta: dict.externalCourses.signInCta,
+                  loading: dict.externalCourses.loadingVideo,
+                  unavailable: dict.externalCourses.videoUnavailable,
+                }}
+              />
+            </Suspense>
 
-        {course.tagline ? (
-          <p className="mt-5 text-lg text-frame-silver">{course.tagline}</p>
-        ) : null}
-        {course.description ? (
-          <p className="mt-4 text-frame-silver">{course.description}</p>
-        ) : null}
+            <div className="mt-10">
+              <Link
+                href={localePath(locale, "/routines")}
+                className="group inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
+              >
+                {dict.externalCourses.back}
+                <ArrowLeft className="h-3.5 w-3.5 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
+              </Link>
+            </div>
+          </div>
 
-        <p className="mt-6 text-lg font-semibold text-white">
-          {course.priceDisplay}
-        </p>
-
-        {!hasLessons ? (
-          <p className="mt-2 text-sm text-frame-muted">
-            {dict.externalCourses.comingSoonNote}
-          </p>
-        ) : null}
-      </div>
-
-      {hasLessons ? (
-        <div className="relative z-10 mx-auto max-w-3xl px-4 pb-16 sm:px-6">
-          <h2 className="mb-4 font-display text-lg font-bold text-white">
-            {dict.externalCourses.lessonsHeading}
-          </h2>
-          <div className="flex flex-col gap-8">
-            {course.lessons.map((lesson) => (
-              <div key={lesson.id}>
-                <p className="mb-3 text-sm font-semibold text-frame-silver">
-                  {lesson.title}
-                </p>
-                <CourseLessonPlayer
-                  courseSlug={course.slug}
-                  lesson={lesson}
-                  playerLabels={dict.player}
+          {priceIls != null ? (
+            <aside className="hidden lg:block">
+              <div className="sticky top-24">
+                <CoursePurchaseCard
+                  priceIls={priceIls}
+                  checkoutHref={checkoutHref}
                   loginErrors={dict.login.errors}
-                  labels={{
-                    signInPrompt: dict.externalCourses.signInPrompt,
-                    signInCta: dict.externalCourses.signInCta,
-                    loading: dict.externalCourses.loadingVideo,
-                    unavailable: dict.externalCourses.videoUnavailable,
-                  }}
+                  labels={purchaseLabels}
                 />
               </div>
-            ))}
-          </div>
+            </aside>
+          ) : null}
         </div>
-      ) : null}
+      </main>
 
-      <div className="relative z-10 mx-auto max-w-3xl px-4 pb-16 text-center sm:px-6">
-        <Link
-          href={localePath(locale, "/routines")}
-          className="group inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
-        >
-          {dict.externalCourses.back}
-          <ArrowLeft className="h-3.5 w-3.5 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-        </Link>
-      </div>
-    </main>
+      {priceIls != null ? (
+        <CourseMobileStickyCta
+          priceIls={priceIls}
+          checkoutHref={checkoutHref}
+          ctaLabel={dict.routine.getAccessNow}
+          loginErrors={dict.login.errors}
+        />
+      ) : null}
+    </>
   );
 }

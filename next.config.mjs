@@ -32,8 +32,9 @@ function buildCsp() {
   // directly — never in production builds, so this is dev-only.
   const scriptSrc =
     process.env.NODE_ENV === "development"
-      ? `script-src 'self' 'unsafe-inline' 'unsafe-eval'`
-      : `script-src 'self' 'unsafe-inline'`;
+      ? `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://www.google.com https://accounts.google.com`
+      : `script-src 'self' 'unsafe-inline' https://apis.google.com https://www.gstatic.com https://www.google.com https://accounts.google.com`;
+  const authFrame = firebaseAuthDomain ? ` https://${firebaseAuthDomain}` : "";
   const directives = [
     `default-src 'self'`,
     scriptSrc,
@@ -41,8 +42,8 @@ function buildCsp() {
     `img-src 'self' data: https:`,
     `font-src 'self' data:`,
     `media-src 'self' https:`,
-    `connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com`,
-    `frame-src 'self' https://accounts.google.com${firebaseAuthDomain ? ` https://${firebaseAuthDomain}` : ""}`,
+    `connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://apis.google.com https://www.google.com https://accounts.google.com${authFrame}`,
+    `frame-src 'self' https://accounts.google.com https://www.google.com${authFrame}`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
@@ -78,6 +79,10 @@ const nextConfig = {
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Content-Security-Policy", value: buildCsp() },
           {
