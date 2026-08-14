@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ExternalCourseCard } from "@/components/ExternalCourseCard";
 import { RoutineLibrary } from "@/components/routines/RoutineLibrary";
+import type { LibraryItem } from "@/components/routines/libraryItem";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { LEVEL_ORDER } from "@/lib/routines";
@@ -62,6 +62,13 @@ export default async function RoutinesPage({ params, searchParams }: RoutinesPag
   // routines currently exist, so a level with 0 routines today still shows.
   const levels = LEVEL_ORDER;
 
+  // External courses lack posters/style/level, so they're appended after all
+  // routines rather than interleaved — keeps the image-heavy grid coherent.
+  const allItems: LibraryItem[] = [
+    ...allRoutines.map((routine) => ({ kind: "routine" as const, routine })),
+    ...externalCourses.map((course) => ({ kind: "external" as const, course })),
+  ];
+
   const initialInstructors = instructorSlug ? instructorSlug.split(",").filter(Boolean) : [];
   const initialStyles = style ? style.split(",").filter(Boolean) : [];
   const initialLevels = level ? level.split(",").filter(Boolean) : [];
@@ -80,7 +87,7 @@ export default async function RoutinesPage({ params, searchParams }: RoutinesPag
         // RoutineCard) lands on this page with a different filter preset.
         key={`${instructorSlug ?? ""}|${style ?? ""}|${level ?? ""}`}
         locale={locale}
-        allRoutines={allRoutines}
+        allItems={allItems}
         instructors={instructors}
         styles={styles}
         levels={levels}
@@ -89,33 +96,6 @@ export default async function RoutinesPage({ params, searchParams }: RoutinesPag
         initialLevels={initialLevels}
         pageSize={PAGE_SIZE}
       />
-
-      {externalCourses.length > 0 ? (
-        <section className="mt-16 border-t border-frame-border pt-12">
-          <div className="mb-8 max-w-2xl">
-            <h2 className="font-display text-3xl font-black text-white sm:text-4xl">
-              {dict.externalCourses.title}
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {externalCourses.map((course) => (
-              <ExternalCourseCard
-                key={course.slug}
-                course={course}
-                locale={locale}
-                labels={{
-                  comingSoonBadge: dict.externalCourses.comingSoonBadge,
-                  availableBadge: dict.externalCourses.availableBadge,
-                  providerPrefix: dict.externalCourses.providerPrefix,
-                  cta: dict.externalCourses.cta,
-                  linkAria: dict.externalCourses.linkAria,
-                }}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
     </main>
   );
 }

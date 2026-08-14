@@ -10,6 +10,7 @@ interface ExternalCourseCardProps {
   course: CatalogExternalCourse;
   locale: Locale;
   labels: {
+    externalCourseTag: string;
     comingSoonBadge: string;
     availableBadge: string;
     providerPrefix: string;
@@ -36,9 +37,14 @@ export function ExternalCourseCard({
       variant="interactive"
       className="group flex flex-col p-6"
     >
-      <span className="inline-flex w-fit items-center rounded-full border border-frame-border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-frame-silver">
-        {hasLessons ? labels.availableBadge : labels.comingSoonBadge}
-      </span>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="inline-flex w-fit items-center rounded-full bg-frame-magenta px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-frame-bg">
+          {labels.externalCourseTag}
+        </span>
+        <span className="inline-flex w-fit items-center rounded-full border border-frame-border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-frame-silver">
+          {hasLessons ? labels.availableBadge : labels.comingSoonBadge}
+        </span>
+      </div>
 
       <h3 className="mt-4 font-display text-xl font-black text-white">
         {course.title}
@@ -51,7 +57,7 @@ export function ExternalCourseCard({
         <p className="mt-3 text-sm text-frame-silver">{course.tagline}</p>
       ) : null}
 
-      <div className="mt-5 flex items-center justify-between border-t border-frame-border pt-4">
+      <div className="mt-auto flex items-center justify-between border-t border-frame-border pt-4">
         <span className="text-sm font-semibold text-white">
           {course.priceDisplay}
         </span>
