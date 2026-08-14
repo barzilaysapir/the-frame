@@ -11,6 +11,12 @@ interface ExternalCourseLessonRecord {
   id: string;
   /** Object key inside the private `the-frame-class-videos` R2 bucket — never sent to the client, only read server-side to stream/sign playback. */
   r2Key: string;
+  /**
+   * When false, the player hides the mirror control and does not flip.
+   * Omit or true to show the control and start mirrored. Set false for
+   * lessons that are already mirrored in edit or have burned-in captions.
+   */
+  allowMirror?: boolean;
 }
 
 export interface ExternalCourseRecord {

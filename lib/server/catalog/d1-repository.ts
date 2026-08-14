@@ -73,6 +73,7 @@ interface ExternalCourseRow {
 interface ExternalCourseLessonRow {
   lesson_id: string;
   title: string | null;
+  allow_mirror: number | null;
 }
 
 function parseTags(tagsJson: string, routineSlug: string): TagKey[] {
@@ -146,7 +147,7 @@ async function fetchLessonsForSlug(
 ): Promise<CatalogExternalCourse["lessons"]> {
   const result = await db
     .prepare(
-      `SELECT l.lesson_id, li.title
+      `SELECT l.lesson_id, l.allow_mirror, li.title
        FROM external_course_lessons l
        LEFT JOIN external_course_lesson_i18n li
          ON li.course_slug = l.course_slug AND li.lesson_id = l.lesson_id AND li.locale = ?
@@ -159,6 +160,7 @@ async function fetchLessonsForSlug(
   return (result.results ?? []).map((row: ExternalCourseLessonRow) => ({
     id: row.lesson_id,
     title: row.title ?? row.lesson_id,
+    allowMirror: row.allow_mirror !== 0,
   }));
 }
 
@@ -174,7 +176,7 @@ async function fetchLessonsForAllExternalCourses(
 ): Promise<Map<string, CatalogExternalCourse["lessons"]>> {
   const result = await db
     .prepare(
-      `SELECT l.course_slug, l.lesson_id, li.title
+      `SELECT l.course_slug, l.lesson_id, l.allow_mirror, li.title
        FROM external_course_lessons l
        LEFT JOIN external_course_lesson_i18n li
          ON li.course_slug = l.course_slug AND li.lesson_id = l.lesson_id AND li.locale = ?
@@ -186,7 +188,11 @@ async function fetchLessonsForAllExternalCourses(
   const bySlug = new Map<string, CatalogExternalCourse["lessons"]>();
   for (const row of result.results ?? []) {
     const list = bySlug.get(row.course_slug) ?? [];
-    list.push({ id: row.lesson_id, title: row.title ?? row.lesson_id });
+    list.push({
+      id: row.lesson_id,
+      title: row.title ?? row.lesson_id,
+      allowMirror: row.allow_mirror !== 0,
+    });
     bySlug.set(row.course_slug, list);
   }
   return bySlug;

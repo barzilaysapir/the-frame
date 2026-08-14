@@ -55,6 +55,8 @@ export interface CatalogInstructor {
 export interface CatalogExternalCourseLesson {
   id: string;
   title: string;
+  /** False hides the player mirror control. Defaults to true. */
+  allowMirror: boolean;
 }
 
 export interface CatalogExternalCourse {

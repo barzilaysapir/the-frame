@@ -137,6 +137,7 @@ export function CourseLessonPlayer({
       title={lesson.title}
       chapters={[]}
       labels={playerLabels}
+      showMirror={lesson.allowMirror}
     />
   );
 }
