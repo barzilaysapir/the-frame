@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { Check, ChevronDown, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,6 +43,9 @@ export function RoutineFilterMultiSelect({
 }: RoutineFilterMultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const idPrefix = useId();
+  const listRef = useRef<HTMLUListElement>(null);
 
   const selectedOptions = options.filter((option) => option.active);
   const hasActive = selectedOptions.length > 0;
@@ -51,66 +54,121 @@ export function RoutineFilterMultiSelect({
   const filteredOptions = normalizedQuery
     ? options.filter((option) => option.label.toLowerCase().includes(normalizedQuery))
     : options;
+  // Index 0 is the "All" row; option rows follow at 1..N, so arrow/Enter
+  // navigation and mouse hover can share one flat index.
+  const navCount = filteredOptions.length + 1;
+
+  useEffect(() => {
+    if (!isOpen) return;
+    listRef.current
+      ?.querySelector(`[data-nav-index="${highlightedIndex}"]`)
+      ?.scrollIntoView({ block: "nearest" });
+  }, [highlightedIndex, isOpen]);
+
+  function activateHighlighted() {
+    if (highlightedIndex === 0) {
+      onClear();
+      return;
+    }
+    const option = filteredOptions[highlightedIndex - 1];
+    if (option) onToggle(option.value);
+  }
+
+  function handleSearchKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        setHighlightedIndex((index) => Math.min(index + 1, navCount - 1));
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        setHighlightedIndex((index) => Math.max(index - 1, 0));
+        break;
+      case "Home":
+        event.preventDefault();
+        setHighlightedIndex(0);
+        break;
+      case "End":
+        event.preventDefault();
+        setHighlightedIndex(navCount - 1);
+        break;
+      case "Enter":
+        event.preventDefault();
+        activateHighlighted();
+        break;
+      default:
+        break;
+    }
+  }
 
   return (
     <Popover.Root
       open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open);
-        if (open) setQuery("");
+        if (open) {
+          setQuery("");
+          setHighlightedIndex(0);
+        }
       }}
     >
-      <div
-        className={cn(
-          "flex w-full flex-wrap items-center gap-1.5 rounded-full border py-1 ps-1 pe-1 transition-colors",
-          hasActive
-            ? "border-frame-cyan/70 bg-frame-cyan/15"
-            : "border-frame-border bg-frame-bg/60 hover:border-white/40",
-        )}
-      >
-        {hasActive ? (
-          <>
-            {selectedOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => onToggle(option.value)}
-                aria-label={optionRemoveAriaLabel(option.label)}
-                className="inline-flex max-w-[9rem] items-center gap-1 rounded-full bg-frame-cyan/20 ps-2.5 pe-1.5 py-1 text-xs font-medium text-frame-cyan transition-colors hover:bg-frame-cyan/30"
-              >
-                <span className="truncate">{option.label}</span>
-                <X aria-hidden="true" className="h-3 w-3 shrink-0" />
-              </button>
-            ))}
+      {/* Anchor, not just Trigger: the trigger button (the chevron below) shifts
+          around as chips wrap to multiple lines, which would otherwise make the
+          popover position itself off that moving target instead of the stable
+          container. */}
+      <Popover.Anchor asChild>
+        <div
+          className={cn(
+            "flex w-full flex-wrap items-center gap-1.5 border py-1 ps-1 pe-1 transition-colors",
+            hasActive
+              ? "rounded-2xl border-frame-cyan/70 bg-frame-cyan/15"
+              : "rounded-full border-frame-border bg-frame-bg/60 hover:border-white/40",
+          )}
+        >
+          {hasActive ? (
+            <>
+              {selectedOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => onToggle(option.value)}
+                  aria-label={optionRemoveAriaLabel(option.label)}
+                  className="inline-flex max-w-[9rem] items-center gap-1 rounded-full bg-frame-cyan/20 ps-2.5 pe-1.5 py-1 text-xs font-medium text-frame-cyan transition-colors hover:bg-frame-cyan/30"
+                >
+                  <span className="truncate">{option.label}</span>
+                  <X aria-hidden="true" className="h-3 w-3 shrink-0" />
+                </button>
+              ))}
+              <Popover.Trigger asChild>
+                <button
+                  type="button"
+                  aria-label={label}
+                  className="ms-auto shrink-0 rounded-full p-1.5 text-frame-cyan transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70"
+                >
+                  <ChevronDown
+                    aria-hidden="true"
+                    className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")}
+                  />
+                </button>
+              </Popover.Trigger>
+            </>
+          ) : (
             <Popover.Trigger asChild>
               <button
                 type="button"
                 aria-label={label}
-                className="ms-auto shrink-0 rounded-full p-1.5 text-frame-cyan transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70"
+                className="flex w-full items-center justify-between gap-2 px-3 py-1 text-start text-sm font-medium text-frame-silver transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70"
               >
+                <span className="truncate">{placeholder}</span>
                 <ChevronDown
                   aria-hidden="true"
-                  className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")}
+                  className={cn("h-4 w-4 shrink-0 transition-transform", isOpen && "rotate-180")}
                 />
               </button>
             </Popover.Trigger>
-          </>
-        ) : (
-          <Popover.Trigger asChild>
-            <button
-              type="button"
-              aria-label={label}
-              className="flex w-full items-center justify-between gap-2 px-3 py-1 text-start text-sm font-medium text-frame-silver transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frame-cyan/70"
-            >
-              <span className="truncate">{placeholder}</span>
-              <ChevronDown
-                aria-hidden="true"
-                className={cn("h-4 w-4 shrink-0 transition-transform", isOpen && "rotate-180")}
-              />
-            </button>
-          </Popover.Trigger>
-        )}
-      </div>
+          )}
+        </div>
+      </Popover.Anchor>
 
       {/* Portaled to document.body so it isn't clipped by page content and gets Radix's collision-aware positioning + focus/dismiss handling for free. */}
       <Popover.Portal>
@@ -128,23 +186,41 @@ export function RoutineFilterMultiSelect({
               <input
                 autoFocus
                 type="text"
+                role="combobox"
+                aria-expanded="true"
+                aria-controls={`${idPrefix}-listbox`}
+                aria-activedescendant={`${idPrefix}-option-${highlightedIndex}`}
                 value={query}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setHighlightedIndex(0);
+                }}
+                onKeyDown={handleSearchKeyDown}
                 placeholder={searchPlaceholder}
                 aria-label={searchAriaLabel}
                 className="w-full rounded-lg bg-transparent py-1.5 ps-7 pe-2 text-sm text-white placeholder:text-frame-muted focus:outline-none"
               />
             </div>
           ) : null}
-          <ul role="listbox" aria-multiselectable="true" className="max-h-60 overflow-y-auto py-1">
+          <ul
+            ref={listRef}
+            id={`${idPrefix}-listbox`}
+            role="listbox"
+            aria-multiselectable="true"
+            className="max-h-60 overflow-y-auto py-1"
+          >
             <li role="none">
               <button
                 type="button"
+                id={`${idPrefix}-option-0`}
+                data-nav-index={0}
                 onClick={onClear}
+                onMouseEnter={() => setHighlightedIndex(0)}
                 role="option"
                 aria-selected={!hasActive}
                 className={cn(
-                  "flex w-full items-center gap-2 px-3 py-2 text-start text-sm transition-colors hover:bg-white/5",
+                  "flex w-full items-center gap-2 px-3 py-2 text-start text-sm transition-colors",
+                  highlightedIndex === 0 && "bg-white/10",
                   !hasActive ? "text-frame-cyan" : "text-frame-silver",
                 )}
               >
@@ -160,15 +236,19 @@ export function RoutineFilterMultiSelect({
                 {noMatchesLabel}
               </li>
             ) : (
-              filteredOptions.map((option) => (
+              filteredOptions.map((option, index) => (
                 <li key={option.value} role="none">
                   <button
                     type="button"
+                    id={`${idPrefix}-option-${index + 1}`}
+                    data-nav-index={index + 1}
                     onClick={() => onToggle(option.value)}
+                    onMouseEnter={() => setHighlightedIndex(index + 1)}
                     role="option"
                     aria-selected={option.active}
                     className={cn(
-                      "flex w-full items-center gap-2 px-3 py-2 text-start text-sm transition-colors hover:bg-white/5",
+                      "flex w-full items-center gap-2 px-3 py-2 text-start text-sm transition-colors",
+                      highlightedIndex === index + 1 && "bg-white/10",
                       option.active ? "text-frame-cyan" : "text-white/80",
                     )}
                   >

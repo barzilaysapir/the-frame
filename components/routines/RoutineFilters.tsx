@@ -42,7 +42,7 @@ export function RoutineFilters({
   return (
     <Panel as="section" aria-label={ariaLabel} className="mb-10 bg-frame-panel/40">
       {/* No overflow-hidden here — the dropdowns below need to escape this container's bounds. */}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-x-6 gap-y-3 px-4 py-3.5 sm:px-5 sm:py-4">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] items-start gap-x-6 gap-y-3 px-4 py-3.5 sm:px-5 sm:py-4">
         {sections.map((section) =>
           section.type === "multiselect" ? (
             <RoutineFilterMultiSelect
