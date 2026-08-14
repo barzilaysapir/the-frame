@@ -68,3 +68,13 @@ Details: `.cursor/rules/`
 
 - Locale routing uses Edge **`middleware.ts`** (not Next 16 `proxy.ts`). `@opennextjs/cloudflare@1.20.x` still rejects Node.js proxy with “Node.js middleware is not currently supported”; switch back when OpenNext ships proxy support (see opennextjs-cloudflare#1309).
 - Firebase `NEXT_PUBLIC_*` must be set in Cloudflare **Build variables and secrets** (Workers Builds) *and* as Worker **runtime** vars/secrets. `.env.local` is local-only (gitignored) and does not reach production. Deploy scripts use `--keep-vars` so dashboard vars are not wiped.
+
+# Cursor Cloud specific instructions
+
+Dependency install happens automatically on VM startup (`npm install`). Standard commands are in `package.json` scripts (`dev`, `lint`, `typecheck`, `test`, `build`) — use those; don't duplicate them here.
+
+Non-obvious caveats for running in the cloud VM:
+
+- **Run the app with `npm run dev`** (Next.js dev on `http://localhost:3000`). Its `predev` hook applies the local D1 migrations first, so the catalog is served from real seeded D1 — confirm with `GET /api/v1/health` returning `"source":"d1"` (`"mock"` means D1 wasn't seeded). No manual `db:migrate:local` step is normally needed before `dev`.
+- **The homepage `/` 307-redirects to a locale** (`/he` default, or `/en`) via Edge `middleware.ts`; hit `/en` or `/he` directly when testing.
+- **Firebase is intentionally NOT configured here** (no `NEXT_PUBLIC_FIREBASE_*` secrets). The public catalog — home, routines, instructors, styles, routine detail, `/api/v1/*` catalog endpoints — works fully. Sign-in-gated flows do not: the routine-page "Start learning"/get-access CTA shows a generic "Something went wrong" error when signed out + Firebase unconfigured (expected, see `components/checkout/GetAccessButton.tsx`), and `/api/v1/me*` is unusable. To view the checkout page anyway, navigate directly to `/{locale}/checkout/{slug}` — it renders plans plus a payment placeholder. To test auth/library/favorites end-to-end, add the `NEXT_PUBLIC_FIREBASE_*` secrets.
