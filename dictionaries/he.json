@@ -40,8 +40,8 @@
     "resultOne": "תוצאה אחת",
     "resultNone": "אין תוצאות",
     "resultMany": "{count} תוצאות",
-    "libraryLoadedStatus": "{shown} מתוך {total} קומבינציות מוצגות",
-    "empty": "אין קומבינציות להצגה בספרייה כרגע.",
+    "libraryLoadedStatus": "{shown} מתוך {total} פריטים מוצגים",
+    "empty": "אין פריטים להצגה בספרייה כרגע.",
     "viewRoutine": "צפו בקומבינציה",
     "taughtBy": "בהנחיית {name}",
     "favoriteAdd": "הוספה למועדפים",
@@ -73,13 +73,13 @@
     "browseAria": "עיינו בקומבינציות בסגנון {name}"
   },
   "externalCourses": {
-    "title": "קורסים נוספים",
+    "tag": "קורס חיצוני",
     "comingSoonBadge": "בקרוב",
     "comingSoonNote": "הקורס הזה בהפקה ויעלה בקרוב ל-The Frame.",
     "providerPrefix": "מבית {provider}",
     "cta": "לצפייה בקורס",
     "linkAria": "{title} מבית {provider}",
-    "back": "חזרה לקורסים נוספים"
+    "back": "חזרה לספרייה"
   },
   "about": {
     "metaTitle": "אודות",

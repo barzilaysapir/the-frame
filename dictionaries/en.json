@@ -40,8 +40,8 @@
     "resultOne": "1 result",
     "resultNone": "No results",
     "resultMany": "{count} results",
-    "libraryLoadedStatus": "Showing {shown} of {total} combinations",
-    "empty": "No combinations to show in the library right now.",
+    "libraryLoadedStatus": "Showing {shown} of {total} items",
+    "empty": "No items to show in the library right now.",
     "viewRoutine": "View combination",
     "taughtBy": "Taught by {name}",
     "favoriteAdd": "Add to favorites",
@@ -73,13 +73,13 @@
     "browseAria": "Browse {name} combinations"
   },
   "externalCourses": {
-    "title": "More courses",
+    "tag": "External course",
     "comingSoonBadge": "Coming soon",
     "comingSoonNote": "This course is in production and will be available on The Frame soon.",
     "providerPrefix": "by {provider}",
     "cta": "View course",
     "linkAria": "{title} by {provider}",
-    "back": "Back to more courses"
+    "back": "Back to the library"
   },
   "about": {
     "metaTitle": "About",

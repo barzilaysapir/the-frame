@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Locale } from "@/lib/i18n/config";
 import { routinesFilterHref } from "@/lib/routines";
-import type { CatalogRoutine } from "@/lib/server/catalog/types";
+import type { LibraryItem } from "@/components/routines/libraryItem";
 
 function toggleSelection(selected: string[], value: string): string[] {
   return selected.includes(value)
@@ -13,16 +13,16 @@ function toggleSelection(selected: string[], value: string): string[] {
 
 interface UseRoutineFiltersArgs {
   locale: Locale;
-  allRoutines: CatalogRoutine[];
+  allItems: LibraryItem[];
   initialInstructors: string[];
   initialStyles: string[];
   initialLevels: string[];
 }
 
-/** Owns the three filter selections, the filtered routine list, and keeps the URL in sync. */
+/** Owns the filter selections, the filtered library item list, and keeps the URL in sync. */
 export function useRoutineFilters({
   locale,
-  allRoutines,
+  allItems,
   initialInstructors,
   initialStyles,
   initialLevels,
@@ -31,21 +31,27 @@ export function useRoutineFilters({
   const [selectedStyles, setSelectedStyles] = useState(initialStyles);
   const [selectedLevels, setSelectedLevels] = useState(initialLevels);
 
-  const filteredRoutines = useMemo(() => {
-    let routines = allRoutines;
+  const filteredItems = useMemo(() => {
+    let items = allItems;
+    // Instructor/style/level only exist on routines — an external course
+    // never matches, so it naturally drops out once any of these is active.
     if (selectedInstructors.length > 0) {
-      routines = routines.filter((routine) =>
-        selectedInstructors.includes(routine.instructorSlug),
+      items = items.filter(
+        (item) => item.kind === "routine" && selectedInstructors.includes(item.routine.instructorSlug),
       );
     }
     if (selectedStyles.length > 0) {
-      routines = routines.filter((routine) => selectedStyles.includes(routine.style));
+      items = items.filter(
+        (item) => item.kind === "routine" && selectedStyles.includes(item.routine.style),
+      );
     }
     if (selectedLevels.length > 0) {
-      routines = routines.filter((routine) => selectedLevels.includes(routine.level));
+      items = items.filter(
+        (item) => item.kind === "routine" && selectedLevels.includes(item.routine.level),
+      );
     }
-    return routines;
-  }, [allRoutines, selectedInstructors, selectedStyles, selectedLevels]);
+    return items;
+  }, [allItems, selectedInstructors, selectedStyles, selectedLevels]);
 
   // Raw History API, not next/navigation's router — a router-driven update
   // would re-invoke the Server Component, the exact round-trip this avoids.
@@ -66,7 +72,7 @@ export function useRoutineFilters({
     selectedInstructors,
     selectedStyles,
     selectedLevels,
-    filteredRoutines,
+    filteredItems,
     hasActiveFilters,
     toggleInstructor: (value: string) =>
       setSelectedInstructors((prev) => toggleSelection(prev, value)),

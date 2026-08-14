@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
+import { ExternalCourseCard } from "@/components/ExternalCourseCard";
 import { RoutineCard } from "@/components/routines/RoutineCard";
 import { RoutineFilters, type RoutineFilterSection } from "@/components/routines/RoutineFilters";
 import { useInfiniteReveal } from "@/components/routines/useInfiniteReveal";
 import { useRoutineFilters } from "@/components/routines/useRoutineFilters";
+import type { LibraryItem } from "@/components/routines/libraryItem";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage, getDictionarySync } from "@/lib/i18n/get-dictionary";
 import { localizeLevel } from "@/lib/i18n/localize";
@@ -13,7 +15,7 @@ import type { CatalogInstructor, CatalogRoutine } from "@/lib/server/catalog/typ
 
 interface RoutineLibraryProps {
   locale: Locale;
-  allRoutines: CatalogRoutine[];
+  allItems: LibraryItem[];
   instructors: CatalogInstructor[];
   styles: DanceStyleKey[];
   levels: LevelKey[];
@@ -26,7 +28,7 @@ interface RoutineLibraryProps {
 /** Filters/paginates the already-fetched catalog client-side, instead of navigating per click. */
 export function RoutineLibrary({
   locale,
-  allRoutines,
+  allItems,
   instructors,
   styles,
   levels,
@@ -39,13 +41,13 @@ export function RoutineLibrary({
 
   const filters = useRoutineFilters({
     locale,
-    allRoutines,
+    allItems,
     initialInstructors,
     initialStyles,
     initialLevels,
   });
   const { visibleCount, hasMore, sentinelRef, reset: resetVisibleCount } = useInfiniteReveal(
-    filters.filteredRoutines.length,
+    filters.filteredItems.length,
     pageSize,
   );
 
@@ -85,13 +87,22 @@ export function RoutineLibrary({
     [instructors],
   );
 
+  const routinesForLabels = useMemo(
+    () =>
+      allItems.reduce<CatalogRoutine[]>((acc, item) => {
+        if (item.kind === "routine") acc.push(item.routine);
+        return acc;
+      }, []),
+    [allItems],
+  );
+
   const teacherOptions = instructors.map((instructor) => ({
     label: instructor.name,
     value: instructor.slug,
     active: filters.selectedInstructors.includes(instructor.slug),
   }));
   const styleOptions = styles.map((item) => ({
-    label: allRoutines.find((routine) => routine.style === item)?.styleLabel ?? item,
+    label: routinesForLabels.find((routine) => routine.style === item)?.styleLabel ?? item,
     value: item,
     active: filters.selectedStyles.includes(item),
   }));
@@ -143,7 +154,7 @@ export function RoutineLibrary({
     },
   ];
 
-  const total = filters.filteredRoutines.length;
+  const total = filters.filteredItems.length;
   const resultLabel =
     total === 0
       ? dict.tutorials.resultNone
@@ -151,7 +162,7 @@ export function RoutineLibrary({
         ? dict.tutorials.resultOne
         : formatMessage(dict.tutorials.resultMany, { count: total });
 
-  const visibleRoutines = filters.filteredRoutines.slice(0, visibleCount);
+  const visibleItems = filters.filteredItems.slice(0, visibleCount);
 
   return (
     <>
@@ -164,30 +175,45 @@ export function RoutineLibrary({
         sections={sections}
       />
 
-      {visibleRoutines.length > 0 ? (
+      {visibleItems.length > 0 ? (
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {visibleRoutines.map((routine, index) => (
-              <RoutineCard
-                key={routine.slug}
-                routine={routine}
-                locale={locale}
-                instructorName={instructorNameBySlug[routine.instructorSlug]}
-                priority={index < 3}
-                labels={{
-                  viewRoutine: dict.tutorials.viewRoutine,
-                  taughtBy: dict.tutorials.taughtBy,
-                  favoriteAdd: dict.tutorials.favoriteAdd,
-                  favoriteRemove: dict.tutorials.favoriteRemove,
-                }}
-              />
-            ))}
+            {visibleItems.map((item, index) =>
+              item.kind === "routine" ? (
+                <RoutineCard
+                  key={item.routine.slug}
+                  routine={item.routine}
+                  locale={locale}
+                  instructorName={instructorNameBySlug[item.routine.instructorSlug]}
+                  priority={index < 3}
+                  labels={{
+                    viewRoutine: dict.tutorials.viewRoutine,
+                    taughtBy: dict.tutorials.taughtBy,
+                    favoriteAdd: dict.tutorials.favoriteAdd,
+                    favoriteRemove: dict.tutorials.favoriteRemove,
+                  }}
+                />
+              ) : (
+                <ExternalCourseCard
+                  key={item.course.slug}
+                  course={item.course}
+                  locale={locale}
+                  labels={{
+                    externalCourseTag: dict.externalCourses.tag,
+                    comingSoonBadge: dict.externalCourses.comingSoonBadge,
+                    providerPrefix: dict.externalCourses.providerPrefix,
+                    cta: dict.externalCourses.cta,
+                    linkAria: dict.externalCourses.linkAria,
+                  }}
+                />
+              ),
+            )}
           </div>
           {hasMore ? <div ref={sentinelRef} aria-hidden="true" className="h-1" /> : null}
           {/* Announces newly-revealed cards to screen readers as visibleCount grows. */}
           <p aria-live="polite" className="sr-only">
             {formatMessage(dict.tutorials.libraryLoadedStatus, {
-              shown: visibleRoutines.length,
+              shown: visibleItems.length,
               total,
             })}
           </p>
