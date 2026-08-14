@@ -76,10 +76,16 @@
     "tag": "External course",
     "comingSoonBadge": "Coming soon",
     "comingSoonNote": "This course is in production and will be available on The Frame soon.",
+    "availableBadge": "Available now",
     "providerPrefix": "by {provider}",
     "cta": "View course",
     "linkAria": "{title} by {provider}",
-    "back": "Back to the library"
+    "back": "Back to the library",
+    "lessonsHeading": "Lessons",
+    "signInPrompt": "Sign in to watch this lesson.",
+    "signInCta": "Sign in with Google",
+    "loadingVideo": "Loading video…",
+    "videoUnavailable": "Couldn't load this video. Try refreshing the page."
   },
   "about": {
     "metaTitle": "About",

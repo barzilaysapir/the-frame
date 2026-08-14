@@ -527,6 +527,18 @@
       "title": "Dancehall Vibes 101",
       "tagline": "Foundational dancehall bounce and vibe",
       "description": "An entry-level dancehall course building bounce, vibe, and musicality for total beginners."
+    },
+    "gisha-gmisha-foundations": {
+      "title": "Gisha Gmisha - Foundations Course",
+      "tagline": "",
+      "description": "",
+      "lessons": {
+        "warmup": { "title": "Warm-up" },
+        "head-neck": { "title": "Head & neck" },
+        "shoulder-blades": { "title": "Shoulder blades" },
+        "shoulder-blades-physio-exercise": { "title": "Shoulder blades physio exercise" },
+        "spine-abs": { "title": "Spine & abs" }
+      }
     }
   }
 }

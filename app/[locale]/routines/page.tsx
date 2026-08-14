@@ -62,11 +62,16 @@ export default async function RoutinesPage({ params, searchParams }: RoutinesPag
   // routines currently exist, so a level with 0 routines today still shows.
   const levels = LEVEL_ORDER;
 
-  // External courses lack posters/style/level, so they're appended after all
-  // routines rather than interleaved — keeps the image-heavy grid coherent.
+  // A course with real, watchable lessons is content, same as a routine — it
+  // leads the grid rather than sitting in an external-courses cluster.
+  // Still-mock "coming soon" stubs (no lessons yet, nothing to watch) stay
+  // appended after routines.
+  const availableCourses = externalCourses.filter((course) => course.lessons.length > 0);
+  const comingSoonCourses = externalCourses.filter((course) => course.lessons.length === 0);
   const allItems: LibraryItem[] = [
+    ...availableCourses.map((course) => ({ kind: "external" as const, course })),
     ...allRoutines.map((routine) => ({ kind: "routine" as const, routine })),
-    ...externalCourses.map((course) => ({ kind: "external" as const, course })),
+    ...comingSoonCourses.map((course) => ({ kind: "external" as const, course })),
   ];
 
   const initialInstructors = instructorSlug ? instructorSlug.split(",").filter(Boolean) : [];

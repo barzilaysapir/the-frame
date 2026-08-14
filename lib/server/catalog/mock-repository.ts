@@ -15,6 +15,7 @@ import "server-only";
 import type { Locale } from "@/lib/i18n/config";
 import {
   localizeExternalCourse,
+  localizeExternalCourseLessonTitle,
   localizeInstructor,
   localizeRoutine,
 } from "@/lib/i18n/localize";
@@ -113,6 +114,12 @@ function toCatalogExternalCourse(
     tagline: localized.tagline,
     description: localized.description,
     priceDisplay: course.priceDisplay,
+    coverImage: course.coverImage,
+    lessons: (course.lessons ?? []).map((lesson) => ({
+      id: lesson.id,
+      title: localizeExternalCourseLessonTitle(locale, course.slug, lesson.id),
+      allowMirror: lesson.allowMirror !== false,
+    })),
   };
 }
 
@@ -174,5 +181,11 @@ export const mockCatalogRepository: CatalogRepository = {
 
   async getExternalCourse(locale, slug) {
     return toCatalogExternalCourse(locale, slug);
+  },
+
+  async getExternalCourseLessonSource(courseSlug, lessonId) {
+    const course = getExternalCourseBySlug(courseSlug);
+    const lesson = course?.lessons?.find((item) => item.id === lessonId);
+    return lesson ? { r2Key: lesson.r2Key } : null;
   },
 };
