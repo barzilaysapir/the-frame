@@ -5,6 +5,7 @@ import { RoutineCard } from "@/components/routines/RoutineCard";
 import { RoutineFilters, type RoutineFilterSection } from "@/components/routines/RoutineFilters";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage, getDictionarySync } from "@/lib/i18n/get-dictionary";
+import { localizeLevel } from "@/lib/i18n/localize";
 import { routinesFilterHref, type DanceStyleKey, type LevelKey } from "@/lib/routines";
 import type { CatalogInstructor, CatalogRoutine } from "@/lib/server/catalog/types";
 
@@ -128,7 +129,7 @@ export function RoutineLibrary({
     active: selectedStyles.includes(item),
   }));
   const levelOptions = levels.map((item) => ({
-    label: allRoutines.find((routine) => routine.level === item)?.levelLabel ?? item,
+    label: localizeLevel(locale, item),
     value: item,
     active: selectedLevels.includes(item),
   }));

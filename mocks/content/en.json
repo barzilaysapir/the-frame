@@ -10,9 +10,10 @@
     "voguing": "Voguing"
   },
   "levels": {
+    "beginner": "Beginner",
     "intermediate": "Intermediate",
     "advanced": "Advanced",
-    "all-levels": "All levels"
+    "all-levels": "Open level"
   },
   "chapters": {
     "full-performance": "Full performance",

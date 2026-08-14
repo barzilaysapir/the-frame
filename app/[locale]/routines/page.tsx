@@ -4,6 +4,7 @@ import { ExternalCourseCard } from "@/components/ExternalCourseCard";
 import { RoutineLibrary } from "@/components/routines/RoutineLibrary";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
+import { LEVEL_ORDER } from "@/lib/routines";
 import { resolveCatalog } from "@/lib/server/catalog";
 
 // NOTE: this route reads `searchParams` only to seed the *initial* filter
@@ -57,7 +58,9 @@ export default async function RoutinesPage({ params, searchParams }: RoutinesPag
   ]);
 
   const styles = [...new Set(allRoutines.map((routine) => routine.style))];
-  const levels = [...new Set(allRoutines.map((routine) => routine.level))];
+  // Fixed, always-shown, canonically ordered — not derived from which
+  // routines currently exist, so a level with 0 routines today still shows.
+  const levels = LEVEL_ORDER;
 
   const initialInstructors = instructorSlug ? instructorSlug.split(",").filter(Boolean) : [];
   const initialStyles = style ? style.split(",").filter(Boolean) : [];

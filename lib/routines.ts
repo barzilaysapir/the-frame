@@ -14,7 +14,8 @@ export type DanceStyleKey =
   | "afro"
   | "dancehall"
   | "voguing";
-export type LevelKey = "intermediate" | "advanced" | "all-levels";
+export type LevelKey = "beginner" | "intermediate" | "advanced" | "all-levels";
+export const LEVEL_ORDER: LevelKey[] = ["beginner", "intermediate", "advanced", "all-levels"];
 export type TagKey =
   | DanceStyleKey
   | "performance"
