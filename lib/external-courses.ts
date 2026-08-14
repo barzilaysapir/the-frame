@@ -7,6 +7,12 @@
  * Not third-party/affiliate — replace with real course records when ready.
  */
 
+interface ExternalCourseLessonRecord {
+  id: string;
+  /** Object key inside the private `the-frame-class-videos` R2 bucket — never sent to the client, only read server-side to stream/sign playback. */
+  r2Key: string;
+}
+
 export interface ExternalCourseRecord {
   slug: string;
   /** MOCK creator/series name — replace with the real one when ready. */
@@ -15,6 +21,12 @@ export interface ExternalCourseRecord {
   priceDisplay: string;
   /** Controls display order; lower sorts first. */
   sortOrder: number;
+  /**
+   * Lessons with real, hosted video (gated behind login — see
+   * lib/server/course-videos.ts). Array order is display order. Omitted/empty
+   * for the still-mock "coming soon" listings.
+   */
+  lessons?: ExternalCourseLessonRecord[];
 }
 
 /** @textScraped scripts/verify-mock-db-parity.ts may later locate this array by its literal `export const EXTERNAL_COURSES...` source text — keep it exported. */
@@ -55,6 +67,20 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
     provider: "Dancehall Society",
     priceDisplay: "₪69/mo",
     sortOrder: 5,
+  },
+  {
+    // Real course — first one actually being implemented (not a mock
+    // "coming soon" stub). Price is a placeholder until confirmed.
+    slug: "gisha-gmisha-foundations",
+    provider: "גישה גמישה",
+    priceDisplay: "מחיר בקרוב",
+    sortOrder: 6,
+    lessons: [
+      {
+        id: "warmup",
+        r2Key: "external-courses/gisha-gmisha/foundations/warmup.mp4",
+      },
+    ],
   },
 ];
 

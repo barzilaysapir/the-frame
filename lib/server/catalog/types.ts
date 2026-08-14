@@ -51,6 +51,12 @@ export interface CatalogInstructor {
   routineCount: number;
 }
 
+/** Public-facing lesson metadata — deliberately excludes the R2 object key (server-only, resolved via `CatalogRepository.getExternalCourseLessonSource`). */
+export interface CatalogExternalCourseLesson {
+  id: string;
+  title: string;
+}
+
 export interface CatalogExternalCourse {
   slug: string;
   title: string;
@@ -58,6 +64,7 @@ export interface CatalogExternalCourse {
   tagline: string;
   description: string;
   priceDisplay: string;
+  lessons: CatalogExternalCourseLesson[];
 }
 
 export type CatalogSource = "d1" | "mock";

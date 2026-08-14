@@ -73,10 +73,16 @@
     "title": "קורסים נוספים",
     "comingSoonBadge": "בקרוב",
     "comingSoonNote": "הקורס הזה בהפקה ויעלה בקרוב ל-The Frame.",
+    "availableBadge": "זמין עכשיו",
     "providerPrefix": "מבית {provider}",
     "cta": "לצפייה בקורס",
     "linkAria": "{title} מבית {provider}",
-    "back": "חזרה לקורסים נוספים"
+    "back": "חזרה לקורסים נוספים",
+    "lessonsHeading": "שיעורים",
+    "signInPrompt": "יש להתחבר כדי לצפות בשיעור הזה.",
+    "signInCta": "התחברות עם גוגל",
+    "loadingVideo": "טוען וידאו…",
+    "videoUnavailable": "לא ניתן לטעון את הווידאו הזה. נסו לרענן את הדף."
   },
   "about": {
     "metaTitle": "אודות",

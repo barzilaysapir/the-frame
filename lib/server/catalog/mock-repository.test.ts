@@ -208,4 +208,47 @@ describe("mockCatalogRepository.getExternalCourse", () => {
     );
     expect(course).toBeNull();
   });
+
+  it("includes lessons (with localized titles, no r2Key leaked) for a course that has real video content", async () => {
+    const all = await mockCatalogRepository.listExternalCourses("en");
+    const withLessons = all.find((course) => course.lessons.length > 0);
+    expect(withLessons).toBeDefined();
+    expect(
+      withLessons!.lessons.every(
+        (lesson) =>
+          lesson.id.length > 0 &&
+          lesson.title.length > 0 &&
+          !("r2Key" in lesson),
+      ),
+    ).toBe(true);
+  });
+
+  it("returns an empty lessons array for a still-mock 'coming soon' course", async () => {
+    const all = await mockCatalogRepository.listExternalCourses("en");
+    const withoutLessons = all.find((course) => course.lessons.length === 0);
+    expect(withoutLessons).toBeDefined();
+  });
+});
+
+describe("mockCatalogRepository.getExternalCourseLessonSource", () => {
+  it("returns the r2Key for a known course/lesson pair", async () => {
+    const all = await mockCatalogRepository.listExternalCourses("en");
+    const withLessons = all.find((course) => course.lessons.length > 0);
+    expect(withLessons).toBeDefined();
+    const lessonId = withLessons!.lessons[0].id;
+
+    const source = await mockCatalogRepository.getExternalCourseLessonSource(
+      withLessons!.slug,
+      lessonId,
+    );
+    expect(source?.r2Key.length).toBeGreaterThan(0);
+  });
+
+  it("returns null for an unknown lesson id", async () => {
+    const source = await mockCatalogRepository.getExternalCourseLessonSource(
+      "definitely-not-a-real-slug",
+      "definitely-not-a-real-lesson",
+    );
+    expect(source).toBeNull();
+  });
 });

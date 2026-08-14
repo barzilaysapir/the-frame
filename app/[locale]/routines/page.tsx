@@ -299,6 +299,7 @@ export default async function RoutinesPage({
                 locale={locale}
                 labels={{
                   comingSoonBadge: dict.externalCourses.comingSoonBadge,
+                  availableBadge: dict.externalCourses.availableBadge,
                   providerPrefix: dict.externalCourses.providerPrefix,
                   cta: dict.externalCourses.cta,
                   linkAria: dict.externalCourses.linkAria,
