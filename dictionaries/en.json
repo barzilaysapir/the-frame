@@ -88,7 +88,7 @@
     "signInCta": "Sign in with Google",
     "loadingVideo": "Loading video…",
     "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
-    "pricingNote": "This course, or the course plus combination credits · choose at checkout",
+    "pricingNote": "This course, or the course plus extra credits at a pack discount · choose at checkout",
     "paymentBody": "One-time payment for access to this course.",
     "guarantees": [
       "Access to every lesson in this course",
@@ -179,8 +179,8 @@
     "subtitle": "Choose a plan and complete payment.",
     "backToRoutine": "Back to combination",
     "backToCourse": "Back to course",
-    "courseSubtitle": "The course alone, or the course plus combination credits.",
-    "creditExplainer": "1 credit = ₪1. Spend credits on combinations in the library.",
+    "courseSubtitle": "The course alone, or the course plus extra credits at a pack discount.",
+    "creditExplainer": "1 credit = ₪1 in your wallet. You can spend credits on classes and courses on the site. We don’t lock future prices — this offer only discounts the credits you buy now.",
     "loading": "Loading…",
     "paymentTitle": "Payment",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
@@ -217,7 +217,7 @@
       },
       "course": {
         "title": "This course only",
-        "description": "Pay for this course. No combination credits included.",
+        "description": "Pay for this course. No extra credits.",
         "priceNote": "course only",
         "paymentBody": "One-time payment for this course.",
         "guarantees": [
@@ -228,16 +228,17 @@
       },
       "courseCredits": {
         "title": "Course + {count} credits",
-        "description": "This course, plus credits for combinations in the library. 1 credit = ₪1.",
-        "priceNote": "save ₪{saved}",
-        "paymentBody": "One-time payment for the course plus {count} credits (1 credit = ₪1).",
+        "description": "This course, plus {count} credits (1 credit = ₪1). Catalog prices can change; the discount is only on this credit pack.",
+        "priceNote": "save ₪{saved} on credits",
+        "paymentBody": "One-time payment for the course plus {count} credits at a pack discount. 1 credit = ₪1. Future class and course prices are not locked.",
         "lineCourse": "This course — ₪{coursePrice}",
         "lineCredits": "{count} credits — ₪{creditsList}",
-        "lineDiscount": "Buying credits together — save ₪{saved}",
+        "lineDiscount": "Discount on this credit pack — save ₪{saved}",
         "guarantees": [
           "Every lesson in this course",
           "{count} credits (1 credit = ₪1)",
-          "Credits are cheaper when you buy more at once",
+          "Pack discount on the credits you buy now",
+          "Future class and course prices are not locked",
           "7-day money-back guarantee"
         ]
       }
