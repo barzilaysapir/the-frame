@@ -26,9 +26,6 @@ interface RoutineFilterMultiSelectProps {
   options: RoutineFilterMultiSelectOption[];
   /** Toggles a single option on/off within the current selection. */
   onToggle: (value: string) => void;
-  /** Clears this filter dimension entirely. */
-  onClear: () => void;
-  allLabel: string;
   placeholder: string;
   optionRemoveAriaLabel: (optionLabel: string) => string;
   /** Shows a search box above the option list. Defaults to true; set false for short option lists (style/level). */
@@ -42,8 +39,6 @@ export function RoutineFilterMultiSelect({
   label,
   options,
   onToggle,
-  onClear,
-  allLabel,
   placeholder,
   optionRemoveAriaLabel,
   showSearch = true,
@@ -58,6 +53,11 @@ export function RoutineFilterMultiSelect({
   const listRef = useRef<HTMLUListElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
   const measureRowRef = useRef<HTMLDivElement>(null);
+  // Snapshot of value -> position, selected options first, taken once when
+  // the dropdown opens. Toggling options afterward doesn't recompute this,
+  // so nothing moves out from under the cursor mid-session (that reordering
+  // was what caused the whole page to jump scroll position earlier).
+  const [openOrder, setOpenOrder] = useState<Map<string, number>>(new Map());
 
   const selectedOptions = options.filter((option) => option.active);
   const hasActive = selectedOptions.length > 0;
@@ -104,12 +104,13 @@ export function RoutineFilterMultiSelect({
   const hiddenChipCount = selectedOptions.length - visibleChips.length;
 
   const normalizedQuery = showSearch ? query.trim().toLowerCase() : "";
-  const filteredOptions = normalizedQuery
+  const matchingOptions = normalizedQuery
     ? options.filter((option) => option.label.toLowerCase().includes(normalizedQuery))
     : options;
-  // Index 0 is the "All" row; option rows follow at 1..N, so arrow/Enter
-  // navigation and mouse hover can share one flat index.
-  const navCount = filteredOptions.length + 1;
+  const filteredOptions = [...matchingOptions].sort(
+    (a, b) => (openOrder.get(a.value) ?? Infinity) - (openOrder.get(b.value) ?? Infinity),
+  );
+  const navCount = filteredOptions.length;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -119,11 +120,7 @@ export function RoutineFilterMultiSelect({
   }, [highlightedIndex, isOpen]);
 
   function activateHighlighted() {
-    if (highlightedIndex === 0) {
-      onClear();
-      return;
-    }
-    const option = filteredOptions[highlightedIndex - 1];
+    const option = filteredOptions[highlightedIndex];
     if (option) onToggle(option.value);
   }
 
@@ -166,6 +163,13 @@ export function RoutineFilterMultiSelect({
     if (open) {
       setQuery("");
       setHighlightedIndex(0);
+      setOpenOrder(
+        new Map(
+          [...options]
+            .sort((a, b) => Number(b.active) - Number(a.active))
+            .map((option, index) => [option.value, index]),
+        ),
+      );
     }
   }
 
@@ -310,28 +314,6 @@ export function RoutineFilterMultiSelect({
             aria-multiselectable="true"
             className="max-h-60 overflow-y-auto py-1"
           >
-            <li role="none">
-              <button
-                type="button"
-                id={`${idPrefix}-option-0`}
-                data-nav-index={0}
-                onClick={onClear}
-                onMouseEnter={() => setHighlightedIndex(0)}
-                role="option"
-                aria-selected={!hasActive}
-                className={cn(
-                  "flex w-full items-center gap-2 px-3 py-2 text-start text-sm transition-colors",
-                  highlightedIndex === 0 && "bg-white/10",
-                  !hasActive ? "text-frame-cyan" : "text-frame-silver",
-                )}
-              >
-                <Check
-                  aria-hidden="true"
-                  className={cn("h-3.5 w-3.5 shrink-0", !hasActive ? "opacity-100" : "opacity-0")}
-                />
-                {allLabel}
-              </button>
-            </li>
             {filteredOptions.length === 0 ? (
               <li className="px-3 py-2 text-sm text-frame-muted" role="none">
                 {noMatchesLabel}
@@ -341,15 +323,15 @@ export function RoutineFilterMultiSelect({
                 <li key={option.value} role="none">
                   <button
                     type="button"
-                    id={`${idPrefix}-option-${index + 1}`}
-                    data-nav-index={index + 1}
+                    id={`${idPrefix}-option-${index}`}
+                    data-nav-index={index}
                     onClick={() => onToggle(option.value)}
-                    onMouseEnter={() => setHighlightedIndex(index + 1)}
+                    onMouseEnter={() => setHighlightedIndex(index)}
                     role="option"
                     aria-selected={option.active}
                     className={cn(
                       "flex w-full items-center gap-2 px-3 py-2 text-start text-sm transition-colors",
-                      highlightedIndex === index + 1 && "bg-white/10",
+                      highlightedIndex === index && "bg-white/10",
                       option.active ? "text-frame-cyan" : "text-white/80",
                     )}
                   >
