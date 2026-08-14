@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { RoutineFilterGroup, type RoutineFilterChip } from "@/components/routines/RoutineFilterGroup";
 import {
   RoutineFilterMultiSelect,
@@ -12,7 +11,8 @@ export type RoutineFilterSection =
       type: "multiselect";
       label: string;
       options: RoutineFilterMultiSelectOption[];
-      allHref: string;
+      onToggle: (value: string) => void;
+      onClear: () => void;
       allLabel: string;
       triggerLabel: string;
       showSearch?: boolean;
@@ -27,7 +27,7 @@ interface RoutineFiltersProps {
   clearLabel: string;
   ariaLabel: string;
   hasActiveFilters: boolean;
-  clearHref: string;
+  onClear: () => void;
 }
 
 export function RoutineFilters({
@@ -36,7 +36,7 @@ export function RoutineFilters({
   clearLabel,
   ariaLabel,
   hasActiveFilters,
-  clearHref,
+  onClear,
 }: RoutineFiltersProps) {
   return (
     <Panel as="section" aria-label={ariaLabel} className="mb-10 bg-frame-panel/40">
@@ -53,7 +53,8 @@ export function RoutineFilters({
               key={section.label}
               label={section.label}
               options={section.options}
-              allHref={section.allHref}
+              onToggle={section.onToggle}
+              onClear={section.onClear}
               allLabel={section.allLabel}
               triggerLabel={section.triggerLabel}
               showSearch={section.showSearch}
@@ -70,12 +71,13 @@ export function RoutineFilters({
       {hasActiveFilters ? (
         <div className="flex items-center justify-between gap-4 rounded-b-2xl border-t border-frame-border bg-frame-bg/40 px-4 py-3 sm:px-5">
           <p className="text-sm text-frame-silver">{resultLabel}</p>
-          <Link
-            href={clearHref}
+          <button
+            type="button"
+            onClick={onClear}
             className="text-sm font-semibold text-frame-cyan transition-colors hover:text-white"
           >
             {clearLabel}
-          </Link>
+          </button>
         </div>
       ) : null}
     </Panel>

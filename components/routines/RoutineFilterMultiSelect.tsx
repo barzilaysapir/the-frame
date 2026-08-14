@@ -1,25 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import * as Popover from "@radix-ui/react-popover";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface RoutineFilterMultiSelectOption {
   label: string;
-  /** href resulting from toggling this option on/off within the current selection. */
-  href: string;
+  value: string;
   active: boolean;
 }
 
 interface RoutineFilterMultiSelectProps {
   label: string;
   options: RoutineFilterMultiSelectOption[];
-  /** href with this filter dimension cleared entirely. */
-  allHref: string;
+  /** Toggles a single option on/off within the current selection. */
+  onToggle: (value: string) => void;
+  /** Clears this filter dimension entirely. */
+  onClear: () => void;
   allLabel: string;
-  /** Precomputed summary shown on the closed trigger (e.g. "All", a single name, or "{n} selected"). */
+  /** Precomputed summary shown on the closed trigger (a placeholder, a single name, or the selected names joined). */
   triggerLabel: string;
   /** Shows a search box above the option list. Defaults to true; set false for short option lists (style/level). */
   showSearch?: boolean;
@@ -31,7 +31,8 @@ interface RoutineFilterMultiSelectProps {
 export function RoutineFilterMultiSelect({
   label,
   options,
-  allHref,
+  onToggle,
+  onClear,
   allLabel,
   triggerLabel,
   showSearch = true,
@@ -115,12 +116,13 @@ export function RoutineFilterMultiSelect({
           ) : null}
           <ul role="listbox" aria-multiselectable="true" className="max-h-60 overflow-y-auto py-1">
             <li role="none">
-              <Link
-                href={allHref}
+              <button
+                type="button"
+                onClick={onClear}
                 role="option"
                 aria-selected={!hasActive}
                 className={cn(
-                  "flex items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-white/5",
+                  "flex w-full items-center gap-2 px-3 py-2 text-start text-sm transition-colors hover:bg-white/5",
                   !hasActive ? "text-frame-cyan" : "text-frame-silver",
                 )}
               >
@@ -129,7 +131,7 @@ export function RoutineFilterMultiSelect({
                   className={cn("h-3.5 w-3.5 shrink-0", !hasActive ? "opacity-100" : "opacity-0")}
                 />
                 {allLabel}
-              </Link>
+              </button>
             </li>
             {sortedOptions.length === 0 ? (
               <li className="px-3 py-2 text-sm text-frame-muted" role="none">
@@ -137,13 +139,14 @@ export function RoutineFilterMultiSelect({
               </li>
             ) : (
               sortedOptions.map((option) => (
-                <li key={option.href} role="none">
-                  <Link
-                    href={option.href}
+                <li key={option.value} role="none">
+                  <button
+                    type="button"
+                    onClick={() => onToggle(option.value)}
                     role="option"
                     aria-selected={option.active}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-white/5",
+                      "flex w-full items-center gap-2 px-3 py-2 text-start text-sm transition-colors hover:bg-white/5",
                       option.active ? "text-frame-cyan" : "text-white/80",
                     )}
                   >
@@ -155,7 +158,7 @@ export function RoutineFilterMultiSelect({
                       )}
                     />
                     <span className="truncate">{option.label}</span>
-                  </Link>
+                  </button>
                 </li>
               ))
             )}

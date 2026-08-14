@@ -41,7 +41,6 @@
     "resultMany": "{count} results",
     "empty": "No combinations to show in the library right now.",
     "viewRoutine": "View combination",
-    "loadingMore": "Loading more…",
     "taughtBy": "Taught by {name}",
     "favoriteAdd": "Add to favorites",
     "favoriteRemove": "Remove from favorites"
