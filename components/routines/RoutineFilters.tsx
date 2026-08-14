@@ -42,8 +42,11 @@ export function RoutineFilters({
     <Panel as="section" aria-label={ariaLabel} className="mb-10 bg-frame-panel/40">
       {/* NOTE: the panel intentionally has no `overflow-hidden` — the filter
           dropdowns below render absolutely-positioned popovers that must be
-          able to escape this container's bounds. */}
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-3 px-4 py-3.5 sm:px-5 sm:py-4">
+          able to escape this container's bounds.
+          `auto-fit`/`minmax` (rather than a fixed breakpoint) sizes each
+          filter to the actual available width: as many as fit per row share
+          it evenly, and a lone filter on its own row stretches to fill it. */}
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-x-6 gap-y-3 px-4 py-3.5 sm:px-5 sm:py-4">
         {sections.map((section) =>
           section.type === "multiselect" ? (
             <RoutineFilterMultiSelect
