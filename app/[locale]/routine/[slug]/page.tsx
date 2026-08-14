@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { EarlyBirdBanner } from "@/components/EarlyBirdBanner";
 import { DanceVideoPlayer } from "@/components/player/DanceVideoPlayer";
 import { RoutineBreakdown, type RoutineDetail } from "@/components/routines/RoutineBreakdown";
@@ -96,6 +98,13 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
       />
 
       <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8 lg:pb-16">
+        <Link
+          href={localePath(locale, "/routines")}
+          className="group mb-8 inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5 rtl:rotate-180" />
+          {dict.common.backToLibrary}
+        </Link>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <section className="mb-8">

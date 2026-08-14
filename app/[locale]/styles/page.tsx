@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { StyleCard } from "@/components/StyleCard";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { resolveCatalog } from "@/lib/server/catalog";
-import { STYLE_COVER_POSTERS } from "@/lib/routines";
+import { STYLE_COVER_POSTERS, type DanceStyleKey } from "@/lib/routines";
 
 // Seed-catalog data changes rarely (via migrations, not user writes) — cache
 // the rendered page for 5 minutes instead of refetching D1 on every request.
@@ -32,33 +32,67 @@ export default async function StylesPage({ params }: StylesPageProps) {
   const locale = localeParam;
   const dict = await getDictionary(locale);
   const { repository } = await resolveCatalog();
-  const routines = await repository.listRoutines(locale);
+  const [routines, courses] = await Promise.all([
+    repository.listRoutines(locale),
+    repository.listExternalCourses(locale),
+  ]);
 
   const styleCounts = new Map<
-    string,
+    DanceStyleKey,
     {
-      style: (typeof routines)[number]["style"];
+      style: DanceStyleKey;
       label: string;
       poster: string;
-      count: number;
+      routineCount: number;
+      courseCount: number;
     }
   >();
+
   for (const routine of routines) {
     const existing = styleCounts.get(routine.style);
     if (existing) {
-      existing.count += 1;
+      existing.routineCount += 1;
     } else {
       styleCounts.set(routine.style, {
         style: routine.style,
         label: routine.styleLabel,
         poster: STYLE_COVER_POSTERS[routine.style] ?? routine.poster,
-        count: 1,
+        routineCount: 1,
+        courseCount: 0,
       });
     }
   }
+
+  for (const course of courses) {
+    if (!course.style) continue;
+    const existing = styleCounts.get(course.style);
+    if (existing) {
+      existing.courseCount += 1;
+    } else {
+      styleCounts.set(course.style, {
+        style: course.style,
+        label: course.styleLabel ?? course.style,
+        poster: STYLE_COVER_POSTERS[course.style] ?? course.coverImage,
+        routineCount: 0,
+        courseCount: 1,
+      });
+    }
+  }
+
   const styles = [...styleCounts.values()].sort((a, b) =>
     a.label.localeCompare(b.label, locale),
   );
+
+  function countLabel(entry: (typeof styles)[number]): string {
+    if (entry.courseCount > 0 && entry.routineCount === 0) {
+      return entry.courseCount === 1
+        ? dict.styles.courseOne
+        : formatMessage(dict.styles.courseMany, { count: entry.courseCount });
+    }
+    return entry.routineCount === 1
+      ? dict.styles.routineOne
+      : formatMessage(dict.styles.routineMany, { count: entry.routineCount });
+  }
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -76,14 +110,10 @@ export default async function StylesPage({ params }: StylesPageProps) {
             style={entry.style}
             label={entry.label}
             poster={entry.poster}
-            routineCount={entry.count}
+            countLabel={countLabel(entry)}
             locale={locale}
             priority={index < 3}
-            labels={{
-              routineOne: dict.styles.routineOne,
-              routineMany: dict.styles.routineMany,
-              browseAria: dict.styles.browseAria,
-            }}
+            browseAria={dict.styles.browseAria}
           />
         ))}
       </div>

@@ -28,9 +28,9 @@
     "filterTeacher": "Teacher",
     "filterStyle": "Style",
     "filterLevel": "Level",
-    "filterTeacherPlaceholder": "Choose teacher",
-    "filterStylePlaceholder": "Choose style",
-    "filterLevelPlaceholder": "Choose level",
+    "filterTeacherPlaceholder": "All teachers",
+    "filterStylePlaceholder": "All styles",
+    "filterLevelPlaceholder": "All levels",
     "filterRemoveOption": "Remove {name}",
     "filterClearOne": "Clear",
     "filterTeacherSearch": "Search teachers",
@@ -70,7 +70,9 @@
     "subtitle": "Browse the library by style and dive into the one you want to learn.",
     "routineOne": "1 combination",
     "routineMany": "{count} combinations",
-    "browseAria": "Browse {name} combinations"
+    "browseAria": "Browse {name} classes",
+    "courseOne": "1 course",
+    "courseMany": "{count} courses"
   },
   "externalCourses": {
     "tag": "External course",
@@ -86,7 +88,7 @@
     "signInCta": "Sign in with Google",
     "loadingVideo": "Loading video…",
     "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
-    "pricingNote": "One-time payment · access to this course",
+    "pricingNote": "This course, or the course plus extra credits at a pack discount · choose at checkout",
     "paymentBody": "One-time payment for access to this course.",
     "guarantees": [
       "Access to every lesson in this course",
@@ -177,7 +179,8 @@
     "subtitle": "Choose a plan and complete payment.",
     "backToRoutine": "Back to combination",
     "backToCourse": "Back to course",
-    "courseSubtitle": "Complete payment to unlock this course.",
+    "courseSubtitle": "The course alone, or the course plus extra credits at a pack discount.",
+    "creditExplainer": "1 credit = ₪1 in your wallet. You can spend credits on classes and courses on the site. We don’t lock future prices — this offer only discounts the credits you buy now.",
     "loading": "Loading…",
     "paymentTitle": "Payment",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
@@ -209,6 +212,33 @@
           "Access to every combination on the site",
           "New releases included while subscribed",
           "Cancel anytime",
+          "7-day money-back guarantee"
+        ]
+      },
+      "course": {
+        "title": "This course only",
+        "description": "Pay for this course. No extra credits.",
+        "priceNote": "course only",
+        "paymentBody": "One-time payment for this course.",
+        "guarantees": [
+          "Every lesson in this course",
+          "Watch on any device",
+          "7-day money-back guarantee"
+        ]
+      },
+      "courseCredits": {
+        "title": "Course + {count} credits",
+        "description": "This course, plus {count} credits (1 credit = ₪1). Catalog prices can change; the discount is only on this credit pack.",
+        "priceNote": "{percent}% off credits",
+        "paymentBody": "One-time payment for the course plus {count} credits at a pack discount. 1 credit = ₪1. Future class and course prices are not locked.",
+        "lineCourse": "This course — ₪{coursePrice}",
+        "lineCredits": "{count} credits — ₪{creditsList}",
+        "lineDiscount": "{percent}% off this credit pack",
+        "guarantees": [
+          "Every lesson in this course",
+          "{count} credits (1 credit = ₪1)",
+          "Pack discount on the credits you buy now",
+          "Future class and course prices are not locked",
           "7-day money-back guarantee"
         ]
       }
@@ -253,6 +283,7 @@
   },
   "common": {
     "browseTutorials": "Browse the library",
+    "backToLibrary": "Back to the library",
     "home": "Back to home",
     "loading": "Loading…"
   },

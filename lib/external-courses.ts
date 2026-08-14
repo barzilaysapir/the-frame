@@ -6,6 +6,7 @@
  * of content — e.g. stretching/warm-up series instead of song combinations.
  * Not third-party/affiliate — replace with real course records when ready.
  */
+import type { DanceStyleKey, LevelKey } from "@/lib/routines";
 
 interface ExternalCourseLessonRecord {
   id: string;
@@ -29,6 +30,10 @@ export interface ExternalCourseRecord {
   sortOrder: number;
   /** Card/detail-page cover image. Reuses an existing generic routine poster as a placeholder, same as several routines already do, until real course art is ready. */
   coverImage: string;
+  /** Library style this course belongs to, when it should show in style filters. */
+  style?: DanceStyleKey;
+  /** Library level, when it should show in level filters. */
+  level?: LevelKey;
   /**
    * Lessons with real, hosted video (gated behind login — see
    * lib/server/course-videos.ts). Array order is display order. Omitted/empty
@@ -49,6 +54,8 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
     priceDisplay: "₪200",
     sortOrder: 0,
     coverImage: "/routine-posters/routine-poster-amber-loft.png",
+    style: "flexibility-technique",
+    level: "beginner",
     lessons: [
       {
         id: "warmup",

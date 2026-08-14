@@ -33,21 +33,25 @@ export function useRoutineFilters({
 
   const filteredItems = useMemo(() => {
     let items = allItems;
-    // Instructor/style/level only exist on routines — an external course
-    // never matches, so it naturally drops out once any of these is active.
+    // Instructor only exists on routines. Style and level can match a
+    // course that has those fields set.
     if (selectedInstructors.length > 0) {
       items = items.filter(
         (item) => item.kind === "routine" && selectedInstructors.includes(item.routine.instructorSlug),
       );
     }
     if (selectedStyles.length > 0) {
-      items = items.filter(
-        (item) => item.kind === "routine" && selectedStyles.includes(item.routine.style),
+      items = items.filter((item) =>
+        item.kind === "routine"
+          ? selectedStyles.includes(item.routine.style)
+          : item.course.style != null && selectedStyles.includes(item.course.style),
       );
     }
     if (selectedLevels.length > 0) {
-      items = items.filter(
-        (item) => item.kind === "routine" && selectedLevels.includes(item.routine.level),
+      items = items.filter((item) =>
+        item.kind === "routine"
+          ? selectedLevels.includes(item.routine.level)
+          : item.course.level != null && selectedLevels.includes(item.course.level),
       );
     }
     return items;

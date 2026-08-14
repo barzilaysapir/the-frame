@@ -88,6 +88,7 @@ export function localizeExternalCourse(
   course: ExternalCourseRecord,
 ): {
   title: string;
+  provider: string;
   tagline: string;
   description: string;
 } {
@@ -95,10 +96,18 @@ export function localizeExternalCourse(
   const copy =
     content.externalCourses[
       course.slug as keyof typeof content.externalCourses
-    ];
+    ] as
+      | {
+          title?: string;
+          provider?: string;
+          tagline?: string;
+          description?: string;
+        }
+      | undefined;
 
   return {
     title: copy?.title ?? course.slug,
+    provider: copy?.provider ?? course.provider,
     tagline: copy?.tagline ?? "",
     description: copy?.description ?? "",
   };

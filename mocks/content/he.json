@@ -7,7 +7,8 @@
     "jazz": "ג'אז",
     "afro": "אפרו",
     "dancehall": "דאנסהול",
-    "voguing": "ווגינג"
+    "voguing": "ווגינג",
+    "flexibility-technique": "גמישות וטכניקה"
   },
   "levels": {
     "beginner": "מתחילים",
@@ -530,6 +531,7 @@
     },
     "gisha-gmisha-foundations": {
       "title": "גישה גמישה - קורס יסודות",
+      "provider": "יהל חייט",
       "tagline": "",
       "description": "",
       "lessons": {

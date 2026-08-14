@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { CourseComingSoon } from "@/components/courses/CourseComingSoon";
 import { CourseMobileStickyCta } from "@/components/courses/CourseMobileStickyCta";
 import { CoursePurchaseCard } from "@/components/courses/CoursePurchaseCard";
+import { CourseTags } from "@/components/courses/CourseTags";
 import { CourseWatch } from "@/components/courses/CourseWatch";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
@@ -56,7 +57,8 @@ export default async function ExternalCourseDetailPage({
           comingSoonBadge: dict.externalCourses.comingSoonBadge,
           comingSoonNote: dict.externalCourses.comingSoonNote,
           taughtBy: dict.tutorials.taughtBy,
-          back: dict.externalCourses.back,
+          back: dict.common.backToLibrary,
+          externalCourseTag: dict.externalCourses.tag,
         }}
       />
     );
@@ -74,9 +76,22 @@ export default async function ExternalCourseDetailPage({
   return (
     <>
       <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8 lg:pb-16">
+        <Link
+          href={localePath(locale, "/routines")}
+          className="group mb-8 inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5 rtl:rotate-180" />
+          {dict.common.backToLibrary}
+        </Link>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <section className="mb-8 max-w-3xl">
+              <CourseTags
+                course={course}
+                locale={locale}
+                externalCourseLabel={dict.externalCourses.tag}
+                className="mb-4"
+              />
               <h1 className="text-balance font-display text-4xl font-black leading-[0.98] text-white sm:text-5xl">
                 {course.title}
               </h1>
@@ -112,16 +127,6 @@ export default async function ExternalCourseDetailPage({
                 }}
               />
             </Suspense>
-
-            <div className="mt-10">
-              <Link
-                href={localePath(locale, "/routines")}
-                className="group inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
-              >
-                {dict.externalCourses.back}
-                <ArrowLeft className="h-3.5 w-3.5 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-              </Link>
-            </div>
           </div>
 
           {priceIls != null ? (

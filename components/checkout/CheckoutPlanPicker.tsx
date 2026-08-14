@@ -1,41 +1,33 @@
 "use client";
 
 import type { KeyboardEvent } from "react";
-import { CheckoutPlanOption } from "@/components/checkout/CheckoutPlanOption";
-import type { CheckoutPlanId } from "@/lib/pricing";
+import {
+  CheckoutPlanOption,
+  type CheckoutPlanCopy,
+} from "@/components/checkout/CheckoutPlanOption";
 
-interface PlanCopy {
-  title: string;
-  description: string;
-  priceNote: string;
-  guarantees: string[];
+export interface CheckoutPlanChoice {
+  id: string;
+  price: number;
+  originalPrice?: number;
+  copy: CheckoutPlanCopy;
 }
 
 interface CheckoutPlanPickerProps {
-  selected: CheckoutPlanId;
-  onSelect: (id: CheckoutPlanId) => void;
+  selected: string;
+  onSelect: (id: string) => void;
   chooseLabel: string;
-  rentalPrice: number;
-  rentalOriginalPrice: number;
-  subscriptionPrice: number;
-  subscriptionOriginalPrice: number;
-  rentalCopy: PlanCopy;
-  subscriptionCopy: PlanCopy;
+  plans: CheckoutPlanChoice[];
 }
-
-const PLAN_IDS: CheckoutPlanId[] = ["rental", "subscription"];
 
 export function CheckoutPlanPicker({
   selected,
   onSelect,
   chooseLabel,
-  rentalPrice,
-  rentalOriginalPrice,
-  subscriptionPrice,
-  subscriptionOriginalPrice,
-  rentalCopy,
-  subscriptionCopy,
+  plans,
 }: CheckoutPlanPickerProps) {
+  const planIds = plans.map((plan) => plan.id);
+
   // ARIA APG radiogroup pattern: arrow keys move selection between options
   // (mirroring native <input type="radio"> group behavior for role="radio").
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -43,15 +35,11 @@ export function CheckoutPlanPicker({
       return;
     }
     event.preventDefault();
-    const currentIndex = PLAN_IDS.indexOf(selected);
+    const currentIndex = Math.max(0, planIds.indexOf(selected));
     const direction = event.key === "ArrowDown" || event.key === "ArrowRight" ? 1 : -1;
-    const nextIndex =
-      (currentIndex + direction + PLAN_IDS.length) % PLAN_IDS.length;
-    const nextId = PLAN_IDS[nextIndex];
+    const nextIndex = (currentIndex + direction + planIds.length) % planIds.length;
+    const nextId = planIds[nextIndex];
     onSelect(nextId);
-    // Roving tabindex: move DOM focus to match the newly selected option
-    // (its tabIndex becomes 0 on re-render; focusing works regardless of
-    // the current tabIndex value).
     document.getElementById(`checkout-plan-option-${nextId}`)?.focus();
   };
 
@@ -64,22 +52,17 @@ export function CheckoutPlanPicker({
       <legend className="mb-1 text-sm font-medium text-white">
         {chooseLabel}
       </legend>
-      <CheckoutPlanOption
-        id="rental"
-        selected={selected === "rental"}
-        onSelect={onSelect}
-        price={rentalPrice}
-        originalPrice={rentalOriginalPrice}
-        copy={rentalCopy}
-      />
-      <CheckoutPlanOption
-        id="subscription"
-        selected={selected === "subscription"}
-        onSelect={onSelect}
-        price={subscriptionPrice}
-        originalPrice={subscriptionOriginalPrice}
-        copy={subscriptionCopy}
-      />
+      {plans.map((plan) => (
+        <CheckoutPlanOption
+          key={plan.id}
+          id={plan.id}
+          selected={selected === plan.id}
+          onSelect={onSelect}
+          price={plan.price}
+          originalPrice={plan.originalPrice}
+          copy={plan.copy}
+        />
+      ))}
     </fieldset>
   );
 }
