@@ -44,15 +44,23 @@ export function RoutineFilterDropdown({
   searchAriaLabel,
   noMatchesLabel,
 }: RoutineFilterDropdownProps) {
-  const clearButton = hasActive ? (
+  // Always mounted, visibility toggled instead of conditionally rendered —
+  // so selecting/deselecting the last option doesn't shift the search box's
+  // width (or, without search, pop the whole header row in and out).
+  const clearButton = (
     <button
       type="button"
       onClick={onClear}
-      className="shrink-0 text-xs font-medium text-frame-cyan transition-colors hover:text-white"
+      tabIndex={hasActive ? 0 : -1}
+      aria-hidden={!hasActive}
+      className={cn(
+        "shrink-0 text-xs font-medium text-frame-cyan transition-colors hover:text-white",
+        !hasActive && "invisible pointer-events-none",
+      )}
     >
       {clearLabel}
     </button>
-  ) : null;
+  );
 
   return (
     // Portaled to document.body so it isn't clipped by page content and gets
@@ -64,8 +72,12 @@ export function RoutineFilterDropdown({
         className="z-30 w-[var(--radix-popover-trigger-width)] min-w-[12rem] overflow-hidden rounded-xl border border-frame-border bg-frame-panel shadow-xl"
       >
         <Command label={label} className="flex flex-col bg-transparent">
-          {showSearch ? (
-            <div className="flex items-center gap-2 border-b border-frame-border p-2">
+          {/* Always has real content (search box, or the filter's own name)
+              so the row never reads as an empty strip — only the clear
+              button's visibility changes, keeping this row's layout fixed
+              regardless of what's selected. */}
+          <div className="flex items-center gap-2 border-b border-frame-border p-2">
+            {showSearch ? (
               <div className="relative flex-1">
                 <Search
                   aria-hidden="true"
@@ -86,13 +98,11 @@ export function RoutineFilterDropdown({
                   className="w-full rounded-lg bg-transparent py-1.5 ps-7 pe-2 text-sm text-white placeholder:text-frame-muted focus:outline-none"
                 />
               </div>
-              {clearButton}
-            </div>
-          ) : clearButton ? (
-            <div className="flex items-center justify-end border-b border-frame-border px-3 py-1.5">
-              {clearButton}
-            </div>
-          ) : null}
+            ) : (
+              <span className="flex-1 px-2 text-xs font-semibold text-frame-muted">{label}</span>
+            )}
+            {clearButton}
+          </div>
           <Command.List className="max-h-60 overflow-y-auto py-1">
             <Command.Empty className="px-3 py-2 text-sm text-frame-muted">
               {noMatchesLabel}
