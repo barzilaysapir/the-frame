@@ -21,6 +21,7 @@ import {
 import { cn, formatTime } from "@/lib/utils";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { ChapterMarkers } from "@/components/player/ChapterMarkers";
+import { PlayerTitlePoster } from "@/components/player/PlayerTitlePoster";
 import { VolumeControl } from "@/components/player/VolumeControl";
 import { SpeedMenu } from "@/components/player/SpeedMenu";
 import type { PlayerChapter } from "@/components/player/types";
@@ -49,6 +50,12 @@ interface DanceVideoPlayerProps {
    * so a real CMS-provided VTT URL lights up the CC button automatically.
    */
   captions?: CaptionsTrack;
+  /**
+   * When true (default), the horizontal-flip control is shown and playback
+   * starts mirrored so dancers can follow as if looking in a studio mirror.
+   * Set false for footage that is already mirrored or has burned-in captions.
+   */
+  showMirror?: boolean;
 }
 
 export function DanceVideoPlayer({
@@ -59,6 +66,7 @@ export function DanceVideoPlayer({
   labels,
   className,
   captions,
+  showMirror = true,
 }: DanceVideoPlayerProps) {
   const resolvedTitle = title ?? labels.defaultTitle;
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -73,7 +81,7 @@ export function DanceVideoPlayer({
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
-  const [isMirrored, setIsMirrored] = useState(false);
+  const [isMirrored, setIsMirrored] = useState(showMirror);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(true);
@@ -261,6 +269,11 @@ export function DanceVideoPlayer({
           ) : null}
         </video>
 
+        <PlayerTitlePoster
+          title={resolvedTitle}
+          show={!poster && !isPlaying && !hasError}
+        />
+
         {/* Center play button, shown when paused */}
         {!hasError && !isPlaying && (
           <button
@@ -275,8 +288,9 @@ export function DanceVideoPlayer({
           </button>
         )}
 
-        {/* Mirrored indicator badge */}
-        {isMirrored && (
+        {/* Mirrored indicator badge — also shown when the flip control is
+            hidden because the footage is already mirrored in edit. */}
+        {(isMirrored || !showMirror) && (
           <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
             {labels.mirrored}
           </span>
@@ -369,21 +383,22 @@ export function DanceVideoPlayer({
                 </button>
               ) : null}
 
-              {/* Mirror toggle */}
-              <button
-                type="button"
-                onClick={toggleMirror}
-                aria-label={labels.mirrorMode}
-                aria-pressed={isMirrored}
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
-                  isMirrored
-                    ? "border-frame-magenta text-frame-magenta"
-                    : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
-                )}
-              >
-                <FlipHorizontal2 className="h-4 w-4" />
-              </button>
+              {showMirror ? (
+                <button
+                  type="button"
+                  onClick={toggleMirror}
+                  aria-label={labels.mirrorMode}
+                  aria-pressed={isMirrored}
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
+                    isMirrored
+                      ? "border-frame-magenta text-frame-magenta"
+                      : "border-white/15 text-white/80 hover:border-white/40 hover:text-white"
+                  )}
+                >
+                  <FlipHorizontal2 className="h-4 w-4" />
+                </button>
+              ) : null}
 
               {/* Fullscreen */}
               <button

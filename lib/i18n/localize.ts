@@ -88,6 +88,7 @@ export function localizeExternalCourse(
   course: ExternalCourseRecord,
 ): {
   title: string;
+  provider: string;
   tagline: string;
   description: string;
 } {
@@ -95,11 +96,35 @@ export function localizeExternalCourse(
   const copy =
     content.externalCourses[
       course.slug as keyof typeof content.externalCourses
-    ];
+    ] as
+      | {
+          title?: string;
+          provider?: string;
+          tagline?: string;
+          description?: string;
+        }
+      | undefined;
 
   return {
     title: copy?.title ?? course.slug,
+    provider: copy?.provider ?? course.provider,
     tagline: copy?.tagline ?? "",
     description: copy?.description ?? "",
   };
+}
+
+/** Localized title for one lesson of a course with real (non-mock) video content. */
+export function localizeExternalCourseLessonTitle(
+  locale: Locale,
+  courseSlug: string,
+  lessonId: string,
+): string {
+  const content = getMockContent(locale);
+  const copy =
+    content.externalCourses[
+      courseSlug as keyof typeof content.externalCourses
+    ];
+  const lessons = (copy as { lessons?: Record<string, { title: string }> })
+    ?.lessons;
+  return lessons?.[lessonId]?.title ?? lessonId;
 }

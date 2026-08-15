@@ -42,4 +42,13 @@ export interface CatalogRepository {
     locale: Locale,
     slug: string,
   ): Promise<CatalogExternalCourse | null>;
+  /**
+   * Server-only lookup of a lesson's video source (R2 object key) — never
+   * exposed via `CatalogExternalCourse`/the public API. Used by the gated
+   * streaming route to resolve what to serve after the signature check.
+   */
+  getExternalCourseLessonSource(
+    courseSlug: string,
+    lessonId: string,
+  ): Promise<{ r2Key: string } | null>;
 }

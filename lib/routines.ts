@@ -13,8 +13,10 @@ export type DanceStyleKey =
   | "jazz"
   | "afro"
   | "dancehall"
-  | "voguing";
-export type LevelKey = "intermediate" | "advanced" | "all-levels";
+  | "voguing"
+  | "flexibility-technique";
+export type LevelKey = "beginner" | "intermediate" | "advanced" | "all-levels";
+export const LEVEL_ORDER: LevelKey[] = ["beginner", "intermediate", "advanced", "all-levels"];
 export type TagKey =
   | DanceStyleKey
   | "performance"
@@ -2580,6 +2582,7 @@ export const STYLE_COVER_POSTERS: Record<DanceStyleKey, string> = {
   afro: "/routine-posters/routine-poster-afro-sunburst.png",
   dancehall: "/routine-posters/routine-poster-dancehall-bounce.png",
   voguing: "/routine-posters/routine-poster-ballroom-runway.png",
+  "flexibility-technique": "/routine-posters/routine-poster-amber-loft.png",
 };
 
 export function getAllRoutines(): RoutineRecord[] {

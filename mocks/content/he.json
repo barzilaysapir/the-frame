@@ -7,12 +7,14 @@
     "jazz": "ג'אז",
     "afro": "אפרו",
     "dancehall": "דאנסהול",
-    "voguing": "ווגינג"
+    "voguing": "ווגינג",
+    "flexibility-technique": "גמישות וטכניקה"
   },
   "levels": {
+    "beginner": "מתחילים",
     "intermediate": "בינוני",
-    "advanced": "מתקדם",
-    "all-levels": "כל הרמות"
+    "advanced": "מתקדמים",
+    "all-levels": "רמה פתוחה"
   },
   "chapters": {
     "full-performance": "הופעה מלאה",
@@ -526,6 +528,19 @@
       "title": "דאנסהול וייבס 101",
       "tagline": "בסיס לבאונס ווייב בדאנסהול",
       "description": "קורס דאנסהול למתחילים לחלוטין שבונה באונס, וייב ומוזיקליות."
+    },
+    "gisha-gmisha-foundations": {
+      "title": "גישה גמישה - קורס יסודות",
+      "provider": "יהל חייט",
+      "tagline": "",
+      "description": "",
+      "lessons": {
+        "warmup": { "title": "חימום" },
+        "head-neck": { "title": "ראש וצוואר" },
+        "shoulder-blades": { "title": "שכמות" },
+        "shoulder-blades-physio-exercise": { "title": "תרגיל פיזיותרפיה לשכמות" },
+        "spine-abs": { "title": "עמוד שדרה ובטן" }
+      }
     }
   }
 }

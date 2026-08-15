@@ -7,12 +7,14 @@
     "jazz": "Jazz",
     "afro": "Afro",
     "dancehall": "Dancehall",
-    "voguing": "Voguing"
+    "voguing": "Voguing",
+    "flexibility-technique": "Flexibility and technique"
   },
   "levels": {
+    "beginner": "Beginner",
     "intermediate": "Intermediate",
     "advanced": "Advanced",
-    "all-levels": "All levels"
+    "all-levels": "Open level"
   },
   "chapters": {
     "full-performance": "Full performance",
@@ -526,6 +528,19 @@
       "title": "Dancehall Vibes 101",
       "tagline": "Foundational dancehall bounce and vibe",
       "description": "An entry-level dancehall course building bounce, vibe, and musicality for total beginners."
+    },
+    "gisha-gmisha-foundations": {
+      "title": "Gisha Gmisha - Foundations Course",
+      "provider": "Yahel Hayat",
+      "tagline": "",
+      "description": "",
+      "lessons": {
+        "warmup": { "title": "Warm-up" },
+        "head-neck": { "title": "Head & neck" },
+        "shoulder-blades": { "title": "Shoulder blades" },
+        "shoulder-blades-physio-exercise": { "title": "Shoulder blades physio exercise" },
+        "spine-abs": { "title": "Spine & abs" }
+      }
     }
   }
 }

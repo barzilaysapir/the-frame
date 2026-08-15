@@ -2,22 +2,22 @@
 
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { CheckoutPlanId } from "@/lib/pricing";
 
-interface PlanCopy {
+export interface CheckoutPlanCopy {
   title: string;
   description: string;
   priceNote: string;
   guarantees: string[];
+  breakdown?: string[];
 }
 
 interface CheckoutPlanOptionProps {
-  id: CheckoutPlanId;
+  id: string;
   selected: boolean;
-  onSelect: (id: CheckoutPlanId) => void;
+  onSelect: (id: string) => void;
   price: number;
   originalPrice?: number;
-  copy: PlanCopy;
+  copy: CheckoutPlanCopy;
 }
 
 /** Compact plan row; the selected plan stays expanded with details. */
@@ -91,6 +91,15 @@ export function CheckoutPlanOption({
           className="border-t border-frame-border/70 px-4 pb-4 pt-3"
         >
           <p className="text-xs text-frame-silver">{copy.description}</p>
+          {copy.breakdown && copy.breakdown.length > 0 ? (
+            <ul className="mt-3 space-y-1.5 border-s-2 border-frame-border ps-3">
+              {copy.breakdown.map((item) => (
+                <li key={item} className="text-xs text-frame-silver">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          ) : null}
           <ul className="mt-3 space-y-2">
             {copy.guarantees.map((item) => (
               <li

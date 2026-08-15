@@ -1,0 +1,14 @@
+# Wrangler-only local secrets (read by `wrangler dev` / `next dev` via the
+# OpenNext Cloudflare platform proxy, and by `npm run preview`). Unlike
+# .env.local, these are never exposed to the browser — server-only.
+#
+# Copy this file to `.dev.vars` (gitignored) and fill in a real value.
+# `.dev.vars` is NOT read in production — for that, set the same name as a
+# Worker secret: `npx wrangler secret put VIDEO_SIGNING_SECRET`.
+
+# Signs/verifies the short-lived playback URLs used to gate real (non-mock)
+# external-course video lessons stored in the private R2 bucket
+# `the-frame-class-videos` — see lib/server/course-videos.ts. Any long random
+# string works; generate one with:
+#   node -e "console.log(crypto.randomUUID() + crypto.randomUUID())"
+VIDEO_SIGNING_SECRET=

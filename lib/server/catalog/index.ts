@@ -6,6 +6,7 @@ import { createD1CatalogRepository } from "@/lib/server/catalog/d1-repository";
 import { mockCatalogRepository } from "@/lib/server/catalog/mock-repository";
 import type { CatalogRepository } from "@/lib/server/catalog/repository";
 import type {
+  CatalogExternalCourse,
   CatalogInstructor,
   CatalogRoutine,
   CatalogSource,
@@ -73,6 +74,17 @@ export const getCachedInstructor = cache(
   async (locale: Locale, slug: string): Promise<CatalogInstructor | null> => {
     const { repository } = await resolveCatalog();
     return repository.getInstructor(locale, slug);
+  },
+);
+
+/** Single external-course lookup, memoized the same way as `getCachedRoutine`. */
+export const getCachedExternalCourse = cache(
+  async (
+    locale: Locale,
+    slug: string,
+  ): Promise<CatalogExternalCourse | null> => {
+    const { repository } = await resolveCatalog();
+    return repository.getExternalCourse(locale, slug);
   },
 );
 

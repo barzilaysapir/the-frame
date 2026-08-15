@@ -64,9 +64,20 @@ interface ExternalCourseRow {
   slug: string;
   provider: string;
   price_display: string;
+  cover_image: string;
+  style: string | null;
+  level: string | null;
   title: string | null;
   tagline: string | null;
   description: string | null;
+  style_label: string | null;
+  level_label: string | null;
+}
+
+interface ExternalCourseLessonRow {
+  lesson_id: string;
+  title: string | null;
+  allow_mirror: number | null;
 }
 
 function parseTags(tagsJson: string, routineSlug: string): TagKey[] {
@@ -116,7 +127,10 @@ function mapRoutine(
   };
 }
 
-function mapExternalCourse(row: ExternalCourseRow): CatalogExternalCourse {
+function mapExternalCourse(
+  row: ExternalCourseRow,
+  lessons: CatalogExternalCourse["lessons"],
+): CatalogExternalCourse {
   return {
     slug: row.slug,
     title: row.title ?? row.slug,
@@ -124,7 +138,72 @@ function mapExternalCourse(row: ExternalCourseRow): CatalogExternalCourse {
     tagline: row.tagline ?? "",
     description: row.description ?? "",
     priceDisplay: row.price_display,
+    coverImage: row.cover_image,
+    style: (row.style as DanceStyleKey | null) ?? null,
+    styleLabel: row.style ? (row.style_label ?? row.style) : null,
+    level: (row.level as LevelKey | null) ?? null,
+    levelLabel: row.level ? (row.level_label ?? row.level) : null,
+    lessons,
   };
+}
+
+/** Lessons for a single course, ordered by sort_order — mirrors `fetchChaptersForSlug`. */
+async function fetchLessonsForSlug(
+  db: AppDb,
+  locale: Locale,
+  courseSlug: string,
+): Promise<CatalogExternalCourse["lessons"]> {
+  const result = await db
+    .prepare(
+      `SELECT l.lesson_id, l.allow_mirror, li.title
+       FROM external_course_lessons l
+       LEFT JOIN external_course_lesson_i18n li
+         ON li.course_slug = l.course_slug AND li.lesson_id = l.lesson_id AND li.locale = ?
+       WHERE l.course_slug = ?
+       ORDER BY l.sort_order ASC`,
+    )
+    .bind(locale, courseSlug)
+    .all<ExternalCourseLessonRow>();
+
+  return (result.results ?? []).map((row: ExternalCourseLessonRow) => ({
+    id: row.lesson_id,
+    title: row.title ?? row.lesson_id,
+    allowMirror: row.allow_mirror !== 0,
+  }));
+}
+
+/**
+ * Lessons for *all* external courses in one round trip, grouped by course
+ * slug — avoids an N+1 query when listing the catalog (mirrors
+ * `fetchChaptersForAllRoutines`). The course count here is small, but the
+ * pattern stays consistent with the rest of this file.
+ */
+async function fetchLessonsForAllExternalCourses(
+  db: AppDb,
+  locale: Locale,
+): Promise<Map<string, CatalogExternalCourse["lessons"]>> {
+  const result = await db
+    .prepare(
+      `SELECT l.course_slug, l.lesson_id, l.allow_mirror, li.title
+       FROM external_course_lessons l
+       LEFT JOIN external_course_lesson_i18n li
+         ON li.course_slug = l.course_slug AND li.lesson_id = l.lesson_id AND li.locale = ?
+       ORDER BY l.course_slug ASC, l.sort_order ASC`,
+    )
+    .bind(locale)
+    .all<ExternalCourseLessonRow & { course_slug: string }>();
+
+  const bySlug = new Map<string, CatalogExternalCourse["lessons"]>();
+  for (const row of result.results ?? []) {
+    const list = bySlug.get(row.course_slug) ?? [];
+    list.push({
+      id: row.lesson_id,
+      title: row.title ?? row.lesson_id,
+      allowMirror: row.allow_mirror !== 0,
+    });
+    bySlug.set(row.course_slug, list);
+  }
+  return bySlug;
 }
 
 /** Chapters for a single routine, ordered by sort_order. */
@@ -363,20 +442,29 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
       // 500 here instead of just missing this one catalog slice. Fall back
       // to the mock list so the page still renders.
       try {
-        const result = await db
-          .prepare(
-            `SELECT
-               ec.slug, ec.provider, ec.price_display,
-               eci.title, eci.tagline, eci.description
-             FROM external_courses ec
-             LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
-             ORDER BY ec.sort_order ASC`,
-          )
-          .bind(locale)
-          .all<ExternalCourseRow>();
+        const [result, lessonsBySlug] = await Promise.all([
+          db
+            .prepare(
+              `SELECT
+                 ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level,
+                 COALESCE(NULLIF(eci.provider, ''), ec.provider) AS provider,
+                 eci.title, eci.tagline, eci.description,
+                 si.label AS style_label,
+                 li.label AS level_label
+               FROM external_courses ec
+               LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+               LEFT JOIN style_i18n si ON si.style_key = ec.style AND si.locale = ?
+               LEFT JOIN level_i18n li ON li.level_key = ec.level AND li.locale = ?
+               ORDER BY ec.sort_order ASC`,
+            )
+            .bind(locale, locale, locale)
+            .all<ExternalCourseRow>(),
+          fetchLessonsForAllExternalCourses(db, locale),
+        ]);
 
         return ((result.results ?? []) as ExternalCourseRow[]).map(
-          mapExternalCourse,
+          (row: ExternalCourseRow) =>
+            mapExternalCourse(row, lessonsBySlug.get(row.slug) ?? []),
         );
       } catch (error) {
         console.error(
@@ -389,26 +477,57 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
 
     async getExternalCourse(locale, slug) {
       try {
-        const row = await db
-          .prepare(
-            `SELECT
-               ec.slug, ec.provider, ec.price_display,
-               eci.title, eci.tagline, eci.description
-             FROM external_courses ec
-             LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
-             WHERE ec.slug = ?`,
-          )
-          .bind(locale, slug)
-          .first<ExternalCourseRow>();
+        const [row, lessons] = await Promise.all([
+          db
+            .prepare(
+              `SELECT
+                 ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level,
+                 COALESCE(NULLIF(eci.provider, ''), ec.provider) AS provider,
+                 eci.title, eci.tagline, eci.description,
+                 si.label AS style_label,
+                 li.label AS level_label
+               FROM external_courses ec
+               LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+               LEFT JOIN style_i18n si ON si.style_key = ec.style AND si.locale = ?
+               LEFT JOIN level_i18n li ON li.level_key = ec.level AND li.locale = ?
+               WHERE ec.slug = ?`,
+            )
+            .bind(locale, locale, locale, slug)
+            .first<ExternalCourseRow>(),
+          fetchLessonsForSlug(db, locale, slug),
+        ]);
 
         if (!row) return null;
-        return mapExternalCourse(row);
+        return mapExternalCourse(row, lessons);
       } catch (error) {
         console.error(
           "D1 external_courses query failed; falling back to the in-memory mock lookup:",
           error,
         );
         return mockCatalogRepository.getExternalCourse(locale, slug);
+      }
+    },
+
+    async getExternalCourseLessonSource(courseSlug, lessonId) {
+      try {
+        const row = await db
+          .prepare(
+            `SELECT r2_key FROM external_course_lessons
+             WHERE course_slug = ? AND lesson_id = ?`,
+          )
+          .bind(courseSlug, lessonId)
+          .first<{ r2_key: string }>();
+
+        return row ? { r2Key: row.r2_key } : null;
+      } catch (error) {
+        console.error(
+          "D1 external_course_lessons query failed; falling back to the in-memory mock lookup:",
+          error,
+        );
+        return mockCatalogRepository.getExternalCourseLessonSource(
+          courseSlug,
+          lessonId,
+        );
       }
     },
   };
