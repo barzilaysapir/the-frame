@@ -18,14 +18,6 @@ function getLanDevOrigins() {
 // and talks to Google's identity REST APIs directly from the browser — both
 // need explicit CSP allowances or sign-in breaks silently.
 const firebaseAuthDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN?.trim();
-console.log(
-  "DEBUG_ENV_CHECK NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN =",
-  JSON.stringify(process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN),
-);
-console.log(
-  "DEBUG_ENV_CHECK all NEXT_PUBLIC_ keys =",
-  Object.keys(process.env).filter((k) => k.startsWith("NEXT_PUBLIC_")),
-);
 
 /**
  * No nonce/strict-dynamic here: that requires threading a per-request nonce
