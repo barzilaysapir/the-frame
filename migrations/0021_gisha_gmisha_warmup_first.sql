@@ -3,7 +3,7 @@
 -- Matches lib/external-courses.ts + mocks/content/{en,he}.json.
 
 INSERT OR IGNORE INTO external_course_lessons (course_slug, lesson_id, r2_key, sort_order) VALUES
-  ('gisha-gmisha-foundations', 'warmup', 'external-courses/gisha-gmisha/foundations/warmup.mp4', 0);
+  ('gisha-gmisha-foundations', 'warmup', 'class-videos/external-courses/gisha-gmisha/foundations/warmup.mp4', 0);
 
 INSERT OR IGNORE INTO external_course_lesson_i18n (course_slug, lesson_id, locale, title) VALUES
   ('gisha-gmisha-foundations', 'warmup', 'he', 'חימום'),

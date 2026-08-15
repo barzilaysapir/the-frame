@@ -11,16 +11,16 @@
 	},
 	"main": ".open-next/worker.js",
 	"name": "the-frame",
-	"account_id": "8739cda6b7162b44320b8f637feb219a",
-	"routes": [
-		{
-			"pattern": "theframe.bybarzilay.com",
-			"custom_domain": true
-		}
-	],
-	// Fallback so the Worker is reachable at https://the-frame.<subdomain>.workers.dev
-	// even while the custom domain above has no DNS record attached (confirmed via
-	// `nslookup`: NXDOMAIN as of 2026-08-13 — a separate, pre-existing issue).
+	"account_id": "8541729902392a145a03f97a906af16f",
+	// No custom domain — this is a POC, kept off the real bybarzilay.com domain
+	// on purpose. Reachable only via the workers.dev URL below. To go live on
+	// the real domain again, uncomment this block and run `wrangler deploy`:
+	// "routes": [
+	// 	{
+	// 		"pattern": "theframe.bybarzilay.com",
+	// 		"custom_domain": true
+	// 	}
+	// ],
 	"workers_dev": true,
 	"compatibility_date": "2026-08-04",
 	"compatibility_flags": [
@@ -44,7 +44,7 @@
 		{
 			"binding": "DB",
 			"database_name": "the-frame-catalog",
-			"database_id": "841f01c5-b3c3-4b8c-8891-da5cd2c9b2de",
+			"database_id": "5479efb1-a34c-4279-ad27-56cad1ea1ff9",
 			"migrations_dir": "migrations"
 		}
 	],
@@ -59,17 +59,21 @@
 	"kv_namespaces": [
 		{
 			"binding": "NEXT_INC_CACHE_KV",
-			"id": "63dd1b68c52d4367bd9526fb90c31b0a"
+			"id": "9df9b3aa6ff045478e3d171594449685"
 		}
 	],
 	// Private bucket for real (non-mock) external-course video lessons —
 	// gated behind Firebase login via a signed short-lived playback URL, see
 	// lib/server/course-videos.ts. Public access must stay disabled on this
 	// bucket; the app is the only thing that ever reads from it.
+	// Objects live under the "class-videos/" prefix in the shared "the-frame"
+	// bucket (consolidated here during the Cloudflare account migration —
+	// migrations 0020/0021's r2_key seeds were updated to match, since
+	// neither had been applied anywhere yet).
 	"r2_buckets": [
 		{
 			"binding": "COURSE_VIDEOS",
-			"bucket_name": "the-frame-class-videos",
+			"bucket_name": "the-frame",
 			// Real lesson files live in the remote bucket; local Miniflare R2
 			// is empty, so next/wrangler local dev must proxy reads remotely
 			// (D1 stays local — do not set remote on the DB binding).

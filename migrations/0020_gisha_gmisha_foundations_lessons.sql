@@ -10,10 +10,10 @@ DELETE FROM external_course_lessons
   WHERE course_slug = 'gisha-gmisha-foundations' AND lesson_id = 'warmup';
 
 INSERT INTO external_course_lessons (course_slug, lesson_id, r2_key, sort_order) VALUES
-  ('gisha-gmisha-foundations', 'head-neck', 'external-courses/gisha-gmisha/foundations/head-neck.mp4', 0),
-  ('gisha-gmisha-foundations', 'shoulder-blades', 'external-courses/gisha-gmisha/foundations/shoulder-blades.mp4', 1),
-  ('gisha-gmisha-foundations', 'shoulder-blades-physio-exercise', 'external-courses/gisha-gmisha/foundations/shoulder-blades-physio-exercise.mp4', 2),
-  ('gisha-gmisha-foundations', 'spine-abs', 'external-courses/gisha-gmisha/foundations/spine-abs.mp4', 3);
+  ('gisha-gmisha-foundations', 'head-neck', 'class-videos/external-courses/gisha-gmisha/foundations/head-neck.mp4', 0),
+  ('gisha-gmisha-foundations', 'shoulder-blades', 'class-videos/external-courses/gisha-gmisha/foundations/shoulder-blades.mp4', 1),
+  ('gisha-gmisha-foundations', 'shoulder-blades-physio-exercise', 'class-videos/external-courses/gisha-gmisha/foundations/shoulder-blades-physio-exercise.mp4', 2),
+  ('gisha-gmisha-foundations', 'spine-abs', 'class-videos/external-courses/gisha-gmisha/foundations/spine-abs.mp4', 3);
 
 INSERT INTO external_course_lesson_i18n (course_slug, lesson_id, locale, title) VALUES
   ('gisha-gmisha-foundations', 'head-neck', 'he', 'ראש וצוואר'),
