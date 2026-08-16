@@ -179,7 +179,11 @@ export const mockCatalogRepository: CatalogRepository = {
   },
 
   async listExternalCourses(locale) {
+    // Exclude the one real course (see lib/external-courses.ts) — the demo
+    // catalog should only ever show fake/mock listings, so it doesn't get
+    // confused for real content sitting alongside it.
     return getAllExternalCourses()
+      .filter((course) => course.slug !== "gisha-gmisha-foundations")
       .map((course) => toCatalogExternalCourse(locale, course.slug))
       .filter((item): item is CatalogExternalCourse => item !== null);
   },
