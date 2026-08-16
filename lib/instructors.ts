@@ -14,7 +14,6 @@ export interface InstructorRecord {
   instagramUrl: string;
 }
 
-/** @textScraped scripts/verify-mock-db-parity.ts locates this array by its literal `export const INSTRUCTORS...` source text, not a TS import — keep it exported. */
 export const INSTRUCTORS: InstructorRecord[] = [
   // MOCK teachers for demo UI — replace with real profiles when ready.
   {
