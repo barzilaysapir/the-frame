@@ -42,7 +42,6 @@ export interface ExternalCourseRecord {
   lessons?: ExternalCourseLessonRecord[];
 }
 
-/** @textScraped scripts/verify-mock-db-parity.ts may later locate this array by its literal `export const EXTERNAL_COURSES...` source text — keep it exported. */
 export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
   {
     // Real course — first one actually being implemented (not a mock

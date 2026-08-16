@@ -1,15 +1,14 @@
 /**
- * In-memory catalog repository — a last-resort fallback, kept byte-for-byte
- * in sync with the D1 seed content (verify with
- * `npm run verify:mock-db-parity`).
+ * In-memory catalog repository — the canonical source for the demo/mock
+ * catalog. D1 no longer seeds this content (see
+ * migrations/0027_remove_demo_catalog_seed.sql); this is the only place it
+ * lives. `resolveCatalog()` serves it in two cases:
  *
- * Plain `next dev` normally does **not** hit this: `next.config.mjs` calls
- * `initOpenNextCloudflareForDev()`, which wires up wrangler's platform proxy
- * so `next dev` reads the same local D1 SQLite state as `npm run preview`
- * (`npm run predev` also applies any pending migrations first). This
- * in-memory repo only kicks in when no local D1 state exists at all yet
- * (fresh clone before the first `npm run db:migrate:local`) or a real D1
- * error occurs — see `resolveCatalog()`.
+ * - The `/api/preview` cookie is set (see `lib/preview.ts`) — the intended,
+ *   everyday way to see the demo catalog for testing.
+ * - D1 itself is unavailable (fresh clone before the first
+ *   `npm run db:migrate:local`, or a CI build with no local D1 state) — a
+ *   last-resort fallback so the app still renders *something*.
  */
 import "server-only";
 import type { Locale } from "@/lib/i18n/config";
@@ -180,7 +179,11 @@ export const mockCatalogRepository: CatalogRepository = {
   },
 
   async listExternalCourses(locale) {
+    // Exclude the one real course (see lib/external-courses.ts) — the demo
+    // catalog should only ever show fake/mock listings, so it doesn't get
+    // confused for real content sitting alongside it.
     return getAllExternalCourses()
+      .filter((course) => course.slug !== "gisha-gmisha-foundations")
       .map((course) => toCatalogExternalCourse(locale, course.slug))
       .filter((item): item is CatalogExternalCourse => item !== null);
   },

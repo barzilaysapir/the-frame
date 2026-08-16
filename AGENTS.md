@@ -20,6 +20,7 @@ Always reply in English unless the user explicitly asks for another language.
 - **`lib/server/catalog/`** — catalog repository. Prefer D1; fall back to in-memory mocks when the binding is missing.
 - **`lib/server/users/`** — app profile + paid library queries (keyed by Firebase UID).
 - **`app/api/v1/`** — HTTP API (`source: d1|mock` for catalog; `/me*` requires Firebase ID token).
+- **Demo catalog visibility** — D1 holds only real catalog rows (see `migrations/0027_remove_demo_catalog_seed.sql`); the full demo/mock catalog lives only in the in-memory `mockCatalogRepository`. `/api/preview?token=<PREVIEW_CATALOG_TOKEN>` sets a cookie (`lib/preview.ts`) that switches `resolveCatalog()` to serve it, on any deployment, without a second Cloudflare environment.
 
 ## App D1 (one database)
 
