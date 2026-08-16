@@ -55,7 +55,7 @@ export default async function HomePage({ params }: HomePageProps) {
           <p className="mt-4 text-frame-silver">{dict.whoItsFor.intro}</p>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2">
           {dict.whoItsFor.items.map((item) => (
             <Panel key={item.title} className="p-6">
               <h3 className="font-display text-lg font-bold text-white">
