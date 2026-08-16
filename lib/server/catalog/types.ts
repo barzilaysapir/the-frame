@@ -45,7 +45,7 @@ export interface CatalogInstructor {
   name: string;
   role: string;
   bio: string;
-  style: DanceStyleKey;
+  styles: DanceStyleKey[];
   avatar: string;
   instagramUrl: string;
   routineCount: number;
