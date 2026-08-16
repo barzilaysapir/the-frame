@@ -61,7 +61,6 @@ export interface RoutineRecord {
 const SAMPLE_VIDEO_SRC =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
-/** @textScraped scripts/verify-mock-db-parity.ts locates this array by its literal `export const ROUTINES...` source text, not a TS import — keep it exported. */
 export const ROUTINES: RoutineRecord[] = [
   // MOCK combinations for demo UI — songs/artists are placeholders (licensing TBD).
   {
