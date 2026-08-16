@@ -22,8 +22,6 @@
     "subtitle": "Learn to dance at the time, place, and pace that suits you —"
   },
   "whoItsFor": {
-    "title": "You don't need to fit the mold. The Frame adapts to you.",
-    "intro": "Not every dancer grows up in the same studio, the same city, at the same pace. The Frame is built for anyone who cares about dance — even when life doesn't allow for a regular class, an available teacher, or the confidence to practice in front of everyone.",
     "items": [
       {
         "title": "Distance and timing that don't always work in your favor",
@@ -41,10 +39,7 @@
         "title": "A personalized intensive",
         "body": "Whether you're prepping for an audition or just feel like it — dive deep into a specific style and learn a lot from it in a short time, at your own pace."
       }
-    ],
-    "closingTitle": "Ready to start?",
-    "closingBody": "Dance doesn't wait for perfect conditions. It's waiting for you.",
-    "cta": "Discover the classes"
+    ]
   },
   "tutorials": {
     "title": "Library",
