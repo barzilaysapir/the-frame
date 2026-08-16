@@ -45,12 +45,14 @@ interface RoutineRow {
 
 interface InstructorRow {
   slug: string;
-  style: string;
   avatar: string;
   instagram_url: string;
   name: string | null;
   bio: string | null;
-  role: string | null;
+  /** Style keys in display order, comma-separated (from instructor_styles). */
+  styles_concat: string | null;
+  /** Localized style labels, same order, `|`-separated. */
+  labels_concat: string | null;
   routine_count: number;
 }
 
@@ -124,6 +126,26 @@ function mapRoutine(
       original: row.price_original,
       earlyBird: row.price_early_bird,
     },
+  };
+}
+
+function mapInstructor(row: InstructorRow): CatalogInstructor {
+  const styles = row.styles_concat
+    ? (row.styles_concat.split(",") as DanceStyleKey[])
+    : [];
+  const styleLabels = row.labels_concat
+    ? row.labels_concat.split("|")
+    : styles;
+
+  return {
+    slug: row.slug,
+    name: row.name ?? row.slug,
+    role: styleLabels.length > 0 ? styleLabels.join(" · ") : row.slug,
+    bio: row.bio ?? "",
+    styles,
+    avatar: row.avatar,
+    instagramUrl: row.instagram_url,
+    routineCount: Number(row.routine_count ?? 0),
   };
 }
 
@@ -372,65 +394,67 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
       const result = await db
         .prepare(
           `SELECT
-             i.slug, i.style, i.avatar, i.instagram_url,
+             i.slug, i.avatar, i.instagram_url,
              ii.name, ii.bio,
-             si.label AS role,
+             st.styles_concat, st.labels_concat,
              (
                SELECT COUNT(*) FROM routines r WHERE r.instructor_slug = i.slug
              ) AS routine_count
            FROM instructors i
            LEFT JOIN instructor_i18n ii ON ii.slug = i.slug AND ii.locale = ?
-           LEFT JOIN style_i18n si ON si.style_key = i.style AND si.locale = ?
+           LEFT JOIN (
+             SELECT instructor_slug,
+               GROUP_CONCAT(style_key, ',') AS styles_concat,
+               GROUP_CONCAT(label, '|') AS labels_concat
+             FROM (
+               SELECT ist.instructor_slug, ist.style_key,
+                 COALESCE(si.label, ist.style_key) AS label
+               FROM instructor_styles ist
+               LEFT JOIN style_i18n si ON si.style_key = ist.style_key AND si.locale = ?
+               ORDER BY ist.sort_order ASC
+             )
+             GROUP BY instructor_slug
+           ) st ON st.instructor_slug = i.slug
            ORDER BY i.slug ASC`,
         )
         .bind(locale, locale)
         .all<InstructorRow>();
 
-      return ((result.results ?? []) as InstructorRow[]).map(
-        (row: InstructorRow) => ({
-          slug: row.slug,
-          name: row.name ?? row.slug,
-          role: row.role ?? row.style,
-          bio: row.bio ?? "",
-          style: row.style as DanceStyleKey,
-          avatar: row.avatar,
-          instagramUrl: row.instagram_url,
-          routineCount: Number(row.routine_count ?? 0),
-        }),
-      );
+      return ((result.results ?? []) as InstructorRow[]).map(mapInstructor);
     },
 
     async getInstructor(locale, slug) {
       const row = await db
         .prepare(
           `SELECT
-             i.slug, i.style, i.avatar, i.instagram_url,
+             i.slug, i.avatar, i.instagram_url,
              ii.name, ii.bio,
-             si.label AS role,
+             st.styles_concat, st.labels_concat,
              (
                SELECT COUNT(*) FROM routines r WHERE r.instructor_slug = i.slug
              ) AS routine_count
            FROM instructors i
            LEFT JOIN instructor_i18n ii ON ii.slug = i.slug AND ii.locale = ?
-           LEFT JOIN style_i18n si ON si.style_key = i.style AND si.locale = ?
+           LEFT JOIN (
+             SELECT instructor_slug,
+               GROUP_CONCAT(style_key, ',') AS styles_concat,
+               GROUP_CONCAT(label, '|') AS labels_concat
+             FROM (
+               SELECT ist.instructor_slug, ist.style_key,
+                 COALESCE(si.label, ist.style_key) AS label
+               FROM instructor_styles ist
+               LEFT JOIN style_i18n si ON si.style_key = ist.style_key AND si.locale = ?
+               ORDER BY ist.sort_order ASC
+             )
+             GROUP BY instructor_slug
+           ) st ON st.instructor_slug = i.slug
            WHERE i.slug = ?`,
         )
         .bind(locale, locale, slug)
         .first<InstructorRow>();
 
       if (!row) return null;
-
-      const instructor: CatalogInstructor = {
-        slug: row.slug,
-        name: row.name ?? row.slug,
-        role: row.role ?? row.style,
-        bio: row.bio ?? "",
-        style: row.style as DanceStyleKey,
-        avatar: row.avatar,
-        instagramUrl: row.instagram_url,
-        routineCount: Number(row.routine_count ?? 0),
-      };
-      return instructor;
+      return mapInstructor(row);
     },
 
     async listExternalCourses(locale) {
