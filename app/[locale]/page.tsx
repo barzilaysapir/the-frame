@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Panel } from "@/components/ui/Panel";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -44,6 +45,42 @@ export default async function HomePage({ params }: HomePageProps) {
           {dict.common.browseTutorials}
           <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
         </Button>
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-balance font-display text-4xl font-black leading-[0.98] text-white sm:text-5xl">
+            {dict.whoItsFor.title}
+          </h2>
+          <p className="mt-4 text-frame-silver">{dict.whoItsFor.intro}</p>
+        </div>
+
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {dict.whoItsFor.items.map((item) => (
+            <Panel key={item.title} className="p-6">
+              <h3 className="font-display text-lg font-bold text-white">
+                {item.title}
+              </h3>
+              <p className="mt-3 whitespace-pre-line text-sm text-frame-silver">
+                {item.body}
+              </p>
+            </Panel>
+          ))}
+        </div>
+
+        <div className="mt-16 text-center">
+          <h2 className="font-display text-3xl font-black text-white sm:text-4xl">
+            {dict.whoItsFor.closingTitle}
+          </h2>
+          <p className="mt-3 text-frame-silver">{dict.whoItsFor.closingBody}</p>
+          <Button
+            href={localePath(locale, "/routines")}
+            className="group mt-7 px-6"
+          >
+            {dict.whoItsFor.cta}
+            <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
+          </Button>
+        </div>
       </div>
     </main>
   );
