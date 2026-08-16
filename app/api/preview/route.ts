@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import {
-  PREVIEW_CATALOG_COOKIE,
-  PREVIEW_CATALOG_COOKIE_MAX_AGE,
-} from "@/lib/preview";
+import { PREVIEW_CATALOG_COOKIE } from "@/lib/preview";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -35,8 +32,9 @@ export async function GET(request: NextRequest) {
   const providedToken = searchParams.get("token");
 
   if (expectedToken && providedToken === expectedToken) {
+    // No maxAge/expires: a session cookie, cleared when the browser closes,
+    // so the demo catalog never lingers into a later "plain link" visit.
     response.cookies.set(PREVIEW_CATALOG_COOKIE, "1", {
-      maxAge: PREVIEW_CATALOG_COOKIE_MAX_AGE,
       httpOnly: true,
       sameSite: "lax",
     });
