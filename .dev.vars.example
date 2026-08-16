@@ -12,3 +12,10 @@
 # string works; generate one with:
 #   node -e "console.log(crypto.randomUUID() + crypto.randomUUID())"
 VIDEO_SIGNING_SECRET=
+
+# Gates the `/api/preview?token=...` link that unlocks the demo/mock catalog
+# (routines, instructors) — hidden by default everywhere, including this
+# local dev server, once migration 0027 is applied. See lib/preview.ts and
+# app/api/preview/route.ts. Any long random string works (same generator as
+# above). Leave unset to disable the preview link entirely.
+PREVIEW_CATALOG_TOKEN=

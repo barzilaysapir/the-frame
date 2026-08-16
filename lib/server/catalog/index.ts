@@ -1,6 +1,8 @@
 import "server-only";
 import { cache } from "react";
+import { cookies } from "next/headers";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
+import { PREVIEW_CATALOG_COOKIE } from "@/lib/preview";
 import { getAppDb } from "@/lib/server/db";
 import { createD1CatalogRepository } from "@/lib/server/catalog/d1-repository";
 import { mockCatalogRepository } from "@/lib/server/catalog/mock-repository";
@@ -30,8 +32,10 @@ async function resolveCatalogUncached(): Promise<ResolvedCatalog> {
     if (!row || Number(row.count) < 1) {
       return { repository: mockCatalogRepository, source: "mock" };
     }
+    const cookieStore = await cookies();
+    const includeDemo = cookieStore.get(PREVIEW_CATALOG_COOKIE)?.value === "1";
     return {
-      repository: createD1CatalogRepository(db),
+      repository: createD1CatalogRepository(db, { includeDemo }),
       source: "d1",
     };
   } catch (error) {
@@ -50,6 +54,12 @@ async function resolveCatalogUncached(): Promise<ResolvedCatalog> {
  * `mock-repository.ts` for why — but it's the safety net for a fresh clone
  * that hasn't run `npm run db:migrate:local` yet, or a CI build with no
  * local D1 state.
+ *
+ * Rows flagged `is_demo` — every seeded routine/instructor, plus 5 of the 6
+ * seeded external courses (only `gisha-gmisha-foundations` is real) — are
+ * hidden by default; visiting `/api/preview?token=...` sets the cookie in
+ * `lib/preview.ts` that unlocks them for that browser. See
+ * `app/api/preview/route.ts`.
  *
  * Memoized per request (React `cache`) — `generateMetadata` and the page
  * component both call this, and without memoization each would resolve the

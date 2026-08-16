@@ -271,12 +271,17 @@ async function fetchChaptersForAllRoutines(
 }
 
 /** Shared WHERE-clause builder for `listRoutines`/`countRoutines` so the two never drift apart. */
-function buildRoutineWhereClause(filters?: RoutineFilters): {
+function buildRoutineWhereClause(
+  includeDemo: boolean,
+  filters?: RoutineFilters,
+): {
   whereClause: string;
   params: string[];
 } {
   const conditions: string[] = [];
   const params: string[] = [];
+
+  if (!includeDemo) conditions.push("r.is_demo = 0");
 
   function pushInClause(column: string, rawValue?: string) {
     const values = splitFilterValues(rawValue);
@@ -311,14 +316,22 @@ const ROUTINE_SELECT = `
   LEFT JOIN locale_meta lm ON lm.locale = ?
 `;
 
-export function createD1CatalogRepository(db: AppDb): CatalogRepository {
+export function createD1CatalogRepository(
+  db: AppDb,
+  options?: { includeDemo?: boolean },
+): CatalogRepository {
+  const includeDemo = options?.includeDemo ?? true;
+
   return {
     async listRoutines(
       locale,
       filters?: RoutineFilters,
       pagination?: RoutinePagination,
     ) {
-      const { whereClause, params } = buildRoutineWhereClause(filters);
+      const { whereClause, params } = buildRoutineWhereClause(
+        includeDemo,
+        filters,
+      );
       // `r.slug` (the primary key) gives a stable, deterministic order —
       // required so LIMIT/OFFSET pages don't skip or repeat rows across
       // successive infinite-scroll requests.
@@ -347,7 +360,10 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
     },
 
     async countRoutines(filters?: RoutineFilters) {
-      const { whereClause, params } = buildRoutineWhereClause(filters);
+      const { whereClause, params } = buildRoutineWhereClause(
+        includeDemo,
+        filters,
+      );
       const row = await db
         .prepare(`SELECT COUNT(*) AS count FROM routines r${whereClause}`)
         .bind(...params)
@@ -356,9 +372,10 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
     },
 
     async getRoutine(locale, slug) {
+      const demoClause = includeDemo ? "" : " AND r.is_demo = 0";
       const [row, chapters] = await Promise.all([
         db
-          .prepare(`${ROUTINE_SELECT} WHERE r.slug = ?`)
+          .prepare(`${ROUTINE_SELECT} WHERE r.slug = ?${demoClause}`)
           .bind(locale, locale, locale, locale, slug)
           .first<RoutineRow>(),
         fetchChaptersForSlug(db, locale, slug),
@@ -369,6 +386,8 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
     },
 
     async listInstructors(locale) {
+      const instructorDemoClause = includeDemo ? "" : " WHERE i.is_demo = 0";
+      const routineDemoClause = includeDemo ? "" : " AND r.is_demo = 0";
       const result = await db
         .prepare(
           `SELECT
@@ -376,11 +395,11 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
              ii.name, ii.bio,
              si.label AS role,
              (
-               SELECT COUNT(*) FROM routines r WHERE r.instructor_slug = i.slug
+               SELECT COUNT(*) FROM routines r WHERE r.instructor_slug = i.slug${routineDemoClause}
              ) AS routine_count
            FROM instructors i
            LEFT JOIN instructor_i18n ii ON ii.slug = i.slug AND ii.locale = ?
-           LEFT JOIN style_i18n si ON si.style_key = i.style AND si.locale = ?
+           LEFT JOIN style_i18n si ON si.style_key = i.style AND si.locale = ?${instructorDemoClause}
            ORDER BY i.slug ASC`,
         )
         .bind(locale, locale)
@@ -401,6 +420,8 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
     },
 
     async getInstructor(locale, slug) {
+      const demoClause = includeDemo ? "" : " AND i.is_demo = 0";
+      const routineDemoClause = includeDemo ? "" : " AND r.is_demo = 0";
       const row = await db
         .prepare(
           `SELECT
@@ -408,12 +429,12 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
              ii.name, ii.bio,
              si.label AS role,
              (
-               SELECT COUNT(*) FROM routines r WHERE r.instructor_slug = i.slug
+               SELECT COUNT(*) FROM routines r WHERE r.instructor_slug = i.slug${routineDemoClause}
              ) AS routine_count
            FROM instructors i
            LEFT JOIN instructor_i18n ii ON ii.slug = i.slug AND ii.locale = ?
            LEFT JOIN style_i18n si ON si.style_key = i.style AND si.locale = ?
-           WHERE i.slug = ?`,
+           WHERE i.slug = ?${demoClause}`,
         )
         .bind(locale, locale, slug)
         .first<InstructorRow>();
@@ -442,6 +463,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
       // 500 here instead of just missing this one catalog slice. Fall back
       // to the mock list so the page still renders.
       try {
+        const demoClause = includeDemo ? "" : " WHERE ec.is_demo = 0";
         const [result, lessonsBySlug] = await Promise.all([
           db
             .prepare(
@@ -454,7 +476,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                FROM external_courses ec
                LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
                LEFT JOIN style_i18n si ON si.style_key = ec.style AND si.locale = ?
-               LEFT JOIN level_i18n li ON li.level_key = ec.level AND li.locale = ?
+               LEFT JOIN level_i18n li ON li.level_key = ec.level AND li.locale = ?${demoClause}
                ORDER BY ec.sort_order ASC`,
             )
             .bind(locale, locale, locale)
@@ -477,6 +499,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
 
     async getExternalCourse(locale, slug) {
       try {
+        const demoClause = includeDemo ? "" : " AND ec.is_demo = 0";
         const [row, lessons] = await Promise.all([
           db
             .prepare(
@@ -490,7 +513,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
                LEFT JOIN style_i18n si ON si.style_key = ec.style AND si.locale = ?
                LEFT JOIN level_i18n li ON li.level_key = ec.level AND li.locale = ?
-               WHERE ec.slug = ?`,
+               WHERE ec.slug = ?${demoClause}`,
             )
             .bind(locale, locale, locale, slug)
             .first<ExternalCourseRow>(),
