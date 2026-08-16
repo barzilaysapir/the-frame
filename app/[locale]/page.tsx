@@ -33,7 +33,7 @@ export default async function HomePage({ params }: HomePageProps) {
   return (
     <main className="relative overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl flex-col items-center justify-center px-4 py-24 text-center sm:px-6">
+      <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
         <p className="max-w-xl text-frame-silver">{dict.home.subtitle}</p>
         <h1 className="mt-5 text-balance font-display text-6xl font-black leading-[0.98] text-white sm:text-7xl">
           {dict.home.title}
@@ -45,19 +45,10 @@ export default async function HomePage({ params }: HomePageProps) {
           {dict.common.browseTutorials}
           <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
         </Button>
-      </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-4 pb-24 sm:px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-balance font-display text-4xl font-black leading-[0.98] text-white sm:text-5xl">
-            {dict.whoItsFor.title}
-          </h2>
-          <p className="mt-4 text-frame-silver">{dict.whoItsFor.intro}</p>
-        </div>
-
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid w-full grid-cols-1 gap-6 sm:grid-cols-2">
           {dict.whoItsFor.items.map((item) => (
-            <Panel key={item.title} className="p-6">
+            <Panel key={item.title} className="p-6 text-start">
               <h3 className="font-display text-lg font-bold text-white">
                 {item.title}
               </h3>
@@ -66,20 +57,6 @@ export default async function HomePage({ params }: HomePageProps) {
               </p>
             </Panel>
           ))}
-        </div>
-
-        <div className="mt-16 text-center">
-          <h2 className="font-display text-3xl font-black text-white sm:text-4xl">
-            {dict.whoItsFor.closingTitle}
-          </h2>
-          <p className="mt-3 text-frame-silver">{dict.whoItsFor.closingBody}</p>
-          <Button
-            href={localePath(locale, "/routines")}
-            className="group mt-7 px-6"
-          >
-            {dict.whoItsFor.cta}
-            <ArrowLeft className="h-4 w-4 transition-transform ltr:rotate-180 group-hover:-translate-x-0.5" />
-          </Button>
         </div>
       </div>
     </main>
