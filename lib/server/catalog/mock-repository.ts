@@ -92,7 +92,7 @@ function toCatalogInstructor(
     name: localized.name,
     role: localized.role,
     bio: localized.bio,
-    style: instructor.style,
+    styles: [instructor.style],
     avatar: instructor.avatar,
     instagramUrl: instructor.instagramUrl,
     routineCount: getRoutinesByInstructor(instructor.slug).length,
