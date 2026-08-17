@@ -49,6 +49,7 @@ export interface CatalogInstructor {
   avatar: string;
   instagramUrl: string;
   routineCount: number;
+  courseCount: number;
 }
 
 /** Public-facing lesson metadata — deliberately excludes the R2 object key (server-only, resolved via `CatalogRepository.getExternalCourseLessonSource`). */

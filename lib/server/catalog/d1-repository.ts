@@ -54,6 +54,7 @@ interface InstructorRow {
   /** Localized style labels, same order, `|`-separated. */
   labels_concat: string | null;
   routine_count: number;
+  course_count: number;
 }
 
 interface ChapterRow {
@@ -147,6 +148,7 @@ function mapInstructor(row: InstructorRow): CatalogInstructor {
     avatar: row.avatar,
     instagramUrl: row.instagram_url,
     routineCount: Number(row.routine_count ?? 0),
+    courseCount: Number(row.course_count ?? 0),
   };
 }
 
@@ -399,9 +401,8 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
              i.slug, i.avatar, i.instagram_url,
              ii.name, ii.bio,
              st.styles_concat, st.labels_concat,
-             (
-               SELECT COUNT(*) FROM routines r WHERE r.instructor_slug = i.slug
-             ) AS routine_count
+             (SELECT COUNT(*) FROM routines r WHERE r.instructor_slug = i.slug) AS routine_count,
+             (SELECT COUNT(*) FROM external_courses ec WHERE ec.instructor_slug = i.slug) AS course_count
            FROM instructors i
            LEFT JOIN instructor_i18n ii ON ii.slug = i.slug AND ii.locale = ?
            LEFT JOIN (
@@ -432,9 +433,8 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
              i.slug, i.avatar, i.instagram_url,
              ii.name, ii.bio,
              st.styles_concat, st.labels_concat,
-             (
-               SELECT COUNT(*) FROM routines r WHERE r.instructor_slug = i.slug
-             ) AS routine_count
+             (SELECT COUNT(*) FROM routines r WHERE r.instructor_slug = i.slug) AS routine_count,
+             (SELECT COUNT(*) FROM external_courses ec WHERE ec.instructor_slug = i.slug) AS course_count
            FROM instructors i
            LEFT JOIN instructor_i18n ii ON ii.slug = i.slug AND ii.locale = ?
            LEFT JOIN (
@@ -473,17 +473,22 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
             .prepare(
               `SELECT
                  ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level, ec.instructor_slug,
-                 COALESCE(NULLIF(eci.provider, ''), ec.provider) AS provider,
+                 -- A linked instructor's real (localized) name is the source
+                 -- of truth once instructor_slug is set — falls back to the
+                 -- free-text provider only for courses with no real
+                 -- instructor link (see migrations/0030).
+                 COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec
                LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+               LEFT JOIN instructor_i18n eii ON eii.slug = ec.instructor_slug AND eii.locale = ?
                LEFT JOIN style_i18n si ON si.style_key = ec.style AND si.locale = ?
                LEFT JOIN level_i18n li ON li.level_key = ec.level AND li.locale = ?
                ORDER BY ec.sort_order ASC`,
             )
-            .bind(locale, locale, locale)
+            .bind(locale, locale, locale, locale)
             .all<ExternalCourseRow>(),
           fetchLessonsForAllExternalCourses(db, locale),
         ]);
@@ -508,17 +513,19 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
             .prepare(
               `SELECT
                  ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level, ec.instructor_slug,
-                 COALESCE(NULLIF(eci.provider, ''), ec.provider) AS provider,
+                 -- See the matching comment in listExternalCourses above.
+                 COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec
                LEFT JOIN external_course_i18n eci ON eci.slug = ec.slug AND eci.locale = ?
+               LEFT JOIN instructor_i18n eii ON eii.slug = ec.instructor_slug AND eii.locale = ?
                LEFT JOIN style_i18n si ON si.style_key = ec.style AND si.locale = ?
                LEFT JOIN level_i18n li ON li.level_key = ec.level AND li.locale = ?
                WHERE ec.slug = ?`,
             )
-            .bind(locale, locale, locale, slug)
+            .bind(locale, locale, locale, locale, slug)
             .first<ExternalCourseRow>(),
           fetchLessonsForSlug(db, locale, slug),
         ]);
