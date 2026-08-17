@@ -27,8 +27,8 @@ export function ImageLightbox({
         {trigger}
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/80" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 h-[80vh] w-[80vw] max-w-xl -translate-x-1/2 -translate-y-1/2">
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-overlayShow data-[state=closed]:animate-overlayHide" />
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 h-[80vh] w-[80vw] max-w-xl data-[state=open]:animate-contentShow data-[state=closed]:animate-contentHide">
           <Dialog.Title className="sr-only">{alt}</Dialog.Title>
           <div className="relative h-full w-full overflow-hidden rounded-2xl">
             <Image src={src} alt={alt} fill sizes="80vw" className="object-contain" />
