@@ -1,8 +1,11 @@
+import Link from "next/link";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
 
 interface InstructorContentCountsProps {
   routineCount: number;
   courseCount: number;
+  href: string;
+  ariaLabel: string;
   labels: {
     routineOne: string;
     routineMany: string;
@@ -14,12 +17,18 @@ interface InstructorContentCountsProps {
 export function InstructorContentCounts({
   routineCount,
   courseCount,
+  href,
+  ariaLabel,
   labels,
 }: InstructorContentCountsProps) {
   if (routineCount === 0 && courseCount === 0) return null;
 
   return (
-    <div className="mt-5 space-y-1 border-t border-frame-border pt-4 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
+    <Link
+      href={href}
+      aria-label={ariaLabel}
+      className="mt-5 block space-y-1 border-t border-frame-border pt-4 text-sm font-semibold text-frame-cyan transition-colors hover:text-white"
+    >
       {routineCount > 0 ? (
         <p>
           {routineCount === 1
@@ -34,6 +43,6 @@ export function InstructorContentCounts({
             : formatMessage(labels.courseMany, { count: courseCount })}
         </p>
       ) : null}
-    </div>
+    </Link>
   );
 }

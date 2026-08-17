@@ -33,6 +33,24 @@ const config: Config = {
       backgroundImage: {
         "neon-cta": "linear-gradient(90deg, #E91E8C, #22D3EE)",
       },
+      keyframes: {
+        overlayShow: { from: { opacity: "0" }, to: { opacity: "1" } },
+        overlayHide: { from: { opacity: "1" }, to: { opacity: "0" } },
+        contentShow: {
+          from: { opacity: "0", transform: "translate(-50%, -50%) scale(0.95)" },
+          to: { opacity: "1", transform: "translate(-50%, -50%) scale(1)" },
+        },
+        contentHide: {
+          from: { opacity: "1", transform: "translate(-50%, -50%) scale(1)" },
+          to: { opacity: "0", transform: "translate(-50%, -50%) scale(0.95)" },
+        },
+      },
+      animation: {
+        overlayShow: "overlayShow 200ms ease-out forwards",
+        overlayHide: "overlayHide 150ms ease-in forwards",
+        contentShow: "contentShow 200ms ease-out forwards",
+        contentHide: "contentHide 150ms ease-in forwards",
+      },
     },
   },
   plugins: [],

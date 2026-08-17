@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { InstructorCardHeader } from "@/components/instructors/InstructorCardHeader";
 import { InstructorContentCounts } from "@/components/instructors/InstructorContentCounts";
 import { Panel } from "@/components/ui/Panel";
@@ -17,6 +16,8 @@ interface InstructorCardProps {
     courseMany: string;
     instagramAria: string;
     tutorialsAria: string;
+    avatarEnlargeAria: string;
+    avatarLightboxClose: string;
   };
 }
 
@@ -26,32 +27,30 @@ export function InstructorCard({
   labels,
 }: InstructorCardProps) {
   return (
-    <Panel as="article" variant="interactive" className="group relative p-6">
-      <Link
-        href={routinesFilterHref({ instructor: instructor.slug, locale })}
-        className="absolute inset-0 z-0 rounded-2xl"
-        aria-label={formatMessage(labels.tutorialsAria, {
+    <Panel as="article" className="p-6">
+      <InstructorCardHeader
+        name={instructor.name}
+        role={instructor.role}
+        avatar={instructor.avatar}
+        instagramUrl={instructor.instagramUrl}
+        instagramAriaLabel={formatMessage(labels.instagramAria, {
           name: instructor.name,
         })}
+        avatarEnlargeAriaLabel={formatMessage(labels.avatarEnlargeAria, {
+          name: instructor.name,
+        })}
+        avatarLightboxCloseAriaLabel={labels.avatarLightboxClose}
       />
 
-      <div className="relative z-10 pointer-events-none">
-        <InstructorCardHeader
-          name={instructor.name}
-          role={instructor.role}
-          avatar={instructor.avatar}
-          instagramUrl={instructor.instagramUrl}
-          instagramAriaLabel={formatMessage(labels.instagramAria, {
-            name: instructor.name,
-          })}
-        />
-
-        <InstructorContentCounts
-          routineCount={instructor.routineCount}
-          courseCount={instructor.courseCount}
-          labels={labels}
-        />
-      </div>
+      <InstructorContentCounts
+        routineCount={instructor.routineCount}
+        courseCount={instructor.courseCount}
+        href={routinesFilterHref({ instructor: instructor.slug, locale })}
+        ariaLabel={formatMessage(labels.tutorialsAria, {
+          name: instructor.name,
+        })}
+        labels={labels}
+      />
     </Panel>
   );
 }
