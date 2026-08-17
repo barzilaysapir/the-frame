@@ -24,6 +24,8 @@ export interface ExternalCourseRecord {
   slug: string;
   /** MOCK creator/series name — replace with the real one when ready. */
   provider: string;
+  /** Real instructor slug this course belongs to, when it's taught by someone in the instructors catalog. */
+  instructorSlug?: string;
   /** Display-only price string, in ILS (₪) — this is an Israel-only business, same as routine pricing. */
   priceDisplay: string;
   /** Controls display order; lower sorts first. */
@@ -50,6 +52,7 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
     // into the title; `provider` here credits the instructor.
     slug: "gisha-gmisha-foundations",
     provider: "יהל חייט",
+    instructorSlug: "yahel-hayat",
     priceDisplay: "₪200",
     sortOrder: 0,
     coverImage: "/routine-posters/routine-poster-amber-loft.png",

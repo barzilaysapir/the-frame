@@ -65,6 +65,7 @@ interface ChapterRow {
 interface ExternalCourseRow {
   slug: string;
   provider: string;
+  instructor_slug: string | null;
   price_display: string;
   cover_image: string;
   style: string | null;
@@ -157,6 +158,7 @@ function mapExternalCourse(
     slug: row.slug,
     title: row.title ?? row.slug,
     provider: row.provider,
+    instructorSlug: row.instructor_slug,
     tagline: row.tagline ?? "",
     description: row.description ?? "",
     priceDisplay: row.price_display,
@@ -470,7 +472,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           db
             .prepare(
               `SELECT
-                 ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level,
+                 ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level, ec.instructor_slug,
                  COALESCE(NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
                  si.label AS style_label,
@@ -505,7 +507,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           db
             .prepare(
               `SELECT
-                 ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level,
+                 ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level, ec.instructor_slug,
                  COALESCE(NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
                  si.label AS style_label,
