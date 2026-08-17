@@ -1,5 +1,5 @@
 import { Instagram } from "lucide-react";
-import { InstructorAvatar } from "@/components/InstructorAvatar";
+import { InstructorAvatar } from "@/components/instructors/InstructorAvatar";
 
 interface InstructorCardHeaderProps {
   name: string;

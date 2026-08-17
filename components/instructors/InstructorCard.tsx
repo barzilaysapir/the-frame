@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { InstructorCardHeader } from "@/components/InstructorCardHeader";
-import { InstructorContentCounts } from "@/components/InstructorContentCounts";
+import { InstructorCardHeader } from "@/components/instructors/InstructorCardHeader";
+import { InstructorContentCounts } from "@/components/instructors/InstructorContentCounts";
 import { Panel } from "@/components/ui/Panel";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage } from "@/lib/i18n/get-dictionary";

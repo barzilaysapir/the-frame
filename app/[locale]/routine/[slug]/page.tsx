@@ -7,7 +7,7 @@ import { DanceVideoPlayer } from "@/components/player/DanceVideoPlayer";
 import { RoutineBreakdown, type RoutineDetail } from "@/components/routines/RoutineBreakdown";
 import { PricingCard } from "@/components/PricingCard";
 import { MobileStickyCta } from "@/components/MobileStickyCta";
-import { InstructorAvatar } from "@/components/InstructorAvatar";
+import { InstructorAvatar } from "@/components/instructors/InstructorAvatar";
 import { SongCredit } from "@/components/SongCredit";
 import { RoutineFilterTag } from "@/components/routines/RoutineFilterTag";
 import { isLocale } from "@/lib/i18n/config";
