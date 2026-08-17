@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { RoutineCard } from "@/components/routines/RoutineCard";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";

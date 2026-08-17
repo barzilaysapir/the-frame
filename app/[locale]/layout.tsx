@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Heebo, Rubik, Alex_Brush } from "next/font/google";
 import { notFound } from "next/navigation";
-import { AuthProvider } from "@/components/AuthProvider";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { FavoritesProvider } from "@/components/favorites/FavoritesProvider";
 import { LocalePrefSync } from "@/components/LocalePrefSync";
 import { Header } from "@/components/header/Header";

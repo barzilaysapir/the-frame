@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { swapLocalePath } from "@/lib/i18n/path";
