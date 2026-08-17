@@ -13,6 +13,8 @@ interface InstructorCardProps {
   labels: {
     routineOne: string;
     routineMany: string;
+    courseOne: string;
+    courseMany: string;
     instagramAria: string;
     tutorialsAria: string;
   };
@@ -61,14 +63,27 @@ export function InstructorCard({
           </div>
         </div>
 
-        {instructor.routineCount > 0 ? (
-          <p className="mt-5 border-t border-frame-border pt-4 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
-            {instructor.routineCount === 1
-              ? labels.routineOne
-              : formatMessage(labels.routineMany, {
-                  count: instructor.routineCount,
-                })}
-          </p>
+        {instructor.routineCount > 0 || instructor.courseCount > 0 ? (
+          <div className="mt-5 space-y-1 border-t border-frame-border pt-4 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
+            {instructor.routineCount > 0 ? (
+              <p>
+                {instructor.routineCount === 1
+                  ? labels.routineOne
+                  : formatMessage(labels.routineMany, {
+                      count: instructor.routineCount,
+                    })}
+              </p>
+            ) : null}
+            {instructor.courseCount > 0 ? (
+              <p>
+                {instructor.courseCount === 1
+                  ? labels.courseOne
+                  : formatMessage(labels.courseMany, {
+                      count: instructor.courseCount,
+                    })}
+              </p>
+            ) : null}
+          </div>
         ) : null}
       </div>
     </Panel>

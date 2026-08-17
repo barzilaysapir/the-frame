@@ -80,19 +80,21 @@
   "teachers": {
     "title": "Our teachers",
     "subtitle": "Every teacher at The Frame brings their own professional background — jazz funk, hip hop, and heels — and builds each combination so you can learn it deeply, frame by frame.",
-    "routineOne": "1 combination on the site",
-    "routineMany": "{count} combinations on the site",
+    "routineOne": "1 lesson on the site",
+    "routineMany": "{count} lessons on the site",
+    "courseOne": "1 course on the site",
+    "courseMany": "{count} courses on the site",
     "instagramAria": "{name} on Instagram",
     "tutorialsAria": "{name}'s library"
   },
   "styles": {
     "title": "Dance styles",
     "subtitle": "Browse the library by style and dive into the one you want to learn.",
-    "routineOne": "1 combination",
-    "routineMany": "{count} combinations",
+    "routineOne": "1 lesson on the site",
+    "routineMany": "{count} lessons on the site",
     "browseAria": "Browse {name} classes",
-    "courseOne": "1 course",
-    "courseMany": "{count} courses"
+    "courseOne": "1 course on the site",
+    "courseMany": "{count} courses on the site"
   },
   "externalCourses": {
     "tag": "External course",

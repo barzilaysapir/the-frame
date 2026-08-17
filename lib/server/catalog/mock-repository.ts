@@ -96,6 +96,9 @@ function toCatalogInstructor(
     avatar: instructor.avatar,
     instagramUrl: instructor.instagramUrl,
     routineCount: getRoutinesByInstructor(instructor.slug).length,
+    courseCount: getAllExternalCourses().filter(
+      (course) => course.instructorSlug === instructor.slug,
+    ).length,
   };
 }
 

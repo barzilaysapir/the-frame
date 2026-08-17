@@ -51,6 +51,8 @@ export default async function InstructorsPage({ params }: InstructorsPageProps) 
             labels={{
               routineOne: dict.teachers.routineOne,
               routineMany: dict.teachers.routineMany,
+              courseOne: dict.teachers.courseOne,
+              courseMany: dict.teachers.courseMany,
               instagramAria: dict.teachers.instagramAria,
               tutorialsAria: dict.teachers.tutorialsAria,
             }}
