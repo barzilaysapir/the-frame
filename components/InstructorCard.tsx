@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Instagram } from "lucide-react";
-import { InstructorAvatar } from "@/components/InstructorAvatar";
+import { InstructorCardHeader } from "@/components/InstructorCardHeader";
+import { InstructorContentCounts } from "@/components/InstructorContentCounts";
 import { Panel } from "@/components/ui/Panel";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
@@ -36,55 +36,21 @@ export function InstructorCard({
       />
 
       <div className="relative z-10 pointer-events-none">
-        <div className="flex items-center gap-3">
-          <InstructorAvatar
-            name={instructor.name}
-            src={instructor.avatar}
-            className="h-12 w-12"
-          />
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <h3 className="font-display text-xl font-black text-white">
-                {instructor.name}
-              </h3>
-              <a
-                href={instructor.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="pointer-events-auto relative z-20 rounded-sm text-frame-cyan transition-colors hover:text-white"
-                aria-label={formatMessage(labels.instagramAria, {
-                  name: instructor.name,
-                })}
-              >
-                <Instagram className="h-4 w-4 shrink-0" aria-hidden="true" />
-              </a>
-            </div>
-            <p className="text-sm text-frame-silver">{instructor.role}</p>
-          </div>
-        </div>
+        <InstructorCardHeader
+          name={instructor.name}
+          role={instructor.role}
+          avatar={instructor.avatar}
+          instagramUrl={instructor.instagramUrl}
+          instagramAriaLabel={formatMessage(labels.instagramAria, {
+            name: instructor.name,
+          })}
+        />
 
-        {instructor.routineCount > 0 || instructor.courseCount > 0 ? (
-          <div className="mt-5 space-y-1 border-t border-frame-border pt-4 text-sm font-semibold text-frame-cyan transition-colors group-hover:text-white">
-            {instructor.routineCount > 0 ? (
-              <p>
-                {instructor.routineCount === 1
-                  ? labels.routineOne
-                  : formatMessage(labels.routineMany, {
-                      count: instructor.routineCount,
-                    })}
-              </p>
-            ) : null}
-            {instructor.courseCount > 0 ? (
-              <p>
-                {instructor.courseCount === 1
-                  ? labels.courseOne
-                  : formatMessage(labels.courseMany, {
-                      count: instructor.courseCount,
-                    })}
-              </p>
-            ) : null}
-          </div>
-        ) : null}
+        <InstructorContentCounts
+          routineCount={instructor.routineCount}
+          courseCount={instructor.courseCount}
+          labels={labels}
+        />
       </div>
     </Panel>
   );
