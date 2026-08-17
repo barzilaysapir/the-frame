@@ -63,6 +63,7 @@ export interface CatalogExternalCourse {
   slug: string;
   title: string;
   provider: string;
+  instructorSlug: string | null;
   tagline: string;
   description: string;
   priceDisplay: string;
