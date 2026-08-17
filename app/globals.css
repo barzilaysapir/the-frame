@@ -84,17 +84,6 @@ input[type="range"].frame-range:focus-visible {
   box-shadow: 0 0 0 2px #0f0f11, 0 0 0 4px rgba(34, 211, 238, 0.85);
 }
 
-/* Ambient glow around the video player frame — a box-shadow, not baked
-   into the poster image, so it survives once a real video replaces the
-   placeholder illustration (overflow-hidden on this same element clips
-   its children, not its own box-shadow, so this still renders outside
-   the rounded frame). */
-.neon-frame-glow {
-  box-shadow:
-    0 0 55px -12px rgba(233, 30, 140, 0.45),
-    0 0 90px -20px rgba(34, 211, 238, 0.35);
-}
-
 /* Studio-lighting glow used behind hero sections. Absolutely positioned by
    the caller (relative parent, z-0), content sits above it at z-10. */
 .neon-glow {
