@@ -69,10 +69,10 @@ export interface CatalogExternalCourse {
   description: string;
   priceDisplay: string;
   coverImage: string;
-  style: DanceStyleKey | null;
-  styleLabel: string | null;
-  level: LevelKey | null;
-  levelLabel: string | null;
+  style: DanceStyleKey;
+  styleLabel: string;
+  level: LevelKey;
+  levelLabel: string;
   lessons: CatalogExternalCourseLesson[];
 }
 

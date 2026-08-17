@@ -1,10 +1,11 @@
 /**
- * "More courses" types + **temporary in-memory mock listings**.
- * These are additional courses filmed/produced by The Frame that live on
- * this site (own instructors, own hosting) but are kept in a separate
- * section from the main routines catalog because they're a different kind
- * of content — e.g. stretching/warm-up series instead of song combinations.
- * Not third-party/affiliate — replace with real course records when ready.
+ * "More courses" types + in-memory records, backing the demo/preview
+ * catalog (mockCatalogRepository). These are additional courses
+ * filmed/produced by The Frame that live on this site (own instructors, own
+ * hosting) but are kept in a separate section from the main routines
+ * catalog because they're a different kind of content — e.g. stretching/
+ * warm-up series instead of song combinations. Mirrors the real D1
+ * `external_courses` table (see migrations/) — keep the two in sync.
  */
 import type { DanceStyleKey, LevelKey } from "@/lib/routines";
 
@@ -22,7 +23,6 @@ interface ExternalCourseLessonRecord {
 
 export interface ExternalCourseRecord {
   slug: string;
-  /** MOCK creator/series name — replace with the real one when ready. */
   provider: string;
   /** Real instructor slug this course belongs to, when it's taught by someone in the instructors catalog. */
   instructorSlug?: string;
@@ -32,14 +32,14 @@ export interface ExternalCourseRecord {
   sortOrder: number;
   /** Card/detail-page cover image. Reuses an existing generic routine poster as a placeholder, same as several routines already do, until real course art is ready. */
   coverImage: string;
-  /** Library style this course belongs to, when it should show in style filters. */
-  style?: DanceStyleKey;
-  /** Library level, when it should show in level filters. */
-  level?: LevelKey;
+  /** Library style this course belongs to — same as routines, required so every course shows up in style filters. */
+  style: DanceStyleKey;
+  /** Library level — same as routines, required so every course shows up in level filters. */
+  level: LevelKey;
   /**
    * Lessons with real, hosted video (gated behind login — see
    * lib/server/course-videos.ts). Array order is display order. Omitted/empty
-   * for the still-mock "coming soon" listings.
+   * for courses that don't have lessons live yet.
    */
   lessons?: ExternalCourseLessonRecord[];
 }
@@ -61,73 +61,42 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
     lessons: [
       {
         id: "warmup",
-        r2Key: "external-courses/gisha-gmisha/foundations/warmup.mp4",
+        r2Key: "class-videos/external-courses/gisha-gmisha/foundations/warmup.mp4",
         allowMirror: false,
       },
       {
         id: "head-neck",
-        r2Key: "external-courses/gisha-gmisha/foundations/head-neck.mp4",
+        r2Key: "class-videos/external-courses/gisha-gmisha/foundations/head-neck.mp4",
         allowMirror: false,
       },
       {
         id: "shoulder-blades",
-        r2Key: "external-courses/gisha-gmisha/foundations/shoulder-blades.mp4",
+        r2Key: "class-videos/external-courses/gisha-gmisha/foundations/shoulder-blades.mp4",
         allowMirror: false,
       },
       {
         id: "shoulder-blades-physio-exercise",
-        r2Key: "external-courses/gisha-gmisha/foundations/shoulder-blades-physio-exercise.mp4",
+        r2Key: "class-videos/external-courses/gisha-gmisha/foundations/shoulder-blades-physio-exercise.mp4",
         allowMirror: false,
       },
       {
         id: "spine-abs",
-        r2Key: "external-courses/gisha-gmisha/foundations/spine-abs.mp4",
+        r2Key: "class-videos/external-courses/gisha-gmisha/foundations/spine-abs.mp4",
         allowMirror: false,
       },
     ],
   },
-  // MOCK course listings for demo UI — replace with real course records when ready.
   {
-    slug: "steez-academy-hiphop-foundations",
-    provider: "Steez Academy",
-    priceDisplay: "₪99/mo",
-    sortOrder: 1,
-    coverImage: "/routine-posters/routine-poster-street-cypher.png",
-  },
-  {
-    slug: "urban-motion-jazzfunk-intensive",
-    provider: "Urban Motion Studio",
-    priceDisplay: "₪449 one-time",
-    sortOrder: 2,
-    coverImage: "/routine-posters/routine-poster-jazz-glow.png",
-  },
-  {
-    slug: "heels-and-heart-confidence-course",
-    provider: "Heels & Heart",
-    priceDisplay: "₪129/mo",
-    sortOrder: 3,
-    coverImage: "/routine-posters/routine-poster-penthouse-heels.png",
-  },
-  {
-    slug: "movement-lab-contemporary-lines",
-    provider: "The Movement Lab",
-    priceDisplay: "₪179/mo",
-    sortOrder: 4,
-    coverImage: "/routine-posters/routine-poster-spotlight-lyrical.png",
-  },
-  {
-    slug: "rhythm-collective-afrobeats-bootcamp",
-    provider: "Rhythm Collective",
-    priceDisplay: "₪89/mo",
-    sortOrder: 5,
-    coverImage: "/routine-posters/routine-poster-afro-groove.png",
-  },
-  {
-    slug: "dancehall-society-vibes-101",
-    provider: "Dancehall Society",
-    priceDisplay: "₪69/mo",
-    sortOrder: 6,
-    coverImage: "/routine-posters/routine-poster-dancehall-block.png",
+    // Second real course — no lessons yet, card-only, same starting point as
+    // gisha-gmisha-foundations before migrations/0017.
+    slug: "vibe-on-heels",
+    provider: "דניאל לאני",
+    instructorSlug: "daniel-lani",
+    priceDisplay: "בקרוב",
+    sortOrder: 7,
+    coverImage: "/routine-posters/routine-poster-velvet-heels.png",
+    style: "heels",
+    level: "all-levels",
   },
 ];
 

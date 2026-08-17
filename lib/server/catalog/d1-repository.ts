@@ -69,8 +69,8 @@ interface ExternalCourseRow {
   instructor_slug: string | null;
   price_display: string;
   cover_image: string;
-  style: string | null;
-  level: string | null;
+  style: string;
+  level: string;
   title: string | null;
   tagline: string | null;
   description: string | null;
@@ -165,10 +165,10 @@ function mapExternalCourse(
     description: row.description ?? "",
     priceDisplay: row.price_display,
     coverImage: row.cover_image,
-    style: (row.style as DanceStyleKey | null) ?? null,
-    styleLabel: row.style ? (row.style_label ?? row.style) : null,
-    level: (row.level as LevelKey | null) ?? null,
-    levelLabel: row.level ? (row.level_label ?? row.level) : null,
+    style: row.style as DanceStyleKey,
+    styleLabel: row.style_label ?? row.style,
+    level: row.level as LevelKey,
+    levelLabel: row.level_label ?? row.level,
     lessons,
   };
 }
