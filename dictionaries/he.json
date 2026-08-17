@@ -80,19 +80,23 @@
   "teachers": {
     "title": "המורים שלנו",
     "subtitle": "כל מורה ב-The Frame מביא רקע מקצועי משלו — ג'אז פאנק, היפ הופ ועקבים — ובונה כל קומבינציה כך שתלמדו אותה לעומק, פריים אחרי פריים.",
-    "routineOne": "קומבינציה אחת באתר",
-    "routineMany": "{count} קומבינציות באתר",
+    "routineOne": "שיעור אחד באתר",
+    "routineMany": "{count} שיעורים באתר",
+    "courseOne": "קורס אחד באתר",
+    "courseMany": "{count} קורסים באתר",
     "instagramAria": "{name} באינסטגרם",
-    "tutorialsAria": "ספריית {name}"
+    "tutorialsAria": "ספריית {name}",
+    "avatarEnlargeAria": "הגדלת התמונה של {name}",
+    "avatarLightboxClose": "סגירת התמונה המוגדלת"
   },
   "styles": {
     "title": "סגנונות ריקוד",
     "subtitle": "עברו על הספרייה לפי סגנון, ובחרו לאיזה מהם לצלול.",
-    "routineOne": "קומבינציה אחת",
-    "routineMany": "{count} קומבינציות",
+    "routineOne": "שיעור אחד באתר",
+    "routineMany": "{count} שיעורים באתר",
     "browseAria": "עיינו בשיעורים בסגנון {name}",
-    "courseOne": "קורס אחד",
-    "courseMany": "{count} קורסים"
+    "courseOne": "קורס אחד באתר",
+    "courseMany": "{count} קורסים באתר"
   },
   "externalCourses": {
     "tag": "קורס חיצוני",

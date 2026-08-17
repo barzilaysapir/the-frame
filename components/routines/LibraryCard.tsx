@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import { SongCredit } from "@/components/SongCredit";
+import { SongCredit } from "@/components/routines/SongCredit";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { RoutineFilterTag } from "@/components/routines/RoutineFilterTag";
 import { Panel } from "@/components/ui/Panel";

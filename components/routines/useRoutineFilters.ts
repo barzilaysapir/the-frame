@@ -33,11 +33,12 @@ export function useRoutineFilters({
 
   const filteredItems = useMemo(() => {
     let items = allItems;
-    // Instructor only exists on routines. Style and level can match a
-    // course that has those fields set.
     if (selectedInstructors.length > 0) {
-      items = items.filter(
-        (item) => item.kind === "routine" && selectedInstructors.includes(item.routine.instructorSlug),
+      items = items.filter((item) =>
+        item.kind === "routine"
+          ? selectedInstructors.includes(item.routine.instructorSlug)
+          : item.course.instructorSlug != null &&
+            selectedInstructors.includes(item.course.instructorSlug),
       );
     }
     if (selectedStyles.length > 0) {

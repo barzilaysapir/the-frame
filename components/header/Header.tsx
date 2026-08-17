@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { HeaderAuthActions } from "@/components/header/HeaderAuthActions";
 import { MobileMenuAuthActions } from "@/components/header/MobileMenuAuthActions";

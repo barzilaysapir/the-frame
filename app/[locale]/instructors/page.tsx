@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { InstructorCard } from "@/components/InstructorCard";
+import { InstructorCard } from "@/components/instructors/InstructorCard";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { resolveCatalog } from "@/lib/server/catalog";
@@ -51,8 +51,12 @@ export default async function InstructorsPage({ params }: InstructorsPageProps) 
             labels={{
               routineOne: dict.teachers.routineOne,
               routineMany: dict.teachers.routineMany,
+              courseOne: dict.teachers.courseOne,
+              courseMany: dict.teachers.courseMany,
               instagramAria: dict.teachers.instagramAria,
               tutorialsAria: dict.teachers.tutorialsAria,
+              avatarEnlargeAria: dict.teachers.avatarEnlargeAria,
+              avatarLightboxClose: dict.teachers.avatarLightboxClose,
             }}
           />
         ))}

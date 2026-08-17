@@ -2,7 +2,7 @@
 
 import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { useFavorites } from "@/components/favorites/FavoritesProvider";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";

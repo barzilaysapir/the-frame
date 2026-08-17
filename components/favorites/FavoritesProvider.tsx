@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
 import type { CatalogRoutine } from "@/lib/server/catalog/types";

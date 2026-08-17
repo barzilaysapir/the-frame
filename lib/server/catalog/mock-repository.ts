@@ -96,6 +96,9 @@ function toCatalogInstructor(
     avatar: instructor.avatar,
     instagramUrl: instructor.instagramUrl,
     routineCount: getRoutinesByInstructor(instructor.slug).length,
+    courseCount: getAllExternalCourses().filter(
+      (course) => course.instructorSlug === instructor.slug,
+    ).length,
   };
 }
 
@@ -112,14 +115,15 @@ function toCatalogExternalCourse(
     slug: course.slug,
     title: localized.title,
     provider: localized.provider,
+    instructorSlug: course.instructorSlug ?? null,
     tagline: localized.tagline,
     description: localized.description,
     priceDisplay: course.priceDisplay,
     coverImage: course.coverImage,
-    style: course.style ?? null,
-    styleLabel: course.style ? localizeStyle(locale, course.style) : null,
-    level: course.level ?? null,
-    levelLabel: course.level ? localizeLevel(locale, course.level) : null,
+    style: course.style,
+    styleLabel: localizeStyle(locale, course.style),
+    level: course.level,
+    levelLabel: localizeLevel(locale, course.level),
     lessons: (course.lessons ?? []).map((lesson) => ({
       id: lesson.id,
       title: localizeExternalCourseLessonTitle(locale, course.slug, lesson.id),
@@ -179,11 +183,7 @@ export const mockCatalogRepository: CatalogRepository = {
   },
 
   async listExternalCourses(locale) {
-    // Exclude the one real course (see lib/external-courses.ts) — the demo
-    // catalog should only ever show fake/mock listings, so it doesn't get
-    // confused for real content sitting alongside it.
     return getAllExternalCourses()
-      .filter((course) => course.slug !== "gisha-gmisha-foundations")
       .map((course) => toCatalogExternalCourse(locale, course.slug))
       .filter((item): item is CatalogExternalCourse => item !== null);
   },

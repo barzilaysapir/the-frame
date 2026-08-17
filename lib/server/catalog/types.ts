@@ -49,6 +49,7 @@ export interface CatalogInstructor {
   avatar: string;
   instagramUrl: string;
   routineCount: number;
+  courseCount: number;
 }
 
 /** Public-facing lesson metadata — deliberately excludes the R2 object key (server-only, resolved via `CatalogRepository.getExternalCourseLessonSource`). */
@@ -63,14 +64,15 @@ export interface CatalogExternalCourse {
   slug: string;
   title: string;
   provider: string;
+  instructorSlug: string | null;
   tagline: string;
   description: string;
   priceDisplay: string;
   coverImage: string;
-  style: DanceStyleKey | null;
-  styleLabel: string | null;
-  level: LevelKey | null;
-  levelLabel: string | null;
+  style: DanceStyleKey;
+  styleLabel: string;
+  level: LevelKey;
+  levelLabel: string;
   lessons: CatalogExternalCourseLesson[];
 }
 

@@ -18,6 +18,21 @@ body {
   color: #f4f4f5;
 }
 
+/* Radix's scroll lock (any Dialog/AlertDialog) adds its own
+   `margin-right: <scrollbar-width> !important` to body via a
+   `body[data-scroll-locked]` rule it injects at runtime, compensating for a
+   scrollbar it assumes it's hiding. That's redundant with (and fights) the
+   permanent gutter reserved above — it shrinks body by an extra scrollbar's
+   width while any dialog is open and un-shrinks it on close, which is the
+   same horizontal-jump bug the html rule above already exists to prevent.
+   Zero it out; keep everything else Radix sets (overflow: hidden etc. still
+   correctly block background scroll while a dialog is open). The extra
+   `html` ancestor gives this higher specificity than Radix's injected rule
+   so it wins regardless of injection order. */
+html body[data-scroll-locked] {
+  margin-right: 0 !important;
+}
+
 /* Slim custom scrollbar for a more editorial feel */
 ::-webkit-scrollbar {
   width: 10px;
@@ -82,17 +97,6 @@ input[type="range"].frame-range::-moz-range-thumb {
    no visible indicator at all (WCAG 2.4.7). */
 input[type="range"].frame-range:focus-visible {
   box-shadow: 0 0 0 2px #0f0f11, 0 0 0 4px rgba(34, 211, 238, 0.85);
-}
-
-/* Ambient glow around the video player frame — a box-shadow, not baked
-   into the poster image, so it survives once a real video replaces the
-   placeholder illustration (overflow-hidden on this same element clips
-   its children, not its own box-shadow, so this still renders outside
-   the rounded frame). */
-.neon-frame-glow {
-  box-shadow:
-    0 0 55px -12px rgba(233, 30, 140, 0.45),
-    0 0 90px -20px rgba(34, 211, 238, 0.35);
 }
 
 /* Studio-lighting glow used behind hero sections. Absolutely positioned by
