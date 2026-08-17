@@ -16,6 +16,8 @@ interface InstructorCardProps {
     courseMany: string;
     instagramAria: string;
     tutorialsAria: string;
+    avatarEnlargeAria: string;
+    avatarLightboxClose: string;
   };
 }
 
@@ -34,6 +36,10 @@ export function InstructorCard({
         instagramAriaLabel={formatMessage(labels.instagramAria, {
           name: instructor.name,
         })}
+        avatarEnlargeAriaLabel={formatMessage(labels.avatarEnlargeAria, {
+          name: instructor.name,
+        })}
+        avatarLightboxCloseAriaLabel={labels.avatarLightboxClose}
       />
 
       <InstructorContentCounts

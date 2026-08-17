@@ -1,5 +1,6 @@
 import { Instagram } from "lucide-react";
 import { InstructorAvatar } from "@/components/instructors/InstructorAvatar";
+import { ImageLightbox } from "@/components/ui/ImageLightbox";
 
 interface InstructorCardHeaderProps {
   name: string;
@@ -7,6 +8,8 @@ interface InstructorCardHeaderProps {
   avatar: string;
   instagramUrl: string;
   instagramAriaLabel: string;
+  avatarEnlargeAriaLabel: string;
+  avatarLightboxCloseAriaLabel: string;
 }
 
 export function InstructorCardHeader({
@@ -15,10 +18,31 @@ export function InstructorCardHeader({
   avatar,
   instagramUrl,
   instagramAriaLabel,
+  avatarEnlargeAriaLabel,
+  avatarLightboxCloseAriaLabel,
 }: InstructorCardHeaderProps) {
+  const avatarElement = <InstructorAvatar name={name} src={avatar} className="h-12 w-12" />;
+
   return (
     <div className="flex items-center gap-3">
-      <InstructorAvatar name={name} src={avatar} className="h-12 w-12" />
+      {avatar ? (
+        <ImageLightbox
+          src={avatar}
+          alt={name}
+          trigger={
+            <button
+              type="button"
+              className="rounded-full transition-opacity hover:opacity-80"
+            >
+              {avatarElement}
+            </button>
+          }
+          triggerAriaLabel={avatarEnlargeAriaLabel}
+          closeAriaLabel={avatarLightboxCloseAriaLabel}
+        />
+      ) : (
+        avatarElement
+      )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <h3 className="font-display text-xl font-black text-white">
