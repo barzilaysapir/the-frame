@@ -28,10 +28,10 @@ export function InstructorCardHeader({
             href={instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="pointer-events-auto relative z-20 rounded-sm text-frame-cyan transition-colors hover:text-white"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-frame-border bg-white/5 text-frame-cyan transition-colors hover:border-frame-cyan hover:bg-frame-cyan/10 hover:text-white"
             aria-label={instagramAriaLabel}
           >
-            <Instagram className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <Instagram className="h-4 w-4" aria-hidden="true" />
           </a>
         </div>
         <p className="text-sm text-frame-silver">{role}</p>
