@@ -2,7 +2,7 @@
 
 import { useEffect, type ReactNode } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { AccountNav } from "@/components/account/AccountNav";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import { isLocale } from "@/lib/i18n/config";

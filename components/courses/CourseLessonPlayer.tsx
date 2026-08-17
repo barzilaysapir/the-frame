@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { DanceVideoPlayer } from "@/components/player/DanceVideoPlayer";
 import { Button } from "@/components/ui/Button";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";

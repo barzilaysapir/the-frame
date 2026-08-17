@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import type { User } from "firebase/auth";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { UserAvatar } from "@/components/account/UserAvatar";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";

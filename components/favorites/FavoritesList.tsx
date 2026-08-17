@@ -2,7 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { RoutineCard } from "@/components/routines/RoutineCard";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { useFavorites } from "@/components/favorites/FavoritesProvider";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
