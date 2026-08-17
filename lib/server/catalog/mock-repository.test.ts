@@ -210,9 +210,14 @@ describe("mockCatalogRepository.getExternalCourse", () => {
   });
 
   it("includes lessons (with localized titles, no r2Key leaked) for a course that has real video content", async () => {
-    const all = await mockCatalogRepository.listExternalCourses("en");
-    const withLessons = all.find((course) => course.lessons.length > 0);
-    expect(withLessons).toBeDefined();
+    // Real courses (like this one) are excluded from listExternalCourses
+    // (see mock-repository.ts) but still reachable by direct slug, same as
+    // the app's course-detail page fetches them.
+    const withLessons = await mockCatalogRepository.getExternalCourse(
+      "en",
+      "gisha-gmisha-foundations",
+    );
+    expect(withLessons?.lessons.length).toBeGreaterThan(0);
     expect(
       withLessons!.lessons.every(
         (lesson) =>
@@ -232,9 +237,11 @@ describe("mockCatalogRepository.getExternalCourse", () => {
 
 describe("mockCatalogRepository.getExternalCourseLessonSource", () => {
   it("returns the r2Key for a known course/lesson pair", async () => {
-    const all = await mockCatalogRepository.listExternalCourses("en");
-    const withLessons = all.find((course) => course.lessons.length > 0);
-    expect(withLessons).toBeDefined();
+    const withLessons = await mockCatalogRepository.getExternalCourse(
+      "en",
+      "gisha-gmisha-foundations",
+    );
+    expect(withLessons?.lessons.length).toBeGreaterThan(0);
     const lessonId = withLessons!.lessons[0].id;
 
     const source = await mockCatalogRepository.getExternalCourseLessonSource(
