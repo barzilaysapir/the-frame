@@ -55,7 +55,7 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
     instructorSlug: "yahel-hayat",
     priceDisplay: "₪200",
     sortOrder: 0,
-    coverImage: "/routine-posters/routine-poster-amber-loft.png",
+    coverImage: "/course-covers/gisha-gmisha-foundations.jpg",
     style: "flexibility-technique",
     level: "beginner",
     lessons: [
