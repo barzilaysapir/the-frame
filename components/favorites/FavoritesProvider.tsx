@@ -12,19 +12,29 @@ import {
 import { useAuth } from "@/components/auth/AuthProvider";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
-import type { CatalogRoutine } from "@/lib/server/catalog/types";
+import type { CatalogExternalCourse, CatalogRoutine } from "@/lib/server/catalog/types";
 
-interface FavoriteItem {
-  routineSlug: string;
-  createdAt: string;
-  routine: CatalogRoutine;
-}
+export type FavoriteItemType = "lesson" | "external_course";
+
+/** What a card needs to hand `toggleFavorite` to add/optimistically render itself. */
+export type FavoritableItem =
+  | { itemType: "lesson"; slug: string; routine: CatalogRoutine }
+  | { itemType: "external_course"; slug: string; course: CatalogExternalCourse };
+
+type FavoriteItem =
+  | { itemType: "lesson"; slug: string; createdAt: string; routine: CatalogRoutine }
+  | {
+      itemType: "external_course";
+      slug: string;
+      createdAt: string;
+      course: CatalogExternalCourse;
+    };
 
 interface FavoritesContextValue {
   favorites: FavoriteItem[];
   loading: boolean;
-  isFavorited: (slug: string) => boolean;
-  toggleFavorite: (routine: CatalogRoutine) => Promise<void>;
+  isFavorited: (itemType: FavoriteItemType, slug: string) => boolean;
+  toggleFavorite: (item: FavoritableItem) => Promise<void>;
 }
 
 const FavoritesContext = createContext<FavoritesContextValue>({
@@ -95,38 +105,43 @@ export function FavoritesProvider({
   const loading = Boolean(user) && !isCurrent;
 
   const isFavorited = useCallback(
-    (slug: string) => favorites.some((item) => item.routineSlug === slug),
+    (itemType: FavoriteItemType, slug: string) =>
+      favorites.some((item) => item.itemType === itemType && item.slug === slug),
     [favorites],
   );
 
   const toggleFavorite = useCallback(
-    async (routine: CatalogRoutine) => {
+    async (item: FavoritableItem) => {
       if (!user) return;
       const currentItems = favorites;
       const alreadyFavorited = currentItems.some(
-        (item) => item.routineSlug === routine.slug,
+        (existing) => existing.itemType === item.itemType && existing.slug === item.slug,
       );
-      const nextItems = alreadyFavorited
-        ? currentItems.filter((item) => item.routineSlug !== routine.slug)
-        : [
-            ...currentItems,
-            {
-              routineSlug: routine.slug,
-              createdAt: new Date().toISOString(),
-              routine,
-            },
-          ];
+      // Branched (not a single spread) so TS narrows `item` per-arm and the
+      // result actually matches the FavoriteItem union instead of widening
+      // to {routine?, course?}.
+      const newItem: FavoriteItem =
+        item.itemType === "lesson"
+          ? { ...item, createdAt: new Date().toISOString() }
+          : { ...item, createdAt: new Date().toISOString() };
+      const nextItems: FavoriteItem[] = alreadyFavorited
+        ? currentItems.filter(
+            (existing) => !(existing.itemType === item.itemType && existing.slug === item.slug),
+          )
+        : [...currentItems, newItem];
 
       setSnapshot({ uid: user.uid, locale, items: nextItems });
 
       try {
         const response = alreadyFavorited
-          ? await fetchWithAuth(user, `/api/v1/me/favorites/${routine.slug}`, {
-              method: "DELETE",
-            })
+          ? await fetchWithAuth(
+              user,
+              `/api/v1/me/favorites/${item.slug}?itemType=${item.itemType}`,
+              { method: "DELETE" },
+            )
           : await fetchWithAuth(user, "/api/v1/me/favorites", {
               method: "POST",
-              body: JSON.stringify({ routineSlug: routine.slug }),
+              body: JSON.stringify({ itemType: item.itemType, slug: item.slug }),
             });
         if (!response.ok) throw new Error(`favorites toggle ${response.status}`);
       } catch {

@@ -2,6 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { RoutineCard } from "@/components/routines/RoutineCard";
+import { LibraryCard } from "@/components/routines/LibraryCard";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useFavorites } from "@/components/favorites/FavoritesProvider";
 import { Button } from "@/components/ui/Button";
@@ -23,6 +24,8 @@ interface FavoritesListProps {
     taughtBy: string;
     favoriteAdd: string;
     favoriteRemove: string;
+    externalCourseTag: string;
+    externalCourseCta: string;
   };
 }
 
@@ -87,18 +90,43 @@ export function FavoritesList({ locale, labels }: FavoritesListProps) {
 
   return (
     <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {favorites.map(({ routineSlug, routine }) => (
-        <li key={routineSlug}>
-          <RoutineCard
-            routine={routine}
-            locale={locale}
-            labels={{
-              viewRoutine: labels.viewRoutine,
-              taughtBy: labels.taughtBy,
-              favoriteAdd: labels.favoriteAdd,
-              favoriteRemove: labels.favoriteRemove,
-            }}
-          />
+      {favorites.map((favorite) => (
+        <li key={`${favorite.itemType}:${favorite.slug}`}>
+          {favorite.itemType === "lesson" ? (
+            <RoutineCard
+              routine={favorite.routine}
+              locale={locale}
+              labels={{
+                viewRoutine: labels.viewRoutine,
+                taughtBy: labels.taughtBy,
+                favoriteAdd: labels.favoriteAdd,
+                favoriteRemove: labels.favoriteRemove,
+              }}
+            />
+          ) : (
+            <LibraryCard
+              href={localePath(locale, `/external-courses/${favorite.course.slug}`)}
+              poster={favorite.course.coverImage}
+              title={favorite.course.title}
+              instructorName={favorite.course.provider}
+              locale={locale}
+              style={favorite.course.style}
+              level={favorite.course.level}
+              typeLabel={labels.externalCourseTag}
+              priceDisplay={favorite.course.priceDisplay}
+              cta={labels.externalCourseCta}
+              taughtBy={labels.taughtBy}
+              favorite={{
+                item: {
+                  itemType: "external_course",
+                  slug: favorite.course.slug,
+                  course: favorite.course,
+                },
+                add: labels.favoriteAdd,
+                remove: labels.favoriteRemove,
+              }}
+            />
+          )}
         </li>
       ))}
     </ul>

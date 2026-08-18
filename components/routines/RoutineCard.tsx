@@ -40,7 +40,7 @@ export function RoutineCard({
       taughtBy={labels.taughtBy}
       priority={priority}
       favorite={{
-        routine,
+        item: { itemType: "lesson", slug: routine.slug, routine },
         add: labels.favoriteAdd,
         remove: labels.favoriteRemove,
       }}

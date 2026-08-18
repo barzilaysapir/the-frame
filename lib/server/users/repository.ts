@@ -168,13 +168,17 @@ export async function listPaidPurchases(
   }));
 }
 
+export type FavoriteItemType = "lesson" | "external_course";
+
 export interface FavoriteRow {
-  routineSlug: string;
+  itemType: FavoriteItemType;
+  itemSlug: string;
   createdAt: string;
 }
 
 interface FavoriteDbRow {
-  routine_slug: string;
+  item_type: FavoriteItemType;
+  item_slug: string;
   created_at: string;
 }
 
@@ -184,7 +188,7 @@ export async function listFavorites(
 ): Promise<FavoriteRow[]> {
   const { results } = await db
     .prepare(
-      `SELECT routine_slug, created_at
+      `SELECT item_type, item_slug, created_at
        FROM favorites
        WHERE firebase_uid = ?
        ORDER BY created_at DESC`,
@@ -193,7 +197,8 @@ export async function listFavorites(
     .all<FavoriteDbRow>();
 
   return (results ?? []).map((row) => ({
-    routineSlug: row.routine_slug,
+    itemType: row.item_type,
+    itemSlug: row.item_slug,
     createdAt: row.created_at,
   }));
 }
@@ -201,27 +206,29 @@ export async function listFavorites(
 export async function addFavorite(
   db: AppDb,
   firebaseUid: string,
-  routineSlug: string,
+  itemType: FavoriteItemType,
+  itemSlug: string,
 ): Promise<void> {
   await db
     .prepare(
-      `INSERT INTO favorites (firebase_uid, routine_slug)
-       VALUES (?, ?)
-       ON CONFLICT(firebase_uid, routine_slug) DO NOTHING`,
+      `INSERT INTO favorites (firebase_uid, item_type, item_slug)
+       VALUES (?, ?, ?)
+       ON CONFLICT(firebase_uid, item_type, item_slug) DO NOTHING`,
     )
-    .bind(firebaseUid, routineSlug)
+    .bind(firebaseUid, itemType, itemSlug)
     .run();
 }
 
 export async function removeFavorite(
   db: AppDb,
   firebaseUid: string,
-  routineSlug: string,
+  itemType: FavoriteItemType,
+  itemSlug: string,
 ): Promise<void> {
   await db
     .prepare(
-      `DELETE FROM favorites WHERE firebase_uid = ? AND routine_slug = ?`,
+      `DELETE FROM favorites WHERE firebase_uid = ? AND item_type = ? AND item_slug = ?`,
     )
-    .bind(firebaseUid, routineSlug)
+    .bind(firebaseUid, itemType, itemSlug)
     .run();
 }
