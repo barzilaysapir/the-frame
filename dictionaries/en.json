@@ -216,7 +216,7 @@
     "payCta": "Continue to payment",
     "payBusy": "Loading payment options…",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
-    "phoneLabel": "Phone number (for payment confirmation)",
+    "phoneLabel": "Phone number (optional — only needed for some payment options)",
     "phonePlaceholder": "05X-XXXXXXX",
     "phoneError": "Enter a valid Israeli mobile number",
     "choosePaymentMethod": "Choose how to pay",

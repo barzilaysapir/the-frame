@@ -76,7 +76,10 @@ export function CheckoutPaymentPlaceholder({
   const handleContinue = async () => {
     if (!user) return;
     const cleanedPhone = phone.replace(/[\s-]/g, "");
-    if (!IL_MOBILE_RE.test(cleanedPhone)) {
+    // Only Grow requires a phone number (uPay doesn't ask for one at all).
+    // Validate the format if something was typed, but don't block on it
+    // being empty — the server only enforces it when Grow is actually used.
+    if (cleanedPhone && !IL_MOBILE_RE.test(cleanedPhone)) {
       setPhoneError(labels.phoneError);
       return;
     }
