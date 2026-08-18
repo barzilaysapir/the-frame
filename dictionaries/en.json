@@ -215,8 +215,16 @@
     "signedInAs": "Signed in as",
     "payCta": "Continue to payment",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
-    "bitAmount": "Amount to send",
-    "bitInstructions": "Send ₪{amount} via Bit to {phone}, then tap the button below so we know to look out for it.",
+    "bitCard": {
+      "title": "Pay with Bit",
+      "amountLabel": "Amount to send",
+      "copyLabel": "Copy",
+      "copiedLabel": "Copied!",
+      "step1": "Open the Bit app",
+      "step2": "Tap “Send money” and enter this phone number",
+      "step3": "Enter the amount above and send"
+    },
+    "bitPaidIntro": "Once you’ve sent the payment, tap the button below so we know to look out for it.",
     "bitPaidCta": "I’ve paid via Bit",
     "bitPaidBusy": "Recording your payment…",
     "bitConfirmationTitle": "Thanks — payment recorded",

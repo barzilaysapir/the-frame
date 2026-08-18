@@ -4,12 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { BitPaymentCard } from "@/components/checkout/BitPaymentCard";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import { BIT_PAYMENT_INFO } from "@/lib/bit-payment";
 import type { Locale } from "@/lib/i18n/config";
-import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
 
 /** Mirrors `PurchasePlanId` in `lib/server/payments/price-resolver.ts` plus `"subscription"`, a valid UI plan choice that isn't wired to a real purchase yet (see that file for why). */
@@ -148,17 +149,12 @@ export function CheckoutPaymentPlaceholder({
             </p>
           ) : (
             <>
-              <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
-                <p className="text-xs uppercase tracking-wide text-frame-muted">
-                  {labels.bitAmount}: ₪{amountIls}
-                </p>
-                <p className="mt-1 text-sm text-frame-silver">
-                  {formatMessage(labels.bitInstructions, {
-                    amount: amountIls,
-                    phone: BIT_PAYMENT_INFO,
-                  })}
-                </p>
-              </div>
+              <BitPaymentCard
+                amountIls={amountIls}
+                phone={BIT_PAYMENT_INFO}
+                labels={labels.bitCard}
+              />
+              <p className="text-xs text-frame-muted">{labels.bitPaidIntro}</p>
               <Button
                 onClick={handleMarkPaid}
                 disabled={busy}
