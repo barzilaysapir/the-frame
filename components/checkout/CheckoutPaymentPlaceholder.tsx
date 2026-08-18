@@ -16,7 +16,7 @@ import { localePath } from "@/lib/i18n/path";
 type CheckoutPurchasePlanId = "rental" | "course" | "course-credits" | "subscription";
 
 /** The site's contact address, used as a mailto: fallback when no payment option is configured. */
-const CONTACT_EMAIL = "sapir@bybarzilay.com";
+const CONTACT_EMAIL = "theframe@bybarzilay.com";
 
 interface PurchaseApiResponse {
   purchaseId: string;
@@ -65,6 +65,7 @@ export function CheckoutPaymentPlaceholder({
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const upayFormRef = useRef<HTMLFormElement>(null);
 
   const planSupported = planId !== "subscription";
@@ -80,6 +81,10 @@ export function CheckoutPaymentPlaceholder({
 
   const handleContinue = async () => {
     if (!user) return;
+    if (!termsAccepted) {
+      setError(labels.termsRequired);
+      return;
+    }
     setError(null);
     setBusy(true);
     try {
@@ -191,9 +196,27 @@ export function CheckoutPaymentPlaceholder({
               {returnedFromPayment === "cancelled" ? (
                 <p className="text-xs text-frame-muted">{labels.paymentCancelled}</p>
               ) : null}
+              <label className="flex items-start gap-2 text-sm text-frame-silver">
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(event) => setTermsAccepted(event.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 rounded border-frame-border bg-frame-bg accent-frame-cyan"
+                />
+                <span>
+                  {labels.termsPrefix}{" "}
+                  <Link
+                    href={localePath(locale, "/terms")}
+                    target="_blank"
+                    className="text-frame-cyan underline"
+                  >
+                    {labels.termsLinkText}
+                  </Link>
+                </span>
+              </label>
               <Button
                 onClick={handleContinue}
-                disabled={busy}
+                disabled={busy || !termsAccepted}
                 aria-busy={busy}
                 className="w-full disabled:opacity-60"
               >
