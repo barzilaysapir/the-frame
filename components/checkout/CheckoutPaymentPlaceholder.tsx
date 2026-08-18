@@ -31,7 +31,6 @@ interface CheckoutPaymentPlaceholderProps {
   labels: Dictionary["checkout"];
   loginErrors: Dictionary["login"]["errors"];
   continueGoogleLabel: string;
-  paymentBody: string;
   itemType: "lesson" | "external_course";
   itemSlug: string;
   planId: CheckoutPurchasePlanId;
@@ -51,7 +50,6 @@ export function CheckoutPaymentPlaceholder({
   labels,
   loginErrors,
   continueGoogleLabel,
-  paymentBody,
   itemType,
   itemSlug,
   planId,
@@ -119,11 +117,6 @@ export function CheckoutPaymentPlaceholder({
 
   return (
     <Panel className="p-6">
-      <h2 className="font-display text-2xl font-black text-white">
-        {labels.paymentTitle}
-      </h2>
-      <p className="mt-2 text-sm text-frame-silver">{paymentBody}</p>
-
       {!isConfigured ? (
         <p className="mt-6 rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
           {labels.authUnavailable}
@@ -145,13 +138,6 @@ export function CheckoutPaymentPlaceholder({
         </div>
       ) : (
         <div className="mt-6 space-y-3">
-          <p className="text-sm text-frame-silver">
-            {labels.signedInAs}{" "}
-            <span className="font-medium text-white">
-              {user.displayName || user.email || user.phoneNumber}
-            </span>
-          </p>
-
           {result?.status === "paid" ? (
             <>
               <p className="text-sm font-medium text-white">{labels.alreadyOwned}</p>

@@ -1,13 +1,11 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { CheckoutPlans } from "@/components/checkout/CheckoutPlans";
-import { CourseCheckout } from "@/components/courses/CourseCheckout";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
-import { parsePriceIls } from "@/lib/pricing";
 import {
   getCachedExternalCourse,
   getCachedInstructor,
@@ -87,40 +85,13 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     );
   }
 
+  // External-course checkout now lives directly on the course page itself
+  // (plan picker + payment merged into CourseLandingPreview) — this route
+  // only still exists for routines above; redirect old course-checkout
+  // links instead of duplicating that flow.
   const course = await getCachedExternalCourse(localeParam, slug);
-  const priceIls = course ? parsePriceIls(course.priceDisplay) : null;
-  if (!course || course.lessons.length === 0 || priceIls == null) {
+  if (!course || course.lessons.length === 0) {
     notFound();
   }
-
-  return (
-    <main className="mx-auto max-w-lg px-4 py-12 sm:px-6 lg:py-16">
-      <Link
-        href={localePath(localeParam, `/external-courses/${course.slug}`)}
-        className="group mb-8 inline-flex items-center gap-2 text-sm font-medium text-frame-silver transition-colors hover:text-white"
-      >
-        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5 rtl:rotate-180" />
-        {dict.checkout.backToCourse}
-      </Link>
-
-      <h1 className="text-balance font-display text-4xl font-black leading-[0.98] text-white sm:text-5xl">
-        {dict.checkout.title}
-      </h1>
-      <p className="mt-3 text-frame-silver">{dict.checkout.courseSubtitle}</p>
-
-      <div className="mt-10">
-        <CourseCheckout
-          locale={localeParam}
-          courseSlug={course.slug}
-          title={course.title}
-          instructorName={course.provider}
-          taughtByLabel={dict.routine.taughtBy}
-          priceIls={priceIls}
-          labels={dict.checkout}
-          loginErrors={dict.login.errors}
-          continueGoogleLabel={dict.login.continueGoogle}
-        />
-      </div>
-    </main>
-  );
+  redirect(localePath(localeParam, `/external-courses/${course.slug}`));
 }
