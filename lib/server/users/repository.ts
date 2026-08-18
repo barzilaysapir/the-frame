@@ -168,7 +168,14 @@ export async function listPaidPurchases(
   }));
 }
 
-export type FavoriteItemType = "lesson" | "external_course";
+/**
+ * `internal_course` is reserved for a future internally-hosted, multi-lesson
+ * course — no catalog table/repository method backs it yet, so nothing can
+ * actually produce one today (see migrations/0036). Kept in the union here
+ * so call sites are forced to consider it once it's real, rather than
+ * silently mishandling it.
+ */
+export type FavoriteItemType = "lesson" | "internal_course" | "external_course";
 
 export interface FavoriteRow {
   itemType: FavoriteItemType;
