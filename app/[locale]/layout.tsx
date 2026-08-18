@@ -100,7 +100,7 @@ export default async function LocaleLayout({
           <FavoritesProvider locale={locale}>
             <Header locale={locale} labels={dict.nav} />
             <div className="flex-1">{children}</div>
-            <Footer locale={locale} labels={dict.nav} footer={dict.footer} />
+            <Footer locale={locale} footer={dict.footer} />
           </FavoritesProvider>
         </AuthProvider>
       </body>
