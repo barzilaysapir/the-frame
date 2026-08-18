@@ -217,7 +217,6 @@
     "payBusy": "Loading payment options…",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
     "choosePaymentMethod": "Choose how to pay",
-    "payWithGrowCta": "Pay now — secure checkout",
     "paymentCancelled": "Payment was cancelled — you can try again below.",
     "payByCardCta": "Pay by card",
     "noPaymentMethod": "Payment isn’t available yet — please contact us to complete this purchase:",

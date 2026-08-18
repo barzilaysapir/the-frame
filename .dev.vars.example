@@ -26,27 +26,6 @@ PREVIEW_CATALOG_TOKEN=
 # Missing/empty means nobody is an admin, not "allow everyone".
 ADMIN_EMAILS=
 
-# Grow (Meshulam) payment gateway — see lib/server/payments/grow.ts and
-# developers.grow.business. Get real values from Grow support after
-# signing up; the identifiers in their docs are demo-only. Leave any of
-# these three unset to keep the Phase-1 manual Bit flow (no redirect).
-#
-# userId identifies your business.
-GROW_USER_ID=
-# pageCode identifies which payment page/method to use — the "Generic
-# Payment Page" accepts both card and Bit (see developers.grow.business/
-# reference/payment-page). Grow assigns your real one; the doc-listed demo
-# value is b73ca07591f8.
-GROW_PAGE_CODE=
-# Sandbox: https://sandbox.meshulam.co.il/api/light/server/1.0
-# Production (only after Grow approves a production review — see
-# developers.grow.business/reference/live-environment):
-#   https://secure.meshulam.co.il/api/light/server/1.0
-# IMPORTANT: Bit/Apple Pay/Google Pay have NO sandbox — those charge for
-# real even when this points at the sandbox host. Only card-number testing
-# (e.g. 4580458045804580) is safe pre-launch.
-GROW_BASE_URL=https://sandbox.meshulam.co.il/api/light/server/1.0
-
 # uPay (upay.co.il) — see lib/server/payments/upay.ts. uPay publishes no
 # API docs; this is built against a mechanism reverse-engineered from the
 # HTML "embed code" their dashboard generates for a manually-created

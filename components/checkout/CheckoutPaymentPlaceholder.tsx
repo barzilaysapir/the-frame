@@ -22,8 +22,6 @@ interface PurchaseApiResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
-  /** Present once Grow (Meshulam) is configured — redirect here instead of showing manual Bit instructions. */
-  redirectUrl?: string;
   /** Present once uPay is configured — must be submitted as a real POST form (uPay's endpoint isn't a plain redirect link), see the hidden form below. */
   upayForm?: { action: string; fields: Record<string, string> };
 }
@@ -42,11 +40,11 @@ interface CheckoutPaymentPlaceholderProps {
 }
 
 /**
- * Shows every configured payment option (Grow's hosted checkout, uPay's
- * dynamic payment form) as parallel choices — see POST /api/v1/me/purchases.
- * The manual "here's our Bit number" instructions were removed once real
- * gateway options existed; app/[locale]/admin/purchases remains the manual
- * override for edge cases (missed webhook, refund).
+ * Submits uPay's dynamic payment form (see POST /api/v1/me/purchases and
+ * lib/server/payments/upay.ts) — the only payment gateway wired up (Grow
+ * was dropped once uPay's dynamic form was confirmed working with no
+ * monthly fee, see #261's history). app/[locale]/admin/purchases remains
+ * the manual override for edge cases (missed webhook, refund).
  */
 export function CheckoutPaymentPlaceholder({
   locale,
@@ -71,9 +69,6 @@ export function CheckoutPaymentPlaceholder({
 
   const planSupported = planId !== "subscription";
 
-  // NOTE: Grow's API requires a phone number (pageField[phone]) — this form
-  // no longer collects one, so the Grow branch in POST /api/v1/me/purchases
-  // will fail once GROW_* secrets are set, until this is revisited.
   const handleContinue = async () => {
     if (!user) return;
     setError(null);
@@ -153,11 +148,6 @@ export function CheckoutPaymentPlaceholder({
           ) : result ? (
             <>
               <p className="text-sm font-medium text-white">{labels.choosePaymentMethod}</p>
-              {result.redirectUrl ? (
-                <Button href={result.redirectUrl} className="w-full">
-                  {labels.payWithGrowCta}
-                </Button>
-              ) : null}
               {result.upayForm ? (
                 <>
                   <form
@@ -170,24 +160,18 @@ export function CheckoutPaymentPlaceholder({
                       <input key={name} type="hidden" name={name} value={value} />
                     ))}
                   </form>
-                  <Button
-                    onClick={() => upayFormRef.current?.submit()}
-                    variant={result.redirectUrl ? "secondary" : "primary"}
-                    className="w-full"
-                  >
+                  <Button onClick={() => upayFormRef.current?.submit()} className="w-full">
                     {labels.payByCardCta}
                   </Button>
+                  <p className="text-xs text-frame-muted">{labels.bitConfirmationBody}</p>
                 </>
-              ) : null}
-              {!result.redirectUrl && !result.upayForm ? (
+              ) : (
                 <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
                   {labels.noPaymentMethod}{" "}
                   <a href={`mailto:${CONTACT_EMAIL}`} className="text-frame-cyan underline">
                     {CONTACT_EMAIL}
                   </a>
                 </p>
-              ) : (
-                <p className="text-xs text-frame-muted">{labels.bitConfirmationBody}</p>
               )}
             </>
           ) : returnedFromPayment === "success" ? (

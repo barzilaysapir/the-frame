@@ -300,23 +300,6 @@ export async function getPurchaseById(
   return row ? mapPurchase(row) : null;
 }
 
-/** Stores the Grow `processId`/`processToken` returned by `createPaymentProcess` on the pending purchase, so the webhook can verify its callback matches before trusting it. */
-export async function attachProviderProcess(
-  db: AppDb,
-  purchaseId: string,
-  processId: string,
-  processToken: string,
-): Promise<void> {
-  await db
-    .prepare(
-      `UPDATE purchases
-       SET provider_process_id = ?, provider_process_token = ?
-       WHERE id = ? AND status = 'pending'`,
-    )
-    .bind(processId, processToken, purchaseId)
-    .run();
-}
-
 /** Creates a new `pending` purchase row. The amount is always server-computed by the caller — never trust a client-supplied price. */
 export async function createPendingPurchase(
   db: AppDb,
