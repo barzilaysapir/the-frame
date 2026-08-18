@@ -74,9 +74,9 @@ export default async function RoutinesPage({ params, searchParams }: RoutinesPag
   const availableCourses = externalCourses.filter((course) => course.lessons.length > 0);
   const comingSoonCourses = externalCourses.filter((course) => course.lessons.length === 0);
   const allItems: LibraryItem[] = [
-    ...availableCourses.map((course) => ({ kind: "external" as const, course })),
-    ...allRoutines.map((routine) => ({ kind: "routine" as const, routine })),
-    ...comingSoonCourses.map((course) => ({ kind: "external" as const, course })),
+    ...availableCourses.map((course) => ({ kind: "external_course" as const, course })),
+    ...allRoutines.map((routine) => ({ kind: "lesson" as const, routine })),
+    ...comingSoonCourses.map((course) => ({ kind: "external_course" as const, course })),
   ];
 
   const initialInstructors = instructorSlug ? instructorSlug.split(",").filter(Boolean) : [];

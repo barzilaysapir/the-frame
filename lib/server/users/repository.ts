@@ -2,6 +2,7 @@ import "server-only";
 import type { Locale } from "@/lib/i18n/config";
 import { isLocale } from "@/lib/i18n/config";
 import type { FirebaseIdTokenClaims } from "@/lib/server/auth/firebase-token";
+import type { CatalogItemType } from "@/lib/server/catalog/types";
 import type { AppDb } from "@/lib/server/db";
 
 export interface AppUser {
@@ -168,23 +169,14 @@ export async function listPaidPurchases(
   }));
 }
 
-/**
- * `internal_course` is reserved for a future internally-hosted, multi-lesson
- * course — no catalog table/repository method backs it yet, so nothing can
- * actually produce one today (see migrations/0036). Kept in the union here
- * so call sites are forced to consider it once it's real, rather than
- * silently mishandling it.
- */
-export type FavoriteItemType = "lesson" | "internal_course" | "external_course";
-
 export interface FavoriteRow {
-  itemType: FavoriteItemType;
+  itemType: CatalogItemType;
   itemSlug: string;
   createdAt: string;
 }
 
 interface FavoriteDbRow {
-  item_type: FavoriteItemType;
+  item_type: CatalogItemType;
   item_slug: string;
   created_at: string;
 }
@@ -213,7 +205,7 @@ export async function listFavorites(
 export async function addFavorite(
   db: AppDb,
   firebaseUid: string,
-  itemType: FavoriteItemType,
+  itemType: CatalogItemType,
   itemSlug: string,
 ): Promise<void> {
   await db
@@ -229,7 +221,7 @@ export async function addFavorite(
 export async function removeFavorite(
   db: AppDb,
   firebaseUid: string,
-  itemType: FavoriteItemType,
+  itemType: CatalogItemType,
   itemSlug: string,
 ): Promise<void> {
   await db

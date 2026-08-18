@@ -15,6 +15,18 @@ export interface CatalogChapter extends VideoChapter {
   label: string;
 }
 
+/**
+ * What kind of library item something is — the shared vocabulary every
+ * "which item" reference uses (the library grid's `LibraryItem.kind`,
+ * favorites' `item_type`, and anywhere else that needs to say "a routine
+ * or an external course" without redefining its own copy of that split).
+ *
+ * `internal_course` is reserved for a future internally-hosted, multi-lesson
+ * course — no catalog table/repository method backs it yet (see
+ * migrations/0036), so nothing can produce one today.
+ */
+export type CatalogItemType = "lesson" | "internal_course" | "external_course";
+
 export interface CatalogRoutine {
   slug: string;
   title: string;
