@@ -54,9 +54,6 @@ export function CourseLessonPlayer({
     if (!user) return;
 
     let cancelled = false;
-    setPlaybackUrl(null);
-    setFetchFailed(false);
-    setPurchaseRequired(false);
     (async () => {
       try {
         const res = await fetchWithAuth(
@@ -64,7 +61,11 @@ export function CourseLessonPlayer({
           `/api/v1/external-courses/${encodeURIComponent(courseSlug)}/lessons/${encodeURIComponent(lesson.id)}/playback-url`,
         );
         if (res.status === 403) {
-          if (!cancelled) setPurchaseRequired(true);
+          if (!cancelled) {
+            setPurchaseRequired(true);
+            setPlaybackUrl(null);
+            setFetchFailed(false);
+          }
           return;
         }
         if (!res.ok) {
@@ -74,12 +75,14 @@ export function CourseLessonPlayer({
         if (!cancelled) {
           setPlaybackUrl(data.url);
           setFetchFailed(false);
+          setPurchaseRequired(false);
         }
       } catch (error) {
         console.error("[CourseLessonPlayer] failed to get playback URL:", error);
         if (!cancelled) {
           setFetchFailed(true);
           setPlaybackUrl(null);
+          setPurchaseRequired(false);
         }
       }
     })();
