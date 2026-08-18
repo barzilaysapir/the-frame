@@ -22,7 +22,7 @@ interface __BaseEnv_CloudflareEnv {
 	GROW_USER_ID: string;
 	GROW_PAGE_CODE: string;
 	GROW_BASE_URL: string;
-	UPAY_PAYMENT_LINKS: string;
+	UPAY_MERCHANT_EMAIL: string;
 	ME_WRITE_RATE_LIMITER: RateLimit;
 	ASSETS: Fetcher;
 	NEXT_PUBLIC_FIREBASE_API_KEY: string;

@@ -14,7 +14,7 @@ import {
   resolvePurchasePrice,
   type PurchasePlanId,
 } from "@/lib/server/payments/price-resolver";
-import { getUpayLinkForAmount } from "@/lib/server/payments/upay-links";
+import { buildUpayFormFields, getUpayConfig } from "@/lib/server/payments/upay";
 import {
   attachProviderProcess,
   createPendingPurchase,
@@ -50,8 +50,8 @@ interface PurchaseResponse {
   amountIls: number | null;
   /** Present once Grow is configured and the hosted payment process was created — the client should offer this as a "pay now" option (Grow auto-confirms via webhook). */
   redirectUrl?: string;
-  /** A static uPay payment link matching this exact amount, if one exists (see lib/server/payments/upay-links.ts) — offered as another option alongside Grow and the manual Bit instructions. Can be present at the same time as `redirectUrl`; the buyer picks whichever they prefer. */
-  upayLinkUrl?: string;
+  /** Present once uPay is configured (see lib/server/payments/upay.ts) — the client must render these as hidden inputs in a real `<form method="post">` and submit it (uPay's endpoint isn't a simple GET redirect). Can be present at the same time as `redirectUrl`; the buyer picks whichever they prefer. uPay does not auto-confirm as reliably as Grow — see the webhook route's caveats. */
+  upayForm?: { action: string; fields: Record<string, string> };
 }
 
 /**
@@ -140,12 +140,13 @@ export async function POST(request: NextRequest) {
       amountIls: purchase.amountIls,
     };
 
+    const path = returnPath && returnPath.startsWith("/") ? returnPath : "/";
+
     const growConfig = await getGrowConfig();
     if (growConfig) {
       if (!phone || !IL_MOBILE_RE.test(phone)) {
         throw new ApiError(400, "A valid Israeli mobile number is required");
       }
-      const path = returnPath && returnPath.startsWith("/") ? returnPath : "/";
       const result = await createPaymentProcess(growConfig, {
         sum: amountIls,
         description,
@@ -160,9 +161,14 @@ export async function POST(request: NextRequest) {
       response.redirectUrl = result.url;
     }
 
-    const upayLink = await getUpayLinkForAmount(purchase.amountIls ?? amountIls);
-    if (upayLink) {
-      response.upayLinkUrl = upayLink;
+    const upayConfig = await getUpayConfig();
+    if (upayConfig) {
+      response.upayForm = buildUpayFormFields(upayConfig, {
+        amountIls: purchase.amountIls ?? amountIls,
+        description,
+        returnUrl: `${SITE_URL}${path}?payment=success&provider=upay&purchaseId=${purchase.id}`,
+        ipnUrl: `${SITE_URL}/api/v1/webhooks/upay?purchaseId=${purchase.id}`,
+      });
     }
 
     return NextResponse.json(response);

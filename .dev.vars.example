@@ -47,13 +47,10 @@ GROW_PAGE_CODE=
 # (e.g. 4580458045804580) is safe pre-launch.
 GROW_BASE_URL=https://sandbox.meshulam.co.il/api/light/server/1.0
 
-# uPay (upay.co.il) static payment links — see lib/server/payments/upay-links.ts.
-# uPay has no API for creating a hosted payment page per order (confirmed —
-# see the payments Notion doc), so this is a manually-maintained map of
-# whole-ILS amount -> the static payment link/button URL you created for
-# that exact price in the uPay dashboard ("יצירת כפתור תשלום"). A price with
-# no entry here just falls back to the manual Bit-only flow. This does NOT
-# auto-confirm payment — you still mark it paid by hand on
-# app/[locale]/admin/purchases once you see it land in the uPay dashboard.
-# Example: {"29":"https://pay.upay.co.il/xxxxx","200":"https://pay.upay.co.il/yyyyy"}
-UPAY_PAYMENT_LINKS=
+# uPay (upay.co.il) — see lib/server/payments/upay.ts. uPay publishes no
+# API docs; this is built against a mechanism reverse-engineered from the
+# HTML "embed code" their dashboard generates for a manually-created
+# payment button, confirmed live with a real ₪200 test transaction on
+# 2026-08-18. Just your uPay account login email — no separate merchant ID
+# or API key exists for this flow. Leave unset to skip offering uPay.
+UPAY_MERCHANT_EMAIL=

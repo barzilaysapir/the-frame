@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { BitPaymentCard } from "@/components/checkout/BitPaymentCard";
@@ -26,8 +26,8 @@ interface PurchaseApiResponse {
   amountIls: number | null;
   /** Present once Grow (Meshulam) is configured — redirect here instead of showing manual Bit instructions. */
   redirectUrl?: string;
-  /** A static uPay card-payment link matching this exact amount, if one exists — shown alongside (not instead of) the manual Bit instructions, since neither auto-confirms without Grow. */
-  upayLinkUrl?: string;
+  /** Present once uPay is configured — must be submitted as a real POST form (uPay's endpoint isn't a plain redirect link), see the hidden form below. */
+  upayForm?: { action: string; fields: Record<string, string> };
 }
 
 interface CheckoutPaymentPlaceholderProps {
@@ -73,6 +73,7 @@ export function CheckoutPaymentPlaceholder({
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const upayFormRef = useRef<HTMLFormElement>(null);
 
   const planSupported = planId !== "subscription";
 
@@ -167,18 +168,28 @@ export function CheckoutPaymentPlaceholder({
                   {labels.payWithGrowCta}
                 </Button>
               ) : null}
-              {result.upayLinkUrl ? (
-                <Button
-                  href={result.upayLinkUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant={result.redirectUrl ? "secondary" : "primary"}
-                  className="w-full"
-                >
-                  {labels.payByCardCta}
-                </Button>
+              {result.upayForm ? (
+                <>
+                  <form
+                    ref={upayFormRef}
+                    method="POST"
+                    action={result.upayForm.action}
+                    className="hidden"
+                  >
+                    {Object.entries(result.upayForm.fields).map(([name, value]) => (
+                      <input key={name} type="hidden" name={name} value={value} />
+                    ))}
+                  </form>
+                  <Button
+                    onClick={() => upayFormRef.current?.submit()}
+                    variant={result.redirectUrl ? "secondary" : "primary"}
+                    className="w-full"
+                  >
+                    {labels.payByCardCta}
+                  </Button>
+                </>
               ) : null}
-              {result.redirectUrl || result.upayLinkUrl ? (
+              {result.redirectUrl || result.upayForm ? (
                 <p className="text-center text-xs text-frame-muted">{labels.orPayByBit}</p>
               ) : null}
               <BitPaymentCard
