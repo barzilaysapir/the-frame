@@ -5,11 +5,9 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
-import { BitPaymentCard } from "@/components/checkout/BitPaymentCard";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
-import { BIT_PAYMENT_INFO } from "@/lib/bit-payment";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -39,17 +37,16 @@ interface CheckoutPaymentPlaceholderProps {
   itemType: "lesson" | "external_course";
   itemSlug: string;
   planId: CheckoutPurchasePlanId;
-  /** Display-only amount shown in the Bit instructions — the real charge is always recomputed server-side in POST /api/v1/me/purchases. */
-  amountIls: number;
   /** Where "watch now" / already-owned should link to. */
   itemHref: string;
 }
 
 /**
- * Redirects to Grow (Meshulam)'s hosted payment page once Grow is
- * configured (see POST /api/v1/me/purchases); falls back to the Phase-1
- * manual Bit flow — a `pending` purchase confirmed by the site owner on
- * app/[locale]/admin/purchases — when it isn't.
+ * Shows every configured payment option (Grow's hosted checkout, uPay's
+ * dynamic payment form) as parallel choices — see POST /api/v1/me/purchases.
+ * The manual "here's our Bit number" instructions were removed once real
+ * gateway options existed; app/[locale]/admin/purchases remains the manual
+ * override for edge cases (missed webhook, refund).
  */
 export function CheckoutPaymentPlaceholder({
   locale,
@@ -60,7 +57,6 @@ export function CheckoutPaymentPlaceholder({
   itemType,
   itemSlug,
   planId,
-  amountIls,
   itemHref,
 }: CheckoutPaymentPlaceholderProps) {
   const { user, loading, isConfigured } = useAuth();
@@ -189,15 +185,13 @@ export function CheckoutPaymentPlaceholder({
                   </Button>
                 </>
               ) : null}
-              {result.redirectUrl || result.upayForm ? (
-                <p className="text-center text-xs text-frame-muted">{labels.orPayByBit}</p>
-              ) : null}
-              <BitPaymentCard
-                amountIls={amountIls}
-                phone={BIT_PAYMENT_INFO}
-                labels={labels.bitCard}
-              />
-              <p className="text-xs text-frame-muted">{labels.bitConfirmationBody}</p>
+              {!result.redirectUrl && !result.upayForm ? (
+                <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
+                  {labels.noPaymentMethod}
+                </p>
+              ) : (
+                <p className="text-xs text-frame-muted">{labels.bitConfirmationBody}</p>
+              )}
             </>
           ) : returnedFromPayment === "success" ? (
             <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">

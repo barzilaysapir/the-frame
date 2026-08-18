@@ -110,7 +110,6 @@ export function CourseCheckout({
         itemType="external_course"
         itemSlug={courseSlug}
         planId={plan}
-        amountIls={plan === "course" ? priceIls : bundle.sale}
         itemHref={localePath(locale, `/external-courses/${courseSlug}`)}
       />
     </div>

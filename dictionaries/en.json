@@ -222,17 +222,8 @@
     "choosePaymentMethod": "Choose how to pay",
     "payWithGrowCta": "Pay now — secure checkout",
     "paymentCancelled": "Payment was cancelled — you can try again below.",
-    "bitCard": {
-      "title": "Pay with Bit",
-      "amountLabel": "Amount to send",
-      "copyLabel": "Copy",
-      "copiedLabel": "Copied!",
-      "step1": "Open the Bit app",
-      "step2": "Tap “Send money” and enter this phone number",
-      "step3": "Enter the amount above and send"
-    },
     "payByCardCta": "Pay by card",
-    "orPayByBit": "Or pay by Bit:",
+    "noPaymentMethod": "Payment isn’t available yet — please contact us to complete this purchase.",
     "bitConfirmationTitle": "Thanks — payment recorded",
     "bitConfirmationBody": "We’ll confirm your payment and unlock access shortly. If it’s urgent, feel free to reach out directly.",
     "payError": "Something went wrong recording your payment. Please try again.",
