@@ -14,15 +14,15 @@ import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
 import type { CatalogExternalCourse, CatalogRoutine } from "@/lib/server/catalog/types";
 
-export type FavoriteItemType = "routine" | "external_course";
+export type FavoriteItemType = "lesson" | "external_course";
 
 /** What a card needs to hand `toggleFavorite` to add/optimistically render itself. */
 export type FavoritableItem =
-  | { itemType: "routine"; slug: string; routine: CatalogRoutine }
+  | { itemType: "lesson"; slug: string; routine: CatalogRoutine }
   | { itemType: "external_course"; slug: string; course: CatalogExternalCourse };
 
 type FavoriteItem =
-  | { itemType: "routine"; slug: string; createdAt: string; routine: CatalogRoutine }
+  | { itemType: "lesson"; slug: string; createdAt: string; routine: CatalogRoutine }
   | {
       itemType: "external_course";
       slug: string;
@@ -121,7 +121,7 @@ export function FavoritesProvider({
       // result actually matches the FavoriteItem union instead of widening
       // to {routine?, course?}.
       const newItem: FavoriteItem =
-        item.itemType === "routine"
+        item.itemType === "lesson"
           ? { ...item, createdAt: new Date().toISOString() }
           : { ...item, createdAt: new Date().toISOString() };
       const nextItems: FavoriteItem[] = alreadyFavorited

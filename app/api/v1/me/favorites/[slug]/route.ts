@@ -20,9 +20,9 @@ export async function DELETE(
     const db = await requireAppDb();
     const { slug } = await params;
     const itemType = request.nextUrl.searchParams.get("itemType");
-    if (itemType !== "routine" && itemType !== "external_course") {
+    if (itemType !== "lesson" && itemType !== "external_course") {
       return NextResponse.json(
-        { error: "itemType must be 'routine' or 'external_course'" },
+        { error: "itemType must be 'lesson' or 'external_course'" },
         { status: 400 },
       );
     }

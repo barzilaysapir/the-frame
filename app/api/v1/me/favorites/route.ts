@@ -22,7 +22,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export type FavoriteItem =
-  | { itemType: "routine"; slug: string; createdAt: string; routine: CatalogRoutine }
+  | { itemType: "lesson"; slug: string; createdAt: string; routine: CatalogRoutine }
   | {
       itemType: "external_course";
       slug: string;
@@ -31,7 +31,7 @@ export type FavoriteItem =
     };
 
 function isFavoriteItemType(value: unknown): value is FavoriteItemType {
-  return value === "routine" || value === "external_course";
+  return value === "lesson" || value === "external_course";
 }
 
 export async function GET(request: NextRequest) {
@@ -66,11 +66,11 @@ export async function GET(request: NextRequest) {
 
     const items: FavoriteItem[] = [];
     for (const favorite of favorites) {
-      if (favorite.itemType === "routine") {
+      if (favorite.itemType === "lesson") {
         const routine = routineBySlug.get(favorite.itemSlug);
         if (!routine) continue;
         items.push({
-          itemType: "routine",
+          itemType: "lesson",
           slug: favorite.itemSlug,
           createdAt: favorite.createdAt,
           routine,
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     );
     if (!isFavoriteItemType(body.itemType)) {
       return NextResponse.json(
-        { error: "itemType must be 'routine' or 'external_course'" },
+        { error: "itemType must be 'lesson' or 'external_course'" },
         { status: 400 },
       );
     }
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
 
     const { repository } = await resolveCatalog();
     const item =
-      body.itemType === "routine"
+      body.itemType === "lesson"
         ? await repository.getRoutine(locale, body.slug)
         : await repository.getExternalCourse(locale, body.slug);
     if (!item) {

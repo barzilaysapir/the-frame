@@ -168,7 +168,7 @@ export async function listPaidPurchases(
   }));
 }
 
-export type FavoriteItemType = "routine" | "external_course";
+export type FavoriteItemType = "lesson" | "external_course";
 
 export interface FavoriteRow {
   itemType: FavoriteItemType;
