@@ -9,16 +9,19 @@ import {
 import { enforceWriteRateLimit } from "@/lib/server/api/rate-limit";
 import { resolveCatalogLocale } from "@/lib/server/catalog";
 import type { CatalogItemType } from "@/lib/server/catalog/types";
+import { createPaymentProcess, getGrowConfig } from "@/lib/server/payments/grow";
 import {
   resolvePurchasePrice,
   type PurchasePlanId,
 } from "@/lib/server/payments/price-resolver";
 import {
+  attachProviderProcess,
   createPendingPurchase,
   findPaidPurchase,
   findPendingPurchase,
   upsertUserFromClaims,
 } from "@/lib/server/users/repository";
+import { SITE_URL } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,25 +29,34 @@ export const dynamic = "force-dynamic";
 const PURCHASABLE_ITEM_TYPES: CatalogItemType[] = ["lesson", "external_course"];
 const PLAN_IDS: PurchasePlanId[] = ["rental", "course", "course-credits"];
 
+/** A valid Israeli mobile number — required by Grow's `pageField[phone]` (see lib/server/payments/grow.ts). Accepts spaces/dashes for pasted numbers. */
+const IL_MOBILE_RE = /^05\d{8}$/;
+
 interface PurchaseRequestBody {
   itemType?: unknown;
   itemSlug?: unknown;
   planId?: unknown;
   locale?: unknown;
+  /** Israeli mobile number, required only once Grow is configured — see below. */
+  phone?: unknown;
+  /** Path (not a full URL) the buyer should land back on after paying/cancelling — always resolved against our own SITE_URL server-side, so a client-supplied value can't redirect off-site. */
+  returnPath?: unknown;
 }
 
 interface PurchaseResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
+  /** Present once Grow is configured and the hosted payment process was created — the client should redirect here instead of showing manual Bit instructions. */
+  redirectUrl?: string;
 }
 
 /**
- * Records a buyer's intent to pay via Bit (Phase 1 — manual confirmation
- * only, see app/[locale]/admin/purchases). This does NOT call out to any
- * payment gateway; it just creates/reuses a `pending` purchases row after
- * recomputing the price server-side. The site owner marks it `paid` (or
- * `refunded`) by hand once she confirms the Bit transfer arrived.
+ * Creates/reuses a `pending` purchases row after recomputing the price
+ * server-side, then — if Grow (Meshulam) is configured — asks Grow to open
+ * a hosted payment process (card or Bit) and returns the redirect URL.
+ * Falls back to the Phase-1 manual Bit flow (see app/[locale]/admin/purchases)
+ * when Grow isn't configured yet, so local dev without secrets still works.
  *
  * A client-supplied amount is never trusted — see
  * `.cursor/rules/security-conventions.mdc`.
@@ -75,6 +87,8 @@ export async function POST(request: NextRequest) {
     const locale = resolveCatalogLocale(
       typeof body.locale === "string" ? body.locale : null,
     );
+    const phone = typeof body.phone === "string" ? body.phone.replace(/[\s-]/g, "") : null;
+    const returnPath = typeof body.returnPath === "string" ? body.returnPath : null;
 
     const alreadyPaid = await findPaidPurchase(
       db,
@@ -91,7 +105,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(response);
     }
 
-    const { amountIls } = await resolvePurchasePrice(
+    const { amountIls, description } = await resolvePurchasePrice(
       locale,
       itemType as CatalogItemType,
       itemSlug,
@@ -120,6 +134,27 @@ export async function POST(request: NextRequest) {
       status: "pending",
       amountIls: purchase.amountIls,
     };
+
+    const growConfig = await getGrowConfig();
+    if (growConfig) {
+      if (!phone || !IL_MOBILE_RE.test(phone)) {
+        throw new ApiError(400, "A valid Israeli mobile number is required");
+      }
+      const path = returnPath && returnPath.startsWith("/") ? returnPath : "/";
+      const result = await createPaymentProcess(growConfig, {
+        sum: amountIls,
+        description,
+        fullName: claims.name || "Frame customer",
+        phone,
+        successUrl: `${SITE_URL}${path}?payment=success`,
+        cancelUrl: `${SITE_URL}${path}?payment=cancelled`,
+        notifyUrl: `${SITE_URL}/api/v1/webhooks/grow`,
+        purchaseId: purchase.id,
+      });
+      await attachProviderProcess(db, purchase.id, result.processId, result.processToken);
+      response.redirectUrl = result.url;
+    }
+
     return NextResponse.json(response);
   } catch (error) {
     return jsonError(error);

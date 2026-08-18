@@ -197,6 +197,9 @@ export interface Purchase {
   itemSlug: string;
   provider: string;
   providerPaymentId: string | null;
+  /** Grow `processId`/`processToken` from `createPaymentProcess`, stored so the webhook can verify its callback is genuine (Grow's callback has no signature — see migration 0038). Null until `attachProviderProcess` runs, and irrelevant once `status` is `paid`. */
+  providerProcessId: string | null;
+  providerProcessToken: string | null;
   amountIls: number | null;
   currency: string;
   status: "pending" | "paid" | "refunded";
@@ -211,6 +214,8 @@ interface FullPurchaseRow {
   item_slug: string;
   provider: string;
   provider_payment_id: string | null;
+  provider_process_id: string | null;
+  provider_process_token: string | null;
   amount_ils: number | null;
   currency: string;
   status: "pending" | "paid" | "refunded";
@@ -226,6 +231,8 @@ function mapPurchase(row: FullPurchaseRow): Purchase {
     itemSlug: row.item_slug,
     provider: row.provider,
     providerPaymentId: row.provider_payment_id,
+    providerProcessId: row.provider_process_id,
+    providerProcessToken: row.provider_process_token,
     amountIls: row.amount_ils,
     currency: row.currency,
     status: row.status,
@@ -244,6 +251,7 @@ export async function findPaidPurchase(
   const row = await db
     .prepare(
       `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              provider_process_id, provider_process_token,
               amount_ils, currency, status, created_at, paid_at
        FROM purchases
        WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND status = 'paid'
@@ -264,6 +272,7 @@ export async function findPendingPurchase(
   const row = await db
     .prepare(
       `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              provider_process_id, provider_process_token,
               amount_ils, currency, status, created_at, paid_at
        FROM purchases
        WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND status = 'pending'
@@ -282,12 +291,30 @@ export async function getPurchaseById(
   const row = await db
     .prepare(
       `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              provider_process_id, provider_process_token,
               amount_ils, currency, status, created_at, paid_at
        FROM purchases WHERE id = ?`,
     )
     .bind(purchaseId)
     .first<FullPurchaseRow>();
   return row ? mapPurchase(row) : null;
+}
+
+/** Stores the Grow `processId`/`processToken` returned by `createPaymentProcess` on the pending purchase, so the webhook can verify its callback matches before trusting it. */
+export async function attachProviderProcess(
+  db: AppDb,
+  purchaseId: string,
+  processId: string,
+  processToken: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE purchases
+       SET provider_process_id = ?, provider_process_token = ?
+       WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(processId, processToken, purchaseId)
+    .run();
 }
 
 /** Creates a new `pending` purchase row. The amount is always server-computed by the caller — never trust a client-supplied price. */
@@ -372,6 +399,7 @@ export async function listAllPurchases(
   const { results } = await db
     .prepare(
       `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              provider_process_id, provider_process_token,
               amount_ils, currency, status, created_at, paid_at
        FROM purchases
        ORDER BY created_at DESC

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
@@ -16,10 +17,15 @@ import { localePath } from "@/lib/i18n/path";
 /** Mirrors `PurchasePlanId` in `lib/server/payments/price-resolver.ts` plus `"subscription"`, a valid UI plan choice that isn't wired to a real purchase yet (see that file for why). */
 type CheckoutPurchasePlanId = "rental" | "course" | "course-credits" | "subscription";
 
+/** Mirrors `IL_MOBILE_RE` in `app/api/v1/me/purchases/route.ts` — client-side check is just for a fast error message, the server always re-validates. */
+const IL_MOBILE_RE = /^05\d{8}$/;
+
 interface PurchaseApiResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
+  /** Present once Grow (Meshulam) is configured — redirect here instead of showing manual Bit instructions. */
+  redirectUrl?: string;
 }
 
 interface CheckoutPaymentPlaceholderProps {
@@ -38,10 +44,10 @@ interface CheckoutPaymentPlaceholderProps {
 }
 
 /**
- * Phase 1 payment: Bit only, manually confirmed by the site owner (see
- * app/[locale]/admin/purchases) — no payment-gateway integration yet.
- * "I've paid via Bit" just records a `pending` purchase; there's no
- * redirect, no webhook, no automatic confirmation.
+ * Redirects to Grow (Meshulam)'s hosted payment page once Grow is
+ * configured (see POST /api/v1/me/purchases); falls back to the Phase-1
+ * manual Bit flow — a `pending` purchase confirmed by the site owner on
+ * app/[locale]/admin/purchases — when it isn't.
  */
 export function CheckoutPaymentPlaceholder({
   locale,
@@ -56,30 +62,53 @@ export function CheckoutPaymentPlaceholder({
   itemHref,
 }: CheckoutPaymentPlaceholderProps) {
   const { user, loading, isConfigured } = useAuth();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const returnedFromPayment = searchParams.get("payment");
+
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
+  const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const planSupported = planId !== "subscription";
 
-  const handleMarkPaid = async () => {
+  const handleContinue = async () => {
     if (!user) return;
+    const cleanedPhone = phone.replace(/[\s-]/g, "");
+    if (!IL_MOBILE_RE.test(cleanedPhone)) {
+      setPhoneError(labels.phoneError);
+      return;
+    }
+    setPhoneError(null);
     setError(null);
     setBusy(true);
     try {
       const res = await fetchWithAuth(user, "/api/v1/me/purchases", {
         method: "POST",
-        body: JSON.stringify({ itemType, itemSlug, planId, locale }),
+        body: JSON.stringify({
+          itemType,
+          itemSlug,
+          planId,
+          locale,
+          phone: cleanedPhone,
+          returnPath: pathname,
+        }),
       });
       if (!res.ok) {
         throw new Error(`purchase request failed with ${res.status}`);
       }
       const data = (await res.json()) as PurchaseApiResponse;
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+        return; // keep `busy` true — the page is navigating away
+      }
       setResult(data);
+      setBusy(false);
     } catch (err) {
       console.error("[CheckoutPaymentPlaceholder] purchase request failed:", err);
       setError(labels.payError);
-    } finally {
       setBusy(false);
     }
   };
@@ -125,43 +154,76 @@ export function CheckoutPaymentPlaceholder({
             </span>
           </p>
 
-          {result ? (
-            result.status === "paid" ? (
-              <>
-                <p className="text-sm font-medium text-white">{labels.alreadyOwned}</p>
-                <Button href={itemHref} className="w-full">
-                  {labels.alreadyOwnedCta}
-                </Button>
-              </>
-            ) : (
-              <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
-                <p className="text-sm font-medium text-white">
-                  {labels.bitConfirmationTitle}
-                </p>
-                <p className="mt-1 text-sm text-frame-silver">
-                  {labels.bitConfirmationBody}
-                </p>
-              </div>
-            )
+          {result?.status === "paid" ? (
+            <>
+              <p className="text-sm font-medium text-white">{labels.alreadyOwned}</p>
+              <Button href={itemHref} className="w-full">
+                {labels.alreadyOwnedCta}
+              </Button>
+            </>
+          ) : result?.redirectUrl ? (
+            <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
+              <p className="text-sm font-medium text-white">{labels.redirectingTitle}</p>
+              <a
+                href={result.redirectUrl}
+                className="mt-1 block text-sm text-frame-cyan underline"
+              >
+                {labels.redirectingLink}
+              </a>
+            </div>
+          ) : result && !result.redirectUrl ? (
+            <>
+              <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
+              <BitPaymentCard
+                amountIls={amountIls}
+                phone={BIT_PAYMENT_INFO}
+                labels={labels.bitCard}
+              />
+              <p className="text-xs text-frame-muted">{labels.bitConfirmationBody}</p>
+            </>
+          ) : returnedFromPayment === "success" ? (
+            <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
+              <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
+              <p className="mt-1 text-sm text-frame-silver">{labels.bitConfirmationBody}</p>
+            </div>
           ) : !planSupported ? (
             <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
               {labels.planUnavailable}
             </p>
           ) : (
             <>
-              <BitPaymentCard
-                amountIls={amountIls}
-                phone={BIT_PAYMENT_INFO}
-                labels={labels.bitCard}
-              />
-              <p className="text-xs text-frame-muted">{labels.bitPaidIntro}</p>
+              {returnedFromPayment === "cancelled" ? (
+                <p className="text-xs text-frame-muted">{labels.paymentCancelled}</p>
+              ) : null}
+              <div>
+                <label
+                  htmlFor="checkout-phone"
+                  className="mb-1 block text-xs font-medium text-frame-silver"
+                >
+                  {labels.phoneLabel}
+                </label>
+                <input
+                  id="checkout-phone"
+                  type="tel"
+                  dir="ltr"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder={labels.phonePlaceholder}
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  className="w-full rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-white placeholder:text-frame-muted focus:border-frame-cyan focus:outline-none"
+                />
+                {phoneError ? (
+                  <p className="mt-1 text-xs font-medium text-frame-magenta">{phoneError}</p>
+                ) : null}
+              </div>
               <Button
-                onClick={handleMarkPaid}
+                onClick={handleContinue}
                 disabled={busy}
                 aria-busy={busy}
                 className="w-full disabled:opacity-60"
               >
-                {busy ? labels.bitPaidBusy : labels.bitPaidCta}
+                {busy ? labels.payBusy : labels.payCta}
               </Button>
             </>
           )}

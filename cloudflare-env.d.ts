@@ -16,6 +16,12 @@ interface __BaseEnv_CloudflareEnv {
 	// ADMIN_EMAILS added by hand, same as the block above — see
 	// .dev.vars.example. Re-run `npm run cf-typegen` once a real value exists.
 	ADMIN_EMAILS: string;
+	// GROW_* added by hand, same convention — see .dev.vars.example and
+	// lib/server/payments/grow.ts. Re-run `npm run cf-typegen` once real
+	// values exist.
+	GROW_USER_ID: string;
+	GROW_PAGE_CODE: string;
+	GROW_BASE_URL: string;
 	ME_WRITE_RATE_LIMITER: RateLimit;
 	ASSETS: Fetcher;
 	NEXT_PUBLIC_FIREBASE_API_KEY: string;
