@@ -361,5 +361,26 @@
     "retry": "Try again",
     "captionsOn": "Turn off captions",
     "captionsOff": "Turn on captions"
+  },
+  "admin": {
+    "purchases": {
+      "title": "Purchases",
+      "subtitle": "Confirm Bit payments and manage purchase status.",
+      "loading": "Loading…",
+      "unavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
+      "signInPrompt": "Sign in to view this page.",
+      "notAuthorized": "You’re signed in, but this account isn’t on the admin allowlist.",
+      "empty": "No purchases yet.",
+      "markPaid": "Mark paid",
+      "markRefunded": "Mark refunded",
+      "error": "Something went wrong. Please try again.",
+      "colItem": "Item",
+      "colBuyer": "Buyer",
+      "colAmount": "Amount",
+      "colStatus": "Status",
+      "colProvider": "Provider",
+      "colCreated": "Created",
+      "colActions": "Actions"
+    }
   }
 }

@@ -361,5 +361,26 @@
     "retry": "נסה שוב",
     "captionsOn": "כבה כתוביות",
     "captionsOff": "הפעל כתוביות"
+  },
+  "admin": {
+    "purchases": {
+      "title": "רכישות",
+      "subtitle": "אישור תשלומי ביט וניהול סטטוס רכישות.",
+      "loading": "טוען...",
+      "unavailable": "התחברות עדיין לא מוגדרת. הוסיפו את מפתחות Firebase ל־.env.local.",
+      "signInPrompt": "התחברו כדי לצפות בעמוד הזה.",
+      "notAuthorized": "אתם מחוברים, אבל החשבון הזה לא ברשימת המנהלים המורשים.",
+      "empty": "אין עדיין רכישות.",
+      "markPaid": "סמנו כשולם",
+      "markRefunded": "סמנו כהוחזר",
+      "error": "משהו השתבש. נסו שוב.",
+      "colItem": "פריט",
+      "colBuyer": "קונה",
+      "colAmount": "סכום",
+      "colStatus": "סטטוס",
+      "colProvider": "אמצעי תשלום",
+      "colCreated": "נוצר",
+      "colActions": "פעולות"
+    }
   }
 }
