@@ -131,6 +131,39 @@
       "cta": "More about me at bybarzilay.com"
     }
   },
+  "terms": {
+    "metaTitle": "Terms & Conditions",
+    "metaDescription": "The Frame by Barzilay's terms of service: delivery, liability, cancellation, and privacy.",
+    "title": "Terms & Conditions",
+    "updated": "Last updated: August 2026",
+    "intro": "These terms govern your use of The Frame by Barzilay and any combination or course you purchase on it. By completing a purchase, you agree to the terms below.",
+    "sections": {
+      "delivery": {
+        "title": "Delivery of content",
+        "body": "The Frame sells digital access only — no physical product is ever shipped. Once payment is confirmed, access to the purchased combination or course opens automatically, immediately (typically within seconds; if a payment confirmation is delayed, access is granted as soon as it's manually verified, generally within one business day). Combination access lasts 30 days from purchase; course/credit terms are shown on the item's checkout page before you pay."
+      },
+      "liability": {
+        "title": "Site and business liability",
+        "body": "The site owner is responsible for the operation of the platform and the accuracy of the catalog and pricing shown on it. Instructional content reflects each instructor's own teaching approach; The Frame is not liable for injury arising from attempting any physical movement shown in a lesson — dance at your own pace and within your own physical limits. The Frame is not liable for indirect or consequential damages arising from use of the site or its content, to the maximum extent permitted by law."
+      },
+      "cancellation": {
+        "title": "Cancelling a purchase",
+        "body": "Under Israeli consumer-protection law, digital content becomes non-cancellable once it has been accessed (opened) — this is standard for streamed video access, not specific to The Frame. If you have a genuine problem with a purchase — the wrong item, a technical fault preventing playback, or you haven't yet started watching — contact us (see the Contact page) and we will resolve it, including a refund where appropriate. Purchased credits, where offered, remain valid for the period stated at time of purchase, in line with Israeli law on stored-value vouchers."
+      },
+      "privacy": {
+        "title": "Privacy",
+        "body": "The Frame collects the account information needed to run the service — your name, email, and a record of what you've purchased — via Firebase Authentication and stores it in a Cloudflare D1 database. Payment card details are handled entirely by our payment processor and never pass through or get stored on The Frame's own systems. We do not sell your personal information to third parties. Contact us (see the Contact page) with any privacy question or data request."
+      }
+    }
+  },
+  "contact": {
+    "metaTitle": "Contact",
+    "metaDescription": "Get in touch with The Frame by Barzilay.",
+    "title": "Contact us",
+    "body": "Questions about a purchase, a lesson, or anything else? Reach out directly:",
+    "emailLabel": "Email",
+    "instagramLabel": "Instagram"
+  },
   "login": {
     "metaTitle": "Log in",
     "title": "Log in",
@@ -217,6 +250,9 @@
     "payBusy": "Taking you to payment…",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
     "paymentCancelled": "Payment was cancelled — you can try again below.",
+    "termsPrefix": "I agree to the",
+    "termsLinkText": "Terms & Conditions",
+    "termsRequired": "You need to agree to the Terms & Conditions to continue.",
     "noPaymentMethod": "Payment isn’t available yet — please contact us to complete this purchase:",
     "bitConfirmationTitle": "Thanks — payment recorded",
     "bitConfirmationBody": "We’ll confirm your payment and unlock access shortly. If it’s urgent, feel free to reach out directly.",
@@ -330,7 +366,9 @@
   },
   "footer": {
     "rights": "All rights reserved.",
-    "socialAria": "The Frame on {platform}"
+    "socialAria": "The Frame on {platform}",
+    "terms": "Terms & Conditions",
+    "contact": "Contact"
   },
   "player": {
     "defaultTitle": "Combination preview",

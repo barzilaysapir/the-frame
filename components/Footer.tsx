@@ -88,6 +88,23 @@ export function Footer({ locale, labels, footer }: FooterProps) {
           © {year} The Frame by Barzilay. {footer.rights}
         </p>
       </div>
+
+      <div className="border-t border-frame-border/60">
+        <div className="mx-auto flex max-w-7xl justify-center gap-x-6 px-4 py-4 sm:justify-start sm:px-6 lg:px-8">
+          <Link
+            href={localePath(locale, "/terms")}
+            className="text-xs text-frame-muted transition-colors hover:text-white"
+          >
+            {footer.terms}
+          </Link>
+          <Link
+            href={localePath(locale, "/contact")}
+            className="text-xs text-frame-muted transition-colors hover:text-white"
+          >
+            {footer.contact}
+          </Link>
+        </div>
+      </div>
     </footer>
   );
 }
