@@ -112,6 +112,8 @@
     "signInCta": "התחברות עם גוגל",
     "loadingVideo": "טוען וידאו…",
     "videoUnavailable": "לא ניתן לטעון את הווידאו הזה. נסו לרענן את הדף.",
+    "purchaseRequired": "יש לרכוש את הקורס כדי לצפות בשיעורים.",
+    "purchaseRequiredCta": "לרכישה",
     "pricingNote": "הקורס לבד, או הקורס ועוד קרדיטים בהנחת חבילה · בחירה בתשלום",
     "paymentBody": "תשלום חד־פעמי לגישה לקורס הזה.",
     "guarantees": [

@@ -8,7 +8,7 @@ import {
   resolveCatalog,
   resolveCatalogLocale,
 } from "@/lib/server/catalog";
-import type { CatalogRoutine } from "@/lib/server/catalog/types";
+import type { CatalogExternalCourse, CatalogRoutine } from "@/lib/server/catalog/types";
 import {
   listPaidPurchases,
   upsertUserFromClaims,
@@ -17,11 +17,19 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export interface LibraryItem {
-  purchaseId: string;
-  paidAt: string | null;
-  routine: CatalogRoutine;
-}
+export type LibraryItem =
+  | {
+      purchaseId: string;
+      paidAt: string | null;
+      itemType: "lesson";
+      routine: CatalogRoutine;
+    }
+  | {
+      purchaseId: string;
+      paidAt: string | null;
+      itemType: "external_course";
+      course: CatalogExternalCourse;
+    };
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,22 +48,42 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Fetch the full catalog once (batched internally) rather than issuing
-    // getRoutine() per purchase — avoids N+1 queries when a user's library
-    // grows to many routines.
-    const allRoutines = await repository.listRoutines(locale);
+    // getRoutine()/getExternalCourse() per purchase — same N+1 concern as
+    // /api/v1/me/favorites.
+    const [allRoutines, allExternalCourses] = await Promise.all([
+      repository.listRoutines(locale),
+      repository.listExternalCourses(locale),
+    ]);
     const routineBySlug = new Map(
       allRoutines.map((routine) => [routine.slug, routine]),
+    );
+    const courseBySlug = new Map(
+      allExternalCourses.map((course) => [course.slug, course]),
     );
 
     const items: LibraryItem[] = [];
     for (const purchase of purchases) {
-      const routine = routineBySlug.get(purchase.routineSlug);
-      if (!routine) continue;
-      items.push({
-        purchaseId: purchase.id,
-        paidAt: purchase.paidAt,
-        routine,
-      });
+      if (purchase.itemType === "lesson") {
+        const routine = routineBySlug.get(purchase.itemSlug);
+        if (!routine) continue;
+        items.push({
+          purchaseId: purchase.id,
+          paidAt: purchase.paidAt,
+          itemType: "lesson",
+          routine,
+        });
+      } else if (purchase.itemType === "external_course") {
+        const course = courseBySlug.get(purchase.itemSlug);
+        if (!course) continue;
+        items.push({
+          purchaseId: purchase.id,
+          paidAt: purchase.paidAt,
+          itemType: "external_course",
+          course,
+        });
+      }
+      // `internal_course` purchases can't exist yet — no catalog method
+      // backs it, same as favorites (see lib/server/catalog/types.ts).
     }
 
     return NextResponse.json({
