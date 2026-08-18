@@ -7,8 +7,10 @@ import { resolveCatalog } from "@/lib/server/catalog";
 import { STYLE_COVER_POSTERS, type DanceStyleKey } from "@/lib/routines";
 
 // Seed-catalog data changes rarely (via migrations, not user writes) — cache
-// the rendered page for 5 minutes instead of refetching D1 on every request.
-export const revalidate = 300;
+// the rendered page for 1 hour instead of refetching D1 on every request.
+// Kept long to limit Workers KV op volume on the ISR cache (free-tier daily
+// cap) — see https://github.com/barzilaysapir/the-frame/issues/271.
+export const revalidate = 3600;
 
 interface StylesPageProps {
   params: Promise<{ locale: string }>;
