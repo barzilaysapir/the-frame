@@ -7,8 +7,6 @@ import { isLocale } from "@/lib/i18n/config";
 import { parsePriceIls } from "@/lib/pricing";
 import { getCachedExternalCourse } from "@/lib/server/catalog";
 
-// Kept long to limit Workers KV op volume on the ISR cache (free-tier daily
-// cap) — see https://github.com/barzilaysapir/the-frame/issues/271.
 export const revalidate = 3600;
 
 interface ExternalCourseDetailPageProps {
