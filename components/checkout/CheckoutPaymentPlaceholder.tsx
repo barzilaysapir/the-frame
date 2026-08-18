@@ -6,9 +6,20 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
+import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
+
+/** Mirrors `PurchasePlanId` in `lib/server/payments/price-resolver.ts` plus `"subscription"`, which is a valid UI plan choice but not wired to a real purchase yet (see that file for why). */
+type CheckoutPurchasePlanId = "rental" | "course" | "course-credits" | "subscription";
+
+interface PurchaseApiResponse {
+  purchaseId: string;
+  status: "pending" | "paid";
+  checkoutUrl: string | null;
+  providerConfigured: boolean;
+}
 
 interface CheckoutPaymentPlaceholderProps {
   locale: Locale;
@@ -16,6 +27,11 @@ interface CheckoutPaymentPlaceholderProps {
   loginErrors: Dictionary["login"]["errors"];
   continueGoogleLabel: string;
   paymentBody: string;
+  itemType: "lesson" | "external_course";
+  itemSlug: string;
+  planId: CheckoutPurchasePlanId;
+  /** Where "watch now" / already-owned should link to. */
+  itemHref: string;
 }
 
 export function CheckoutPaymentPlaceholder({
@@ -24,9 +40,45 @@ export function CheckoutPaymentPlaceholder({
   loginErrors,
   continueGoogleLabel,
   paymentBody,
+  itemType,
+  itemSlug,
+  planId,
+  itemHref,
 }: CheckoutPaymentPlaceholderProps) {
   const { user, loading, isConfigured } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<PurchaseApiResponse | null>(null);
+
+  const planSupported = planId !== "subscription";
+
+  const handlePay = async () => {
+    if (!user) return;
+    setError(null);
+    setBusy(true);
+    try {
+      const res = await fetchWithAuth(user, "/api/v1/me/purchases", {
+        method: "POST",
+        body: JSON.stringify({ itemType, itemSlug, planId, locale }),
+      });
+      if (!res.ok) {
+        throw new Error(`purchase request failed with ${res.status}`);
+      }
+      const data = (await res.json()) as PurchaseApiResponse;
+      setResult(data);
+      if (data.checkoutUrl) {
+        // Full navigation to an external hosted-checkout domain — a
+        // client-side router.push can't cross origins, so this is the
+        // correct choice here (unlike a same-origin redirect).
+        window.location.href = data.checkoutUrl;
+      }
+    } catch (err) {
+      console.error("[CheckoutPaymentPlaceholder] purchase request failed:", err);
+      setError(labels.payError);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -68,10 +120,32 @@ export function CheckoutPaymentPlaceholder({
               {user.displayName || user.email || user.phoneNumber}
             </span>
           </p>
-          <Button disabled className="w-full cursor-not-allowed">
-            {labels.payCta}
-          </Button>
-          <p className="text-xs text-frame-muted">{labels.paySoon}</p>
+
+          {result?.status === "paid" ? (
+            <>
+              <p className="text-sm font-medium text-white">{labels.alreadyOwned}</p>
+              <Button href={itemHref} className="w-full">
+                {labels.alreadyOwnedCta}
+              </Button>
+            </>
+          ) : !planSupported ? (
+            <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
+              {labels.planUnavailable}
+            </p>
+          ) : result && !result.providerConfigured ? (
+            <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
+              {labels.providerNotConfigured}
+            </p>
+          ) : (
+            <Button
+              onClick={handlePay}
+              disabled={busy}
+              aria-busy={busy}
+              className="w-full disabled:opacity-60"
+            >
+              {busy ? labels.payBusy : labels.payCta}
+            </Button>
+          )}
         </div>
       )}
 

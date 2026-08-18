@@ -13,6 +13,12 @@ interface __BaseEnv_CloudflareEnv {
 	COURSE_VIDEOS: R2Bucket;
 	VIDEO_SIGNING_SECRET: string;
 	PREVIEW_CATALOG_TOKEN: string;
+	// UPAY_*/ADMIN_EMAILS added by hand, same as the block above — see
+	// .dev.vars.example. Re-run `npm run cf-typegen` once real values exist.
+	UPAY_MERCHANT_ID: string;
+	UPAY_API_KEY: string;
+	UPAY_WEBHOOK_SECRET: string;
+	ADMIN_EMAILS: string;
 	ME_WRITE_RATE_LIMITER: RateLimit;
 	ASSETS: Fetcher;
 	NEXT_PUBLIC_FIREBASE_API_KEY: string;

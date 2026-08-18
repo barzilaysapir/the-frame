@@ -190,6 +190,193 @@ export async function hasPaidPurchase(
   return row !== null;
 }
 
+export interface Purchase {
+  id: string;
+  firebaseUid: string;
+  itemType: CatalogItemType;
+  itemSlug: string;
+  provider: string;
+  providerPaymentId: string | null;
+  amountIls: number | null;
+  currency: string;
+  status: "pending" | "paid" | "refunded";
+  createdAt: string;
+  paidAt: string | null;
+}
+
+interface FullPurchaseRow {
+  id: string;
+  firebase_uid: string;
+  item_type: CatalogItemType;
+  item_slug: string;
+  provider: string;
+  provider_payment_id: string | null;
+  amount_ils: number | null;
+  currency: string;
+  status: "pending" | "paid" | "refunded";
+  created_at: string;
+  paid_at: string | null;
+}
+
+function mapPurchase(row: FullPurchaseRow): Purchase {
+  return {
+    id: row.id,
+    firebaseUid: row.firebase_uid,
+    itemType: row.item_type,
+    itemSlug: row.item_slug,
+    provider: row.provider,
+    providerPaymentId: row.provider_payment_id,
+    amountIls: row.amount_ils,
+    currency: row.currency,
+    status: row.status,
+    createdAt: row.created_at,
+    paidAt: row.paid_at,
+  };
+}
+
+/** The `paid` purchase row for this exact item, if any. */
+export async function findPaidPurchase(
+  db: AppDb,
+  firebaseUid: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
+): Promise<Purchase | null> {
+  const row = await db
+    .prepare(
+      `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              amount_ils, currency, status, created_at, paid_at
+       FROM purchases
+       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND status = 'paid'
+       LIMIT 1`,
+    )
+    .bind(firebaseUid, itemType, itemSlug)
+    .first<FullPurchaseRow>();
+  return row ? mapPurchase(row) : null;
+}
+
+/** The most recent `pending` purchase for this exact item, if any — reused instead of creating a duplicate when the buyer retries checkout. */
+export async function findPendingPurchase(
+  db: AppDb,
+  firebaseUid: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
+): Promise<Purchase | null> {
+  const row = await db
+    .prepare(
+      `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              amount_ils, currency, status, created_at, paid_at
+       FROM purchases
+       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND status = 'pending'
+       ORDER BY created_at DESC
+       LIMIT 1`,
+    )
+    .bind(firebaseUid, itemType, itemSlug)
+    .first<FullPurchaseRow>();
+  return row ? mapPurchase(row) : null;
+}
+
+export async function getPurchaseById(
+  db: AppDb,
+  purchaseId: string,
+): Promise<Purchase | null> {
+  const row = await db
+    .prepare(
+      `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              amount_ils, currency, status, created_at, paid_at
+       FROM purchases WHERE id = ?`,
+    )
+    .bind(purchaseId)
+    .first<FullPurchaseRow>();
+  return row ? mapPurchase(row) : null;
+}
+
+/** Creates a new `pending` purchase row. The amount is always server-computed by the caller — never trust a client-supplied price. */
+export async function createPendingPurchase(
+  db: AppDb,
+  firebaseUid: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
+  amountIls: number,
+  provider: string,
+): Promise<Purchase> {
+  const id = crypto.randomUUID();
+  await db
+    .prepare(
+      `INSERT INTO purchases (id, firebase_uid, item_type, item_slug, provider, amount_ils, currency, status)
+       VALUES (?, ?, ?, ?, ?, ?, 'ILS', 'pending')`,
+    )
+    .bind(id, firebaseUid, itemType, itemSlug, provider, amountIls)
+    .run();
+
+  const purchase = await getPurchaseById(db, id);
+  if (!purchase) {
+    throw new Error("Failed to load purchase after insert");
+  }
+  return purchase;
+}
+
+/**
+ * Flips a `pending` purchase to `paid` (idempotent — a purchase already
+ * `paid` is left as-is, so a retried/duplicate webhook delivery is safe).
+ */
+export async function markPurchasePaid(
+  db: AppDb,
+  purchaseId: string,
+  providerPaymentId: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE purchases
+       SET status = 'paid', provider_payment_id = ?, paid_at = datetime('now')
+       WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(providerPaymentId, purchaseId)
+    .run();
+}
+
+/** Manual admin override for edge cases (missed webhook, support-confirmed payment). */
+export async function markPurchasePaidManually(
+  db: AppDb,
+  purchaseId: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE purchases
+       SET status = 'paid', provider = 'manual', paid_at = datetime('now')
+       WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(purchaseId)
+    .run();
+}
+
+export async function markPurchaseRefunded(
+  db: AppDb,
+  purchaseId: string,
+): Promise<void> {
+  await db
+    .prepare(`UPDATE purchases SET status = 'refunded' WHERE id = ?`)
+    .bind(purchaseId)
+    .run();
+}
+
+/** All purchases across all users, most recent first — admin visibility page only. */
+export async function listAllPurchases(
+  db: AppDb,
+  limit = 200,
+): Promise<Purchase[]> {
+  const { results } = await db
+    .prepare(
+      `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              amount_ils, currency, status, created_at, paid_at
+       FROM purchases
+       ORDER BY created_at DESC
+       LIMIT ?`,
+    )
+    .bind(limit)
+    .all<FullPurchaseRow>();
+  return (results ?? []).map(mapPurchase);
+}
+
 export interface FavoriteRow {
   itemType: CatalogItemType;
   itemSlug: string;

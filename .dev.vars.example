@@ -19,3 +19,17 @@ VIDEO_SIGNING_SECRET=
 # app/api/preview/route.ts. Any long random string works (same generator as
 # above). Leave unset to disable the preview link entirely.
 PREVIEW_CATALOG_TOKEN=
+
+# uPay (upay.co.il) hosted-checkout credentials — see
+# lib/server/payments/upay.ts for a big caveat: uPay doesn't publish a
+# public API reference, so these field names (and the request/response
+# shapes that use them) are UNCONFIRMED placeholders pending real docs from
+# uPay's support team after signup. Leave unset to keep checkout in its
+# "payment not configured yet" state instead of erroring.
+UPAY_MERCHANT_ID=
+UPAY_API_KEY=
+UPAY_WEBHOOK_SECRET=
+
+# Comma-separated Firebase-verified emails allowed onto the admin purchases
+# page (app/[locale]/admin/purchases). See app/api/v1/admin/purchases/route.ts.
+ADMIN_EMAILS=
