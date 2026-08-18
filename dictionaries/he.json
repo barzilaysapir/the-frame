@@ -403,7 +403,9 @@
       "colStatus": "סטטוס",
       "colProvider": "אמצעי תשלום",
       "colCreated": "נוצר",
-      "colActions": "פעולות"
+      "colActions": "פעולות",
+      "unverifiedBadge": "לא מאומת",
+      "unverifiedTooltip": "אושר אוטומטית דרך ה-callback של uPay, שאין לו חתימה או אימות בצד השרת — כדאי להצליב מול לוח הבקרה של uPay לפני שסומכים על זה."
     }
   }
 }

@@ -37,6 +37,8 @@ interface AdminPurchasesListProps {
     colProvider: string;
     colCreated: string;
     colActions: string;
+    unverifiedBadge: string;
+    unverifiedTooltip: string;
   };
 }
 
@@ -197,6 +199,15 @@ export function AdminPurchasesList({ labels }: AdminPurchasesListProps) {
                   >
                     {purchase.status}
                   </span>
+                  {purchase.status === "paid" &&
+                  purchase.providerPaymentId === "upay-ipn" ? (
+                    <span
+                      title={labels.unverifiedTooltip}
+                      className="ml-2 inline-block rounded-full border border-frame-magenta/50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-frame-magenta"
+                    >
+                      {labels.unverifiedBadge}
+                    </span>
+                  ) : null}
                 </td>
                 <td className="px-4 py-3 text-frame-silver">
                   {new Date(purchase.createdAt).toLocaleString()}
