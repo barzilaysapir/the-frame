@@ -35,7 +35,7 @@ export function useRoutineFilters({
     let items = allItems;
     if (selectedInstructors.length > 0) {
       items = items.filter((item) =>
-        item.kind === "routine"
+        item.kind === "lesson"
           ? selectedInstructors.includes(item.routine.instructorSlug)
           : item.course.instructorSlug != null &&
             selectedInstructors.includes(item.course.instructorSlug),
@@ -43,14 +43,14 @@ export function useRoutineFilters({
     }
     if (selectedStyles.length > 0) {
       items = items.filter((item) =>
-        item.kind === "routine"
+        item.kind === "lesson"
           ? selectedStyles.includes(item.routine.style)
           : item.course.style != null && selectedStyles.includes(item.course.style),
       );
     }
     if (selectedLevels.length > 0) {
       items = items.filter((item) =>
-        item.kind === "routine"
+        item.kind === "lesson"
           ? selectedLevels.includes(item.routine.level)
           : item.course.level != null && selectedLevels.includes(item.course.level),
       );

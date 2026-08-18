@@ -10,12 +10,15 @@ import {
   resolveCatalog,
   resolveCatalogLocale,
 } from "@/lib/server/catalog";
-import type { CatalogExternalCourse, CatalogRoutine } from "@/lib/server/catalog/types";
+import type {
+  CatalogExternalCourse,
+  CatalogItemType,
+  CatalogRoutine,
+} from "@/lib/server/catalog/types";
 import {
   addFavorite,
   listFavorites,
   upsertUserFromClaims,
-  type FavoriteItemType,
 } from "@/lib/server/users/repository";
 
 export const runtime = "nodejs";
@@ -30,7 +33,7 @@ export type FavoriteItem =
       course: CatalogExternalCourse;
     };
 
-function isFavoriteItemType(value: unknown): value is FavoriteItemType {
+function isCatalogItemType(value: unknown): value is CatalogItemType {
   return value === "lesson" || value === "internal_course" || value === "external_course";
 }
 
@@ -108,7 +111,7 @@ export async function POST(request: NextRequest) {
     const body = await readJsonBody<{ itemType?: unknown; slug?: unknown }>(
       request,
     );
-    if (!isFavoriteItemType(body.itemType)) {
+    if (!isCatalogItemType(body.itemType)) {
       return NextResponse.json(
         { error: "itemType must be 'lesson', 'internal_course', or 'external_course'" },
         { status: 400 },
