@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { DanceVideoPlayer } from "@/components/player/DanceVideoPlayer";
+import { DanceVideoPlayer, type PlayerChapter } from "@/components/player/DanceVideoPlayer";
 import { Button } from "@/components/ui/Button";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import {
@@ -10,11 +10,12 @@ import {
   signInWithGoogle,
 } from "@/lib/client/sign-in-with-google";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { CatalogExternalCourseLesson } from "@/lib/server/catalog/types";
 
-interface CourseLessonPlayerProps {
-  courseSlug: string;
-  lesson: CatalogExternalCourseLesson;
+interface RoutineVideoPlayerProps {
+  slug: string;
+  poster: string;
+  title: string;
+  chapters: PlayerChapter[];
   checkoutHref: string;
   playerLabels: Dictionary["player"];
   loginErrors: Dictionary["login"]["errors"];
@@ -29,20 +30,23 @@ interface CourseLessonPlayerProps {
 }
 
 /**
- * Login-gated lesson player. Signed-out visitors see a sign-in prompt;
- * signed-in visitors get a short-lived signed playback URL fetched with
- * their Firebase ID token, then handed to the same `<video>`-based player
- * routines use — the gating lives entirely in how `src` is obtained, not in
- * the player itself.
+ * Login-and-purchase-gated routine player (issue #232) — mirrors
+ * `CourseLessonPlayer`: signed-out visitors see a sign-in prompt, signed-in
+ * non-purchasers see a "buy to watch" prompt, and purchasers get a
+ * short-lived signed playback URL fetched with their Firebase ID token,
+ * handed to the same `<video>`-based player. The gating lives entirely in
+ * how `src` is obtained, not in the player itself.
  */
-export function CourseLessonPlayer({
-  courseSlug,
-  lesson,
+export function RoutineVideoPlayer({
+  slug,
+  poster,
+  title,
+  chapters,
   checkoutHref,
   playerLabels,
   loginErrors,
   labels,
-}: CourseLessonPlayerProps) {
+}: RoutineVideoPlayerProps) {
   const { user, loading: authLoading, isConfigured } = useAuth();
   const [playbackUrl, setPlaybackUrl] = useState<string | null>(null);
   const [fetchFailed, setFetchFailed] = useState(false);
@@ -58,7 +62,7 @@ export function CourseLessonPlayer({
       try {
         const res = await fetchWithAuth(
           user,
-          `/api/v1/external-courses/${encodeURIComponent(courseSlug)}/lessons/${encodeURIComponent(lesson.id)}/playback-url`,
+          `/api/v1/routines/${encodeURIComponent(slug)}/playback-url`,
         );
         if (res.status === 403) {
           if (!cancelled) {
@@ -78,7 +82,7 @@ export function CourseLessonPlayer({
           setPurchaseRequired(false);
         }
       } catch (error) {
-        console.error("[CourseLessonPlayer] failed to get playback URL:", error);
+        console.error("[RoutineVideoPlayer] failed to get playback URL:", error);
         if (!cancelled) {
           setFetchFailed(true);
           setPlaybackUrl(null);
@@ -90,7 +94,7 @@ export function CourseLessonPlayer({
     return () => {
       cancelled = true;
     };
-  }, [user, courseSlug, lesson.id]);
+  }, [user, slug]);
 
   const handleSignIn = async () => {
     setSignInError(null);
@@ -102,7 +106,7 @@ export function CourseLessonPlayer({
     try {
       await signInWithGoogle();
     } catch (error) {
-      console.error("[CourseLessonPlayer sign-in]", error);
+      console.error("[RoutineVideoPlayer sign-in]", error);
       setSignInError(getGoogleSignInErrorMessage(error, loginErrors));
     } finally {
       setSignInBusy(false);
@@ -156,17 +160,18 @@ export function CourseLessonPlayer({
   return (
     <DanceVideoPlayer
       src={playbackUrl}
-      title={lesson.title}
-      chapters={[]}
+      poster={poster}
+      title={title}
+      chapters={chapters}
       labels={playerLabels}
-      showMirror={lesson.allowMirror}
+      className="mb-10"
     />
   );
 }
 
 function PlaceholderFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-2xl border border-frame-border bg-black/40 px-6 text-center">
+    <div className="mb-10 flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-2xl border border-frame-border bg-black/40 px-6 text-center">
       {children}
     </div>
   );

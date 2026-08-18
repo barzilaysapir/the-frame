@@ -126,7 +126,8 @@ export async function updateUserProfile(
 
 export interface PaidPurchase {
   id: string;
-  routineSlug: string;
+  itemType: CatalogItemType;
+  itemSlug: string;
   provider: string;
   amountIls: number | null;
   currency: string;
@@ -136,7 +137,8 @@ export interface PaidPurchase {
 
 interface PurchaseRow {
   id: string;
-  routine_slug: string;
+  item_type: CatalogItemType;
+  item_slug: string;
   provider: string;
   amount_ils: number | null;
   currency: string;
@@ -150,7 +152,7 @@ export async function listPaidPurchases(
 ): Promise<PaidPurchase[]> {
   const { results } = await db
     .prepare(
-      `SELECT id, routine_slug, provider, amount_ils, currency, paid_at, created_at
+      `SELECT id, item_type, item_slug, provider, amount_ils, currency, paid_at, created_at
        FROM purchases
        WHERE firebase_uid = ? AND status = 'paid'
        ORDER BY COALESCE(paid_at, created_at) DESC`,
@@ -160,13 +162,32 @@ export async function listPaidPurchases(
 
   return (results ?? []).map((row) => ({
     id: row.id,
-    routineSlug: row.routine_slug,
+    itemType: row.item_type,
+    itemSlug: row.item_slug,
     provider: row.provider,
     amountIls: row.amount_ils,
     currency: row.currency,
     paidAt: row.paid_at,
     createdAt: row.created_at,
   }));
+}
+
+/** True if the user has a `paid` purchase row for this exact item. Used to gate playback/detail access. */
+export async function hasPaidPurchase(
+  db: AppDb,
+  firebaseUid: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
+): Promise<boolean> {
+  const row = await db
+    .prepare(
+      `SELECT 1 FROM purchases
+       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND status = 'paid'
+       LIMIT 1`,
+    )
+    .bind(firebaseUid, itemType, itemSlug)
+    .first();
+  return row !== null;
 }
 
 export interface FavoriteRow {

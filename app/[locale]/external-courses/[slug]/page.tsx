@@ -116,6 +116,7 @@ export default async function ExternalCourseDetailPage({
               <CourseWatch
                 courseSlug={course.slug}
                 lessons={course.lessons}
+                checkoutHref={checkoutHref}
                 playerLabels={dict.player}
                 loginErrors={dict.login.errors}
                 lessonsHeading={dict.externalCourses.lessonsHeading}
@@ -124,6 +125,8 @@ export default async function ExternalCourseDetailPage({
                   signInCta: dict.externalCourses.signInCta,
                   loading: dict.externalCourses.loadingVideo,
                   unavailable: dict.externalCourses.videoUnavailable,
+                  purchaseRequired: dict.externalCourses.purchaseRequired,
+                  purchaseRequiredCta: dict.externalCourses.purchaseRequiredCta,
                 }}
               />
             </Suspense>

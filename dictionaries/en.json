@@ -112,6 +112,8 @@
     "signInCta": "Sign in with Google",
     "loadingVideo": "Loading video…",
     "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
+    "purchaseRequired": "Purchase this course to watch its lessons.",
+    "purchaseRequiredCta": "Get access",
     "pricingNote": "This course, or the course plus extra credits at a pack discount · choose at checkout",
     "paymentBody": "One-time payment for access to this course.",
     "guarantees": [
@@ -298,6 +300,12 @@
     "pricingNote": "30-day access or monthly site plan · choose at checkout",
     "getAccessNow": "Start learning",
     "secureNote": "Secure checkout · access starts right after payment",
+    "signInPrompt": "Sign in to watch this combination.",
+    "signInCta": "Sign in with Google",
+    "loadingVideo": "Loading video…",
+    "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
+    "purchaseRequired": "Purchase this combination to watch it.",
+    "purchaseRequiredCta": "Get access",
     "guarantees": [
       "30 days of viewing access to this combination",
       "Slowed and mirrored practice modes",
