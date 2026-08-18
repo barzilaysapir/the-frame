@@ -14,7 +14,14 @@ import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
 import type { CatalogExternalCourse, CatalogRoutine } from "@/lib/server/catalog/types";
 
-export type FavoriteItemType = "lesson" | "external_course";
+/**
+ * `internal_course` is reserved for a future internally-hosted, multi-lesson
+ * course — no card/catalog type produces one yet (see the server-side
+ * `FavoriteItemType` in lib/server/users/repository.ts), so it never
+ * appears in `FavoritableItem`/`FavoriteItem` below. Kept in sync here so
+ * `isFavorited`'s signature won't need to change when it's real.
+ */
+export type FavoriteItemType = "lesson" | "internal_course" | "external_course";
 
 /** What a card needs to hand `toggleFavorite` to add/optimistically render itself. */
 export type FavoritableItem =

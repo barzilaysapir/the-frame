@@ -31,7 +31,7 @@ export type FavoriteItem =
     };
 
 function isFavoriteItemType(value: unknown): value is FavoriteItemType {
-  return value === "lesson" || value === "external_course";
+  return value === "lesson" || value === "internal_course" || value === "external_course";
 }
 
 export async function GET(request: NextRequest) {
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
           createdAt: favorite.createdAt,
           routine,
         });
-      } else {
+      } else if (favorite.itemType === "external_course") {
         const course = courseBySlug.get(favorite.itemSlug);
         if (!course) continue;
         items.push({
@@ -85,6 +85,8 @@ export async function GET(request: NextRequest) {
           course,
         });
       }
+      // `internal_course` rows can't exist yet (POST/DELETE reject the type
+      // below) — no branch needed until a catalog method backs it.
     }
 
     return NextResponse.json({ locale, source, items });
@@ -108,12 +110,20 @@ export async function POST(request: NextRequest) {
     );
     if (!isFavoriteItemType(body.itemType)) {
       return NextResponse.json(
-        { error: "itemType must be 'lesson' or 'external_course'" },
+        { error: "itemType must be 'lesson', 'internal_course', or 'external_course'" },
         { status: 400 },
       );
     }
     if (typeof body.slug !== "string" || !body.slug) {
       return NextResponse.json({ error: "slug is required" }, { status: 400 });
+    }
+    // Reserved for a future internally-hosted course — no catalog table/
+    // method exists to validate or store one against yet.
+    if (body.itemType === "internal_course") {
+      return NextResponse.json(
+        { error: "internal_course favorites are not supported yet" },
+        { status: 501 },
+      );
     }
 
     const { repository } = await resolveCatalog();
