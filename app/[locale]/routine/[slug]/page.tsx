@@ -16,8 +16,8 @@ import { localePath } from "@/lib/i18n/path";
 import { getCachedInstructor, getCachedRoutine } from "@/lib/server/catalog";
 
 // Seed-catalog data changes rarely (via migrations, not user writes) — cache
-// the rendered page for 5 minutes instead of refetching D1 on every request.
-export const revalidate = 300;
+// the rendered page for 1 hour instead of refetching D1 on every request.
+export const revalidate = 3600;
 
 interface RoutinePageProps {
   params: Promise<{ locale: string; slug: string }>;

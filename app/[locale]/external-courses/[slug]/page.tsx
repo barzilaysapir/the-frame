@@ -7,7 +7,7 @@ import { isLocale } from "@/lib/i18n/config";
 import { parsePriceIls } from "@/lib/pricing";
 import { getCachedExternalCourse } from "@/lib/server/catalog";
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
 interface ExternalCourseDetailPageProps {
   params: Promise<{ locale: string; slug: string }>;
