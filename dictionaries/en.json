@@ -300,6 +300,12 @@
     "pricingNote": "30-day access or monthly site plan · choose at checkout",
     "getAccessNow": "Start learning",
     "secureNote": "Secure checkout · access starts right after payment",
+    "signInPrompt": "Sign in to watch this combination.",
+    "signInCta": "Sign in with Google",
+    "loadingVideo": "Loading video…",
+    "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
+    "purchaseRequired": "Purchase this combination to watch it.",
+    "purchaseRequiredCta": "Get access",
     "guarantees": [
       "30 days of viewing access to this combination",
       "Slowed and mirrored practice modes",

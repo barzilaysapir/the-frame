@@ -3,8 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { EarlyBirdBanner } from "@/components/EarlyBirdBanner";
-import { DanceVideoPlayer } from "@/components/player/DanceVideoPlayer";
 import { RoutineBreakdown, type RoutineDetail } from "@/components/routines/RoutineBreakdown";
+import { RoutineVideoPlayer } from "@/components/routines/RoutineVideoPlayer";
 import { PricingCard } from "@/components/routines/PricingCard";
 import { MobileStickyCta } from "@/components/routines/MobileStickyCta";
 import { InstructorAvatar } from "@/components/instructors/InstructorAvatar";
@@ -141,15 +141,24 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
               ) : null}
             </section>
 
-            <DanceVideoPlayer
-              src={routine.videoSrc}
+            <RoutineVideoPlayer
+              slug={routine.slug}
               poster={routine.poster}
               title={formatMessage(dict.routine.previewTitle, {
                 title: routine.title,
               })}
               chapters={routine.chapters}
-              labels={dict.player}
-              className="mb-10"
+              checkoutHref={localePath(locale, `/checkout/${routine.slug}`)}
+              playerLabels={dict.player}
+              loginErrors={dict.login.errors}
+              labels={{
+                signInPrompt: dict.routine.signInPrompt,
+                signInCta: dict.routine.signInCta,
+                loading: dict.routine.loadingVideo,
+                unavailable: dict.routine.videoUnavailable,
+                purchaseRequired: dict.routine.purchaseRequired,
+                purchaseRequiredCta: dict.routine.purchaseRequiredCta,
+              }}
             />
 
             <RoutineBreakdown
