@@ -5,12 +5,14 @@ import { CheckoutPaymentPlaceholder } from "@/components/checkout/CheckoutPaymen
 import { CheckoutPlanPicker } from "@/components/checkout/CheckoutPlanPicker";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
+import { localePath } from "@/lib/i18n/path";
 import { courseCreditsBundlePricing } from "@/lib/pricing";
 
 type CoursePlanId = "course" | "course-credits";
 
 interface CourseCheckoutProps {
   locale: Locale;
+  courseSlug: string;
   title: string;
   instructorName: string;
   taughtByLabel: string;
@@ -29,6 +31,7 @@ function fill(
 
 export function CourseCheckout({
   locale,
+  courseSlug,
   title,
   instructorName,
   taughtByLabel,
@@ -104,6 +107,11 @@ export function CourseCheckout({
         paymentBody={
           plan === "course" ? singleCopy.paymentBody : creditsCopy.paymentBody
         }
+        itemType="external_course"
+        itemSlug={courseSlug}
+        planId={plan}
+        amountIls={plan === "course" ? priceIls : bundle.sale}
+        itemHref={localePath(locale, `/external-courses/${courseSlug}`)}
       />
     </div>
   );

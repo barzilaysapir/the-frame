@@ -72,6 +72,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         <div className="mt-10">
           <CheckoutPlans
             locale={localeParam}
+            routineSlug={routine.slug}
             routineTitle={routine.title}
             instructorName={instructor?.name}
             taughtByLabel={dict.routine.taughtBy}
@@ -110,6 +111,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       <div className="mt-10">
         <CourseCheckout
           locale={localeParam}
+          courseSlug={course.slug}
           title={course.title}
           instructorName={course.provider}
           taughtByLabel={dict.routine.taughtBy}

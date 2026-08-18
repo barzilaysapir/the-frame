@@ -5,6 +5,7 @@ import { CheckoutPaymentPlaceholder } from "@/components/checkout/CheckoutPaymen
 import { CheckoutPlanPicker } from "@/components/checkout/CheckoutPlanPicker";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { localePath } from "@/lib/i18n/path";
 import {
   MONTHLY_SUBSCRIPTION,
   type CheckoutPlanId,
@@ -12,6 +13,7 @@ import {
 
 interface CheckoutPlansProps {
   locale: Locale;
+  routineSlug: string;
   routineTitle: string;
   instructorName?: string;
   taughtByLabel: string;
@@ -24,6 +26,7 @@ interface CheckoutPlansProps {
 
 export function CheckoutPlans({
   locale,
+  routineSlug,
   routineTitle,
   instructorName,
   taughtByLabel,
@@ -79,6 +82,11 @@ export function CheckoutPlans({
             ? labels.plans.rental.paymentBody
             : labels.plans.subscription.paymentBody
         }
+        itemType="lesson"
+        itemSlug={routineSlug}
+        planId={plan}
+        amountIls={plan === "rental" ? rentalPrice : MONTHLY_SUBSCRIPTION.earlyBird}
+        itemHref={localePath(locale, `/routine/${routineSlug}`)}
       />
     </div>
   );
