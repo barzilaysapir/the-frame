@@ -13,12 +13,14 @@ import {
   resolvePurchasePrice,
   type PurchasePlanId,
 } from "@/lib/server/payments/price-resolver";
+import { buildUpayFormFields, getUpayConfig } from "@/lib/server/payments/upay";
 import {
   createPendingPurchase,
   findPaidPurchase,
   findPendingPurchase,
   upsertUserFromClaims,
 } from "@/lib/server/users/repository";
+import { SITE_URL } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,20 +33,24 @@ interface PurchaseRequestBody {
   itemSlug?: unknown;
   planId?: unknown;
   locale?: unknown;
+  /** Path (not a full URL) the buyer should land back on after paying/cancelling — always resolved against our own SITE_URL server-side, so a client-supplied value can't redirect off-site. */
+  returnPath?: unknown;
 }
 
 interface PurchaseResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
+  /** Present once uPay is configured (see lib/server/payments/upay.ts) — the client must render these as hidden inputs in a real `<form method="post">` and submit it (uPay's endpoint isn't a simple GET redirect). */
+  upayForm?: { action: string; fields: Record<string, string> };
 }
 
 /**
- * Records a buyer's intent to pay via Bit (Phase 1 — manual confirmation
- * only, see app/[locale]/admin/purchases). This does NOT call out to any
- * payment gateway; it just creates/reuses a `pending` purchases row after
- * recomputing the price server-side. The site owner marks it `paid` (or
- * `refunded`) by hand once she confirms the Bit transfer arrived.
+ * Creates/reuses a `pending` purchases row after recomputing the price
+ * server-side, then returns a uPay dynamic payment form (see
+ * lib/server/payments/upay.ts) if uPay is configured — the only payment
+ * gateway wired up (Grow was dropped: uPay's dynamic form works and has
+ * no monthly fee, see #261's history).
  *
  * A client-supplied amount is never trusted — see
  * `.cursor/rules/security-conventions.mdc`.
@@ -75,6 +81,7 @@ export async function POST(request: NextRequest) {
     const locale = resolveCatalogLocale(
       typeof body.locale === "string" ? body.locale : null,
     );
+    const returnPath = typeof body.returnPath === "string" ? body.returnPath : null;
 
     const alreadyPaid = await findPaidPurchase(
       db,
@@ -91,7 +98,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(response);
     }
 
-    const { amountIls } = await resolvePurchasePrice(
+    const { amountIls, description } = await resolvePurchasePrice(
       locale,
       itemType as CatalogItemType,
       itemSlug,
@@ -120,6 +127,19 @@ export async function POST(request: NextRequest) {
       status: "pending",
       amountIls: purchase.amountIls,
     };
+
+    const path = returnPath && returnPath.startsWith("/") ? returnPath : "/";
+
+    const upayConfig = await getUpayConfig();
+    if (upayConfig) {
+      response.upayForm = buildUpayFormFields(upayConfig, {
+        amountIls: purchase.amountIls ?? amountIls,
+        description,
+        returnUrl: `${SITE_URL}${path}?payment=success&provider=upay&purchaseId=${purchase.id}`,
+        ipnUrl: `${SITE_URL}/api/v1/webhooks/upay?purchaseId=${purchase.id}`,
+      });
+    }
+
     return NextResponse.json(response);
   } catch (error) {
     return jsonError(error);

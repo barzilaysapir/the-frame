@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
-import { BitPaymentCard } from "@/components/checkout/BitPaymentCard";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
-import { BIT_PAYMENT_INFO } from "@/lib/bit-payment";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -16,10 +15,15 @@ import { localePath } from "@/lib/i18n/path";
 /** Mirrors `PurchasePlanId` in `lib/server/payments/price-resolver.ts` plus `"subscription"`, a valid UI plan choice that isn't wired to a real purchase yet (see that file for why). */
 type CheckoutPurchasePlanId = "rental" | "course" | "course-credits" | "subscription";
 
+/** The site's contact address, used as a mailto: fallback when no payment option is configured. */
+const CONTACT_EMAIL = "sapir@bybarzilay.com";
+
 interface PurchaseApiResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
+  /** Present once uPay is configured — must be submitted as a real POST form (uPay's endpoint isn't a plain redirect link), see the hidden form below. */
+  upayForm?: { action: string; fields: Record<string, string> };
 }
 
 interface CheckoutPaymentPlaceholderProps {
@@ -31,17 +35,16 @@ interface CheckoutPaymentPlaceholderProps {
   itemType: "lesson" | "external_course";
   itemSlug: string;
   planId: CheckoutPurchasePlanId;
-  /** Display-only amount shown in the Bit instructions — the real charge is always recomputed server-side in POST /api/v1/me/purchases. */
-  amountIls: number;
   /** Where "watch now" / already-owned should link to. */
   itemHref: string;
 }
 
 /**
- * Phase 1 payment: Bit only, manually confirmed by the site owner (see
- * app/[locale]/admin/purchases) — no payment-gateway integration yet.
- * "I've paid via Bit" just records a `pending` purchase; there's no
- * redirect, no webhook, no automatic confirmation.
+ * Submits uPay's dynamic payment form (see POST /api/v1/me/purchases and
+ * lib/server/payments/upay.ts) — the only payment gateway wired up (Grow
+ * was dropped once uPay's dynamic form was confirmed working with no
+ * monthly fee, see #261's history). app/[locale]/admin/purchases remains
+ * the manual override for edge cases (missed webhook, refund).
  */
 export function CheckoutPaymentPlaceholder({
   locale,
@@ -52,34 +55,53 @@ export function CheckoutPaymentPlaceholder({
   itemType,
   itemSlug,
   planId,
-  amountIls,
   itemHref,
 }: CheckoutPaymentPlaceholderProps) {
   const { user, loading, isConfigured } = useAuth();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const returnedFromPayment = searchParams.get("payment");
+
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
+  const upayFormRef = useRef<HTMLFormElement>(null);
 
   const planSupported = planId !== "subscription";
 
-  const handleMarkPaid = async () => {
+  // uPay is the only gateway, so there's nothing to "choose" — submit
+  // straight through the moment the form fields arrive, instead of making
+  // the buyer click a second button.
+  useEffect(() => {
+    if (result?.upayForm) {
+      upayFormRef.current?.submit();
+    }
+  }, [result]);
+
+  const handleContinue = async () => {
     if (!user) return;
     setError(null);
     setBusy(true);
     try {
       const res = await fetchWithAuth(user, "/api/v1/me/purchases", {
         method: "POST",
-        body: JSON.stringify({ itemType, itemSlug, planId, locale }),
+        body: JSON.stringify({
+          itemType,
+          itemSlug,
+          planId,
+          locale,
+          returnPath: pathname,
+        }),
       });
       if (!res.ok) {
         throw new Error(`purchase request failed with ${res.status}`);
       }
       const data = (await res.json()) as PurchaseApiResponse;
       setResult(data);
+      setBusy(false);
     } catch (err) {
       console.error("[CheckoutPaymentPlaceholder] purchase request failed:", err);
       setError(labels.payError);
-    } finally {
       setBusy(false);
     }
   };
@@ -125,43 +147,57 @@ export function CheckoutPaymentPlaceholder({
             </span>
           </p>
 
-          {result ? (
-            result.status === "paid" ? (
-              <>
-                <p className="text-sm font-medium text-white">{labels.alreadyOwned}</p>
-                <Button href={itemHref} className="w-full">
-                  {labels.alreadyOwnedCta}
-                </Button>
-              </>
-            ) : (
-              <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
-                <p className="text-sm font-medium text-white">
-                  {labels.bitConfirmationTitle}
-                </p>
-                <p className="mt-1 text-sm text-frame-silver">
-                  {labels.bitConfirmationBody}
-                </p>
-              </div>
-            )
+          {result?.status === "paid" ? (
+            <>
+              <p className="text-sm font-medium text-white">{labels.alreadyOwned}</p>
+              <Button href={itemHref} className="w-full">
+                {labels.alreadyOwnedCta}
+              </Button>
+            </>
+          ) : result?.upayForm ? (
+            <>
+              <form
+                ref={upayFormRef}
+                method="POST"
+                action={result.upayForm.action}
+                className="hidden"
+              >
+                {Object.entries(result.upayForm.fields).map(([name, value]) => (
+                  <input key={name} type="hidden" name={name} value={value} />
+                ))}
+              </form>
+              <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-silver">
+                {labels.payBusy}
+              </p>
+            </>
+          ) : result ? (
+            <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
+              {labels.noPaymentMethod}{" "}
+              <a href={`mailto:${CONTACT_EMAIL}`} className="text-frame-cyan underline">
+                {CONTACT_EMAIL}
+              </a>
+            </p>
+          ) : returnedFromPayment === "success" ? (
+            <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
+              <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
+              <p className="mt-1 text-sm text-frame-silver">{labels.bitConfirmationBody}</p>
+            </div>
           ) : !planSupported ? (
             <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
               {labels.planUnavailable}
             </p>
           ) : (
             <>
-              <BitPaymentCard
-                amountIls={amountIls}
-                phone={BIT_PAYMENT_INFO}
-                labels={labels.bitCard}
-              />
-              <p className="text-xs text-frame-muted">{labels.bitPaidIntro}</p>
+              {returnedFromPayment === "cancelled" ? (
+                <p className="text-xs text-frame-muted">{labels.paymentCancelled}</p>
+              ) : null}
               <Button
-                onClick={handleMarkPaid}
+                onClick={handleContinue}
                 disabled={busy}
                 aria-busy={busy}
                 className="w-full disabled:opacity-60"
               >
-                {busy ? labels.bitPaidBusy : labels.bitPaidCta}
+                {busy ? labels.payBusy : labels.payCta}
               </Button>
             </>
           )}

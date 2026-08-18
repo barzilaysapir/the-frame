@@ -25,3 +25,11 @@ PREVIEW_CATALOG_TOKEN=
 # payment as paid/refunded" tool for Phase 1. See lib/server/admin.ts.
 # Missing/empty means nobody is an admin, not "allow everyone".
 ADMIN_EMAILS=
+
+# uPay (upay.co.il) — see lib/server/payments/upay.ts. uPay publishes no
+# API docs; this is built against a mechanism reverse-engineered from the
+# HTML "embed code" their dashboard generates for a manually-created
+# payment button, confirmed live with a real ₪200 test transaction on
+# 2026-08-18. Just your uPay account login email — no separate merchant ID
+# or API key exists for this flow. Leave unset to skip offering uPay.
+UPAY_MERCHANT_EMAIL=
