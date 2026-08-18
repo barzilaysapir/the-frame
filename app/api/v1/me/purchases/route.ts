@@ -14,6 +14,7 @@ import {
   resolvePurchasePrice,
   type PurchasePlanId,
 } from "@/lib/server/payments/price-resolver";
+import { getUpayLinkForAmount } from "@/lib/server/payments/upay-links";
 import {
   attachProviderProcess,
   createPendingPurchase,
@@ -49,6 +50,8 @@ interface PurchaseResponse {
   amountIls: number | null;
   /** Present once Grow is configured and the hosted payment process was created — the client should redirect here instead of showing manual Bit instructions. */
   redirectUrl?: string;
+  /** A static uPay payment link matching this exact amount, if one exists (see lib/server/payments/upay-links.ts) — shown as a card-payment option alongside the manual Bit instructions. Never set when `redirectUrl` is, since Grow is the better (auto-confirming) option when available. */
+  upayLinkUrl?: string;
 }
 
 /**
@@ -153,6 +156,11 @@ export async function POST(request: NextRequest) {
       });
       await attachProviderProcess(db, purchase.id, result.processId, result.processToken);
       response.redirectUrl = result.url;
+    } else {
+      const upayLink = await getUpayLinkForAmount(purchase.amountIls ?? amountIls);
+      if (upayLink) {
+        response.upayLinkUrl = upayLink;
+      }
     }
 
     return NextResponse.json(response);

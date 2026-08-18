@@ -231,6 +231,8 @@
       "step2": "Tap “Send money” and enter this phone number",
       "step3": "Enter the amount above and send"
     },
+    "payByCardCta": "Pay by card",
+    "orPayByBit": "Or pay by Bit:",
     "bitConfirmationTitle": "Thanks — payment recorded",
     "bitConfirmationBody": "We’ll confirm your payment and unlock access shortly. If it’s urgent, feel free to reach out directly.",
     "payError": "Something went wrong recording your payment. Please try again.",

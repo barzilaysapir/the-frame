@@ -26,6 +26,8 @@ interface PurchaseApiResponse {
   amountIls: number | null;
   /** Present once Grow (Meshulam) is configured — redirect here instead of showing manual Bit instructions. */
   redirectUrl?: string;
+  /** A static uPay card-payment link matching this exact amount, if one exists — shown alongside (not instead of) the manual Bit instructions, since neither auto-confirms without Grow. */
+  upayLinkUrl?: string;
 }
 
 interface CheckoutPaymentPlaceholderProps {
@@ -174,6 +176,19 @@ export function CheckoutPaymentPlaceholder({
           ) : result && !result.redirectUrl ? (
             <>
               <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
+              {result.upayLinkUrl ? (
+                <>
+                  <Button
+                    href={result.upayLinkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full"
+                  >
+                    {labels.payByCardCta}
+                  </Button>
+                  <p className="text-center text-xs text-frame-muted">{labels.orPayByBit}</p>
+                </>
+              ) : null}
               <BitPaymentCard
                 amountIls={amountIls}
                 phone={BIT_PAYMENT_INFO}
