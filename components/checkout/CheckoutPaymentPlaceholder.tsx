@@ -102,10 +102,6 @@ export function CheckoutPaymentPlaceholder({
         throw new Error(`purchase request failed with ${res.status}`);
       }
       const data = (await res.json()) as PurchaseApiResponse;
-      if (data.redirectUrl) {
-        window.location.href = data.redirectUrl;
-        return; // keep `busy` true — the page is navigating away
-      }
       setResult(data);
       setBusy(false);
     } catch (err) {
@@ -163,31 +159,27 @@ export function CheckoutPaymentPlaceholder({
                 {labels.alreadyOwnedCta}
               </Button>
             </>
-          ) : result?.redirectUrl ? (
-            <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
-              <p className="text-sm font-medium text-white">{labels.redirectingTitle}</p>
-              <a
-                href={result.redirectUrl}
-                className="mt-1 block text-sm text-frame-cyan underline"
-              >
-                {labels.redirectingLink}
-              </a>
-            </div>
-          ) : result && !result.redirectUrl ? (
+          ) : result ? (
             <>
-              <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
+              <p className="text-sm font-medium text-white">{labels.choosePaymentMethod}</p>
+              {result.redirectUrl ? (
+                <Button href={result.redirectUrl} className="w-full">
+                  {labels.payWithGrowCta}
+                </Button>
+              ) : null}
               {result.upayLinkUrl ? (
-                <>
-                  <Button
-                    href={result.upayLinkUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full"
-                  >
-                    {labels.payByCardCta}
-                  </Button>
-                  <p className="text-center text-xs text-frame-muted">{labels.orPayByBit}</p>
-                </>
+                <Button
+                  href={result.upayLinkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant={result.redirectUrl ? "secondary" : "primary"}
+                  className="w-full"
+                >
+                  {labels.payByCardCta}
+                </Button>
+              ) : null}
+              {result.redirectUrl || result.upayLinkUrl ? (
+                <p className="text-center text-xs text-frame-muted">{labels.orPayByBit}</p>
               ) : null}
               <BitPaymentCard
                 amountIls={amountIls}

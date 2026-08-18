@@ -48,18 +48,20 @@ interface PurchaseResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
-  /** Present once Grow is configured and the hosted payment process was created — the client should redirect here instead of showing manual Bit instructions. */
+  /** Present once Grow is configured and the hosted payment process was created — the client should offer this as a "pay now" option (Grow auto-confirms via webhook). */
   redirectUrl?: string;
-  /** A static uPay payment link matching this exact amount, if one exists (see lib/server/payments/upay-links.ts) — shown as a card-payment option alongside the manual Bit instructions. Never set when `redirectUrl` is, since Grow is the better (auto-confirming) option when available. */
+  /** A static uPay payment link matching this exact amount, if one exists (see lib/server/payments/upay-links.ts) — offered as another option alongside Grow and the manual Bit instructions. Can be present at the same time as `redirectUrl`; the buyer picks whichever they prefer. */
   upayLinkUrl?: string;
 }
 
 /**
  * Creates/reuses a `pending` purchases row after recomputing the price
- * server-side, then — if Grow (Meshulam) is configured — asks Grow to open
- * a hosted payment process (card or Bit) and returns the redirect URL.
- * Falls back to the Phase-1 manual Bit flow (see app/[locale]/admin/purchases)
- * when Grow isn't configured yet, so local dev without secrets still works.
+ * server-side, then returns every payment option currently available for
+ * it — a Grow (Meshulam) hosted-checkout redirect (auto-confirms via
+ * webhook) if Grow is configured, and/or a static uPay payment link if one
+ * exists for this exact amount — alongside the always-available manual Bit
+ * flow (see app/[locale]/admin/purchases). These are parallel choices for
+ * the buyer, not a fallback chain: uPay is offered even when Grow is too.
  *
  * A client-supplied amount is never trusted — see
  * `.cursor/rules/security-conventions.mdc`.
@@ -156,11 +158,11 @@ export async function POST(request: NextRequest) {
       });
       await attachProviderProcess(db, purchase.id, result.processId, result.processToken);
       response.redirectUrl = result.url;
-    } else {
-      const upayLink = await getUpayLinkForAmount(purchase.amountIls ?? amountIls);
-      if (upayLink) {
-        response.upayLinkUrl = upayLink;
-      }
+    }
+
+    const upayLink = await getUpayLinkForAmount(purchase.amountIls ?? amountIls);
+    if (upayLink) {
+      response.upayLinkUrl = upayLink;
     }
 
     return NextResponse.json(response);
