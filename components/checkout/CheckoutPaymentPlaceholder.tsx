@@ -15,8 +15,8 @@ import { localePath } from "@/lib/i18n/path";
 /** Mirrors `PurchasePlanId` in `lib/server/payments/price-resolver.ts` plus `"subscription"`, a valid UI plan choice that isn't wired to a real purchase yet (see that file for why). */
 type CheckoutPurchasePlanId = "rental" | "course" | "course-credits" | "subscription";
 
-/** Mirrors `IL_MOBILE_RE` in `app/api/v1/me/purchases/route.ts` — client-side check is just for a fast error message, the server always re-validates. */
-const IL_MOBILE_RE = /^05\d{8}$/;
+/** The site's contact address, used as a mailto: fallback when no payment option is configured. */
+const CONTACT_EMAIL = "sapir@bybarzilay.com";
 
 interface PurchaseApiResponse {
   purchaseId: string;
@@ -67,23 +67,15 @@ export function CheckoutPaymentPlaceholder({
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
-  const [phone, setPhone] = useState("");
-  const [phoneError, setPhoneError] = useState<string | null>(null);
   const upayFormRef = useRef<HTMLFormElement>(null);
 
   const planSupported = planId !== "subscription";
 
+  // NOTE: Grow's API requires a phone number (pageField[phone]) — this form
+  // no longer collects one, so the Grow branch in POST /api/v1/me/purchases
+  // will fail once GROW_* secrets are set, until this is revisited.
   const handleContinue = async () => {
     if (!user) return;
-    const cleanedPhone = phone.replace(/[\s-]/g, "");
-    // Only Grow requires a phone number (uPay doesn't ask for one at all).
-    // Validate the format if something was typed, but don't block on it
-    // being empty — the server only enforces it when Grow is actually used.
-    if (cleanedPhone && !IL_MOBILE_RE.test(cleanedPhone)) {
-      setPhoneError(labels.phoneError);
-      return;
-    }
-    setPhoneError(null);
     setError(null);
     setBusy(true);
     try {
@@ -94,7 +86,6 @@ export function CheckoutPaymentPlaceholder({
           itemSlug,
           planId,
           locale,
-          phone: cleanedPhone,
           returnPath: pathname,
         }),
       });
@@ -190,7 +181,10 @@ export function CheckoutPaymentPlaceholder({
               ) : null}
               {!result.redirectUrl && !result.upayForm ? (
                 <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
-                  {labels.noPaymentMethod}
+                  {labels.noPaymentMethod}{" "}
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="text-frame-cyan underline">
+                    {CONTACT_EMAIL}
+                  </a>
                 </p>
               ) : (
                 <p className="text-xs text-frame-muted">{labels.bitConfirmationBody}</p>
@@ -210,28 +204,6 @@ export function CheckoutPaymentPlaceholder({
               {returnedFromPayment === "cancelled" ? (
                 <p className="text-xs text-frame-muted">{labels.paymentCancelled}</p>
               ) : null}
-              <div>
-                <label
-                  htmlFor="checkout-phone"
-                  className="mb-1 block text-xs font-medium text-frame-silver"
-                >
-                  {labels.phoneLabel}
-                </label>
-                <input
-                  id="checkout-phone"
-                  type="tel"
-                  dir="ltr"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder={labels.phonePlaceholder}
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
-                  className="w-full rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-white placeholder:text-frame-muted focus:border-frame-cyan focus:outline-none"
-                />
-                {phoneError ? (
-                  <p className="mt-1 text-xs font-medium text-frame-magenta">{phoneError}</p>
-                ) : null}
-              </div>
               <Button
                 onClick={handleContinue}
                 disabled={busy}
