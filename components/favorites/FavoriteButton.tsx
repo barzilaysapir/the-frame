@@ -3,14 +3,13 @@
 import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { useFavorites } from "@/components/favorites/FavoritesProvider";
+import { useFavorites, type FavoritableItem } from "@/components/favorites/FavoritesProvider";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
 import { cn } from "@/lib/utils";
-import type { CatalogRoutine } from "@/lib/server/catalog/types";
 
 interface FavoriteButtonProps {
-  routine: CatalogRoutine;
+  item: FavoritableItem;
   locale: Locale;
   className?: string;
   labels: {
@@ -20,7 +19,7 @@ interface FavoriteButtonProps {
 }
 
 export function FavoriteButton({
-  routine,
+  item,
   locale,
   className,
   labels,
@@ -28,7 +27,7 @@ export function FavoriteButton({
   const router = useRouter();
   const { user } = useAuth();
   const { isFavorited, toggleFavorite } = useFavorites();
-  const active = isFavorited(routine.slug);
+  const active = isFavorited(item.itemType, item.slug);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -38,7 +37,7 @@ export function FavoriteButton({
       router.push(localePath(locale, "/login"));
       return;
     }
-    void toggleFavorite(routine);
+    void toggleFavorite(item);
   };
 
   return (

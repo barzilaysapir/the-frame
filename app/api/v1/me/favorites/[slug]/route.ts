@@ -19,7 +19,14 @@ export async function DELETE(
     await enforceWriteRateLimit(claims.uid);
     const db = await requireAppDb();
     const { slug } = await params;
-    await removeFavorite(db, claims.uid, slug);
+    const itemType = request.nextUrl.searchParams.get("itemType");
+    if (itemType !== "routine" && itemType !== "external_course") {
+      return NextResponse.json(
+        { error: "itemType must be 'routine' or 'external_course'" },
+        { status: 400 },
+      );
+    }
+    await removeFavorite(db, claims.uid, itemType, slug);
     return NextResponse.json({ ok: true });
   } catch (error) {
     return jsonError(error);

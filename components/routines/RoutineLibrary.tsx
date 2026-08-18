@@ -200,6 +200,15 @@ export function RoutineLibrary({
                   cta={dict.externalCourses.cta}
                   taughtBy={dict.tutorials.taughtBy}
                   priority={index < 3}
+                  favorite={{
+                    item: {
+                      itemType: "external_course",
+                      slug: item.course.slug,
+                      course: item.course,
+                    },
+                    add: dict.tutorials.favoriteAdd,
+                    remove: dict.tutorials.favoriteRemove,
+                  }}
                 />
               ),
             )}
