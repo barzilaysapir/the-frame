@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { Button } from "@/components/ui/Button";
@@ -68,6 +68,15 @@ export function CheckoutPaymentPlaceholder({
   const upayFormRef = useRef<HTMLFormElement>(null);
 
   const planSupported = planId !== "subscription";
+
+  // uPay is the only gateway, so there's nothing to "choose" — submit
+  // straight through the moment the form fields arrive, instead of making
+  // the buyer click a second button.
+  useEffect(() => {
+    if (result?.upayForm) {
+      upayFormRef.current?.submit();
+    }
+  }, [result]);
 
   const handleContinue = async () => {
     if (!user) return;
@@ -145,35 +154,29 @@ export function CheckoutPaymentPlaceholder({
                 {labels.alreadyOwnedCta}
               </Button>
             </>
-          ) : result ? (
+          ) : result?.upayForm ? (
             <>
-              <p className="text-sm font-medium text-white">{labels.choosePaymentMethod}</p>
-              {result.upayForm ? (
-                <>
-                  <form
-                    ref={upayFormRef}
-                    method="POST"
-                    action={result.upayForm.action}
-                    className="hidden"
-                  >
-                    {Object.entries(result.upayForm.fields).map(([name, value]) => (
-                      <input key={name} type="hidden" name={name} value={value} />
-                    ))}
-                  </form>
-                  <Button onClick={() => upayFormRef.current?.submit()} className="w-full">
-                    {labels.payByCardCta}
-                  </Button>
-                  <p className="text-xs text-frame-muted">{labels.bitConfirmationBody}</p>
-                </>
-              ) : (
-                <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
-                  {labels.noPaymentMethod}{" "}
-                  <a href={`mailto:${CONTACT_EMAIL}`} className="text-frame-cyan underline">
-                    {CONTACT_EMAIL}
-                  </a>
-                </p>
-              )}
+              <form
+                ref={upayFormRef}
+                method="POST"
+                action={result.upayForm.action}
+                className="hidden"
+              >
+                {Object.entries(result.upayForm.fields).map(([name, value]) => (
+                  <input key={name} type="hidden" name={name} value={value} />
+                ))}
+              </form>
+              <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-silver">
+                {labels.payBusy}
+              </p>
             </>
+          ) : result ? (
+            <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
+              {labels.noPaymentMethod}{" "}
+              <a href={`mailto:${CONTACT_EMAIL}`} className="text-frame-cyan underline">
+                {CONTACT_EMAIL}
+              </a>
+            </p>
           ) : returnedFromPayment === "success" ? (
             <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
               <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
