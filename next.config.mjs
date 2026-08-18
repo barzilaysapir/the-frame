@@ -46,7 +46,11 @@ function buildCsp() {
     `frame-src 'self' https://accounts.google.com https://www.google.com${authFrame}`,
     `object-src 'none'`,
     `base-uri 'self'`,
-    `form-action 'self'`,
+    // uPay's dynamic payment form (lib/server/payments/upay.ts) is a real
+    // <form method="post"> submitted client-side straight to their hosted
+    // checkout — form-action must explicitly allow it or the browser
+    // silently blocks the submit with no visible error beyond the console.
+    `form-action 'self' https://app.upay.co.il`,
     `frame-ancestors 'self'`,
   ];
   // Rewrites every http:// sub-resource request on the page to https:// before
