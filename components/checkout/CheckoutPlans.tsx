@@ -77,11 +77,6 @@ export function CheckoutPlans({
         labels={labels}
         loginErrors={loginErrors}
         continueGoogleLabel={continueGoogleLabel}
-        paymentBody={
-          plan === "rental"
-            ? labels.plans.rental.paymentBody
-            : labels.plans.subscription.paymentBody
-        }
         itemType="lesson"
         itemSlug={routineSlug}
         planId={plan}

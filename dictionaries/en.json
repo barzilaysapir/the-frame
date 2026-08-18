@@ -115,12 +115,14 @@
     "purchaseRequired": "Purchase this course to watch its lessons.",
     "purchaseRequiredCta": "Get access",
     "pricingNote": "This course, or the course plus extra credits at a pack discount · choose at checkout",
-    "paymentBody": "One-time payment for access to this course.",
     "guarantees": [
       "Access to every lesson in this course",
       "Watch on any device",
       "7-day money-back guarantee"
-    ]
+    ],
+    "promoPlaceholder": "Promo video coming soon",
+    "checkingAccess": "Checking your access…",
+    "youOwnThis": "You already have access to this course."
   },
   "about": {
     "metaTitle": "About",
@@ -237,11 +239,7 @@
     "title": "Start learning",
     "subtitle": "Choose a plan and complete payment.",
     "backToRoutine": "Back to combination",
-    "backToCourse": "Back to course",
-    "courseSubtitle": "The course alone, or the course plus extra credits at a pack discount.",
-    "creditExplainer": "1 credit = ₪1 in your wallet. You can spend credits on classes and courses on the site. We don’t lock future prices — this offer only discounts the credits you buy now.",
     "loading": "Loading…",
-    "paymentTitle": "Payment",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
     "signInPrompt": "Sign in with Google to continue to payment.",
     "otherSignIn": "More sign-in options",
@@ -266,7 +264,6 @@
         "title": "This combination",
         "description": "30 days of viewing access to this combination only",
         "priceNote": "launch price · one-time",
-        "paymentBody": "One-time payment for 30 days of viewing access to this combination.",
         "guarantees": [
           "30 days of viewing access to this combination",
           "Slowed and mirrored practice modes",
@@ -278,7 +275,6 @@
         "title": "Monthly site subscription",
         "description": "Access every combination on The Frame, renews each month",
         "priceNote": "launch price · per month",
-        "paymentBody": "Monthly subscription for every combination on the site.",
         "guarantees": [
           "Access to every combination on the site",
           "New releases included while subscribed",
@@ -290,7 +286,6 @@
         "title": "This course only",
         "description": "Pay for this course. No extra credits.",
         "priceNote": "course only",
-        "paymentBody": "One-time payment for this course.",
         "guarantees": [
           "Every lesson in this course",
           "Watch on any device",
@@ -301,7 +296,6 @@
         "title": "Course + {count} credits",
         "description": "This course, plus {count} credits (1 credit = ₪1). Catalog prices can change; the discount is only on this credit pack.",
         "priceNote": "{percent}% off credits",
-        "paymentBody": "One-time payment for the course plus {count} credits at a pack discount. 1 credit = ₪1. Future class and course prices are not locked.",
         "lineCourse": "This course — ₪{coursePrice}",
         "lineCredits": "{count} credits — ₪{creditsList}",
         "lineDiscount": "{percent}% off this credit pack",
