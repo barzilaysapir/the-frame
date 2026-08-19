@@ -61,9 +61,14 @@ For every implementation task:
 3. Open a dedicated branch from `preview` (not `main`), e.g. `feat/12-short-slug`.
 4. Link the PR/commits to the issue (`Fixes #N` / `Refs #N`).
 5. Open PRs into `preview`. Promote to production only via `preview` → `main`.
-6. When the PR merges into `preview`: close the linked issue and move the board item to **Done**.
+6. **Do not merge any PR — into `preview` or `main` — without the repo owner explicitly approving first**, even once CI is green. Open it, report it's ready, and wait.
+7. Once a PR is merged (by the owner): close the linked issue and move the board item to **Done**.
 
 Details: `.cursor/rules/`
+
+# Claude working conventions
+
+- **Comments**: keep code comments minimal. Only add one where the *why* is genuinely non-obvious (a hidden constraint, a workaround, a subtle invariant) — not to restate what the code already says.
 
 # Cloudflare / OpenNext notes
 
