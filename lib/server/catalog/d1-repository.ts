@@ -69,6 +69,8 @@ interface ExternalCourseRow {
   instructor_slug: string | null;
   price_display: string;
   cover_image: string;
+  promo_video: string;
+  promo_poster: string;
   style: string;
   level: string;
   title: string | null;
@@ -216,6 +218,8 @@ function mapExternalCourse(
     features: parseFeatures(row.features_json, row.slug),
     priceDisplay: row.price_display,
     coverImage: row.cover_image,
+    promoVideo: row.promo_video || null,
+    promoPoster: row.promo_poster || null,
     style: row.style as DanceStyleKey,
     styleLabel: row.style_label ?? row.style,
     level: row.level as LevelKey,
@@ -523,7 +527,8 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           db
             .prepare(
               `SELECT
-                 ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level, ec.instructor_slug,
+                 ec.slug, ec.price_display, ec.cover_image, ec.promo_video, ec.promo_poster,
+                 ec.style, ec.level, ec.instructor_slug,
                  -- A linked instructor's real (localized) name is the source
                  -- of truth once instructor_slug is set — falls back to the
                  -- free-text provider only for courses with no real
@@ -564,7 +569,8 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
           db
             .prepare(
               `SELECT
-                 ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level, ec.instructor_slug,
+                 ec.slug, ec.price_display, ec.cover_image, ec.promo_video, ec.promo_poster,
+                 ec.style, ec.level, ec.instructor_slug,
                  -- See the matching comment in listExternalCourses above.
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,

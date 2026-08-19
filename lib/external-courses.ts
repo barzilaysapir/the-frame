@@ -32,6 +32,10 @@ export interface ExternalCourseRecord {
   sortOrder: number;
   /** Card/detail-page cover image. Reuses an existing generic routine poster as a placeholder, same as several routines already do, until real course art is ready. */
   coverImage: string;
+  /** Public promo clip in `public/` — ungated preview, not a lesson. */
+  promoVideo?: string;
+  /** Still shown before the promo plays. Falls back to `coverImage` in the player. */
+  promoPoster?: string;
   /** Library style this course belongs to — same as routines, required so every course shows up in style filters. */
   style: DanceStyleKey;
   /** Library level — same as routines, required so every course shows up in level filters. */
@@ -95,6 +99,8 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
     priceDisplay: "בקרוב",
     sortOrder: 7,
     coverImage: "/routine-posters/routine-poster-velvet-heels.png",
+    promoVideo: "/course-promos/vibe-on-heels.mp4",
+    promoPoster: "/course-promos/vibe-on-heels.jpg",
     style: "heels",
     level: "all-levels",
   },

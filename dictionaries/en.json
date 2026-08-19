@@ -102,6 +102,7 @@
     "tag": "External course",
     "comingSoonBadge": "Coming soon",
     "comingSoonNote": "This course is in production and will be available on The Frame soon.",
+    "promoLabel": "Promo video for {title}",
     "availableBadge": "Available now",
     "providerPrefix": "by {provider}",
     "cta": "View course",
