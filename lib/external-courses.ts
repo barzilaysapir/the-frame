@@ -56,7 +56,7 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
     priceDisplay: "₪200",
     sortOrder: 0,
     coverImage: "/course-covers/gisha-gmisha-foundations.jpg",
-    style: "flexibility-technique",
+    style: "flexibility",
     level: "beginner",
     lessons: [
       {
