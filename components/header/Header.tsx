@@ -9,6 +9,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { HeaderAuthActions } from "@/components/header/HeaderAuthActions";
 import { MobileMenuAuthActions } from "@/components/header/MobileMenuAuthActions";
+import { UserMenu } from "@/components/header/UserMenu";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -17,9 +18,10 @@ import { getNavLinks } from "@/lib/nav-links";
 interface HeaderProps {
   locale: Locale;
   labels: Dictionary["nav"];
+  settingsLabel: string;
 }
 
-export function Header({ locale, labels }: HeaderProps) {
+export function Header({ locale, labels, settingsLabel }: HeaderProps) {
   const menuId = useId();
   const router = useRouter();
   const { user, signOutUser } = useAuth();
@@ -105,28 +107,41 @@ export function Header({ locale, labels }: HeaderProps) {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-4 lg:flex">
-          <LanguageSwitcher locale={locale} label={labels.language} />
-          <HeaderAuthActions
-            locale={locale}
-            labels={labels}
-            isAuthenticated={isAuthenticated}
-            accountName={accountName}
-            photoURL={user?.photoURL}
-            onSignOut={handleSignOut}
-          />
-        </div>
+        {!isAuthenticated ? (
+          <div className="hidden items-center gap-4 lg:flex">
+            <LanguageSwitcher locale={locale} label={labels.language} />
+            <HeaderAuthActions locale={locale} labels={labels} />
+          </div>
+        ) : null}
 
-        <button
-          type="button"
-          onClick={toggleMenu}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white touch-manipulation lg:hidden"
-          aria-label={isMenuOpen ? labels.closeMenu : labels.openMenu}
-          aria-expanded={isMenuOpen}
-          aria-controls={isMenuOpen ? menuId : undefined}
-        >
-          {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          {isAuthenticated ? (
+            <UserMenu
+              locale={locale}
+              labels={{
+                account: labels.account,
+                favorites: labels.favorites,
+                settings: settingsLabel,
+                signOut: labels.signOut,
+                language: labels.language,
+              }}
+              accountName={accountName}
+              photoURL={user?.photoURL}
+              onSignOut={handleSignOut}
+            />
+          ) : null}
+
+          <button
+            type="button"
+            onClick={toggleMenu}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white touch-manipulation lg:hidden"
+            aria-label={isMenuOpen ? labels.closeMenu : labels.openMenu}
+            aria-expanded={isMenuOpen}
+            aria-controls={isMenuOpen ? menuId : undefined}
+          >
+            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {isMenuOpen ? (
@@ -152,15 +167,15 @@ export function Header({ locale, labels }: HeaderProps) {
               <div className="mt-3 px-3">
                 <LanguageSwitcher locale={locale} label={labels.language} />
               </div>
-              <div className="mt-2 flex flex-col gap-2 border-t border-frame-border/80 pt-4">
-                <MobileMenuAuthActions
-                  locale={locale}
-                  labels={labels}
-                  isAuthenticated={isAuthenticated}
-                  onCloseMenu={closeMenu}
-                  onSignOut={handleSignOut}
-                />
-              </div>
+              {!isAuthenticated ? (
+                <div className="mt-2 flex flex-col gap-2 border-t border-frame-border/80 pt-4">
+                  <MobileMenuAuthActions
+                    locale={locale}
+                    labels={labels}
+                    onCloseMenu={closeMenu}
+                  />
+                </div>
+              ) : null}
             </div>
           </nav>
         </div>

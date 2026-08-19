@@ -98,7 +98,11 @@ export default async function LocaleLayout({
         <AuthProvider>
           <LocalePrefSync locale={locale} />
           <FavoritesProvider locale={locale}>
-            <Header locale={locale} labels={dict.nav} />
+            <Header
+              locale={locale}
+              labels={dict.nav}
+              settingsLabel={dict.account.nav.settings}
+            />
             <div className="flex-1">{children}</div>
             <Footer locale={locale} footer={dict.footer} />
           </FavoritesProvider>
