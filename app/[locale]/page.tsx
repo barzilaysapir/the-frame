@@ -31,7 +31,7 @@ export default async function HomePage({ params }: HomePageProps) {
   const dict = await getDictionary(locale);
 
   return (
-    <main className="relative overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
       <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
         <p className="max-w-xl text-frame-silver">{dict.home.subtitle}</p>

@@ -20,7 +20,7 @@ export default function RootError({
   }, [error]);
 
   return (
-    <main className="relative overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
       <div className="relative z-10 mx-auto flex max-w-xl flex-col items-center px-4 py-32 text-center sm:px-6">
         <AlertTriangle

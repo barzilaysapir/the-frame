@@ -30,7 +30,8 @@ export default async function ContactPage({ params }: ContactPageProps) {
   const instagram = SOCIAL_LINKS.find((link) => link.platform === "instagram");
 
   return (
-    <main className="relative overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden">
+      <div className="neon-glow" aria-hidden="true" />
       <div className="relative z-10 mx-auto max-w-3xl px-4 py-24 sm:px-6">
         <h1 className="text-balance font-display text-4xl font-black leading-[0.98] text-white sm:text-5xl">
           {title}

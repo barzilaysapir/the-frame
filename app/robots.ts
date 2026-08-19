@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
       // Auth-gated / user-specific pages have nothing worth indexing and are
       // either empty or a redirect-to-login for anonymous crawlers. `/admin`
       // additionally has nothing anonymous crawlers should ever reach.
-      disallow: ["/*/login", "/*/checkout", "/*/account", "/*/favorites", "/*/admin"],
+      disallow: ["/*/login", "/*/account", "/*/favorites", "/*/admin"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

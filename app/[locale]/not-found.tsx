@@ -13,7 +13,7 @@ export default function LocaleNotFound() {
   const dict = getDictionarySync(locale);
 
   return (
-    <main className="relative overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
       <div className="relative z-10 mx-auto flex max-w-xl flex-col items-center px-4 py-32 text-center sm:px-6">
         <span className="font-display text-7xl font-black text-frame-magenta">

@@ -17,6 +17,8 @@ interface CourseCheckoutProps {
   labels: Dictionary["checkout"];
   loginErrors: Dictionary["login"]["errors"];
   continueGoogleLabel: string;
+  termsDict: Dictionary["terms"];
+  closeLabel: string;
 }
 
 function fill(
@@ -34,6 +36,8 @@ export function CourseCheckout({
   labels,
   loginErrors,
   continueGoogleLabel,
+  termsDict,
+  closeLabel,
 }: CourseCheckoutProps) {
   const [plan, setPlan] = useState<CoursePlanId>("course");
   const bundle = courseCreditsBundlePricing(priceIls);
@@ -85,6 +89,8 @@ export function CourseCheckout({
         labels={labels}
         loginErrors={loginErrors}
         continueGoogleLabel={continueGoogleLabel}
+        termsDict={termsDict}
+        closeLabel={closeLabel}
         itemType="external_course"
         itemSlug={courseSlug}
         planId={plan}

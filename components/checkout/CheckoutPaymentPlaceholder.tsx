@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { TermsDialog } from "@/components/checkout/TermsDialog";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
@@ -31,6 +32,8 @@ interface CheckoutPaymentPlaceholderProps {
   labels: Dictionary["checkout"];
   loginErrors: Dictionary["login"]["errors"];
   continueGoogleLabel: string;
+  termsDict: Dictionary["terms"];
+  closeLabel: string;
   itemType: "lesson" | "external_course";
   itemSlug: string;
   planId: CheckoutPurchasePlanId;
@@ -50,6 +53,8 @@ export function CheckoutPaymentPlaceholder({
   labels,
   loginErrors,
   continueGoogleLabel,
+  termsDict,
+  closeLabel,
   itemType,
   itemSlug,
   planId,
@@ -182,24 +187,25 @@ export function CheckoutPaymentPlaceholder({
               {returnedFromPayment === "cancelled" ? (
                 <p className="text-xs text-frame-muted">{labels.paymentCancelled}</p>
               ) : null}
-              <label className="flex items-start gap-2 text-sm text-frame-silver">
-                <input
-                  type="checkbox"
-                  checked={termsAccepted}
-                  onChange={(event) => setTermsAccepted(event.target.checked)}
-                  className="mt-0.5 h-4 w-4 shrink-0 rounded border-frame-border bg-frame-bg accent-frame-cyan"
-                />
-                <span>
-                  {labels.termsPrefix}{" "}
-                  <Link
-                    href={localePath(locale, "/terms")}
-                    target="_blank"
-                    className="text-frame-cyan underline"
-                  >
-                    {labels.termsLinkText}
-                  </Link>
-                </span>
-              </label>
+              <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
+                <div className="flex items-start gap-2 text-sm text-frame-silver">
+                  <input
+                    id="terms-accept"
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={(event) => setTermsAccepted(event.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-frame-border bg-frame-bg accent-frame-cyan"
+                  />
+                  <span>
+                    <label htmlFor="terms-accept">{labels.termsPrefix}</label>{" "}
+                    <TermsDialog
+                      trigger={labels.termsLinkText}
+                      dict={termsDict}
+                      closeLabel={closeLabel}
+                    />
+                  </span>
+                </div>
+              </div>
               <Button
                 onClick={handleContinue}
                 disabled={busy || !termsAccepted}

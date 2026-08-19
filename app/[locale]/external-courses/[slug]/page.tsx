@@ -47,11 +47,10 @@ export default async function ExternalCourseDetailPage({
         course={course}
         locale={locale}
         labels={{
-          comingSoonBadge: dict.externalCourses.comingSoonBadge,
-          comingSoonNote: dict.externalCourses.comingSoonNote,
-          taughtBy: dict.tutorials.taughtBy,
+          taughtBy: dict.routine.taughtBy,
           back: dict.common.backToLibrary,
           externalCourseTag: dict.externalCourses.tag,
+          promoPlaceholder: dict.externalCourses.promoPlaceholder,
         }}
       />
     );

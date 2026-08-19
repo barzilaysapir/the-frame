@@ -52,7 +52,6 @@ export interface RoutineRecord {
   poster: string;
   videoSrc: string;
   chapters: VideoChapter[];
-  checkoutHref: string;
   pricing: {
     original: number;
     earlyBird: number;
@@ -83,7 +82,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 58 },
       { id: "full-speed", time: 96 },
     ],
-    checkoutHref: "/checkout/levitating",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -108,7 +106,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 55 },
       { id: "full-speed", time: 92 },
     ],
-    checkoutHref: "/checkout/kill-bill",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -133,7 +130,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 60 },
       { id: "full-speed", time: 98 },
     ],
-    checkoutHref: "/checkout/earned-it",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -158,7 +154,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 65 },
       { id: "full-speed", time: 118 },
     ],
-    checkoutHref: "/checkout/levitating-maya-azulai",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -183,7 +178,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 59 },
       { id: "full-speed", time: 106 },
     ],
-    checkoutHref: "/checkout/dont-start-now-tali-mizrahi",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -208,7 +202,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 62 },
       { id: "full-speed", time: 112 },
     ],
-    checkoutHref: "/checkout/physical-yael-bar",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -233,7 +226,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 61 },
       { id: "full-speed", time: 111 },
     ],
-    checkoutHref: "/checkout/about-damn-time-maya-azulai",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -258,7 +250,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 51 },
       { id: "full-speed", time: 92 },
     ],
-    checkoutHref: "/checkout/good-as-hell-tali-mizrahi",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -283,7 +274,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 64 },
       { id: "full-speed", time: 116 },
     ],
-    checkoutHref: "/checkout/flowers-yael-bar",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -308,7 +298,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 58 },
       { id: "full-speed", time: 105 },
     ],
-    checkoutHref: "/checkout/shirt-maya-azulai",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -333,7 +322,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 64 },
       { id: "full-speed", time: 116 },
     ],
-    checkoutHref: "/checkout/blinding-lights-tali-mizrahi",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -358,7 +346,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 67 },
       { id: "full-speed", time: 122 },
     ],
-    checkoutHref: "/checkout/need-to-know-yael-bar",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -383,7 +370,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 67 },
       { id: "full-speed", time: 121 },
     ],
-    checkoutHref: "/checkout/kiss-me-more-maya-azulai",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -408,7 +394,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 55 },
       { id: "full-speed", time: 100 },
     ],
-    checkoutHref: "/checkout/woman-tali-mizrahi",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -433,7 +418,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 67 },
       { id: "full-speed", time: 122 },
     ],
-    checkoutHref: "/checkout/nice-for-what-yael-bar",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -458,7 +442,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 53 },
       { id: "full-speed", time: 97 },
     ],
-    checkoutHref: "/checkout/as-it-was-maya-azulai",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -483,7 +466,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 64 },
       { id: "full-speed", time: 116 },
     ],
-    checkoutHref: "/checkout/anti-hero-tali-mizrahi",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -508,7 +490,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 61 },
       { id: "full-speed", time: 111 },
     ],
-    checkoutHref: "/checkout/about-damn-time-daniel-cohen",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -533,7 +514,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 49 },
       { id: "full-speed", time: 89 },
     ],
-    checkoutHref: "/checkout/kill-bill-oran-ben-david",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -558,7 +538,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 71 },
       { id: "full-speed", time: 128 },
     ],
-    checkoutHref: "/checkout/creepin-amit-sharabi",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -583,7 +562,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 55 },
       { id: "full-speed", time: 100 },
     ],
-    checkoutHref: "/checkout/first-class-daniel-cohen",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -608,7 +586,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 68 },
       { id: "full-speed", time: 123 },
     ],
-    checkoutHref: "/checkout/industry-baby-oran-ben-david",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -633,7 +610,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 63 },
       { id: "full-speed", time: 115 },
     ],
-    checkoutHref: "/checkout/god-s-plan-amit-sharabi",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -658,7 +634,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 67 },
       { id: "full-speed", time: 122 },
     ],
-    checkoutHref: "/checkout/nice-for-what-daniel-cohen",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -683,7 +658,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 50 },
       { id: "full-speed", time: 90 },
     ],
-    checkoutHref: "/checkout/savage-oran-ben-david",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -708,7 +682,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 55 },
       { id: "full-speed", time: 99 },
     ],
-    checkoutHref: "/checkout/body-amit-sharabi",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -733,7 +706,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 75 },
       { id: "full-speed", time: 135 },
     ],
-    checkoutHref: "/checkout/get-ur-freak-on-daniel-cohen",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -758,7 +730,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 65 },
       { id: "full-speed", time: 118 },
     ],
-    checkoutHref: "/checkout/work-it-oran-ben-david",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -783,7 +754,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 100 },
       { id: "full-speed", time: 181 },
     ],
-    checkoutHref: "/checkout/sicko-mode-amit-sharabi",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -808,7 +778,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 57 },
       { id: "full-speed", time: 103 },
     ],
-    checkoutHref: "/checkout/humble-daniel-cohen",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -833,7 +802,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 59 },
       { id: "full-speed", time: 107 },
     ],
-    checkoutHref: "/checkout/dna-oran-ben-david",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -858,7 +826,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 49 },
       { id: "full-speed", time: 89 },
     ],
-    checkoutHref: "/checkout/kill-bill-noa-sagi",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -883,7 +850,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 64 },
       { id: "full-speed", time: 117 },
     ],
-    checkoutHref: "/checkout/snooze-maya-rozin",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -908,7 +874,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 58 },
       { id: "full-speed", time: 105 },
     ],
-    checkoutHref: "/checkout/shirt-noga-eliyahu",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -933,7 +898,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 80 },
       { id: "full-speed", time: 145 },
     ],
-    checkoutHref: "/checkout/earned-it-noa-sagi",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -958,7 +922,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 83 },
       { id: "full-speed", time: 151 },
     ],
-    checkoutHref: "/checkout/die-for-you-maya-rozin",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -983,7 +946,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 71 },
       { id: "full-speed", time: 128 },
     ],
-    checkoutHref: "/checkout/creepin-noga-eliyahu",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1008,7 +970,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 67 },
       { id: "full-speed", time: 122 },
     ],
-    checkoutHref: "/checkout/need-to-know-noa-sagi",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -1033,7 +994,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 67 },
       { id: "full-speed", time: 121 },
     ],
-    checkoutHref: "/checkout/kiss-me-more-maya-rozin",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -1058,7 +1018,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 77 },
       { id: "full-speed", time: 139 },
     ],
-    checkoutHref: "/checkout/body-party-noga-eliyahu",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1083,7 +1042,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 88 },
       { id: "full-speed", time: 160 },
     ],
-    checkoutHref: "/checkout/ride-noa-sagi",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1108,7 +1066,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 68 },
       { id: "full-speed", time: 124 },
     ],
-    checkoutHref: "/checkout/2-on-maya-rozin",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -1133,7 +1090,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 63 },
       { id: "full-speed", time: 114 },
     ],
-    checkoutHref: "/checkout/distraction-noga-eliyahu",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -1158,7 +1114,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 68 },
       { id: "full-speed", time: 124 },
     ],
-    checkoutHref: "/checkout/me-and-u-noa-sagi",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1183,7 +1138,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 78 },
       { id: "full-speed", time: 142 },
     ],
-    checkoutHref: "/checkout/rock-the-boat-maya-rozin",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1208,7 +1162,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 72 },
       { id: "full-speed", time: 130 },
     ],
-    checkoutHref: "/checkout/easy-on-me-yasmin-kadosh",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1233,7 +1186,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 73 },
       { id: "full-speed", time: 132 },
     ],
-    checkoutHref: "/checkout/rolling-in-the-deep-omer-tzur",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1258,7 +1210,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 55 },
       { id: "full-speed", time: 100 },
     ],
-    checkoutHref: "/checkout/stay-with-me-hila-ben-ari",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -1283,7 +1234,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 50 },
       { id: "full-speed", time: 90 },
     ],
-    checkoutHref: "/checkout/unholy-yasmin-kadosh",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -1308,7 +1258,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 64 },
       { id: "full-speed", time: 116 },
     ],
-    checkoutHref: "/checkout/ocean-eyes-omer-tzur",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1333,7 +1282,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 95 },
       { id: "full-speed", time: 173 },
     ],
-    checkoutHref: "/checkout/happier-than-ever-hila-ben-ari",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1358,7 +1306,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 67 },
       { id: "full-speed", time: 121 },
     ],
-    checkoutHref: "/checkout/best-part-yasmin-kadosh",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -1383,7 +1330,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 58 },
       { id: "full-speed", time: 106 },
     ],
-    checkoutHref: "/checkout/someone-you-loved-omer-tzur",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -1408,7 +1354,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 52 },
       { id: "full-speed", time: 93 },
     ],
-    checkoutHref: "/checkout/my-hair-hila-ben-ari",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1433,7 +1378,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 67 },
       { id: "full-speed", time: 121 },
     ],
-    checkoutHref: "/checkout/be-honest-yasmin-kadosh",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1458,7 +1402,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 73 },
       { id: "full-speed", time: 132 },
     ],
-    checkoutHref: "/checkout/if-i-aint-got-you-omer-tzur",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -1483,7 +1426,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 86 },
       { id: "full-speed", time: 156 },
     ],
-    checkoutHref: "/checkout/all-of-me-hila-ben-ari",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -1508,7 +1450,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 79 },
       { id: "full-speed", time: 144 },
     ],
-    checkoutHref: "/checkout/get-you-yasmin-kadosh",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1533,7 +1474,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 60 },
       { id: "full-speed", time: 108 },
     ],
-    checkoutHref: "/checkout/toronto-omer-tzur",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1558,7 +1498,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 67 },
       { id: "full-speed", time: 121 },
     ],
-    checkoutHref: "/checkout/be-honest-efrat-wolde",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1583,7 +1522,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 62 },
       { id: "full-speed", time: 113 },
     ],
-    checkoutHref: "/checkout/higher-yonatan-tesfaye",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1608,7 +1546,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 62 },
       { id: "full-speed", time: 113 },
     ],
-    checkoutHref: "/checkout/last-last-efrat-wolde",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -1633,7 +1570,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 68 },
       { id: "full-speed", time: 124 },
     ],
-    checkoutHref: "/checkout/kilometre-yonatan-tesfaye",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -1658,7 +1594,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 79 },
       { id: "full-speed", time: 144 },
     ],
-    checkoutHref: "/checkout/essence-efrat-wolde",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1683,7 +1618,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 73 },
       { id: "full-speed", time: 132 },
     ],
-    checkoutHref: "/checkout/ojuelegba-yonatan-tesfaye",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1708,7 +1642,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 79 },
       { id: "full-speed", time: 143 },
     ],
-    checkoutHref: "/checkout/fall-efrat-wolde",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -1733,7 +1666,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 57 },
       { id: "full-speed", time: 103 },
     ],
-    checkoutHref: "/checkout/unavailable-yonatan-tesfaye",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -1758,7 +1690,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 70 },
       { id: "full-speed", time: 127 },
     ],
-    checkoutHref: "/checkout/calm-down-efrat-wolde",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1783,7 +1714,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 63 },
       { id: "full-speed", time: 114 },
     ],
-    checkoutHref: "/checkout/dumebi-yonatan-tesfaye",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1808,7 +1738,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 53 },
       { id: "full-speed", time: 97 },
     ],
-    checkoutHref: "/checkout/love-nwantiti-efrat-wolde",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -1833,7 +1762,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 73 },
       { id: "full-speed", time: 132 },
     ],
-    checkoutHref: "/checkout/free-mind-yonatan-tesfaye",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -1858,7 +1786,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 55 },
       { id: "full-speed", time: 100 },
     ],
-    checkoutHref: "/checkout/peru-efrat-wolde",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1883,7 +1810,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 54 },
       { id: "full-speed", time: 99 },
     ],
-    checkoutHref: "/checkout/rush-yonatan-tesfaye",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1908,7 +1834,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 55 },
       { id: "full-speed", time: 100 },
     ],
-    checkoutHref: "/checkout/terminator-or-katz",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -1933,7 +1858,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 64 },
       { id: "full-speed", time: 116 },
     ],
-    checkoutHref: "/checkout/touch-it-tamir-levy",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -1958,7 +1882,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 65 },
       { id: "full-speed", time: 118 },
     ],
-    checkoutHref: "/checkout/temperature-or-katz",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -1983,7 +1906,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 69 },
       { id: "full-speed", time: 125 },
     ],
-    checkoutHref: "/checkout/get-busy-tamir-levy",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -2008,7 +1930,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 64 },
       { id: "full-speed", time: 116 },
     ],
-    checkoutHref: "/checkout/family-or-katz",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -2033,7 +1954,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 61 },
       { id: "full-speed", time: 111 },
     ],
-    checkoutHref: "/checkout/ova-dweet-tamir-levy",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -2058,7 +1978,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 59 },
       { id: "full-speed", time: 106 },
     ],
-    checkoutHref: "/checkout/blessed-or-katz",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -2083,7 +2002,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 60 },
       { id: "full-speed", time: 108 },
     ],
-    checkoutHref: "/checkout/lick-tamir-levy",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -2108,7 +2026,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 59 },
       { id: "full-speed", time: 107 },
     ],
-    checkoutHref: "/checkout/bruk-off-yuh-back-or-katz",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -2133,7 +2050,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 61 },
       { id: "full-speed", time: 111 },
     ],
-    checkoutHref: "/checkout/fever-tamir-levy",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -2158,7 +2074,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 57 },
       { id: "full-speed", time: 103 },
     ],
-    checkoutHref: "/checkout/so-mi-like-it-or-katz",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -2183,7 +2098,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 51 },
       { id: "full-speed", time: 93 },
     ],
-    checkoutHref: "/checkout/coke-tamir-levy",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -2208,7 +2122,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 61 },
       { id: "full-speed", time: 110 },
     ],
-    checkoutHref: "/checkout/ina-real-life-or-katz",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -2233,7 +2146,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 69 },
       { id: "full-speed", time: 125 },
     ],
-    checkoutHref: "/checkout/owe-me-nothing-tamir-levy",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -2258,7 +2170,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 76 },
       { id: "full-speed", time: 137 },
     ],
-    checkoutHref: "/checkout/cant-stop-the-feeling-michal-buzaglo",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -2283,7 +2194,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 50 },
       { id: "full-speed", time: 90 },
     ],
-    checkoutHref: "/checkout/unholy-guy-ravid",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -2308,7 +2218,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 57 },
       { id: "full-speed", time: 103 },
     ],
-    checkoutHref: "/checkout/unavailable-michal-buzaglo",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -2333,7 +2242,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 70 },
       { id: "full-speed", time: 127 },
     ],
-    checkoutHref: "/checkout/calm-down-guy-ravid",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -2358,7 +2266,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 54 },
       { id: "full-speed", time: 99 },
     ],
-    checkoutHref: "/checkout/rush-michal-buzaglo",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -2383,7 +2290,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 50 },
       { id: "full-speed", time: 91 },
     ],
-    checkoutHref: "/checkout/sad-girlz-luv-money-guy-ravid",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -2408,7 +2314,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 59 },
       { id: "full-speed", time: 106 },
     ],
-    checkoutHref: "/checkout/blessed-michal-buzaglo",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -2433,7 +2338,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 89 },
       { id: "full-speed", time: 161 },
     ],
-    checkoutHref: "/checkout/break-my-soul-guy-ravid",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -2458,7 +2362,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 66 },
       { id: "full-speed", time: 119 },
     ],
-    checkoutHref: "/checkout/formation-michal-buzaglo",
     pricing: {
       original: 49,
       earlyBird: 29,
@@ -2483,7 +2386,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 88 },
       { id: "full-speed", time: 160 },
     ],
-    checkoutHref: "/checkout/umbrella-guy-ravid",
     pricing: {
       original: 59,
       earlyBird: 39,
@@ -2508,7 +2410,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 87 },
       { id: "full-speed", time: 158 },
     ],
-    checkoutHref: "/checkout/dont-stop-the-music-michal-buzaglo",
     pricing: {
       original: 69,
       earlyBird: 49,
@@ -2533,7 +2434,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 57 },
       { id: "full-speed", time: 103 },
     ],
-    checkoutHref: "/checkout/7-rings-guy-ravid",
     pricing: {
       original: 79,
       earlyBird: 59,
@@ -2558,7 +2458,6 @@ export const ROUTINES: RoutineRecord[] = [
       { id: "slow-practice", time: 68 },
       { id: "full-speed", time: 124 },
     ],
-    checkoutHref: "/checkout/break-free-michal-buzaglo",
     pricing: {
       original: 49,
       earlyBird: 29,
