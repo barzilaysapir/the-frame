@@ -38,7 +38,6 @@ export async function generateMetadata({
   const dict = await getDictionary(locale);
   return {
     title: dict.tutorials.title,
-    description: dict.tutorials.subtitle,
   };
 }
 
@@ -89,7 +88,6 @@ export default async function RoutinesPage({ params, searchParams }: RoutinesPag
         <h1 className="text-balance font-display text-5xl font-black leading-[0.98] text-white sm:text-6xl">
           {dict.tutorials.title}
         </h1>
-        <p className="mt-4 text-frame-silver">{dict.tutorials.subtitle}</p>
       </div>
 
       <RoutineLibrary
