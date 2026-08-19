@@ -110,7 +110,12 @@ input[type="range"].frame-range:focus-visible {
    percentages of that variable height, so on a page/breakpoint with a much
    taller `main`, the second (cyan) circle — placed at 55% down — landed
    far below the initial viewport, leaving only the first (pink) circle
-   visible on load. See issue #225. */
+   visible on load. See issue #225.
+
+   The relative parent (`main`) also needs `min-h-screen`: if its content
+   is short, `overflow-hidden` clips this element before the mask below
+   finishes fading it to transparent, showing a hard-edged rectangle
+   instead of a smooth fade. Every caller of `.neon-glow` sets this. */
 .neon-glow {
   pointer-events: none;
   position: absolute;

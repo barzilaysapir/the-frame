@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Film } from "lucide-react";
-import type { ReactNode } from "react";
 import { CourseTags } from "@/components/courses/CourseTags";
-import { cn } from "@/lib/utils";
 import { localePath } from "@/lib/i18n/path";
 import type { Locale } from "@/lib/i18n/config";
 import type { CatalogExternalCourse } from "@/lib/server/catalog/types";
@@ -16,23 +14,14 @@ interface CourseHeaderProps {
     taughtBy: string;
     promoPlaceholder: string;
   };
-  className?: string;
-  children?: ReactNode;
 }
 
 /**
  * Shared header for the external-course detail page's two pre-purchase
  * states (CourseLandingPreview, CourseComingSoon) — identical in both:
- * back link, tags, title, and instructor credit. Each caller renders its
- * own state-specific content (checkout vs. price) via `children`.
+ * back link, tags, title, instructor credit, and promo-video placeholder.
  */
-export function CourseHeader({
-  course,
-  locale,
-  labels,
-  className,
-  children,
-}: CourseHeaderProps) {
+export function CourseHeader({ course, locale, labels }: CourseHeaderProps) {
   return (
     <>
       <Link
@@ -42,7 +31,7 @@ export function CourseHeader({
         <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5 rtl:rotate-180" />
         {labels.back}
       </Link>
-      <div className={cn("text-center", className)}>
+      <div className="text-center">
         <CourseTags
           course={course}
           locale={locale}
@@ -72,7 +61,6 @@ export function CourseHeader({
           <Film className="h-10 w-10" aria-hidden="true" />
           <p className="text-sm">{labels.promoPlaceholder}</p>
         </div>
-        {children}
       </div>
     </>
   );

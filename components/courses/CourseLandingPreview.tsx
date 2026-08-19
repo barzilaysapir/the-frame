@@ -24,7 +24,7 @@ export function CourseLandingPreview({
   dict,
 }: CourseLandingPreviewProps) {
   return (
-    <main className="relative overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
       <div className="relative z-10 mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:py-16">
         <CourseHeader
