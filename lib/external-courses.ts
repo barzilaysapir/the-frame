@@ -94,7 +94,7 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
     instructorSlug: "daniel-lani",
     priceDisplay: "בקרוב",
     sortOrder: 7,
-    coverImage: "/routine-posters/routine-poster-velvet-heels.png",
+    coverImage: "/course-covers/vibe-on-heels.png",
     style: "heels",
     level: "all-levels",
   },
