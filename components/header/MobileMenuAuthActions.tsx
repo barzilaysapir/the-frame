@@ -7,46 +7,19 @@ import { localePath } from "@/lib/i18n/path";
 interface MobileMenuAuthActionsProps {
   locale: Locale;
   labels: Dictionary["nav"];
-  isAuthenticated: boolean;
   onCloseMenu: () => void;
-  onSignOut: () => void;
 }
 
-/** Mobile menu auth block: account link + sign-out, or login + get-access link. */
+/**
+ * Mobile menu CTA for signed-out visitors (login + get-access). Signed-in
+ * users get the always-visible avatar dropdown instead (see `Header`), so
+ * this never renders for them.
+ */
 export function MobileMenuAuthActions({
   locale,
   labels,
-  isAuthenticated,
   onCloseMenu,
-  onSignOut,
 }: MobileMenuAuthActionsProps) {
-  if (isAuthenticated) {
-    return (
-      <>
-        <Link
-          href={localePath(locale, "/account")}
-          onClick={onCloseMenu}
-          className="rounded-lg px-3 py-3 text-center text-base font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
-        >
-          {labels.account}
-        </Link>
-        <Link
-          href={localePath(locale, "/account/favorites")}
-          onClick={onCloseMenu}
-          className="rounded-lg px-3 py-3 text-center text-base font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
-        >
-          {labels.favorites}
-        </Link>
-        <Button
-          onClick={onSignOut}
-          className="px-3 py-3 text-base touch-manipulation"
-        >
-          {labels.signOut}
-        </Button>
-      </>
-    );
-  }
-
   return (
     <>
       <Link

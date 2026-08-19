@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { UserMenu } from "@/components/header/UserMenu";
 import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -9,41 +8,14 @@ import { localePath } from "@/lib/i18n/path";
 interface HeaderAuthActionsProps {
   locale: Locale;
   labels: Dictionary["nav"];
-  settingsLabel: string;
-  isAuthenticated: boolean;
-  accountName: string;
-  photoURL?: string | null;
-  onSignOut: () => void;
 }
 
-/** Desktop toolbar auth block: avatar dropdown menu, or login + get-access CTA. */
-export function HeaderAuthActions({
-  locale,
-  labels,
-  settingsLabel,
-  isAuthenticated,
-  accountName,
-  photoURL,
-  onSignOut,
-}: HeaderAuthActionsProps) {
-  if (isAuthenticated) {
-    return (
-      <UserMenu
-        locale={locale}
-        labels={{
-          account: labels.account,
-          favorites: labels.favorites,
-          settings: settingsLabel,
-          signOut: labels.signOut,
-          language: labels.language,
-        }}
-        accountName={accountName}
-        photoURL={photoURL}
-        onSignOut={onSignOut}
-      />
-    );
-  }
-
+/**
+ * Desktop toolbar CTA for signed-out visitors (login + get-access). Signed-in
+ * users get the avatar dropdown (`UserMenu`) instead, rendered directly by
+ * `Header` since it's shown at every breakpoint, not just desktop.
+ */
+export function HeaderAuthActions({ locale, labels }: HeaderAuthActionsProps) {
   return (
     <>
       <Link
