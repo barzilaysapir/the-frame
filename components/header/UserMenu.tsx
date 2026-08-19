@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 interface UserMenuLabels {
   account: string;
   favorites: string;
-  settings: string;
+  profile: string;
   signOut: string;
   language: string;
 }
@@ -25,18 +25,28 @@ interface UserMenuProps {
   accountName: string;
   photoURL?: string | null;
   onSignOut: () => void;
+  /** "top" for triggers anchored at the bottom of the screen (mobile tab bar). */
+  side?: "top" | "bottom";
+  align?: "start" | "center" | "end";
+  avatarClassName?: string;
 }
 
 const itemClassName =
   "flex items-center gap-2.5 px-4 py-2.5 text-start text-sm font-medium text-frame-silver outline-none transition-colors hover:bg-white/5 hover:text-white data-[highlighted]:bg-white/5 data-[highlighted]:text-white";
 
-/** Avatar-triggered dropdown for signed-in users: account, favorites, settings, language, sign out. */
+/**
+ * Avatar-triggered dropdown for signed-in users: collection, favorites,
+ * profile, language, sign out. Used in the header (opens downward).
+ */
 export function UserMenu({
   locale,
   labels,
   accountName,
   photoURL,
   onSignOut,
+  side = "bottom",
+  align = "end",
+  avatarClassName = "h-9 w-9 text-sm",
 }: UserMenuProps) {
   const pathname = usePathname() || `/${locale}`;
   const { user } = useAuth();
@@ -62,14 +72,15 @@ export function UserMenu({
           <UserAvatar
             name={accountName}
             photoURL={photoURL}
-            className="h-9 w-9 text-sm"
+            className={avatarClassName}
           />
         </button>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          align="end"
+          side={side}
+          align={align}
           sideOffset={10}
           className="z-[70] flex w-56 flex-col overflow-hidden rounded-xl border border-frame-border bg-frame-panel py-1.5 shadow-xl"
         >
@@ -88,9 +99,9 @@ export function UserMenu({
           </DropdownMenu.Item>
 
           <DropdownMenu.Item asChild>
-            <Link href={localePath(locale, "/account/settings")} className={itemClassName}>
+            <Link href={localePath(locale, "/account/profile")} className={itemClassName}>
               <Settings className="h-4 w-4 shrink-0" />
-              {labels.settings}
+              {labels.profile}
             </Link>
           </DropdownMenu.Item>
 
