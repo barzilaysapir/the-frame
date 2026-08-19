@@ -14,9 +14,6 @@ import {
 interface CheckoutPlansProps {
   locale: Locale;
   routineSlug: string;
-  routineTitle: string;
-  instructorName?: string;
-  taughtByLabel: string;
   rentalOriginalPrice: number;
   rentalPrice: number;
   labels: Dictionary["checkout"];
@@ -26,12 +23,10 @@ interface CheckoutPlansProps {
   closeLabel: string;
 }
 
+/** Plan picker + payment — no title/instructor header here, since the page embedding this already shows that above it (mirrors CourseCheckout). */
 export function CheckoutPlans({
   locale,
   routineSlug,
-  routineTitle,
-  instructorName,
-  taughtByLabel,
   rentalOriginalPrice,
   rentalPrice,
   labels,
@@ -44,18 +39,6 @@ export function CheckoutPlans({
 
   return (
     <div className="space-y-8">
-      <div>
-        <p className="font-display text-xl font-black text-white sm:text-2xl">
-          {routineTitle}
-        </p>
-        {instructorName ? (
-          <p className="mt-1 text-sm text-frame-silver">
-            {taughtByLabel}{" "}
-            <span className="font-medium text-white">{instructorName}</span>
-          </p>
-        ) : null}
-      </div>
-
       <CheckoutPlanPicker
         selected={plan}
         onSelect={(id) => setPlan(id as CheckoutPlanId)}

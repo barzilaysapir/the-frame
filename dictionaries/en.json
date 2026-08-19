@@ -232,9 +232,6 @@
   },
   "checkout": {
     "metaTitle": "Checkout",
-    "title": "Start learning",
-    "subtitle": "Choose a plan and complete payment.",
-    "backToRoutine": "Back to combination",
     "loading": "Loading…",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
     "signInPrompt": "Sign in with Google to continue to payment.",
@@ -332,21 +329,12 @@
     "unitHours": "hrs",
     "unitMinutes": "min",
     "unitSeconds": "sec",
-    "pricingNote": "30-day access or monthly site plan · choose at checkout",
-    "getAccessNow": "Start learning",
-    "secureNote": "Secure checkout · access starts right after payment",
     "signInPrompt": "Sign in to watch this combination.",
     "signInCta": "Sign in with Google",
     "loadingVideo": "Loading video…",
     "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
     "purchaseRequired": "Purchase this combination to watch it.",
-    "purchaseRequiredCta": "Get access",
-    "guarantees": [
-      "30 days of viewing access to this combination",
-      "Slowed and mirrored practice modes",
-      "Watch on any device during your access period",
-      "7-day money-back guarantee"
-    ]
+    "purchaseRequiredCta": "Get access"
   },
   "common": {
     "browseTutorials": "Browse the library",
