@@ -200,6 +200,7 @@
     "fallbackName": "dancer",
     "nav": {
       "library": "My Library",
+      "favorites": "Favorites",
       "profile": "Profile",
       "settings": "Settings"
     },

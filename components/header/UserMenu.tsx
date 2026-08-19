@@ -81,7 +81,7 @@ export function UserMenu({
           </DropdownMenu.Item>
 
           <DropdownMenu.Item asChild>
-            <Link href={localePath(locale, "/favorites")} className={itemClassName}>
+            <Link href={localePath(locale, "/account/favorites")} className={itemClassName}>
               <Heart className="h-4 w-4 shrink-0" />
               {labels.favorites}
             </Link>

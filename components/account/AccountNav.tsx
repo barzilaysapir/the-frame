@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 interface AccountNavLabels {
   library: string;
+  favorites: string;
   profile: string;
   settings: string;
 }
@@ -15,20 +16,22 @@ interface AccountNavLabels {
 interface AccountNavProps {
   locale: Locale;
   labels: AccountNavLabels;
+  ariaLabel: string;
 }
 
 const LINKS = [
   { key: "library" as const, path: "/account" },
+  { key: "favorites" as const, path: "/account/favorites" },
   { key: "profile" as const, path: "/account/profile" },
   { key: "settings" as const, path: "/account/settings" },
 ];
 
-export function AccountNav({ locale, labels }: AccountNavProps) {
+export function AccountNav({ locale, labels, ariaLabel }: AccountNavProps) {
   const pathname = usePathname();
 
   return (
     <nav
-      aria-label={labels.settings}
+      aria-label={ariaLabel}
       className="mb-8 flex flex-wrap gap-2 border-b border-frame-border pb-4"
     >
       {LINKS.map((link) => {

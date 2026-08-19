@@ -1,42 +1,17 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { FavoritesList } from "@/components/favorites/FavoritesList";
+import { redirect } from "next/navigation";
 import { isLocale } from "@/lib/i18n/config";
-import { getDictionarySync } from "@/lib/i18n/get-dictionary";
+import { localePath } from "@/lib/i18n/path";
 
-export default function FavoritesPage() {
-  const params = useParams<{ locale: string }>();
-  const locale = isLocale(params.locale) ? params.locale : "he";
-  const dict = getDictionarySync(locale);
-
-  return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <h1 className="text-balance font-display text-4xl font-black leading-[0.98] text-white sm:text-5xl">
-        {dict.favorites.title}
-      </h1>
-      <p className="mt-3 text-frame-silver">{dict.favorites.subtitle}</p>
-
-      <div className="mt-8">
-        <FavoritesList
-          locale={locale}
-          labels={{
-            loading: dict.favorites.loading,
-            loggedOutTitle: dict.favorites.loggedOutTitle,
-            loggedOutBody: dict.favorites.loggedOutBody,
-            loginCta: dict.favorites.loginCta,
-            unavailable: dict.login.unavailable,
-            empty: dict.favorites.empty,
-            browseTutorials: dict.common.browseTutorials,
-            viewRoutine: dict.tutorials.viewRoutine,
-            taughtBy: dict.tutorials.taughtBy,
-            favoriteAdd: dict.tutorials.favoriteAdd,
-            favoriteRemove: dict.tutorials.favoriteRemove,
-            externalCourseTag: dict.externalCourses.tag,
-            externalCourseCta: dict.externalCourses.cta,
-          }}
-        />
-      </div>
-    </main>
-  );
+/**
+ * Favorites moved under /account as its own tab (alongside library/profile/
+ * settings), since it's account-scoped like the rest of that section. This
+ * keeps the pre-existing /favorites URL working for anyone with it bookmarked.
+ */
+export default async function FavoritesRedirectPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  redirect(localePath(isLocale(locale) ? locale : "he", "/account/favorites"));
 }
