@@ -10,3 +10,8 @@
   Cache-Control: public,max-age=86400
 /*.png
   Cache-Control: public,max-age=86400
+
+# Public course promo clips (not content-hashed). Same one-day cache as
+# catalog images so a same-URL replacement is picked up within a day.
+/course-promos/*
+  Cache-Control: public,max-age=86400

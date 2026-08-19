@@ -102,6 +102,7 @@
     "tag": "קורס חיצוני",
     "comingSoonBadge": "בקרוב",
     "comingSoonNote": "הקורס הזה בהפקה ויעלה בקרוב ל-The Frame.",
+    "promoLabel": "סרטון פרומו של {title}",
     "availableBadge": "זמין עכשיו",
     "providerPrefix": "מבית {provider}",
     "cta": "לצפייה בקורס",

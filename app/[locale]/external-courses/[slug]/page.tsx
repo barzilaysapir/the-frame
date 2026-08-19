@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { CourseComingSoon } from "@/components/courses/CourseComingSoon";
 import { CourseFeatureGrid } from "@/components/courses/CourseFeatureGrid";
 import { CourseMobileStickyCta } from "@/components/courses/CourseMobileStickyCta";
+import { CoursePromoVideo } from "@/components/courses/CoursePromoVideo";
 import { CoursePurchaseCard } from "@/components/courses/CoursePurchaseCard";
 import { CourseTags } from "@/components/courses/CourseTags";
 import { CourseTopicChips } from "@/components/courses/CourseTopicChips";
@@ -61,6 +62,7 @@ export default async function ExternalCourseDetailPage({
           taughtBy: dict.tutorials.taughtBy,
           back: dict.common.backToLibrary,
           externalCourseTag: dict.externalCourses.tag,
+          promoLabel: dict.externalCourses.promoLabel,
         }}
       />
     );
@@ -104,6 +106,16 @@ export default async function ExternalCourseDetailPage({
               </p>
               {course.tagline ? (
                 <p className="mt-4 text-lg text-frame-silver">{course.tagline}</p>
+              ) : null}
+              {course.promoVideo ? (
+                <CoursePromoVideo
+                  src={course.promoVideo}
+                  poster={course.promoPoster ?? course.coverImage}
+                  label={formatMessage(dict.externalCourses.promoLabel, {
+                    title: course.title,
+                  })}
+                  className="mx-0 mt-6"
+                />
               ) : null}
               {course.description ? (
                 <p className="mt-3 text-frame-silver">{course.description}</p>

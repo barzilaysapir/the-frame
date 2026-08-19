@@ -81,6 +81,10 @@ export interface CatalogExternalCourse {
   features: CatalogExternalCourseFeature[];
   priceDisplay: string;
   coverImage: string;
+  /** Public promo clip URL (`public/…`). Null when the course has no preview. */
+  promoVideo: string | null;
+  /** Poster for `promoVideo`. Null when there is no dedicated still. */
+  promoPoster: string | null;
   style: DanceStyleKey;
   styleLabel: string;
   level: LevelKey;

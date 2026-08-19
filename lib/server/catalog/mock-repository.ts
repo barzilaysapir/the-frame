@@ -122,6 +122,8 @@ function toCatalogExternalCourse(
     features: localized.features,
     priceDisplay: course.priceDisplay,
     coverImage: course.coverImage,
+    promoVideo: course.promoVideo ?? null,
+    promoPoster: course.promoPoster ?? null,
     style: course.style,
     styleLabel: localizeStyle(locale, course.style),
     level: course.level,
