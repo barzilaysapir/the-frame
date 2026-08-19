@@ -8,8 +8,8 @@
   "scripts": {
     "build": "next build",
     "predev": "wrangler d1 migrations apply the-frame-catalog --local",
-    "dev": "next dev",
-    "start": "next start",
+    "dev": "next dev -p 4127",
+    "start": "next start -p 4127",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "typecheck:scripts": "tsc --noEmit -p scripts/tsconfig.json",
