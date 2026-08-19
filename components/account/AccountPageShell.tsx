@@ -83,7 +83,6 @@ export function AccountPageShell({
             library: dict.account.nav.library,
             favorites: dict.account.nav.favorites,
             profile: dict.account.nav.profile,
-            settings: dict.account.nav.settings,
           }}
         />
       </div>

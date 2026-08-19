@@ -10,7 +10,6 @@ interface AccountNavLabels {
   library: string;
   favorites: string;
   profile: string;
-  settings: string;
 }
 
 interface AccountNavProps {
@@ -23,7 +22,6 @@ const LINKS = [
   { key: "library" as const, path: "/account" },
   { key: "favorites" as const, path: "/account/favorites" },
   { key: "profile" as const, path: "/account/profile" },
-  { key: "settings" as const, path: "/account/settings" },
 ];
 
 export function AccountNav({ locale, labels, ariaLabel }: AccountNavProps) {

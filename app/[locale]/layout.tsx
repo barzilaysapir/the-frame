@@ -94,14 +94,14 @@ export default async function LocaleLayout({
       dir={localeDirections[locale]}
       className={`dark ${heebo.variable} ${rubik.variable} ${logoScript.variable}`}
     >
-      <body className="flex min-h-screen flex-col bg-frame-bg font-sans antialiased">
+      <body className="flex min-h-screen flex-col bg-frame-bg pb-[calc(4rem+env(safe-area-inset-bottom))] font-sans antialiased lg:pb-0">
         <AuthProvider>
           <LocalePrefSync locale={locale} />
           <FavoritesProvider locale={locale}>
             <Header
               locale={locale}
               labels={dict.nav}
-              settingsLabel={dict.account.nav.settings}
+              profileLabel={dict.account.nav.profile}
             />
             <div className="flex-1">{children}</div>
             <Footer locale={locale} footer={dict.footer} />
