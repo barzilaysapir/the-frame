@@ -74,7 +74,8 @@ interface ExternalCourseRow {
   title: string | null;
   tagline: string | null;
   description: string | null;
-  highlights_json: string | null;
+  curriculum_topics_json: string | null;
+  features_json: string | null;
   style_label: string | null;
   level_label: string | null;
 }
@@ -99,18 +100,43 @@ function parseTags(tagsJson: string, routineSlug: string): TagKey[] {
   }
 }
 
-function parseHighlights(
-  highlightsJson: string | null,
+function parseStringArray(
+  json: string | null,
+  columnName: string,
   courseSlug: string,
 ): string[] {
-  if (!highlightsJson) return [];
+  if (!json) return [];
   try {
-    const parsed = JSON.parse(highlightsJson) as unknown;
+    const parsed = JSON.parse(json) as unknown;
     if (!Array.isArray(parsed)) return [];
     return parsed.filter((item): item is string => typeof item === "string");
   } catch (error) {
     console.error(
-      `Malformed highlights_json for external course "${courseSlug}" (length ${highlightsJson.length}):`,
+      `Malformed ${columnName} for external course "${courseSlug}" (length ${json.length}):`,
+      error,
+    );
+    return [];
+  }
+}
+
+function parseFeatures(
+  featuresJson: string | null,
+  courseSlug: string,
+): CatalogExternalCourse["features"] {
+  if (!featuresJson) return [];
+  try {
+    const parsed = JSON.parse(featuresJson) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (item): item is CatalogExternalCourse["features"][number] =>
+        typeof item === "object" &&
+        item !== null &&
+        typeof (item as { icon?: unknown }).icon === "string" &&
+        typeof (item as { label?: unknown }).label === "string",
+    );
+  } catch (error) {
+    console.error(
+      `Malformed features_json for external course "${courseSlug}" (length ${featuresJson.length}):`,
       error,
     );
     return [];
@@ -182,7 +208,12 @@ function mapExternalCourse(
     instructorSlug: row.instructor_slug,
     tagline: row.tagline ?? "",
     description: row.description ?? "",
-    highlights: parseHighlights(row.highlights_json, row.slug),
+    curriculumTopics: parseStringArray(
+      row.curriculum_topics_json,
+      "curriculum_topics_json",
+      row.slug,
+    ),
+    features: parseFeatures(row.features_json, row.slug),
     priceDisplay: row.price_display,
     coverImage: row.cover_image,
     style: row.style as DanceStyleKey,
@@ -498,7 +529,8 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                  -- free-text provider only for courses with no real
                  -- instructor link (see migrations/0030).
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
-                 eci.title, eci.tagline, eci.description, eci.highlights_json,
+                 eci.title, eci.tagline, eci.description,
+                 eci.curriculum_topics_json, eci.features_json,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec
@@ -535,7 +567,8 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                  ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level, ec.instructor_slug,
                  -- See the matching comment in listExternalCourses above.
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
-                 eci.title, eci.tagline, eci.description, eci.highlights_json,
+                 eci.title, eci.tagline, eci.description,
+                 eci.curriculum_topics_json, eci.features_json,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec

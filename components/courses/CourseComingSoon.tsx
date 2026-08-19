@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { CourseFeatureGrid } from "@/components/courses/CourseFeatureGrid";
 import { CourseTags } from "@/components/courses/CourseTags";
+import { CourseTopicChips } from "@/components/courses/CourseTopicChips";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
 import type { Locale } from "@/lib/i18n/config";
@@ -56,19 +58,14 @@ export function CourseComingSoon({
         {course.description ? (
           <p className="mt-4 text-frame-silver">{course.description}</p>
         ) : null}
-        {course.highlights.length > 0 ? (
-          <ul className="mx-auto mt-6 max-w-lg space-y-3 text-start">
-            {course.highlights.map((item) => (
-              <li
-                key={item}
-                className="flex items-baseline gap-2.5 text-sm text-frame-silver"
-              >
-                <span className="text-frame-silver">—</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        ) : null}
+        <CourseTopicChips
+          topics={course.curriculumTopics}
+          className="mx-auto mt-6 max-w-lg justify-center"
+        />
+        <CourseFeatureGrid
+          features={course.features}
+          className="mx-auto mt-6 max-w-lg"
+        />
         <p className="mt-6 text-lg font-semibold text-white">
           {course.priceDisplay}
         </p>

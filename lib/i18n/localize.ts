@@ -7,6 +7,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { getMockContent } from "@/mocks/get-content";
 import type { ExternalCourseRecord } from "@/lib/external-courses";
 import type { InstructorRecord } from "@/lib/instructors";
+import type { CatalogExternalCourseFeature } from "@/lib/server/catalog/types";
 import type {
   ChapterId,
   DanceStyleKey,
@@ -91,7 +92,8 @@ export function localizeExternalCourse(
   provider: string;
   tagline: string;
   description: string;
-  highlights: string[];
+  curriculumTopics: string[];
+  features: CatalogExternalCourseFeature[];
 } {
   const content = getMockContent(locale);
   const copy =
@@ -103,7 +105,8 @@ export function localizeExternalCourse(
           provider?: string;
           tagline?: string;
           description?: string;
-          highlights?: string[];
+          curriculumTopics?: string[];
+          features?: CatalogExternalCourseFeature[];
         }
       | undefined;
 
@@ -112,7 +115,8 @@ export function localizeExternalCourse(
     provider: copy?.provider ?? course.provider,
     tagline: copy?.tagline ?? "",
     description: copy?.description ?? "",
-    highlights: copy?.highlights ?? [],
+    curriculumTopics: copy?.curriculumTopics ?? [],
+    features: copy?.features ?? [],
   };
 }
 

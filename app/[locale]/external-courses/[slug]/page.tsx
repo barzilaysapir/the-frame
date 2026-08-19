@@ -4,9 +4,11 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { CourseComingSoon } from "@/components/courses/CourseComingSoon";
+import { CourseFeatureGrid } from "@/components/courses/CourseFeatureGrid";
 import { CourseMobileStickyCta } from "@/components/courses/CourseMobileStickyCta";
 import { CoursePurchaseCard } from "@/components/courses/CoursePurchaseCard";
 import { CourseTags } from "@/components/courses/CourseTags";
+import { CourseTopicChips } from "@/components/courses/CourseTopicChips";
 import { CourseWatch } from "@/components/courses/CourseWatch";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
@@ -106,19 +108,8 @@ export default async function ExternalCourseDetailPage({
               {course.description ? (
                 <p className="mt-3 text-frame-silver">{course.description}</p>
               ) : null}
-              {course.highlights.length > 0 ? (
-                <ul className="mt-4 space-y-2.5">
-                  {course.highlights.map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-baseline gap-2.5 text-sm text-frame-silver"
-                    >
-                      <span className="text-frame-silver">—</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
+              <CourseTopicChips topics={course.curriculumTopics} className="mt-4" />
+              <CourseFeatureGrid features={course.features} className="mt-4" />
             </section>
 
             <Suspense
