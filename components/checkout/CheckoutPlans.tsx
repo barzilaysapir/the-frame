@@ -5,6 +5,7 @@ import { CheckoutPaymentPlaceholder } from "@/components/checkout/CheckoutPaymen
 import { CheckoutPlanPicker } from "@/components/checkout/CheckoutPlanPicker";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { localePath } from "@/lib/i18n/path";
 import {
   MONTHLY_SUBSCRIPTION,
   type CheckoutPlanId,
@@ -12,43 +13,32 @@ import {
 
 interface CheckoutPlansProps {
   locale: Locale;
-  routineTitle: string;
-  instructorName?: string;
-  taughtByLabel: string;
+  routineSlug: string;
   rentalOriginalPrice: number;
   rentalPrice: number;
   labels: Dictionary["checkout"];
   loginErrors: Dictionary["login"]["errors"];
   continueGoogleLabel: string;
+  termsDict: Dictionary["terms"];
+  closeLabel: string;
 }
 
+/** Plan picker + payment — no title/instructor header here, since the page embedding this already shows that above it (mirrors CourseCheckout). */
 export function CheckoutPlans({
   locale,
-  routineTitle,
-  instructorName,
-  taughtByLabel,
+  routineSlug,
   rentalOriginalPrice,
   rentalPrice,
   labels,
   loginErrors,
   continueGoogleLabel,
+  termsDict,
+  closeLabel,
 }: CheckoutPlansProps) {
   const [plan, setPlan] = useState<CheckoutPlanId>("rental");
 
   return (
     <div className="space-y-8">
-      <div>
-        <p className="font-display text-xl font-black text-white sm:text-2xl">
-          {routineTitle}
-        </p>
-        {instructorName ? (
-          <p className="mt-1 text-sm text-frame-silver">
-            {taughtByLabel}{" "}
-            <span className="font-medium text-white">{instructorName}</span>
-          </p>
-        ) : null}
-      </div>
-
       <CheckoutPlanPicker
         selected={plan}
         onSelect={(id) => setPlan(id as CheckoutPlanId)}
@@ -74,11 +64,12 @@ export function CheckoutPlans({
         labels={labels}
         loginErrors={loginErrors}
         continueGoogleLabel={continueGoogleLabel}
-        paymentBody={
-          plan === "rental"
-            ? labels.plans.rental.paymentBody
-            : labels.plans.subscription.paymentBody
-        }
+        termsDict={termsDict}
+        closeLabel={closeLabel}
+        itemType="lesson"
+        itemSlug={routineSlug}
+        planId={plan}
+        itemHref={localePath(locale, `/routine/${routineSlug}`)}
       />
     </div>
   );

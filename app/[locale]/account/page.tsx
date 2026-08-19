@@ -24,6 +24,8 @@ export default function AccountLibraryPage() {
           taughtBy: dict.tutorials.taughtBy,
           favoriteAdd: dict.tutorials.favoriteAdd,
           favoriteRemove: dict.tutorials.favoriteRemove,
+          externalCourseTag: dict.externalCourses.tag,
+          externalCourseCta: dict.externalCourses.cta,
         }}
       />
     </AccountPageShell>

@@ -60,7 +60,7 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
     priceDisplay: "₪200",
     sortOrder: 0,
     coverImage: "/course-covers/gisha-gmisha-foundations.jpg",
-    style: "flexibility-technique",
+    style: "flexibility",
     level: "beginner",
     lessons: [
       {
@@ -98,7 +98,7 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
     instructorSlug: "daniel-lani",
     priceDisplay: "בקרוב",
     sortOrder: 7,
-    coverImage: "/routine-posters/routine-poster-velvet-heels.png",
+    coverImage: "/course-covers/vibe-on-heels.png",
     promoVideo: "/course-promos/vibe-on-heels.mp4",
     promoPoster: "/course-promos/vibe-on-heels.jpg",
     style: "heels",

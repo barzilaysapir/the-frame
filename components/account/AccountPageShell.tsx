@@ -78,10 +78,11 @@ export function AccountPageShell({
       <div className="mt-8">
         <AccountNav
           locale={locale}
+          ariaLabel={dict.account.metaTitle}
           labels={{
             library: dict.account.nav.library,
+            favorites: dict.account.nav.favorites,
             profile: dict.account.nav.profile,
-            settings: dict.account.nav.settings,
           }}
         />
       </div>

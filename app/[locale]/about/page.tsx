@@ -31,7 +31,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const { founder } = dict.about;
 
   return (
-    <main className="relative overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
       <div className="relative z-10 mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
         <h1 className="text-balance font-display text-5xl font-black leading-[0.98] text-white sm:text-6xl">

@@ -5,19 +5,20 @@ import { CheckoutPaymentPlaceholder } from "@/components/checkout/CheckoutPaymen
 import { CheckoutPlanPicker } from "@/components/checkout/CheckoutPlanPicker";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
+import { localePath } from "@/lib/i18n/path";
 import { courseCreditsBundlePricing } from "@/lib/pricing";
 
 type CoursePlanId = "course" | "course-credits";
 
 interface CourseCheckoutProps {
   locale: Locale;
-  title: string;
-  instructorName: string;
-  taughtByLabel: string;
+  courseSlug: string;
   priceIls: number;
   labels: Dictionary["checkout"];
   loginErrors: Dictionary["login"]["errors"];
   continueGoogleLabel: string;
+  termsDict: Dictionary["terms"];
+  closeLabel: string;
 }
 
 function fill(
@@ -27,15 +28,16 @@ function fill(
   return formatMessage(template, values);
 }
 
+/** Plan picker + payment — no title/instructor header here, since the page embedding this (CourseLandingPreview) already shows that above it. */
 export function CourseCheckout({
   locale,
-  title,
-  instructorName,
-  taughtByLabel,
+  courseSlug,
   priceIls,
   labels,
   loginErrors,
   continueGoogleLabel,
+  termsDict,
+  closeLabel,
 }: CourseCheckoutProps) {
   const [plan, setPlan] = useState<CoursePlanId>("course");
   const bundle = courseCreditsBundlePricing(priceIls);
@@ -52,7 +54,6 @@ export function CourseCheckout({
     title: fill(credits.title, vars),
     description: fill(credits.description, vars),
     priceNote: fill(credits.priceNote, vars),
-    paymentBody: fill(credits.paymentBody, vars),
     breakdown: [
       fill(credits.lineCourse, vars),
       fill(credits.lineCredits, vars),
@@ -64,19 +65,6 @@ export function CourseCheckout({
 
   return (
     <div className="space-y-8">
-      <div>
-        <p className="font-display text-xl font-black text-white sm:text-2xl">
-          {title}
-        </p>
-        <p className="mt-1 text-sm text-frame-silver">
-          {taughtByLabel}{" "}
-          <span className="font-medium text-white">{instructorName}</span>
-        </p>
-        <p className="mt-4 text-sm leading-relaxed text-frame-silver">
-          {labels.creditExplainer}
-        </p>
-      </div>
-
       <CheckoutPlanPicker
         selected={plan}
         onSelect={(id) => setPlan(id as CoursePlanId)}
@@ -101,9 +89,12 @@ export function CourseCheckout({
         labels={labels}
         loginErrors={loginErrors}
         continueGoogleLabel={continueGoogleLabel}
-        paymentBody={
-          plan === "course" ? singleCopy.paymentBody : creditsCopy.paymentBody
-        }
+        termsDict={termsDict}
+        closeLabel={closeLabel}
+        itemType="external_course"
+        itemSlug={courseSlug}
+        planId={plan}
+        itemHref={localePath(locale, `/external-courses/${courseSlug}`)}
       />
     </div>
   );

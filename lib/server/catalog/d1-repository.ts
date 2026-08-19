@@ -622,5 +622,14 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
         );
       }
     },
+
+    async getRoutineVideoSource(slug) {
+      const row = await db
+        .prepare(`SELECT video_src FROM routines WHERE slug = ?`)
+        .bind(slug)
+        .first<{ video_src: string }>();
+
+      return row ? { videoSrc: row.video_src } : null;
+    },
   };
 }

@@ -7,11 +7,9 @@ import { SOCIAL_LINKS, SOCIAL_PLATFORM_NAMES, type SocialPlatform } from "@/lib/
 import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
-import { getNavLinks } from "@/lib/nav-links";
 
 interface FooterProps {
   locale: Locale;
-  labels: Dictionary["nav"];
   footer: Dictionary["footer"];
 }
 
@@ -21,13 +19,12 @@ const SOCIAL_ICONS: Record<SocialPlatform, ComponentType<{ className?: string }>
   youtube: Youtube,
 };
 
-export function Footer({ locale, labels, footer }: FooterProps) {
+export function Footer({ locale, footer }: FooterProps) {
   const year = new Date().getFullYear();
-  const navLinks = getNavLinks(locale, labels);
 
   return (
     <footer className="border-t border-frame-border/80 bg-frame-bg">
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-8 text-center sm:flex-row sm:justify-between sm:text-start sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-4 text-center sm:flex-row sm:justify-between sm:text-start sm:px-6 lg:px-8">
         <Link
           href={localePath(locale)}
           dir={locale === "he" ? "rtl" : "ltr"}
@@ -50,17 +47,25 @@ export function Footer({ locale, labels, footer }: FooterProps) {
           />
         </Link>
 
-        <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-          {navLinks.map((link) => (
+        <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-6">
+          <p className="text-xs text-frame-muted">
+            © {year} The Frame by Barzilay. {footer.rights}
+          </p>
+          <div className="flex items-center gap-x-6">
             <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm text-frame-silver transition-colors hover:text-white"
+              href={localePath(locale, "/terms")}
+              className="text-xs text-frame-muted transition-colors hover:text-white"
             >
-              {link.label}
+              {footer.terms}
             </Link>
-          ))}
-        </nav>
+            <Link
+              href={localePath(locale, "/contact")}
+              className="text-xs text-frame-muted transition-colors hover:text-white"
+            >
+              {footer.contact}
+            </Link>
+          </div>
+        </div>
 
         {SOCIAL_LINKS.length > 0 ? (
           <div className="flex items-center gap-4">
@@ -83,10 +88,6 @@ export function Footer({ locale, labels, footer }: FooterProps) {
             })}
           </div>
         ) : null}
-
-        <p className="text-xs text-frame-muted">
-          © {year} The Frame by Barzilay. {footer.rights}
-        </p>
       </div>
     </footer>
   );

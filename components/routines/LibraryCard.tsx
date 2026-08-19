@@ -3,11 +3,11 @@ import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { SongCredit } from "@/components/routines/SongCredit";
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
+import type { FavoritableItem } from "@/components/favorites/FavoritesProvider";
 import { RoutineFilterTag } from "@/components/routines/RoutineFilterTag";
 import { Panel } from "@/components/ui/Panel";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMessage } from "@/lib/i18n/get-dictionary";
-import type { CatalogRoutine } from "@/lib/server/catalog/types";
 
 interface LibraryCardProps {
   href: string;
@@ -26,7 +26,7 @@ interface LibraryCardProps {
   taughtBy: string;
   priority?: boolean;
   favorite?: {
-    routine: CatalogRoutine;
+    item: FavoritableItem;
     add: string;
     remove: string;
   };
@@ -94,7 +94,7 @@ export function LibraryCard({
           </div>
           {favorite ? (
             <FavoriteButton
-              routine={favorite.routine}
+              item={favorite.item}
               locale={locale}
               className="pointer-events-auto"
               labels={{ add: favorite.add, remove: favorite.remove }}

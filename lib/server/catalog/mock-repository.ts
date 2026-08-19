@@ -201,4 +201,9 @@ export const mockCatalogRepository: CatalogRepository = {
     const lesson = course?.lessons?.find((item) => item.id === lessonId);
     return lesson ? { r2Key: lesson.r2Key } : null;
   },
+
+  async getRoutineVideoSource(slug) {
+    const routine = getRoutineBySlug(slug);
+    return routine ? { videoSrc: routine.videoSrc } : null;
+  },
 };

@@ -1,25 +1,16 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { AccountPageShell } from "@/components/account/AccountPageShell";
-import { SettingsPanel } from "@/components/account/SettingsPanel";
+import { redirect } from "next/navigation";
 import { isLocale } from "@/lib/i18n/config";
-import { getDictionarySync } from "@/lib/i18n/get-dictionary";
+import { localePath } from "@/lib/i18n/path";
 
-export default function AccountSettingsPage() {
-  const params = useParams<{ locale: string }>();
-  const locale = isLocale(params.locale) ? params.locale : "he";
-  const dict = getDictionarySync(locale);
-
-  return (
-    <AccountPageShell
-      title={dict.account.settings.title}
-      subtitle={dict.account.settings.subtitle}
-    >
-      <SettingsPanel
-        labels={dict.account.settings}
-        languageLabel={dict.nav.language}
-      />
-    </AccountPageShell>
-  );
+/**
+ * Settings merged into /account/profile — not enough content for two tabs.
+ * Keep this URL working for anyone with it bookmarked.
+ */
+export default async function AccountSettingsRedirectPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  redirect(localePath(isLocale(locale) ? locale : "he", "/account/profile"));
 }

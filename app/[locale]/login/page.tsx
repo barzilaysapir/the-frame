@@ -127,7 +127,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="relative overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden">
       <div className="neon-glow" aria-hidden="true" />
       <div className="relative z-10 mx-auto flex max-w-md flex-col px-4 py-20 sm:px-6">
         <h1 className="text-balance text-center font-display text-4xl font-black leading-[0.98] text-white">

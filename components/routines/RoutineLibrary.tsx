@@ -171,7 +171,7 @@ export function RoutineLibrary({
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visibleItems.map((item, index) =>
-              item.kind === "routine" ? (
+              item.kind === "lesson" ? (
                 <RoutineCard
                   key={item.routine.slug}
                   routine={item.routine}
@@ -200,6 +200,15 @@ export function RoutineLibrary({
                   cta={dict.externalCourses.cta}
                   taughtBy={dict.tutorials.taughtBy}
                   priority={index < 3}
+                  favorite={{
+                    item: {
+                      itemType: "external_course",
+                      slug: item.course.slug,
+                      course: item.course,
+                    },
+                    add: dict.tutorials.favoriteAdd,
+                    remove: dict.tutorials.favoriteRemove,
+                  }}
                 />
               ),
             )}

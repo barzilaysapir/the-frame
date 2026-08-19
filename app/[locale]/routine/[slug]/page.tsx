@@ -3,11 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { EarlyBirdBanner } from "@/components/EarlyBirdBanner";
-import { DanceVideoPlayer } from "@/components/player/DanceVideoPlayer";
+import { CheckoutPlans } from "@/components/checkout/CheckoutPlans";
 import { RoutineBreakdown, type RoutineDetail } from "@/components/routines/RoutineBreakdown";
-import { PricingCard } from "@/components/routines/PricingCard";
-import { MobileStickyCta } from "@/components/routines/MobileStickyCta";
-import { InstructorAvatar } from "@/components/instructors/InstructorAvatar";
+import { RoutineVideoPlayer } from "@/components/routines/RoutineVideoPlayer";
 import { SongCredit } from "@/components/routines/SongCredit";
 import { RoutineFilterTag } from "@/components/routines/RoutineFilterTag";
 import { isLocale } from "@/lib/i18n/config";
@@ -16,8 +14,8 @@ import { localePath } from "@/lib/i18n/path";
 import { getCachedInstructor, getCachedRoutine } from "@/lib/server/catalog";
 
 // Seed-catalog data changes rarely (via migrations, not user writes) — cache
-// the rendered page for 5 minutes instead of refetching D1 on every request.
-export const revalidate = 300;
+// the rendered page for 1 hour instead of refetching D1 on every request.
+export const revalidate = 3600;
 
 interface RoutinePageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -65,13 +63,6 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
     routine.instructorSlug,
   );
 
-  const pricingLabels = {
-    pricingNote: dict.routine.pricingNote,
-    getAccessNow: dict.routine.getAccessNow,
-    secureNote: dict.routine.secureNote,
-    guarantees: dict.routine.guarantees,
-  };
-
   const routineDetails: RoutineDetail[] = [
     { label: dict.routine.detailLength, value: routine.lengthLabel },
     { label: dict.routine.detailBpm, value: routine.bpm },
@@ -97,88 +88,82 @@ export default async function RoutinePage({ params }: RoutinePageProps) {
         }}
       />
 
-      <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8 lg:pb-16">
-        <Link
-          href={localePath(locale, "/routines")}
-          className="group mb-8 inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
-        >
-          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5 rtl:rotate-180" />
-          {dict.common.backToLibrary}
-        </Link>
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <section className="mb-8">
-              <div className="mb-4 flex items-center gap-2">
-                <RoutineFilterTag
-                  value={routine.style}
-                  variant="style"
-                  locale={locale}
-                />
-                <RoutineFilterTag
-                  value={routine.level}
-                  variant="level"
-                  locale={locale}
-                />
-              </div>
-              <SongCredit
-                songName={routine.title}
-                artist={routine.artist}
-                size="hero"
-              />
-              {instructor ? (
-                <div className="mt-5 flex items-center gap-3">
-                  <InstructorAvatar
-                    name={instructor.name}
-                    src={instructor.avatar}
-                  />
-                  <p className="text-sm text-frame-silver">
-                    {dict.routine.taughtBy}{" "}
-                    <span className="font-medium text-white">
-                      {instructor.name}
-                    </span>
-                  </p>
-                </div>
-              ) : null}
-            </section>
+      <main className="relative min-h-screen overflow-hidden">
+        <div className="neon-glow" aria-hidden="true" />
+        <div className="relative z-10 mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:py-16">
+          <Link
+            href={localePath(locale, "/routines")}
+            className="group mb-8 inline-flex items-center gap-1.5 text-sm text-frame-silver underline underline-offset-4 transition-colors hover:text-white"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5 rtl:rotate-180" />
+            {dict.common.backToLibrary}
+          </Link>
 
-            <DanceVideoPlayer
-              src={routine.videoSrc}
+          <div className="text-center">
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <RoutineFilterTag value={routine.style} variant="style" locale={locale} />
+              <RoutineFilterTag value={routine.level} variant="level" locale={locale} />
+            </div>
+            <div className="mt-5">
+              <SongCredit songName={routine.title} artist={routine.artist} size="hero" />
+            </div>
+            {instructor ? (
+              <p className="mt-3 text-sm text-frame-silver">
+                {dict.routine.taughtBy}{" "}
+                <Link
+                  href={localePath(locale, "/instructors")}
+                  className="font-medium text-white transition-colors hover:text-frame-cyan"
+                >
+                  {instructor.name}
+                </Link>
+              </p>
+            ) : null}
+          </div>
+
+          <div className="mt-10">
+            <RoutineVideoPlayer
+              slug={routine.slug}
               poster={routine.poster}
               title={formatMessage(dict.routine.previewTitle, {
                 title: routine.title,
               })}
               chapters={routine.chapters}
-              labels={dict.player}
-              className="mb-10"
+              checkoutHref={localePath(locale, `/routine/${routine.slug}#checkout`)}
+              playerLabels={dict.player}
+              loginErrors={dict.login.errors}
+              labels={{
+                signInPrompt: dict.routine.signInPrompt,
+                signInCta: dict.routine.signInCta,
+                loading: dict.routine.loadingVideo,
+                unavailable: dict.routine.videoUnavailable,
+                purchaseRequired: dict.routine.purchaseRequired,
+                purchaseRequiredCta: dict.routine.purchaseRequiredCta,
+              }}
             />
+          </div>
 
+          <div className="mt-10">
             <RoutineBreakdown
               heading={dict.routine.includedHeading}
               details={routineDetails}
             />
           </div>
 
-          <aside className="hidden lg:block">
-            <div className="sticky top-24">
-              <PricingCard
-                originalPrice={routine.pricing.original}
-                discountedPrice={routine.pricing.earlyBird}
-                checkoutHref={localePath(locale, `/checkout/${routine.slug}`)}
-                loginErrors={dict.login.errors}
-                labels={pricingLabels}
-              />
-            </div>
-          </aside>
+          <div id="checkout" className="mt-12 border-t border-frame-border pt-10">
+            <CheckoutPlans
+              locale={locale}
+              routineSlug={routine.slug}
+              rentalOriginalPrice={routine.pricing.original}
+              rentalPrice={routine.pricing.earlyBird}
+              labels={dict.checkout}
+              loginErrors={dict.login.errors}
+              continueGoogleLabel={dict.login.continueGoogle}
+              termsDict={dict.terms}
+              closeLabel={dict.common.close}
+            />
+          </div>
         </div>
       </main>
-
-      <MobileStickyCta
-        originalPrice={routine.pricing.original}
-        discountedPrice={routine.pricing.earlyBird}
-        checkoutHref={localePath(locale, `/checkout/${routine.slug}`)}
-        ctaLabel={dict.routine.getAccessNow}
-        loginErrors={dict.login.errors}
-      />
     </>
   );
 }

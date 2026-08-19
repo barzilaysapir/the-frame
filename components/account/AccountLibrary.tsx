@@ -3,19 +3,28 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { RoutineCard } from "@/components/routines/RoutineCard";
+import { LibraryCard } from "@/components/routines/LibraryCard";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
-import type { CatalogRoutine } from "@/lib/server/catalog/types";
+import type { CatalogExternalCourse, CatalogRoutine } from "@/lib/server/catalog/types";
 
-interface LibraryItem {
-  purchaseId: string;
-  paidAt: string | null;
-  routine: CatalogRoutine;
-}
+type LibraryItem =
+  | {
+      purchaseId: string;
+      paidAt: string | null;
+      itemType: "lesson";
+      routine: CatalogRoutine;
+    }
+  | {
+      purchaseId: string;
+      paidAt: string | null;
+      itemType: "external_course";
+      course: CatalogExternalCourse;
+    };
 
 interface AccountLibraryProps {
   locale: Locale;
@@ -28,6 +37,8 @@ interface AccountLibraryProps {
     taughtBy: string;
     favoriteAdd: string;
     favoriteRemove: string;
+    externalCourseTag: string;
+    externalCourseCta: string;
   };
 }
 
@@ -104,18 +115,34 @@ export function AccountLibrary({ locale, labels }: AccountLibraryProps) {
 
   return (
     <ul className="grid gap-6 sm:grid-cols-2">
-      {items.map(({ purchaseId, routine }) => (
-        <li key={purchaseId}>
-          <RoutineCard
-            routine={routine}
-            locale={locale}
-            labels={{
-              viewRoutine: labels.viewRoutine,
-              taughtBy: labels.taughtBy,
-              favoriteAdd: labels.favoriteAdd,
-              favoriteRemove: labels.favoriteRemove,
-            }}
-          />
+      {items.map((item) => (
+        <li key={item.purchaseId}>
+          {item.itemType === "lesson" ? (
+            <RoutineCard
+              routine={item.routine}
+              locale={locale}
+              labels={{
+                viewRoutine: labels.viewRoutine,
+                taughtBy: labels.taughtBy,
+                favoriteAdd: labels.favoriteAdd,
+                favoriteRemove: labels.favoriteRemove,
+              }}
+            />
+          ) : (
+            <LibraryCard
+              href={localePath(locale, `/external-courses/${item.course.slug}`)}
+              poster={item.course.coverImage}
+              title={item.course.title}
+              instructorName={item.course.provider}
+              locale={locale}
+              style={item.course.style}
+              level={item.course.level}
+              typeLabel={labels.externalCourseTag}
+              priceDisplay={item.course.priceDisplay}
+              cta={labels.externalCourseCta}
+              taughtBy={labels.taughtBy}
+            />
+          )}
         </li>
       ))}
     </ul>

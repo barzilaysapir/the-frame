@@ -100,11 +100,29 @@ input[type="range"].frame-range:focus-visible {
 }
 
 /* Studio-lighting glow used behind hero sections. Absolutely positioned by
-   the caller (relative parent, z-0), content sits above it at z-10. */
+   the caller (relative parent, z-0), content sits above it at z-10.
+
+   Height is viewport-relative (clamp), not a percentage of the parent: the
+   parent is `main`, whose content height varies a lot by page (and by
+   breakpoint on the same page — e.g. the homepage's card grid is 2x2 on
+   desktop but stacks to 4 rows on mobile). With `inset: -15% -10%` (100%
+   of parent height), the radial-gradient circles' `X% Y%` positions were
+   percentages of that variable height, so on a page/breakpoint with a much
+   taller `main`, the second (cyan) circle — placed at 55% down — landed
+   far below the initial viewport, leaving only the first (pink) circle
+   visible on load. See issue #225.
+
+   The relative parent (`main`) also needs `min-h-screen`: if its content
+   is short, `overflow-hidden` clips this element before the mask below
+   finishes fading it to transparent, showing a hard-edged rectangle
+   instead of a smooth fade. Every caller of `.neon-glow` sets this. */
 .neon-glow {
   pointer-events: none;
   position: absolute;
-  inset: -15% -10%;
+  top: -15%;
+  left: -10%;
+  right: -10%;
+  height: clamp(700px, 100vh, 1300px);
   z-index: 0;
   filter: blur(10px);
   background:
