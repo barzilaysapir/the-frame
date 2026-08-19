@@ -2573,17 +2573,22 @@ export const ROUTINES: RoutineRecord[] = [
  * back to whichever routine happened to sort first alphabetically by slug
  * within its style, an arbitrary pick that silently changes any time the
  * per-routine cover assignment is re-run.
+ *
+ * Flat-vector illustration style (not photorealistic), one dedicated asset per
+ * style under public/style-covers/ — same composition/palette as each style's
+ * original poster, redrawn at 960x540 (matches StyleCard's aspect-video
+ * container so object-cover never crops them; see scripts/compress-style-covers.mjs).
  */
 export const STYLE_COVER_POSTERS: Record<DanceStyleKey, string> = {
-  "jazz-funk": "/routine-posters/routine-poster-midnight-static.png",
-  "hip-hop": "/routine-posters/routine-poster-block-party.png",
-  heels: "/routine-posters/routine-poster-penthouse-heels.png",
-  jazz: "/routine-posters/routine-poster-amber-stage.png",
-  afro: "/routine-posters/routine-poster-afro-sunburst.png",
-  dancehall: "/routine-posters/routine-poster-dancehall-bounce.png",
-  voguing: "/routine-posters/routine-poster-ballroom-runway.png",
-  flexibility: "/routine-posters/routine-poster-spotlight-lyrical.png",
-  technique: "/routine-posters/routine-poster-concrete-groove.png",
+  "jazz-funk": "/style-covers/style-cover-jazz-funk.png",
+  "hip-hop": "/style-covers/style-cover-hip-hop.png",
+  heels: "/style-covers/style-cover-heels.png",
+  jazz: "/style-covers/style-cover-jazz.png",
+  afro: "/style-covers/style-cover-afro.png",
+  dancehall: "/style-covers/style-cover-dancehall.png",
+  voguing: "/style-covers/style-cover-voguing.png",
+  flexibility: "/style-covers/style-cover-flexibility.png",
+  technique: "/style-covers/style-cover-technique.png",
 };
 
 export function getAllRoutines(): RoutineRecord[] {
