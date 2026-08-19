@@ -99,9 +99,6 @@
   },
   "externalCourses": {
     "tag": "קורס חיצוני",
-    "comingSoonBadge": "בקרוב",
-    "comingSoonNote": "הקורס הזה בהפקה ויעלה בקרוב ל-The Frame.",
-    "availableBadge": "זמין עכשיו",
     "providerPrefix": "מבית {provider}",
     "cta": "לצפייה בקורס",
     "linkAria": "{title} מבית {provider}",
@@ -119,7 +116,7 @@
       "צפייה בכל מכשיר",
       "אחריות להחזר כספי למשך 7 ימים"
     ],
-    "promoPlaceholder": "סרטון פרומו בקרוב",
+    "promoPlaceholder": "בקרוב",
     "checkingAccess": "בודקים את הגישה שלכם…",
     "youOwnThis": "כבר יש לכם גישה לקורס הזה."
   },
@@ -293,11 +290,11 @@
       },
       "courseCredits": {
         "title": "הקורס + {count} קרדיטים",
-        "description": "הקורס, ועוד {count} קרדיטים (1 קרדיט = ₪1). מחירי הקטלוג יכולים להשתנות; ההנחה היא רק על חבילת הקרדיטים הזו.",
+        "description": "הקורס, ועוד {count} קרדיטים (1 קרדיט = ₪1). מחירי הקטלוג יכולים להשתנות; ההנחה היא על מחיר החבילה הכולל.",
         "priceNote": "חיסכון {percent}%",
         "lineCourse": "הקורס — ₪{coursePrice}",
         "lineCredits": "{count} קרדיטים — ₪{creditsList}",
-        "lineDiscount": "הנחה {percent}% על חבילת הקרדיטים",
+        "lineDiscount": "הנחה {percent}% על כל החבילה",
         "guarantees": [
           "כל שיעורי הקורס",
           "{count} קרדיטים (1 קרדיט = ₪1)",
@@ -355,7 +352,8 @@
     "browseTutorials": "עיינו בספרייה",
     "backToLibrary": "חזרה לספרייה",
     "home": "לדף הבית",
-    "loading": "טוען…"
+    "loading": "טוען…",
+    "close": "סגירה"
   },
   "footer": {
     "rights": "כל הזכויות שמורות.",

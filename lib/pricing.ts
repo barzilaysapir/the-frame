@@ -19,18 +19,19 @@ export const COURSE_CREDIT_BUNDLE_DISCOUNT = 0.2;
 
 export function courseCreditsBundlePricing(coursePriceIls: number) {
   const creditsList = COURSE_BUNDLE_EXTRA_CREDITS * COMBINATION_CREDIT_PRICE;
-  const creditsSale = Math.round(
-    creditsList * (1 - COURSE_CREDIT_BUNDLE_DISCOUNT),
-  );
+  const original = coursePriceIls + creditsList;
+  // Discount applies to the bundle's final price, not just the credits
+  // portion — the displayed "sale" price and the amount charged at
+  // checkout both derive from this same total (see price-resolver.ts).
+  const sale = Math.round(original * (1 - COURSE_CREDIT_BUNDLE_DISCOUNT));
   return {
     extraCredits: COURSE_BUNDLE_EXTRA_CREDITS,
     creditPrice: COMBINATION_CREDIT_PRICE,
     creditsList,
-    creditsSale,
-    saved: creditsList - creditsSale,
+    saved: original - sale,
     discountPercent: Math.round(COURSE_CREDIT_BUNDLE_DISCOUNT * 100),
-    original: coursePriceIls + creditsList,
-    sale: coursePriceIls + creditsSale,
+    original,
+    sale,
   };
 }
 

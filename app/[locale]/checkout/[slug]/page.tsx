@@ -79,6 +79,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
             labels={dict.checkout}
             loginErrors={dict.login.errors}
             continueGoogleLabel={dict.login.continueGoogle}
+            termsDict={dict.terms}
+            closeLabel={dict.common.close}
           />
         </div>
       </main>

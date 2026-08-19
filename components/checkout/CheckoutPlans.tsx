@@ -22,6 +22,8 @@ interface CheckoutPlansProps {
   labels: Dictionary["checkout"];
   loginErrors: Dictionary["login"]["errors"];
   continueGoogleLabel: string;
+  termsDict: Dictionary["terms"];
+  closeLabel: string;
 }
 
 export function CheckoutPlans({
@@ -35,6 +37,8 @@ export function CheckoutPlans({
   labels,
   loginErrors,
   continueGoogleLabel,
+  termsDict,
+  closeLabel,
 }: CheckoutPlansProps) {
   const [plan, setPlan] = useState<CheckoutPlanId>("rental");
 
@@ -77,6 +81,8 @@ export function CheckoutPlans({
         labels={labels}
         loginErrors={loginErrors}
         continueGoogleLabel={continueGoogleLabel}
+        termsDict={termsDict}
+        closeLabel={closeLabel}
         itemType="lesson"
         itemSlug={routineSlug}
         planId={plan}
