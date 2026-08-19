@@ -30,6 +30,13 @@ export function MobileMenuAuthActions({
         >
           {labels.account}
         </Link>
+        <Link
+          href={localePath(locale, "/favorites")}
+          onClick={onCloseMenu}
+          className="rounded-lg px-3 py-3 text-center text-base font-medium text-frame-silver hover:bg-frame-panel hover:text-white"
+        >
+          {labels.favorites}
+        </Link>
         <Button
           onClick={onSignOut}
           className="px-3 py-3 text-base touch-manipulation"

@@ -17,9 +17,10 @@ import { getNavLinks } from "@/lib/nav-links";
 interface HeaderProps {
   locale: Locale;
   labels: Dictionary["nav"];
+  settingsLabel: string;
 }
 
-export function Header({ locale, labels }: HeaderProps) {
+export function Header({ locale, labels, settingsLabel }: HeaderProps) {
   const menuId = useId();
   const router = useRouter();
   const { user, signOutUser } = useAuth();
@@ -106,10 +107,13 @@ export function Header({ locale, labels }: HeaderProps) {
         </nav>
 
         <div className="hidden items-center gap-4 lg:flex">
-          <LanguageSwitcher locale={locale} label={labels.language} />
+          {!isAuthenticated ? (
+            <LanguageSwitcher locale={locale} label={labels.language} />
+          ) : null}
           <HeaderAuthActions
             locale={locale}
             labels={labels}
+            settingsLabel={settingsLabel}
             isAuthenticated={isAuthenticated}
             accountName={accountName}
             photoURL={user?.photoURL}
