@@ -9,6 +9,7 @@ interface CourseComingSoonProps {
     taughtBy: string;
     back: string;
     externalCourseTag: string;
+    promoLabel: string;
     promoPlaceholder: string;
   };
 }

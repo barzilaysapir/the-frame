@@ -34,6 +34,7 @@ export function CourseLandingPreview({
             back: dict.common.backToLibrary,
             externalCourseTag: dict.externalCourses.tag,
             taughtBy: dict.routine.taughtBy,
+            promoLabel: dict.externalCourses.promoLabel,
             promoPlaceholder: dict.externalCourses.promoPlaceholder,
           }}
         />

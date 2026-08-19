@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { ArrowLeft, Film } from "lucide-react";
+import { CourseFeatureGrid } from "@/components/courses/CourseFeatureGrid";
+import { CoursePromoVideo } from "@/components/courses/CoursePromoVideo";
 import { CourseTags } from "@/components/courses/CourseTags";
+import { CourseTopicChips } from "@/components/courses/CourseTopicChips";
+import { formatMessage } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
 import type { Locale } from "@/lib/i18n/config";
 import type { CatalogExternalCourse } from "@/lib/server/catalog/types";
@@ -12,6 +16,7 @@ interface CourseHeaderProps {
     back: string;
     externalCourseTag: string;
     taughtBy: string;
+    promoLabel: string;
     promoPlaceholder: string;
   };
 }
@@ -19,7 +24,8 @@ interface CourseHeaderProps {
 /**
  * Shared header for the external-course detail page's two pre-purchase
  * states (CourseLandingPreview, CourseComingSoon) — identical in both:
- * back link, tags, title, instructor credit, and promo-video placeholder.
+ * back link, tags, title, instructor credit, and promo clip (or a
+ * placeholder until a real teaser exists — separate from gated lessons).
  */
 export function CourseHeader({ course, locale, labels }: CourseHeaderProps) {
   return (
@@ -56,11 +62,27 @@ export function CourseHeader({ course, locale, labels }: CourseHeaderProps) {
         {course.description ? (
           <p className="mt-4 text-frame-silver">{course.description}</p>
         ) : null}
-        {/* Promo video — placeholder until a real teaser clip exists (separate from summary.mp4, which stays a gated lesson). */}
-        <div className="mt-10 flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-2xl border border-frame-border bg-black/40 text-frame-muted">
-          <Film className="h-10 w-10" aria-hidden="true" />
-          <p className="text-sm">{labels.promoPlaceholder}</p>
-        </div>
+        <CourseTopicChips
+          topics={course.curriculumTopics}
+          className="mx-auto mt-6 max-w-lg justify-center"
+        />
+        <CourseFeatureGrid
+          features={course.features}
+          className="mx-auto mt-6 max-w-lg"
+        />
+        {course.promoVideo ? (
+          <CoursePromoVideo
+            src={course.promoVideo}
+            poster={course.promoPoster ?? course.coverImage}
+            label={formatMessage(labels.promoLabel, { title: course.title })}
+            className="mt-10"
+          />
+        ) : (
+          <div className="mt-10 flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-2xl border border-frame-border bg-black/40 text-frame-muted">
+            <Film className="h-10 w-10" aria-hidden="true" />
+            <p className="text-sm">{labels.promoPlaceholder}</p>
+          </div>
+        )}
       </div>
     </>
   );

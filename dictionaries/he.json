@@ -99,6 +99,7 @@
   },
   "externalCourses": {
     "tag": "קורס חיצוני",
+    "promoLabel": "סרטון פרומו של {title}",
     "providerPrefix": "מבית {provider}",
     "cta": "לצפייה בקורס",
     "linkAria": "{title} מבית {provider}",

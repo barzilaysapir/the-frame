@@ -99,6 +99,7 @@
   },
   "externalCourses": {
     "tag": "External course",
+    "promoLabel": "Promo video for {title}",
     "providerPrefix": "by {provider}",
     "cta": "View course",
     "linkAria": "{title} by {provider}",

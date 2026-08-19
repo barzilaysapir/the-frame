@@ -50,6 +50,7 @@ export default async function ExternalCourseDetailPage({
           taughtBy: dict.routine.taughtBy,
           back: dict.common.backToLibrary,
           externalCourseTag: dict.externalCourses.tag,
+          promoLabel: dict.externalCourses.promoLabel,
           promoPlaceholder: dict.externalCourses.promoPlaceholder,
         }}
       />

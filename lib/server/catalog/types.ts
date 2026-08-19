@@ -72,6 +72,14 @@ export interface CatalogExternalCourseLesson {
   allowMirror: boolean;
 }
 
+/** Icon keys mapped to a Lucide component in CourseFeatureGrid. */
+export type CourseFeatureIcon = "sparkles" | "footprints" | "home" | "infinity";
+
+export interface CatalogExternalCourseFeature {
+  icon: CourseFeatureIcon;
+  label: string;
+}
+
 export interface CatalogExternalCourse {
   slug: string;
   title: string;
@@ -79,8 +87,16 @@ export interface CatalogExternalCourse {
   instructorSlug: string | null;
   tagline: string;
   description: string;
+  /** Short curriculum topic labels, shown as chips below the description. */
+  curriculumTopics: string[];
+  /** Short icon+label format/logistics callouts (e.g. "no experience needed"). */
+  features: CatalogExternalCourseFeature[];
   priceDisplay: string;
   coverImage: string;
+  /** Public promo clip URL (`public/…`). Null when the course has no preview. */
+  promoVideo: string | null;
+  /** Poster for `promoVideo`. Null when there is no dedicated still. */
+  promoPoster: string | null;
   style: DanceStyleKey;
   styleLabel: string;
   level: LevelKey;

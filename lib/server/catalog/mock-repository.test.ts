@@ -233,6 +233,16 @@ describe("mockCatalogRepository.getExternalCourse", () => {
     const withoutLessons = all.find((course) => course.lessons.length === 0);
     expect(withoutLessons).toBeDefined();
   });
+
+  it("exposes the public Vibe on Heels promo clip without leaking lesson r2 keys", async () => {
+    const course = await mockCatalogRepository.getExternalCourse(
+      "he",
+      "vibe-on-heels",
+    );
+    expect(course?.promoVideo).toBe("/course-promos/vibe-on-heels.mp4");
+    expect(course?.promoPoster).toBe("/course-promos/vibe-on-heels.jpg");
+    expect(course?.lessons).toEqual([]);
+  });
 });
 
 describe("mockCatalogRepository.getExternalCourseLessonSource", () => {
