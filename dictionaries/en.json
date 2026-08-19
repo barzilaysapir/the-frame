@@ -194,12 +194,12 @@
     "greeting": "Hi, {name}",
     "subtitle": "Your rented combinations will appear here for the active rental period, with breakdowns, mirrored practice, and slowed practice.",
     "empty": "You haven’t rented any combinations yet.",
-    "loadFailed": "Couldn’t load your library. Please try again.",
+    "loadFailed": "Couldn’t load your collection. Please try again.",
     "unavailable": "My account isn’t available yet — the site is still being built.",
     "loading": "Loading…",
     "fallbackName": "dancer",
     "nav": {
-      "library": "My Library",
+      "library": "My Collection",
       "favorites": "Favorites",
       "profile": "Profile",
       "settings": "Settings"
