@@ -56,6 +56,19 @@ export function CourseComingSoon({
         {course.description ? (
           <p className="mt-4 text-frame-silver">{course.description}</p>
         ) : null}
+        {course.highlights.length > 0 ? (
+          <ul className="mx-auto mt-6 max-w-lg space-y-3 text-start">
+            {course.highlights.map((item) => (
+              <li
+                key={item}
+                className="flex items-baseline gap-2.5 text-sm text-frame-silver"
+              >
+                <span className="text-frame-silver">—</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        ) : null}
         <p className="mt-6 text-lg font-semibold text-white">
           {course.priceDisplay}
         </p>

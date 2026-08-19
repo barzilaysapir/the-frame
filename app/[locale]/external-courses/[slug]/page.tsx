@@ -106,6 +106,19 @@ export default async function ExternalCourseDetailPage({
               {course.description ? (
                 <p className="mt-3 text-frame-silver">{course.description}</p>
               ) : null}
+              {course.highlights.length > 0 ? (
+                <ul className="mt-4 space-y-2.5">
+                  {course.highlights.map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-baseline gap-2.5 text-sm text-frame-silver"
+                    >
+                      <span className="text-frame-silver">—</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </section>
 
             <Suspense

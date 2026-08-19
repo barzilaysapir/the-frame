@@ -67,6 +67,8 @@ export interface CatalogExternalCourse {
   instructorSlug: string | null;
   tagline: string;
   description: string;
+  /** Short bullet points (curriculum, format, logistics) shown below the description. */
+  highlights: string[];
   priceDisplay: string;
   coverImage: string;
   style: DanceStyleKey;

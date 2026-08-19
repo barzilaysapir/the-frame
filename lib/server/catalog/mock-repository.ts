@@ -118,6 +118,7 @@ function toCatalogExternalCourse(
     instructorSlug: course.instructorSlug ?? null,
     tagline: localized.tagline,
     description: localized.description,
+    highlights: localized.highlights,
     priceDisplay: course.priceDisplay,
     coverImage: course.coverImage,
     style: course.style,

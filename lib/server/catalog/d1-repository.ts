@@ -74,6 +74,7 @@ interface ExternalCourseRow {
   title: string | null;
   tagline: string | null;
   description: string | null;
+  highlights_json: string | null;
   style_label: string | null;
   level_label: string | null;
 }
@@ -92,6 +93,24 @@ function parseTags(tagsJson: string, routineSlug: string): TagKey[] {
   } catch (error) {
     console.error(
       `Malformed tags_json for routine "${routineSlug}" (length ${tagsJson.length}):`,
+      error,
+    );
+    return [];
+  }
+}
+
+function parseHighlights(
+  highlightsJson: string | null,
+  courseSlug: string,
+): string[] {
+  if (!highlightsJson) return [];
+  try {
+    const parsed = JSON.parse(highlightsJson) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item): item is string => typeof item === "string");
+  } catch (error) {
+    console.error(
+      `Malformed highlights_json for external course "${courseSlug}" (length ${highlightsJson.length}):`,
       error,
     );
     return [];
@@ -163,6 +182,7 @@ function mapExternalCourse(
     instructorSlug: row.instructor_slug,
     tagline: row.tagline ?? "",
     description: row.description ?? "",
+    highlights: parseHighlights(row.highlights_json, row.slug),
     priceDisplay: row.price_display,
     coverImage: row.cover_image,
     style: row.style as DanceStyleKey,
@@ -478,7 +498,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                  -- free-text provider only for courses with no real
                  -- instructor link (see migrations/0030).
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
-                 eci.title, eci.tagline, eci.description,
+                 eci.title, eci.tagline, eci.description, eci.highlights_json,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec
@@ -515,7 +535,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                  ec.slug, ec.price_display, ec.cover_image, ec.style, ec.level, ec.instructor_slug,
                  -- See the matching comment in listExternalCourses above.
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
-                 eci.title, eci.tagline, eci.description,
+                 eci.title, eci.tagline, eci.description, eci.highlights_json,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec

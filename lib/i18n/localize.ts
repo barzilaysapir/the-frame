@@ -91,6 +91,7 @@ export function localizeExternalCourse(
   provider: string;
   tagline: string;
   description: string;
+  highlights: string[];
 } {
   const content = getMockContent(locale);
   const copy =
@@ -102,6 +103,7 @@ export function localizeExternalCourse(
           provider?: string;
           tagline?: string;
           description?: string;
+          highlights?: string[];
         }
       | undefined;
 
@@ -110,6 +112,7 @@ export function localizeExternalCourse(
     provider: copy?.provider ?? course.provider,
     tagline: copy?.tagline ?? "",
     description: copy?.description ?? "",
+    highlights: copy?.highlights ?? [],
   };
 }
 
