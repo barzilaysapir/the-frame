@@ -7,7 +7,7 @@ import { User, Heart, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { UserAvatar } from "@/components/account/UserAvatar";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
-import { locales, localeNames, type Locale } from "@/lib/i18n/config";
+import { locales, localeDirections, localeNames, type Locale } from "@/lib/i18n/config";
 import { localePath, swapLocalePath } from "@/lib/i18n/path";
 import { cn } from "@/lib/utils";
 
@@ -52,7 +52,7 @@ export function UserMenu({
   };
 
   return (
-    <DropdownMenu.Root modal={false}>
+    <DropdownMenu.Root modal={false} dir={localeDirections[locale]}>
       <DropdownMenu.Trigger asChild>
         <button
           type="button"
