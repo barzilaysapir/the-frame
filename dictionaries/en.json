@@ -403,7 +403,9 @@
       "colStatus": "Status",
       "colProvider": "Provider",
       "colCreated": "Created",
-      "colActions": "Actions"
+      "colActions": "Actions",
+      "unverifiedBadge": "Unverified",
+      "unverifiedTooltip": "Confirmed automatically via uPay's callback, which has no signature or server-side verification — cross-check against the uPay dashboard before trusting this."
     }
   }
 }
