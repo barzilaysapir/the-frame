@@ -60,8 +60,9 @@ interface PurchaseResponse {
  * Creates/reuses a `pending` purchases row after recomputing the price
  * server-side, then returns a uPay dynamic payment form (see
  * lib/server/payments/upay.ts) if uPay is configured — card or Bit, both
- * on the same reverse-engineered POST (Grow was dropped: uPay has no
- * monthly fee, see #261's history).
+ * on the same reverse-engineered POST. Bit sends `providername=bit`
+ * (uPay rejects `paymentmethod=bit`). Grow was dropped: uPay has no
+ * monthly fee, see #261's history.
  *
  * A client-supplied amount is never trusted — see
  * `.cursor/rules/security-conventions.mdc`.

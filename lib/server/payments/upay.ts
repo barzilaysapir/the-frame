@@ -77,13 +77,13 @@ const UPAY_ACTION_URL = "https://app.upay.co.il/API6/clientsecure/redirectpage.p
  * The client renders these as hidden inputs in a real `<form>` and submits
  * it — this can't be a plain redirect URL since uPay's endpoint is a POST.
  *
- * Bit: uPay does not document a field on this form. Third-party site
- * integrations reach uPay's Bit UI (phone → SMS or QR; mobile may open
- * the Bit app) through SUMIT (`AutomaticallyRedirectToProviderPaymentPage=UpayBit`)
- * or Cardcom (`UrlToBit`). We set `paymentmethod=bit` on the same POST so a
- * merchant who has Bit enabled in uPay may land on that UI. First live ₪1
- * test still has to confirm the hosted page actually switches; if uPay
- * ignores the field, the buyer sees the usual card form.
+ * Bit: live preview returned `wronginputpaymentmethod bit` for
+ * `paymentmethod=bit`. That field only accepts `0` (card / default).
+ * uPay's own Bit-capable POS page (`BANKRESOURCES/.../redirectpages`)
+ * sends `providername=bit` to `/API6/clientsecure/json.php` when the
+ * buyer picks Bit (radio value 1). `redirectpage.php` accepts that same
+ * field (it does not return `wronginputprovidername`). Card checkout
+ * omits it.
  */
 export function buildUpayFormFields(
   config: UpayConfig,
@@ -107,7 +107,7 @@ export function buildUpayFormFields(
     currency: "NIS",
   };
   if (method === "bit") {
-    fields.paymentmethod = "bit";
+    fields.providername = "bit";
   }
   return {
     action: UPAY_ACTION_URL,
