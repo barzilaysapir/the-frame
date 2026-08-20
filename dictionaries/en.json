@@ -244,8 +244,8 @@
     "termsLinkText": "Terms & Conditions",
     "termsRequired": "You need to agree to the Terms & Conditions to continue.",
     "noPaymentMethod": "Payment isn’t available yet — please contact us to complete this purchase:",
-    "bitConfirmationTitle": "Thanks — payment recorded",
-    "bitConfirmationBody": "We’ll confirm your payment and unlock access shortly. If it’s urgent, feel free to reach out directly.",
+    "paymentConfirmationTitle": "Thanks — we’re confirming your payment",
+    "paymentConfirmationBody": "Access usually unlocks within a few seconds. If it doesn’t, refresh this page — or contact us if it’s urgent.",
     "payError": "Something went wrong recording your payment. Please try again.",
     "planUnavailable": "This plan isn’t available for payment yet — choose another plan above, or contact us.",
     "alreadyOwned": "You already have access to this.",
@@ -372,7 +372,7 @@
   "admin": {
     "purchases": {
       "title": "Purchases",
-      "subtitle": "Confirm Bit payments and manage purchase status.",
+      "subtitle": "Review purchases and manage payment status.",
       "loading": "Loading…",
       "unavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
       "signInPrompt": "Sign in to view this page.",
@@ -389,7 +389,7 @@
       "colCreated": "Created",
       "colActions": "Actions",
       "unverifiedBadge": "Unverified",
-      "unverifiedTooltip": "Confirmed automatically via uPay's callback, which has no signature or server-side verification — cross-check against the uPay dashboard before trusting this."
+      "unverifiedTooltip": "Confirmed automatically via uPay's old unsigned callback. Cross-check against the original payment dashboard before trusting this row."
     }
   }
 }

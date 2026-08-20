@@ -18,7 +18,7 @@ const CHECKABLE_ITEM_TYPES: CatalogItemType[] = ["lesson", "external_course"];
  * show a course's marketing/preview layout or its watch experience before
  * the buyer does anything (see CourseAccessGate). Deliberately separate
  * from POST /api/v1/me/purchases, which has side effects (creates a
- * pending purchase / calls out to uPay) that a page-load status check
+ * pending purchase / calls out to Takbull) that a page-load status check
  * must not trigger.
  */
 export async function GET(request: NextRequest) {

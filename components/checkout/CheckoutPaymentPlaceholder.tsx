@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { TermsDialog } from "@/components/checkout/TermsDialog";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
+import { confirmCheckoutPurchase } from "@/lib/client/confirm-checkout-purchase";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -23,8 +24,8 @@ interface PurchaseApiResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
-  /** Present once uPay is configured — must be submitted as a real POST form (uPay's endpoint isn't a plain redirect link), see the hidden form below. */
-  upayForm?: { action: string; fields: Record<string, string> };
+  /** Present once Takbull is configured — navigate the buyer here (hosted checkout is a GET redirect). */
+  checkoutUrl?: string;
 }
 
 interface CheckoutPaymentPlaceholderProps {
@@ -42,11 +43,10 @@ interface CheckoutPaymentPlaceholderProps {
 }
 
 /**
- * Submits uPay's dynamic payment form (see POST /api/v1/me/purchases and
- * lib/server/payments/upay.ts) — the only payment gateway wired up (Grow
- * was dropped once uPay's dynamic form was confirmed working with no
- * monthly fee, see #261's history). app/[locale]/admin/purchases remains
- * the manual override for edge cases (missed webhook, refund).
+ * Starts Takbull hosted checkout (see POST /api/v1/me/purchases and
+ * lib/server/payments/takbull.ts) — the only payment gateway wired up.
+ * app/[locale]/admin/purchases remains the manual override for edge cases
+ * (missed webhook, refund).
  */
 export function CheckoutPaymentPlaceholder({
   locale,
@@ -64,23 +64,35 @@ export function CheckoutPaymentPlaceholder({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const returnedFromPayment = searchParams.get("payment");
+  const returnedPurchaseId = searchParams.get("purchaseId");
 
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const upayFormRef = useRef<HTMLFormElement>(null);
+  const [returnConfirm, setReturnConfirm] = useState<"pending" | "paid" | "unpaid">(
+    "pending",
+  );
 
   const planSupported = planId !== "subscription";
+  const shouldConfirmReturn = Boolean(
+    user && returnedFromPayment === "success" && returnedPurchaseId,
+  );
+  const confirmingReturn = shouldConfirmReturn && returnConfirm === "pending";
+  const returnedPaid = returnConfirm === "paid";
 
-  // uPay is the only gateway, so there's nothing to "choose" — submit
-  // straight through the moment the form fields arrive, instead of making
-  // the buyer click a second button.
   useEffect(() => {
-    if (result?.upayForm) {
-      upayFormRef.current?.submit();
-    }
-  }, [result]);
+    if (!user || returnedFromPayment !== "success" || !returnedPurchaseId) return;
+    let cancelled = false;
+    (async () => {
+      const status = await confirmCheckoutPurchase(user, returnedPurchaseId);
+      if (cancelled) return;
+      setReturnConfirm(status === "paid" ? "paid" : "unpaid");
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, returnedFromPayment, returnedPurchaseId]);
 
   const handleContinue = async () => {
     if (!user) return;
@@ -105,6 +117,10 @@ export function CheckoutPaymentPlaceholder({
         throw new Error(`purchase request failed with ${res.status}`);
       }
       const data = (await res.json()) as PurchaseApiResponse;
+      if (data.checkoutUrl) {
+        window.location.assign(data.checkoutUrl);
+        return;
+      }
       setResult(data);
       setBusy(false);
     } catch (err) {
@@ -114,7 +130,7 @@ export function CheckoutPaymentPlaceholder({
     }
   };
 
-  if (loading) {
+  if (loading || confirmingReturn) {
     return (
       <Panel className="p-6 text-sm text-frame-silver">{labels.loading}</Panel>
     );
@@ -143,28 +159,12 @@ export function CheckoutPaymentPlaceholder({
         </div>
       ) : (
         <div className="mt-6 space-y-3">
-          {result?.status === "paid" ? (
+          {result?.status === "paid" || returnedPaid ? (
             <>
               <p className="text-sm font-medium text-white">{labels.alreadyOwned}</p>
               <Button href={itemHref} className="w-full">
                 {labels.alreadyOwnedCta}
               </Button>
-            </>
-          ) : result?.upayForm ? (
-            <>
-              <form
-                ref={upayFormRef}
-                method="POST"
-                action={result.upayForm.action}
-                className="hidden"
-              >
-                {Object.entries(result.upayForm.fields).map(([name, value]) => (
-                  <input key={name} type="hidden" name={name} value={value} />
-                ))}
-              </form>
-              <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-silver">
-                {labels.payBusy}
-              </p>
             </>
           ) : result ? (
             <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
@@ -175,8 +175,8 @@ export function CheckoutPaymentPlaceholder({
             </p>
           ) : returnedFromPayment === "success" ? (
             <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
-              <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
-              <p className="mt-1 text-sm text-frame-silver">{labels.bitConfirmationBody}</p>
+              <p className="text-sm font-medium text-white">{labels.paymentConfirmationTitle}</p>
+              <p className="mt-1 text-sm text-frame-silver">{labels.paymentConfirmationBody}</p>
             </div>
           ) : !planSupported ? (
             <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">

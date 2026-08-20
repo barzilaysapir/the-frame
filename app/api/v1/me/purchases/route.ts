@@ -13,8 +13,12 @@ import {
   resolvePurchasePrice,
   type PurchasePlanId,
 } from "@/lib/server/payments/price-resolver";
-import { buildUpayFormFields, getUpayConfig } from "@/lib/server/payments/upay";
 import {
+  createPaymentPage,
+  getTakbullConfig,
+} from "@/lib/server/payments/takbull";
+import {
+  attachProviderProcess,
   createPendingPurchase,
   findPaidPurchase,
   findPendingPurchase,
@@ -41,16 +45,13 @@ interface PurchaseResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
-  /** Present once uPay is configured (see lib/server/payments/upay.ts) — the client must render these as hidden inputs in a real `<form method="post">` and submit it (uPay's endpoint isn't a simple GET redirect). */
-  upayForm?: { action: string; fields: Record<string, string> };
+  /** Present once Takbull is configured — the client must navigate the buyer to this hosted payment URL. */
+  checkoutUrl?: string;
 }
 
 /**
  * Creates/reuses a `pending` purchases row after recomputing the price
- * server-side, then returns a uPay dynamic payment form (see
- * lib/server/payments/upay.ts) if uPay is configured — the only payment
- * gateway wired up (Grow was dropped: uPay's dynamic form works and has
- * no monthly fee, see #261's history).
+ * server-side, then returns a Takbull hosted payment URL if configured.
  *
  * A client-supplied amount is never trusted — see
  * `.cursor/rules/security-conventions.mdc`.
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
         itemType as CatalogItemType,
         itemSlug,
         amountIls,
-        "bit",
+        "takbull",
       );
     }
 
@@ -130,14 +131,19 @@ export async function POST(request: NextRequest) {
 
     const path = returnPath && returnPath.startsWith("/") ? returnPath : "/";
 
-    const upayConfig = await getUpayConfig();
-    if (upayConfig) {
-      response.upayForm = buildUpayFormFields(upayConfig, {
+    const takbullConfig = await getTakbullConfig();
+    if (takbullConfig) {
+      const page = await createPaymentPage(takbullConfig, {
+        purchaseId: purchase.id,
         amountIls: purchase.amountIls ?? amountIls,
         description,
-        returnUrl: `${SITE_URL}${path}?payment=success&provider=upay&purchaseId=${purchase.id}`,
-        ipnUrl: `${SITE_URL}/api/v1/webhooks/upay?purchaseId=${purchase.id}`,
+        successUrl: `${SITE_URL}${path}?payment=success&purchaseId=${purchase.id}`,
+        cancelUrl: `${SITE_URL}${path}?payment=cancelled`,
+        ipnUrl: `${SITE_URL}/api/v1/webhooks/takbull?purchaseId=${purchase.id}`,
+        locale,
       });
+      await attachProviderProcess(db, purchase.id, page.uniqId, "takbull");
+      response.checkoutUrl = page.paymentPageUrl;
     }
 
     return NextResponse.json(response);

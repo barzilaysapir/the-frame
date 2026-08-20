@@ -1,9 +1,11 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { CourseLandingPreview } from "@/components/courses/CourseLandingPreview";
 import { CourseWatchPage } from "@/components/courses/CourseWatchPage";
+import { confirmCheckoutPurchase } from "@/lib/client/confirm-checkout-purchase";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -34,6 +36,7 @@ export function CourseAccessGate({
   dict,
 }: CourseAccessGateProps) {
   const { user, loading: authLoading } = useAuth();
+  const searchParams = useSearchParams();
   // Only the async fetch result needs state — "not signed in" is derived
   // directly below instead of set via an effect, since there's no async
   // work involved and setState synchronously inside an effect body is
@@ -47,6 +50,15 @@ export function CourseAccessGate({
     let cancelled = false;
     (async () => {
       try {
+        const purchaseId = searchParams.get("purchaseId");
+        if (searchParams.get("payment") === "success" && purchaseId) {
+          const confirmed = await confirmCheckoutPurchase(user, purchaseId);
+          if (cancelled) return;
+          if (confirmed === "paid") {
+            setFetchedStatus("paid");
+            return;
+          }
+        }
         const res = await fetchWithAuth(
           user,
           `/api/v1/me/purchases/status?itemType=external_course&itemSlug=${encodeURIComponent(course.slug)}`,
@@ -64,7 +76,7 @@ export function CourseAccessGate({
     return () => {
       cancelled = true;
     };
-  }, [user, authLoading, course.slug]);
+  }, [user, authLoading, course.slug, searchParams]);
 
   const status: AccessStatus = authLoading
     ? "checking"

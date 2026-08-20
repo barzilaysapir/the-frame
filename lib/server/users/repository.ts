@@ -197,7 +197,7 @@ export interface Purchase {
   itemSlug: string;
   provider: string;
   providerPaymentId: string | null;
-  /** Grow `processId`/`processToken` from `createPaymentProcess`, stored so the webhook can verify its callback is genuine (Grow's callback has no signature — see migration 0038). Null until `attachProviderProcess` runs, and irrelevant once `status` is `paid`. */
+  /** Takbull `uniqId` (or a previous gateway process id), stored so IPN/return can validate the charge. Null until `attachProviderProcess` runs. */
   providerProcessId: string | null;
   providerProcessToken: string | null;
   amountIls: number | null;
@@ -325,14 +325,54 @@ export async function createPendingPurchase(
   return purchase;
 }
 
+/** Stores the gateway process id on a pending purchase (Takbull `uniqId`). */
+export async function attachProviderProcess(
+  db: AppDb,
+  purchaseId: string,
+  processId: string,
+  provider?: string,
+): Promise<void> {
+  if (provider) {
+    await db
+      .prepare(
+        `UPDATE purchases
+         SET provider = ?, provider_process_id = ?
+         WHERE id = ? AND status = 'pending'`,
+      )
+      .bind(provider, processId, purchaseId)
+      .run();
+    return;
+  }
+  await db
+    .prepare(
+      `UPDATE purchases
+       SET provider_process_id = ?
+       WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(processId, purchaseId)
+    .run();
+}
+
+export async function findPurchaseByProviderProcessId(
+  db: AppDb,
+  processId: string,
+): Promise<Purchase | null> {
+  const row = await db
+    .prepare(
+      `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              provider_process_id, provider_process_token,
+              amount_ils, currency, status, created_at, paid_at
+       FROM purchases WHERE provider_process_id = ?
+       LIMIT 1`,
+    )
+    .bind(processId)
+    .first<FullPurchaseRow>();
+  return row ? mapPurchase(row) : null;
+}
+
 /**
  * Flips a `pending` purchase to `paid` (idempotent — a purchase already
  * `paid` is left as-is, so a retried/duplicate webhook delivery is safe).
- *
- * Not called anywhere yet — Phase 1 confirms payments manually via
- * `markPurchasePaidManually` on the admin page. Kept ready for a future
- * automated-gateway webhook (see lib/server/payments/ history) so that
- * work doesn't have to touch the repository layer again.
  */
 export async function markPurchasePaid(
   db: AppDb,
@@ -349,7 +389,7 @@ export async function markPurchasePaid(
     .run();
 }
 
-/** Manual admin override — the only "mark as paid" path in Phase 1 (no automated gateway confirmation yet). Used after the site owner verifies a Bit payment arrived. */
+/** Manual admin override for missed webhooks, refunds, or off-platform payments. */
 export async function markPurchasePaidManually(
   db: AppDb,
   purchaseId: string,
