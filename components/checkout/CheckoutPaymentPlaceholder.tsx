@@ -70,24 +70,24 @@ export function CheckoutPaymentPlaceholder({
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [returnedPaid, setReturnedPaid] = useState(false);
-  const [confirmingReturn, setConfirmingReturn] = useState(
-    returnedFromPayment === "success" && Boolean(returnedSessionId),
+  const [returnConfirm, setReturnConfirm] = useState<"pending" | "paid" | "unpaid">(
+    "pending",
   );
 
   const planSupported = planId !== "subscription";
+  const shouldConfirmReturn = Boolean(
+    user && returnedFromPayment === "success" && returnedSessionId,
+  );
+  const confirmingReturn = shouldConfirmReturn && returnConfirm === "pending";
+  const returnedPaid = returnConfirm === "paid";
 
   useEffect(() => {
-    if (!user || returnedFromPayment !== "success" || !returnedSessionId) {
-      setConfirmingReturn(false);
-      return;
-    }
+    if (!user || returnedFromPayment !== "success" || !returnedSessionId) return;
     let cancelled = false;
     (async () => {
       const status = await confirmCheckoutSession(user, returnedSessionId);
       if (cancelled) return;
-      if (status === "paid") setReturnedPaid(true);
-      setConfirmingReturn(false);
+      setReturnConfirm(status === "paid" ? "paid" : "unpaid");
     })();
     return () => {
       cancelled = true;
