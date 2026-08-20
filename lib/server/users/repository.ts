@@ -197,7 +197,7 @@ export interface Purchase {
   itemSlug: string;
   provider: string;
   providerPaymentId: string | null;
-  /** Grow `processId`/`processToken` from `createPaymentProcess`, stored so the webhook can verify its callback is genuine (Grow's callback has no signature — see migration 0038). Null until `attachProviderProcess` runs, and irrelevant once `status` is `paid`. */
+  /** Gateway correlation id. For Stripe this is the Checkout Session id (`cs_…`), stored so a delayed webhook can still look the purchase up if metadata is missing. Null until `attachProviderProcess` runs, and unused once `status` is `paid`. */
   providerProcessId: string | null;
   providerProcessToken: string | null;
   amountIls: number | null;
@@ -325,14 +325,25 @@ export async function createPendingPurchase(
   return purchase;
 }
 
+/** Stores the Stripe Checkout Session id (or a previous gateway process id) on a pending purchase. */
+export async function attachProviderProcess(
+  db: AppDb,
+  purchaseId: string,
+  processId: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE purchases
+       SET provider_process_id = ?
+       WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(processId, purchaseId)
+    .run();
+}
+
 /**
  * Flips a `pending` purchase to `paid` (idempotent — a purchase already
  * `paid` is left as-is, so a retried/duplicate webhook delivery is safe).
- *
- * Not called anywhere yet — Phase 1 confirms payments manually via
- * `markPurchasePaidManually` on the admin page. Kept ready for a future
- * automated-gateway webhook (see lib/server/payments/ history) so that
- * work doesn't have to touch the repository layer again.
  */
 export async function markPurchasePaid(
   db: AppDb,
@@ -349,7 +360,7 @@ export async function markPurchasePaid(
     .run();
 }
 
-/** Manual admin override — the only "mark as paid" path in Phase 1 (no automated gateway confirmation yet). Used after the site owner verifies a Bit payment arrived. */
+/** Manual admin override for missed webhooks, refunds, or off-platform payments. */
 export async function markPurchasePaidManually(
   db: AppDb,
   purchaseId: string,

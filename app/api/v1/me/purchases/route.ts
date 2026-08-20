@@ -13,8 +13,12 @@ import {
   resolvePurchasePrice,
   type PurchasePlanId,
 } from "@/lib/server/payments/price-resolver";
-import { buildUpayFormFields, getUpayConfig } from "@/lib/server/payments/upay";
 import {
+  createCheckoutSession,
+  getStripeConfig,
+} from "@/lib/server/payments/stripe";
+import {
+  attachProviderProcess,
   createPendingPurchase,
   findPaidPurchase,
   findPendingPurchase,
@@ -41,16 +45,13 @@ interface PurchaseResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
-  /** Present once uPay is configured (see lib/server/payments/upay.ts) — the client must render these as hidden inputs in a real `<form method="post">` and submit it (uPay's endpoint isn't a simple GET redirect). */
-  upayForm?: { action: string; fields: Record<string, string> };
+  /** Present once Stripe is configured — the client must navigate the buyer to this Stripe-hosted Checkout URL. */
+  checkoutUrl?: string;
 }
 
 /**
  * Creates/reuses a `pending` purchases row after recomputing the price
- * server-side, then returns a uPay dynamic payment form (see
- * lib/server/payments/upay.ts) if uPay is configured — the only payment
- * gateway wired up (Grow was dropped: uPay's dynamic form works and has
- * no monthly fee, see #261's history).
+ * server-side, then returns a Stripe Checkout URL if Stripe is configured.
  *
  * A client-supplied amount is never trusted — see
  * `.cursor/rules/security-conventions.mdc`.
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
         itemType as CatalogItemType,
         itemSlug,
         amountIls,
-        "bit",
+        "stripe",
       );
     }
 
@@ -130,14 +131,22 @@ export async function POST(request: NextRequest) {
 
     const path = returnPath && returnPath.startsWith("/") ? returnPath : "/";
 
-    const upayConfig = await getUpayConfig();
-    if (upayConfig) {
-      response.upayForm = buildUpayFormFields(upayConfig, {
+    const stripeConfig = await getStripeConfig();
+    if (stripeConfig) {
+      const session = await createCheckoutSession(stripeConfig, {
         amountIls: purchase.amountIls ?? amountIls,
         description,
-        returnUrl: `${SITE_URL}${path}?payment=success&provider=upay&purchaseId=${purchase.id}`,
-        ipnUrl: `${SITE_URL}/api/v1/webhooks/upay?purchaseId=${purchase.id}`,
+        successUrl: `${SITE_URL}${path}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${SITE_URL}${path}?payment=cancelled`,
+        purchaseId: purchase.id,
+        itemType,
+        itemSlug,
+        firebaseUid: claims.uid,
+        customerEmail: claims.email,
+        locale,
       });
+      await attachProviderProcess(db, purchase.id, session.id);
+      response.checkoutUrl = session.url ?? undefined;
     }
 
     return NextResponse.json(response);
