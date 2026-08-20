@@ -1,5 +1,15 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import type { UpayPaymentMethod } from "@/lib/payments/upay-method";
+
+export {
+  bitAmountAllowed,
+  isUpayPaymentMethod,
+  UPAY_BIT_MAX_ILS,
+  UPAY_PAYMENT_METHODS,
+  upayProviderForMethod,
+  type UpayPaymentMethod,
+} from "@/lib/payments/upay-method";
 
 /**
  * uPay (upay.co.il) has no publicly documented API — confirmed by a
@@ -52,6 +62,7 @@ export interface UpayFormParams {
   description: string;
   returnUrl: string;
   ipnUrl: string;
+  method?: UpayPaymentMethod;
 }
 
 export interface UpayFormFields {
@@ -65,28 +76,41 @@ const UPAY_ACTION_URL = "https://app.upay.co.il/API6/clientsecure/redirectpage.p
  * Builds the field set for the reverse-engineered dynamic payment form.
  * The client renders these as hidden inputs in a real `<form>` and submits
  * it — this can't be a plain redirect URL since uPay's endpoint is a POST.
+ *
+ * Bit: uPay does not document a field on this form. Third-party site
+ * integrations reach uPay's Bit UI (phone → SMS or QR; mobile may open
+ * the Bit app) through SUMIT (`AutomaticallyRedirectToProviderPaymentPage=UpayBit`)
+ * or Cardcom (`UrlToBit`). We set `paymentmethod=bit` on the same POST so a
+ * merchant who has Bit enabled in uPay may land on that UI. First live ₪1
+ * test still has to confirm the hosted page actually switches; if uPay
+ * ignores the field, the buyer sees the usual card form.
  */
 export function buildUpayFormFields(
   config: UpayConfig,
   params: UpayFormParams,
 ): UpayFormFields {
+  const method = params.method ?? "card";
+  const fields: Record<string, string> = {
+    email: config.merchantEmail,
+    amount: params.amountIls.toFixed(2),
+    returnurl: params.returnUrl,
+    ipnurl: params.ipnUrl,
+    paymentdetails: params.description,
+    maxpayments: "1",
+    livesystem: "1",
+    commissionreduction: "",
+    createinvoiceandreceipt: "1",
+    createinvoice: "0",
+    createreceipt: "0",
+    refername: "UPAY",
+    lang: "HE",
+    currency: "NIS",
+  };
+  if (method === "bit") {
+    fields.paymentmethod = "bit";
+  }
   return {
     action: UPAY_ACTION_URL,
-    fields: {
-      email: config.merchantEmail,
-      amount: params.amountIls.toFixed(2),
-      returnurl: params.returnUrl,
-      ipnurl: params.ipnUrl,
-      paymentdetails: params.description,
-      maxpayments: "1",
-      livesystem: "1",
-      commissionreduction: "",
-      createinvoiceandreceipt: "1",
-      createinvoice: "0",
-      createreceipt: "0",
-      refername: "UPAY",
-      lang: "HE",
-      currency: "NIS",
-    },
+    fields,
   };
 }

@@ -32,4 +32,9 @@ ADMIN_EMAILS=
 # payment button, confirmed live with a real ₪200 test transaction on
 # 2026-08-18. Just your uPay account login email — no separate merchant ID
 # or API key exists for this flow. Leave unset to skip offering uPay.
+#
+# Bit checkout uses the same form plus paymentmethod=bit. Ask uPay support
+# to enable Bit on the merchant (they sometimes block it for new accounts).
+# First live ₪1 test should confirm the hosted page actually opens Bit
+# (phone → SMS/QR) rather than the card form.
 UPAY_MERCHANT_EMAIL=
