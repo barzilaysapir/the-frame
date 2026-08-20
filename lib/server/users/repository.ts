@@ -300,6 +300,20 @@ export async function getPurchaseById(
   return row ? mapPurchase(row) : null;
 }
 
+/** Updates the gateway label on a reused pending purchase (card vs Bit). */
+export async function setPendingPurchaseProvider(
+  db: AppDb,
+  purchaseId: string,
+  provider: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE purchases SET provider = ? WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(provider, purchaseId)
+    .run();
+}
+
 /** Creates a new `pending` purchase row. The amount is always server-computed by the caller — never trust a client-supplied price. */
 export async function createPendingPurchase(
   db: AppDb,

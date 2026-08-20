@@ -10,8 +10,13 @@ import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
+import {
+  bitAmountAllowed,
+  UPAY_BIT_MAX_ILS,
+  type UpayPaymentMethod,
+} from "@/lib/payments/upay-method";
 
 /** Mirrors `PurchasePlanId` in `lib/server/payments/price-resolver.ts` plus `"subscription"`, a valid UI plan choice that isn't wired to a real purchase yet (see that file for why). */
 type CheckoutPurchasePlanId = "rental" | "course" | "course-credits" | "subscription";
@@ -37,16 +42,16 @@ interface CheckoutPaymentPlaceholderProps {
   itemType: "lesson" | "external_course";
   itemSlug: string;
   planId: CheckoutPurchasePlanId;
+  /** Display-only amount for the Bit ₪5,000 cap. The charge is always recomputed server-side. */
+  amountIls: number;
   /** Where "watch now" / already-owned should link to. */
   itemHref: string;
 }
 
 /**
  * Submits uPay's dynamic payment form (see POST /api/v1/me/purchases and
- * lib/server/payments/upay.ts) — the only payment gateway wired up (Grow
- * was dropped once uPay's dynamic form was confirmed working with no
- * monthly fee, see #261's history). app/[locale]/admin/purchases remains
- * the manual override for edge cases (missed webhook, refund).
+ * lib/server/payments/upay.ts) for card or Bit. app/[locale]/admin/purchases
+ * remains the manual override for edge cases (missed webhook, refund).
  */
 export function CheckoutPaymentPlaceholder({
   locale,
@@ -58,6 +63,7 @@ export function CheckoutPaymentPlaceholder({
   itemType,
   itemSlug,
   planId,
+  amountIls,
   itemHref,
 }: CheckoutPaymentPlaceholderProps) {
   const { user, loading, isConfigured } = useAuth();
@@ -66,30 +72,37 @@ export function CheckoutPaymentPlaceholder({
   const returnedFromPayment = searchParams.get("payment");
 
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [busyMethod, setBusyMethod] = useState<UpayPaymentMethod | null>(null);
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const upayFormRef = useRef<HTMLFormElement>(null);
 
   const planSupported = planId !== "subscription";
+  const bitAllowed = bitAmountAllowed(amountIls);
+  const busy = busyMethod !== null;
 
-  // uPay is the only gateway, so there's nothing to "choose" — submit
-  // straight through the moment the form fields arrive, instead of making
-  // the buyer click a second button.
+  // Submit the hosted form as soon as fields arrive so the buyer isn't asked
+  // to click a second time after choosing card vs Bit.
   useEffect(() => {
     if (result?.upayForm) {
       upayFormRef.current?.submit();
     }
   }, [result]);
 
-  const handleContinue = async () => {
+  const handleContinue = async (paymentMethod: UpayPaymentMethod) => {
     if (!user) return;
     if (!termsAccepted) {
       setError(labels.termsRequired);
       return;
     }
+    if (paymentMethod === "bit" && !bitAllowed) {
+      setError(
+        formatMessage(labels.bitTooExpensive, { max: UPAY_BIT_MAX_ILS }),
+      );
+      return;
+    }
     setError(null);
-    setBusy(true);
+    setBusyMethod(paymentMethod);
     try {
       const res = await fetchWithAuth(user, "/api/v1/me/purchases", {
         method: "POST",
@@ -99,6 +112,7 @@ export function CheckoutPaymentPlaceholder({
           planId,
           locale,
           returnPath: pathname,
+          paymentMethod,
         }),
       });
       if (!res.ok) {
@@ -106,11 +120,11 @@ export function CheckoutPaymentPlaceholder({
       }
       const data = (await res.json()) as PurchaseApiResponse;
       setResult(data);
-      setBusy(false);
+      setBusyMethod(null);
     } catch (err) {
       console.error("[CheckoutPaymentPlaceholder] purchase request failed:", err);
       setError(labels.payError);
-      setBusy(false);
+      setBusyMethod(null);
     }
   };
 
@@ -206,14 +220,33 @@ export function CheckoutPaymentPlaceholder({
                   </span>
                 </div>
               </div>
-              <Button
-                onClick={handleContinue}
-                disabled={busy || !termsAccepted}
-                aria-busy={busy}
-                className="w-full disabled:opacity-60"
-              >
-                {busy ? labels.payBusy : labels.payCta}
-              </Button>
+              <fieldset className="space-y-3">
+                <legend className="text-sm font-medium text-white">
+                  {labels.payMethodLabel}
+                </legend>
+                <Button
+                  onClick={() => handleContinue("card")}
+                  disabled={busy || !termsAccepted}
+                  aria-busy={busyMethod === "card"}
+                  className="w-full disabled:opacity-60"
+                >
+                  {busyMethod === "card" ? labels.payBusy : labels.payWithCard}
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => handleContinue("bit")}
+                  disabled={busy || !termsAccepted || !bitAllowed}
+                  aria-busy={busyMethod === "bit"}
+                  className="w-full disabled:opacity-60"
+                >
+                  {busyMethod === "bit" ? labels.payBusy : labels.payWithBit}
+                </Button>
+                <p className="text-xs text-frame-muted">
+                  {bitAllowed
+                    ? labels.bitHint
+                    : formatMessage(labels.bitTooExpensive, { max: UPAY_BIT_MAX_ILS })}
+                </p>
+              </fieldset>
             </>
           )}
         </div>
