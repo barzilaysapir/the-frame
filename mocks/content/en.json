@@ -532,7 +532,7 @@
       ],
       "features": [
         { "icon": "sparkles", "label": "No experience needed" },
-        { "icon": "footprints", "label": "No specific heel required" },
+        { "icon": "footprints", "label": "No specific heel needed to start" },
         { "icon": "home", "label": "From home, no floor work" },
         { "icon": "infinity", "label": "Unlimited-time access" }
       ]
