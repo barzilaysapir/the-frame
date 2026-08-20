@@ -87,6 +87,8 @@ export interface CatalogExternalCourse {
   instructorSlug: string | null;
   tagline: string;
   description: string;
+  /** Optional caption above the curriculum chips (empty when unused). */
+  curriculumHeading: string;
   /** Short curriculum topic labels, shown as chips below the description. */
   curriculumTopics: string[];
   /** Short icon+label format/logistics callouts (e.g. "no experience needed"). */

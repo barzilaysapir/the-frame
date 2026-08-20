@@ -76,6 +76,7 @@ interface ExternalCourseRow {
   title: string | null;
   tagline: string | null;
   description: string | null;
+  curriculum_heading: string | null;
   curriculum_topics_json: string | null;
   features_json: string | null;
   style_label: string | null;
@@ -210,6 +211,7 @@ function mapExternalCourse(
     instructorSlug: row.instructor_slug,
     tagline: row.tagline ?? "",
     description: row.description ?? "",
+    curriculumHeading: row.curriculum_heading ?? "",
     curriculumTopics: parseStringArray(
       row.curriculum_topics_json,
       "curriculum_topics_json",
@@ -535,7 +537,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                  -- instructor link (see migrations/0030).
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
-                 eci.curriculum_topics_json, eci.features_json,
+                 eci.curriculum_heading, eci.curriculum_topics_json, eci.features_json,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec
@@ -574,7 +576,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                  -- See the matching comment in listExternalCourses above.
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
-                 eci.curriculum_topics_json, eci.features_json,
+                 eci.curriculum_heading, eci.curriculum_topics_json, eci.features_json,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec

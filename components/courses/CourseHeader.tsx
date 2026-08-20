@@ -64,7 +64,8 @@ export function CourseHeader({ course, locale, labels }: CourseHeaderProps) {
         ) : null}
         <CourseTopicChips
           topics={course.curriculumTopics}
-          className="mx-auto mt-6 max-w-lg justify-center"
+          heading={course.curriculumHeading}
+          className="mx-auto mt-6 max-w-lg"
         />
         <CourseFeatureGrid
           features={course.features}
