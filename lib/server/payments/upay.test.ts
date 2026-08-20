@@ -30,12 +30,14 @@ describe("buildUpayFormFields", () => {
     expect(form.fields.amount).toBe("200.00");
     expect(form.fields.paymentdetails).toBe("Vibe on Heels");
     expect(form.fields.paymentmethod).toBeUndefined();
+    expect(form.fields.providername).toBeUndefined();
   });
 
-  it("adds paymentmethod=bit for the Bit checkout path", () => {
+  it("adds providername=bit for the Bit checkout path", () => {
     const form = buildUpayFormFields(config, params({ method: "bit" }));
 
-    expect(form.fields.paymentmethod).toBe("bit");
+    expect(form.fields.providername).toBe("bit");
+    expect(form.fields.paymentmethod).toBeUndefined();
     expect(form.fields.amount).toBe("200.00");
   });
 });
