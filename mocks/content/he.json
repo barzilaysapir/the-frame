@@ -533,7 +533,7 @@
       "features": [
         { "icon": "sparkles", "label": "לא נדרש ניסיון קודם" },
         { "icon": "footprints", "label": "לא חייב עקב ספציפי בשביל ההתחלה" },
-        { "icon": "home", "label": "מהבית, בלי עבודת רצפה" },
+        { "icon": "home", "label": "מותאם ללמידה מהבית, בלי עבודת רצפה" },
         { "icon": "infinity", "label": "גישה ללא הגבלת זמן" }
       ]
     }
