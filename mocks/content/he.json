@@ -510,7 +510,8 @@
         "head-neck": { "title": "ראש וצוואר" },
         "shoulder-blades": { "title": "שכמות" },
         "shoulder-blades-physio-exercise": { "title": "תרגיל פיזיותרפיה לשכמות" },
-        "spine-abs": { "title": "עמוד שדרה ובטן" }
+        "spine-abs": { "title": "עמוד שדרה ובטן" },
+        "summary": { "title": "סיכום" }
       }
     },
     "vibe-on-heels": {

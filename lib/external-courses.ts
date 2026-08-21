@@ -88,6 +88,11 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
         r2Key: "class-videos/external-courses/gisha-gmisha/foundations/spine-abs.mp4",
         allowMirror: false,
       },
+      {
+        id: "summary",
+        r2Key: "class-videos/external-courses/gisha-gmisha/foundations/summary.mp4",
+        allowMirror: false,
+      },
     ],
   },
   {
