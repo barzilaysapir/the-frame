@@ -19,6 +19,8 @@ interface ExternalCourseLessonRecord {
    * lessons that are already mirrored in edit or have burned-in captions.
    */
   allowMirror?: boolean;
+  /** Optional in-video chapter markers (demo/preview catalog only). */
+  chapters?: Array<{ id: string; time: number; label: string }>;
 }
 
 export interface ExternalCourseRecord {

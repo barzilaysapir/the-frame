@@ -7,7 +7,6 @@ import type {
   DanceStyleKey,
   LevelKey,
   TagKey,
-  VideoChapter,
 } from "@/lib/routines";
 import type { Locale } from "@/lib/i18n/config";
 import {
@@ -19,7 +18,10 @@ import {
 export { COURSE_FEATURE_ICONS, isCourseFeatureIcon };
 export type { CourseFeatureIcon };
 
-export interface CatalogChapter extends VideoChapter {
+export interface CatalogChapter {
+  id: string;
+  /** Timestamp in seconds where this section begins. */
+  time: number;
   label: string;
 }
 
@@ -78,6 +80,8 @@ export interface CatalogExternalCourseLesson {
   title: string;
   /** False hides the player mirror control. Defaults to true. */
   allowMirror: boolean;
+  /** In-video chapter markers for the player timeline (empty when none seeded). */
+  chapters: CatalogChapter[];
 }
 
 export interface CatalogExternalCourseFeature {
