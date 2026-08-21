@@ -7,15 +7,11 @@ import { rewriteUpayFormFields } from "@/lib/payments/upay-callback-url";
 export function checkoutAfterPurchase(data: {
   status: "pending" | "paid";
   upayForm?: { action: string; fields: Record<string, string> };
-  bitSent?: boolean;
 }):
   | { type: "owned" }
   | { type: "redirect"; form: { action: string; fields: Record<string, string> } }
-  | { type: "bit-sent" }
   | { type: "unavailable" } {
   if (data.status === "paid") return { type: "owned" };
-  if (data.bitSent) return { type: "bit-sent" };
-  if (data.upayForm?.fields.providername === "bit") return { type: "bit-sent" };
   if (data.upayForm) {
     return {
       type: "redirect",
