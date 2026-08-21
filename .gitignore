@@ -32,3 +32,6 @@ next-env.d.ts
 .wrangler
 .dev.vars*
 !.dev.vars.example
+
+# local brand-kit scratch (scripts/generate-site-icons.mjs)
+.tmp-brand

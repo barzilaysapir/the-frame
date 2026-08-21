@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { FavoritesProvider } from "@/components/favorites/FavoritesProvider";
 import { LocalePrefSync } from "@/components/LocalePrefSync";
+import { ThemeFavicon } from "@/components/ThemeFavicon";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/Footer";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -14,6 +15,7 @@ import {
   type Locale,
 } from "@/lib/i18n/config";
 import { SITE_URL } from "@/lib/site";
+import { FAVICON_DARK, FAVICON_LIGHT } from "@/lib/favicon";
 import "../globals.css";
 
 const heebo = Heebo({
@@ -63,10 +65,27 @@ export async function generateMetadata({
       type: "website",
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
     },
+    icons: {
+      icon: [
+        {
+          url: FAVICON_DARK,
+          type: "image/png",
+          sizes: "32x32",
+          media: "(prefers-color-scheme: dark)",
+        },
+        {
+          url: FAVICON_LIGHT,
+          type: "image/png",
+          sizes: "32x32",
+          media: "(prefers-color-scheme: light)",
+        },
+      ],
+    },
+    themeColor: "#0F0F11",
     alternates: {
       languages: {
         he: "/he",
@@ -97,6 +116,7 @@ export default async function LocaleLayout({
       <body className="flex min-h-screen flex-col bg-frame-bg pb-[calc(4rem+env(safe-area-inset-bottom))] font-sans antialiased lg:pb-0">
         <AuthProvider>
           <LocalePrefSync locale={locale} />
+          <ThemeFavicon />
           <FavoritesProvider locale={locale}>
             <Header
               locale={locale}
