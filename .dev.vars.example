@@ -33,7 +33,7 @@ ADMIN_EMAILS=
 # 2026-08-18. Just your uPay account login email — no separate merchant ID
 # or API key exists for this flow. Leave unset to skip offering uPay.
 #
-# Bit checkout uses the same form plus providername=bit (uPay rejects
-# paymentmethod=bit with "wronginputpaymentmethod bit"). Ask uPay support
+# Bit: checkout collects the buyer’s Israeli mobile and POSTs
+# providername=bit + cellphone on the same form. Ask uPay support
 # to enable Bit on the merchant (they sometimes block it for new accounts).
 UPAY_MERCHANT_EMAIL=

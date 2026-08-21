@@ -13,9 +13,15 @@ import {
   checkoutAfterPurchase,
   submitUpayForm,
 } from "@/lib/client/upay-checkout";
+import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
+import {
+  bitAmountAllowed,
+  UPAY_BIT_MAX_ILS,
+  type UpayPaymentMethod,
+} from "@/lib/payments/upay-method";
+import { toIsraeliMobileNational } from "@/lib/phone";
 
 /** Mirrors `PurchasePlanId` in `lib/server/payments/price-resolver.ts` plus `"subscription"`, a valid UI plan choice that isn't wired to a real purchase yet (see that file for why). */
 type CheckoutPurchasePlanId = "rental" | "course" | "course-credits" | "subscription";
@@ -41,14 +47,15 @@ interface CheckoutPaymentPlaceholderProps {
   itemType: "lesson" | "external_course";
   itemSlug: string;
   planId: CheckoutPurchasePlanId;
+  /** Server-computed plan price — used only to disable Bit above ₪5,000. */
+  amountIls?: number;
   /** Where "watch now" / already-owned should link to. */
   itemHref: string;
 }
 
 /**
- * Submits uPay's card payment form (see POST /api/v1/me/purchases).
- * Same flow as before Bit: one Continue-to-payment button. Keep the
- * button after returnurl — `?payment=success` is not proof of payment.
+ * Card: POST uPay’s hosted form. Bit: same form plus the buyer’s mobile
+ * so uPay can send a payment request to that phone.
  */
 export function CheckoutPaymentPlaceholder({
   locale,
@@ -60,6 +67,7 @@ export function CheckoutPaymentPlaceholder({
   itemType,
   itemSlug,
   planId,
+  amountIls,
   itemHref,
 }: CheckoutPaymentPlaceholderProps) {
   const { user, loading, isConfigured } = useAuth();
@@ -68,14 +76,21 @@ export function CheckoutPaymentPlaceholder({
   const returnedFromPayment = searchParams.get("payment");
 
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [busyMethod, setBusyMethod] = useState<UpayPaymentMethod | null>(null);
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [returnPaid, setReturnPaid] = useState(false);
+  const [phone, setPhone] = useState<string | null>(null);
   const upayFormRef = useRef<HTMLFormElement>(null);
 
   const planSupported = planId !== "subscription";
   const owned = result?.status === "paid" || returnPaid;
+  const busy = busyMethod !== null;
+  const bitAllowed = amountIls == null || bitAmountAllowed(amountIls);
+  const authPhone = user?.phoneNumber
+    ? toIsraeliMobileNational(user.phoneNumber)
+    : null;
+  const phoneValue = phone ?? authPhone ?? "";
 
   // uPay's returnurl always appends ?payment=success. That is not proof of
   // payment — poll ownership (IPN / admin) and keep the pay button so a
@@ -113,16 +128,24 @@ export function CheckoutPaymentPlaceholder({
     upayFormRef.current?.submit();
   }, [result, owned]);
 
-  const handleContinue = async () => {
+  const handlePay = async (paymentMethod: UpayPaymentMethod) => {
     if (!user) return;
     if (!termsAccepted) {
       setError(labels.termsRequired);
       return;
     }
+    const payerPhone =
+      paymentMethod === "bit" ? toIsraeliMobileNational(phoneValue) : null;
+    if (paymentMethod === "bit" && !payerPhone) {
+      setError(labels.phoneError);
+      return;
+    }
+    if (paymentMethod === "bit" && !bitAllowed) {
+      setError(formatMessage(labels.bitTooExpensive, { max: UPAY_BIT_MAX_ILS }));
+      return;
+    }
     setError(null);
-    setBusy(true);
-    // Drop leftover returnurl query so a remount doesn't keep treating this
-    // visit as a just-completed payment.
+    setBusyMethod(paymentMethod);
     if (typeof window !== "undefined" && window.location.search) {
       window.history.replaceState(null, "", `${pathname}${window.location.hash}`);
     }
@@ -135,6 +158,8 @@ export function CheckoutPaymentPlaceholder({
           planId,
           locale,
           returnPath: pathname,
+          paymentMethod,
+          phone: payerPhone ?? undefined,
         }),
       });
       if (!res.ok) {
@@ -148,11 +173,11 @@ export function CheckoutPaymentPlaceholder({
         return;
       }
       setResult(data);
-      setBusy(false);
+      setBusyMethod(null);
     } catch (err) {
       console.error("[CheckoutPaymentPlaceholder] purchase request failed:", err);
       setError(labels.payError);
-      setBusy(false);
+      setBusyMethod(null);
     }
   };
 
@@ -228,6 +253,22 @@ export function CheckoutPaymentPlaceholder({
                 <p className="text-xs text-frame-muted">{labels.paymentCancelled}</p>
               ) : null}
               <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
+                <label htmlFor="checkout-bit-phone" className="text-sm font-medium text-white">
+                  {labels.phoneLabel}
+                </label>
+                <input
+                  id="checkout-bit-phone"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder={labels.phonePlaceholder}
+                  value={phoneValue}
+                  onChange={(event) => setPhone(event.target.value)}
+                  className="mt-2 w-full rounded-lg border border-frame-border bg-frame-bg px-3 py-2 text-sm text-white outline-none focus:border-frame-cyan"
+                />
+                <p className="mt-2 text-xs text-frame-muted">{labels.bitHint}</p>
+              </div>
+              <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
                 <div className="flex items-start gap-2 text-sm text-frame-silver">
                   <input
                     id="terms-accept"
@@ -246,14 +287,33 @@ export function CheckoutPaymentPlaceholder({
                   </span>
                 </div>
               </div>
-              <Button
-                onClick={handleContinue}
-                disabled={busy || !termsAccepted}
-                aria-busy={busy}
-                className="w-full disabled:opacity-60"
-              >
-                {busy ? labels.payBusy : labels.payCta}
-              </Button>
+              <fieldset className="space-y-3">
+                <legend className="text-sm font-medium text-white">
+                  {labels.payMethodLabel}
+                </legend>
+                <Button
+                  onClick={() => void handlePay("card")}
+                  disabled={busy || !termsAccepted}
+                  aria-busy={busyMethod === "card"}
+                  className="w-full disabled:opacity-60"
+                >
+                  {busyMethod === "card" ? labels.payBusy : labels.payCta}
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => void handlePay("bit")}
+                  disabled={busy || !termsAccepted || !bitAllowed}
+                  aria-busy={busyMethod === "bit"}
+                  className="w-full disabled:opacity-60"
+                >
+                  {busyMethod === "bit" ? labels.payBusy : labels.payWithBit}
+                </Button>
+                {!bitAllowed ? (
+                  <p className="text-xs text-frame-muted">
+                    {formatMessage(labels.bitTooExpensive, { max: UPAY_BIT_MAX_ILS })}
+                  </p>
+                ) : null}
+              </fieldset>
             </>
           )}
         </div>

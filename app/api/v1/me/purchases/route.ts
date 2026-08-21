@@ -13,9 +13,15 @@ import {
   resolvePurchasePrice,
   type PurchasePlanId,
 } from "@/lib/server/payments/price-resolver";
+import { toIsraeliMobileNational } from "@/lib/phone";
 import {
+  bitAmountAllowed,
   buildUpayFormFields,
   getUpayConfig,
+  isUpayPaymentMethod,
+  UPAY_BIT_MAX_ILS,
+  upayProviderForMethod,
+  type UpayPaymentMethod,
 } from "@/lib/server/payments/upay";
 import {
   createPendingPurchase,
@@ -40,6 +46,10 @@ interface PurchaseRequestBody {
   locale?: unknown;
   /** Path (not a full URL) the buyer should land back on after paying/cancelling — always resolved against this request's public origin, so a client-supplied value can't redirect off-site. */
   returnPath?: unknown;
+  /** `card` (default) or `bit`. Bit requires `phone`. */
+  paymentMethod?: unknown;
+  /** Israeli mobile for Bit — server-normalized; never used as a price. */
+  phone?: unknown;
 }
 
 interface PurchaseResponse {
@@ -52,8 +62,9 @@ interface PurchaseResponse {
 
 /**
  * Creates/reuses a `pending` purchases row after recomputing the price
- * server-side, then returns uPay's card payment form. Bit is not offered
- * (uPay rejected that path). Grow was dropped: uPay has no monthly fee.
+ * server-side, then returns a uPay form. Card is the hosted page. Bit
+ * adds providername=bit plus the buyer’s mobile so uPay can send a
+ * payment request to that phone. Grow was dropped (monthly fee).
  *
  * A client-supplied amount is never trusted — see
  * `.cursor/rules/security-conventions.mdc`.
@@ -85,6 +96,16 @@ export async function POST(request: NextRequest) {
       typeof body.locale === "string" ? body.locale : null,
     );
     const returnPath = typeof body.returnPath === "string" ? body.returnPath : null;
+    const paymentMethod: UpayPaymentMethod = isUpayPaymentMethod(body.paymentMethod)
+      ? body.paymentMethod
+      : "card";
+    const payerPhone =
+      paymentMethod === "bit" && typeof body.phone === "string"
+        ? toIsraeliMobileNational(body.phone)
+        : null;
+    if (paymentMethod === "bit" && !payerPhone) {
+      throw new ApiError(400, "phone must be a valid Israeli mobile number");
+    }
 
     // #320 marked pending rows paid from returnurl. Reopen those so Continue
     // can POST the card form again; IPN/admin paid rows stay paid.
@@ -117,7 +138,14 @@ export async function POST(request: NextRequest) {
       planId as PurchasePlanId,
     );
 
-    const provider = "upay";
+    if (paymentMethod === "bit" && !bitAmountAllowed(amountIls)) {
+      throw new ApiError(
+        400,
+        `Bit payments are limited to ₪${UPAY_BIT_MAX_ILS}`,
+      );
+    }
+
+    const provider = upayProviderForMethod(paymentMethod);
     let purchase = await findPendingPurchase(
       db,
       claims.uid,
@@ -155,6 +183,8 @@ export async function POST(request: NextRequest) {
       response.upayForm = buildUpayFormFields(upayConfig, {
         amountIls: purchase.amountIls ?? amountIls,
         description,
+        method: paymentMethod,
+        payerPhone: payerPhone ?? undefined,
         returnUrl: `${origin}${path}?payment=success&provider=upay&purchaseId=${purchase.id}`,
         ipnUrl: `${origin}/api/v1/webhooks/upay?purchaseId=${purchase.id}`,
       });
