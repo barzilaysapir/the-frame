@@ -9,7 +9,10 @@ import { TermsDialog } from "@/components/checkout/TermsDialog";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
-import { completeUpayReturn } from "@/lib/client/complete-upay-return";
+import {
+  checkoutAfterPurchase,
+  submitUpayForm,
+} from "@/lib/client/upay-checkout";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -75,36 +78,42 @@ export function CheckoutPaymentPlaceholder({
   const planSupported = planId !== "subscription";
   const owned = result?.status === "paid" || returnPaid;
 
-  // uPay always comes back with ?payment=success. Confirm the buyer's own
-  // pending purchase (IPN is unreliable) and only then treat them as paid.
+  // uPay's returnurl always appends ?payment=success. That is not proof of
+  // payment — poll ownership (IPN / admin) and keep the pay button so a
+  // cancelled return is not a dead end. Do not POST /purchases/confirm here:
+  // that marked pending rows paid and Continue then skipped the uPay form.
   useEffect(() => {
     if (!user || returnedFromPayment !== "success") return;
     let cancelled = false;
-    void (async () => {
+    const check = async () => {
       try {
-        const paid = await completeUpayReturn(
+        const res = await fetchWithAuth(
           user,
-          itemType,
-          itemSlug,
-          searchParams.get("purchaseId"),
+          `/api/v1/me/purchases/status?itemType=${encodeURIComponent(itemType)}&itemSlug=${encodeURIComponent(itemSlug)}`,
         );
-        if (!cancelled && paid) setReturnPaid(true);
+        if (!res.ok) return;
+        const data = (await res.json()) as { status: "paid" | "none" };
+        if (!cancelled && data.status === "paid") setReturnPaid(true);
       } catch (err) {
-        console.error("[CheckoutPaymentPlaceholder] return confirm failed:", err);
+        console.error("[CheckoutPaymentPlaceholder] return status check failed:", err);
       }
-    })();
+    };
+    void check();
+    const interval = setInterval(check, 2500);
+    const stop = setTimeout(() => clearInterval(interval), 15000);
     return () => {
       cancelled = true;
+      clearInterval(interval);
+      clearTimeout(stop);
     };
-  }, [user, returnedFromPayment, itemType, itemSlug, searchParams]);
+  }, [user, returnedFromPayment, itemType, itemSlug]);
 
-  // Submit the hosted form as soon as fields arrive so the buyer isn't asked
-  // to click a second time.
+  // Backup if the imperative POST below is a no-op (e.g. the first submit
+  // raced the browser). The click handler is the primary navigation.
   useEffect(() => {
-    if (result?.upayForm) {
-      upayFormRef.current?.submit();
-    }
-  }, [result]);
+    if (owned || !result?.upayForm) return;
+    upayFormRef.current?.submit();
+  }, [result, owned]);
 
   const handleContinue = async () => {
     if (!user) return;
@@ -114,6 +123,11 @@ export function CheckoutPaymentPlaceholder({
     }
     setError(null);
     setBusy(true);
+    // Drop leftover returnurl query so a remount doesn't keep treating this
+    // visit as a just-completed payment.
+    if (typeof window !== "undefined" && window.location.search) {
+      window.history.replaceState(null, "", `${pathname}${window.location.hash}`);
+    }
     try {
       const res = await fetchWithAuth(user, "/api/v1/me/purchases", {
         method: "POST",
@@ -129,6 +143,12 @@ export function CheckoutPaymentPlaceholder({
         throw new Error(`purchase request failed with ${res.status}`);
       }
       const data = (await res.json()) as PurchaseApiResponse;
+      const step = checkoutAfterPurchase(data);
+      if (step.type === "redirect") {
+        submitUpayForm(step.form.action, step.form.fields);
+        setResult(data);
+        return;
+      }
       setResult(data);
       setBusy(false);
     } catch (err) {
