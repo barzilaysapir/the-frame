@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   buildUpayBrowserReturnUrl,
-  PAY_RETURN_FILE,
   sanitizePayReturnPath,
 } from "@/lib/payments/pay-return";
 import { WORKER_ORIGIN } from "@/lib/site";
@@ -13,10 +12,15 @@ describe("sanitizePayReturnPath", () => {
     );
   });
 
-  it("strips query and hash from the destination", () => {
+  it("strips query, hash, and uPay &error suffixes", () => {
     expect(
       sanitizePayReturnPath("/he/external-courses/vibe-on-heels?payment=success#x"),
     ).toBe("/he/external-courses/vibe-on-heels");
+    expect(
+      sanitizePayReturnPath(
+        "/he/external-courses/gisha-gmisha-foundations&errormessage=USER_NOT_EXISTS",
+      ),
+    ).toBe("/he/external-courses/gisha-gmisha-foundations");
   });
 
   it("rejects open redirects", () => {
@@ -29,11 +33,9 @@ describe("sanitizePayReturnPath", () => {
 });
 
 describe("buildUpayBrowserReturnUrl", () => {
-  it("puts the destination in the hash on the static file", () => {
+  it("returns the production course URL with no extra query", () => {
     expect(
-      buildUpayBrowserReturnUrl("/he/external-courses/vibe-on-heels"),
-    ).toBe(
-      `${WORKER_ORIGIN}${PAY_RETURN_FILE}?next=${encodeURIComponent("/he/external-courses/vibe-on-heels")}#/he/external-courses/vibe-on-heels`,
-    );
+      buildUpayBrowserReturnUrl("/he/external-courses/gisha-gmisha-foundations"),
+    ).toBe(`${WORKER_ORIGIN}/he/external-courses/gisha-gmisha-foundations`);
   });
 });

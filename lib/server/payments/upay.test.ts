@@ -38,13 +38,13 @@ describe("buildUpayFormFields", () => {
       config,
       params({
         returnUrl:
-          "http://localhost:4127/pay-return.html?next=%2Fhe%2Fexternal-courses%2Fvibe-on-heels#/he/external-courses/vibe-on-heels",
+          "http://localhost:4127/he/external-courses/vibe-on-heels",
         ipnUrl: "http://localhost:4127/api/v1/webhooks/upay?purchaseId=x",
       }),
     );
 
     expect(form.fields.returnurl).toBe(
-      "https://the-frame.barzilaysapir.workers.dev/pay-return.html?next=%2Fhe%2Fexternal-courses%2Fvibe-on-heels#/he/external-courses/vibe-on-heels",
+      "https://the-frame.barzilaysapir.workers.dev/he/external-courses/vibe-on-heels",
     );
     expect(form.fields.ipnurl).toBe(
       "https://the-frame.barzilaysapir.workers.dev/api/v1/webhooks/upay?purchaseId=x",

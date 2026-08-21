@@ -45,7 +45,7 @@ interface PurchaseRequestBody {
   itemSlug?: unknown;
   planId?: unknown;
   locale?: unknown;
-  /** In-app path after pay; sent to uPay as a hash on static `/pay-return.html`. */
+  /** In-app path after pay; uPay returnurl is this path on the production Worker. */
   returnPath?: unknown;
   /** `card` (default) or `bit`. Bit requires `phone`. */
   paymentMethod?: unknown;

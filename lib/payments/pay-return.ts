@@ -1,14 +1,13 @@
 import { isLocale } from "@/lib/i18n/config";
 import { WORKER_ORIGIN } from "@/lib/site";
 
-/** Served from `public/` as a Static Asset — the Worker does not run. */
-export const PAY_RETURN_FILE = "/pay-return.html";
-
 const DEFAULT_PAY_RETURN_PATH = "/he";
 
 /**
  * Locale-prefixed in-app path only. Rejects protocol-relative URLs, `..`,
  * and anything that is not `/he` or `/en` (with an optional subpath).
+ * uPay may glue `&errormessage=` onto the raw returnurl string (including
+ * onto a hash) — cut at `&` / `?` / `#`.
  */
 export function sanitizePayReturnPath(raw: string): string {
   let path = raw.trim();
@@ -19,7 +18,7 @@ export function sanitizePayReturnPath(raw: string): string {
   } catch {
     return DEFAULT_PAY_RETURN_PATH;
   }
-  const cut = path.split("?")[0]?.split("#")[0] ?? "";
+  const cut = path.split("&")[0]?.split("?")[0]?.split("#")[0] ?? "";
   if (
     !cut.startsWith("/") ||
     cut.includes("//") ||
@@ -36,14 +35,14 @@ export function sanitizePayReturnPath(raw: string): string {
 }
 
 /**
- * uPay `returnurl` for the buyer’s browser. Destination is in both `next`
- * and the hash so a gateway that appends `?payment=success` or drops one
- * of them still has the other. The file is static — Cloudflare will not
- * invoke the Worker on this hop.
+ * uPay `returnurl` always lands on production. A new `/pay-return.html`
+ * 404s there until this code is promoted to `main`, so we send the buyer
+ * to the real course path with no extra query (unique `?payment=success`
+ * was a cache miss that 1102'd).
  */
 export function buildUpayBrowserReturnUrl(returnPath: string): string {
   const path = sanitizePayReturnPath(
     returnPath.startsWith("/") ? returnPath : DEFAULT_PAY_RETURN_PATH,
   );
-  return `${WORKER_ORIGIN}${PAY_RETURN_FILE}?next=${encodeURIComponent(path)}#${path}`;
+  return `${WORKER_ORIGIN}${path}`;
 }
