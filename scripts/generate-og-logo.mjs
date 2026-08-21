@@ -59,7 +59,7 @@ async function main() {
 </svg>`,
   );
 
-  const out = path.join(ROOT, "public/og/logo-horizontal-brand-kit.jpg");
+  const out = path.join(ROOT, "public/og/logo-horizontal-brand-kit-v2.jpg");
   fs.mkdirSync(path.dirname(out), { recursive: true });
   await sharp({
     create: { width: WIDTH, height: HEIGHT, channels: 3, background: BACKGROUND },
@@ -74,7 +74,7 @@ async function main() {
 
   const info = await sharp(out).metadata();
   console.log(
-    `og/logo-horizontal-brand-kit.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
+    `og/logo-horizontal-brand-kit-v2.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
   );
 }
 
