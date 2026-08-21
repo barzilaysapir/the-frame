@@ -31,7 +31,7 @@ import {
   setPendingPurchaseProvider,
   upsertUserFromClaims,
 } from "@/lib/server/users/repository";
-import { publicOriginFromRequest, upayCallbackOrigin } from "@/lib/server/payments/checkout-origin";
+import { WORKER_ORIGIN } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -44,7 +44,7 @@ interface PurchaseRequestBody {
   itemSlug?: unknown;
   planId?: unknown;
   locale?: unknown;
-  /** Path (not a full URL) the buyer should land back on after paying/cancelling — always resolved against this request's public origin, so a client-supplied value can't redirect off-site. */
+  /** Path (not a full URL) appended to the production Worker origin after paying. */
   returnPath?: unknown;
   /** `card` (default) or `bit`. Bit requires `phone`. */
   paymentMethod?: unknown;
@@ -172,13 +172,7 @@ export async function POST(request: NextRequest) {
     };
 
     const path = returnPath && returnPath.startsWith("/") ? returnPath : "/";
-    const origin = upayCallbackOrigin(
-      publicOriginFromRequest({
-        url: request.url,
-        forwardedHost: request.headers.get("x-forwarded-host"),
-        forwardedProto: request.headers.get("x-forwarded-proto"),
-      }),
-    );
+    const origin = WORKER_ORIGIN;
 
     const upayConfig = await getUpayConfig();
     if (upayConfig) {

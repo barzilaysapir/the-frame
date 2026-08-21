@@ -1,29 +1,13 @@
-import { isUnwiredPlaceholderOrigin, WORKER_ORIGIN } from "@/lib/site";
+import { WORKER_HOSTNAME, WORKER_ORIGIN } from "@/lib/site";
 
 function cannotSendToUpay(url: URL): boolean {
-  if (url.protocol !== "https:") return true;
-  const host = url.hostname.toLowerCase();
-  if (
-    host === "localhost" ||
-    host === "127.0.0.1" ||
-    host === "::1" ||
-    host.endsWith(".localhost")
-  ) {
-    return true;
-  }
-  if (
-    /^10\./.test(host) ||
-    /^192\.168\./.test(host) ||
-    /^172\.(1[6-9]|2\d|3[0-1])\./.test(host)
-  ) {
-    return true;
-  }
-  return isUnwiredPlaceholderOrigin(url.origin);
+  return url.protocol !== "https:" || url.hostname.toLowerCase() !== WORKER_HOSTNAME;
 }
 
 /**
- * uPay rejects loopback/http `returnurl` (`wronginputreturnurl`). Keep the
- * path and query, move the origin to the live Cloudflare Worker.
+ * uPay `wronginputreturnurl` rejects localhost and any host that is not
+ * the production Worker. Preview aliases (`preview-the-frame…`) are a
+ * different hostname — keep the path/query, move the origin.
  */
 export function rewriteUpayCallbackUrl(urlString: string): string {
   try {

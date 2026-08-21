@@ -9,6 +9,7 @@
  * `theframebybarzilay.com` is ignored if still present in an env var.
  */
 export const WORKER_ORIGIN = "https://the-frame.barzilaysapir.workers.dev";
+export const WORKER_HOSTNAME = new URL(WORKER_ORIGIN).hostname;
 
 const UNWIRED_HOSTS = new Set([
   "theframebybarzilay.com",
@@ -39,10 +40,3 @@ function configuredSiteUrl(): string | null {
 
 export const SITE_URL = configuredSiteUrl() ?? WORKER_ORIGIN;
 
-export function isUnwiredPlaceholderOrigin(origin: string): boolean {
-  try {
-    return UNWIRED_HOSTS.has(new URL(origin).hostname.toLowerCase());
-  } catch {
-    return false;
-  }
-}
