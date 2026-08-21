@@ -17,9 +17,9 @@ const ROOT = path.join(__dirname, "..");
 const WIDTH = 1200;
 const HEIGHT = 630;
 const BACKGROUND = { r: 15, g: 15, b: 17 };
-const MARK = 240;
-const GAP = 40;
-const WORD_W = 520;
+const MARK = 360;
+const GAP = 35;
+const WORD_W = 570;
 
 async function main() {
   const mark = await sharp(path.join(ROOT, "public/logos/logo-mark.png"))
@@ -59,7 +59,7 @@ async function main() {
 </svg>`,
   );
 
-  const out = path.join(ROOT, "public/og/logo-silhouette-hq.jpg");
+  const out = path.join(ROOT, "public/og/logo-horizontal.jpg");
   fs.mkdirSync(path.dirname(out), { recursive: true });
   await sharp({
     create: { width: WIDTH, height: HEIGHT, channels: 3, background: BACKGROUND },
@@ -74,7 +74,7 @@ async function main() {
 
   const info = await sharp(out).metadata();
   console.log(
-    `og/logo-silhouette-hq.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
+    `og/logo-horizontal.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
   );
 }
 
