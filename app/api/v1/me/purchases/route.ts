@@ -31,7 +31,8 @@ import {
   setPendingPurchaseProvider,
   upsertUserFromClaims,
 } from "@/lib/server/users/repository";
-import { publicOriginFromRequest } from "@/lib/server/payments/checkout-origin";
+import { publicOriginFromRequest, upayCallbackOrigin } from "@/lib/server/payments/checkout-origin";
+import { SITE_URL } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -172,11 +173,14 @@ export async function POST(request: NextRequest) {
     };
 
     const path = returnPath && returnPath.startsWith("/") ? returnPath : "/";
-    const origin = publicOriginFromRequest({
-      url: request.url,
-      forwardedHost: request.headers.get("x-forwarded-host"),
-      forwardedProto: request.headers.get("x-forwarded-proto"),
-    });
+    const origin = upayCallbackOrigin(
+      publicOriginFromRequest({
+        url: request.url,
+        forwardedHost: request.headers.get("x-forwarded-host"),
+        forwardedProto: request.headers.get("x-forwarded-proto"),
+      }),
+      SITE_URL,
+    );
 
     const upayConfig = await getUpayConfig();
     if (upayConfig) {
