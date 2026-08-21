@@ -6,11 +6,7 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { parsePriceIls } from "@/lib/pricing";
 import { getCachedExternalCourse } from "@/lib/server/catalog";
-import {
-  DEFAULT_SHARE_IMAGE,
-  pageShareMetadata,
-  resolveShareOrigin,
-} from "@/lib/share-metadata";
+import { DEFAULT_SHARE_IMAGE, pageShareMetadata } from "@/lib/share-metadata";
 
 export const revalidate = 3600;
 
@@ -32,7 +28,6 @@ export async function generateMetadata({
     description: course.description || course.tagline,
     image: course.coverImage || DEFAULT_SHARE_IMAGE,
     imageAlt: course.title,
-    origin: await resolveShareOrigin(),
   });
 }
 

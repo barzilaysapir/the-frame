@@ -12,7 +12,7 @@ import { isLocale } from "@/lib/i18n/config";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
 import { getCachedInstructor, getCachedRoutine } from "@/lib/server/catalog";
-import { pageShareMetadata, resolveShareOrigin } from "@/lib/share-metadata";
+import { pageShareMetadata } from "@/lib/share-metadata";
 
 // Seed-catalog data changes rarely (via migrations, not user writes) — cache
 // the rendered page for 1 hour instead of refetching D1 on every request.
@@ -52,7 +52,6 @@ export async function generateMetadata({
     description,
     image: routine.poster,
     imageAlt: routine.title,
-    origin: await resolveShareOrigin(),
   });
 }
 
