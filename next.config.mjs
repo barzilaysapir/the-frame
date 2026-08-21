@@ -46,11 +46,11 @@ function buildCsp() {
     `frame-src 'self' https://accounts.google.com https://www.google.com${authFrame}`,
     `object-src 'none'`,
     `base-uri 'self'`,
-    // uPay's dynamic payment form (lib/server/payments/upay.ts) is a real
-    // <form method="post"> submitted client-side straight to their hosted
-    // checkout — form-action must explicitly allow it or the browser
-    // silently blocks the submit with no visible error beyond the console.
-    `form-action 'self' https://app.upay.co.il`,
+    // uPay's checkout is a POST to https://app.upay.co.il/API6/…. Chrome
+    // treats `https://app.upay.co.il` (no path) as origin-only, so that
+    // URL is blocked with form-action despite listing the host. A trailing
+    // slash allows any path; extra hosts cover post-submit redirects.
+    `form-action 'self' https://app.upay.co.il/ https://*.upay.co.il/ https://upay.co.il/`,
     `frame-ancestors 'self'`,
   ];
   // Rewrites every http:// sub-resource request on the page to https:// before
