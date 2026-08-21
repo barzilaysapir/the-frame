@@ -1,8 +1,7 @@
 /**
  * Builds the default Open Graph share card: full lockup (mark + "The Frame"
  * wordmark + "by Barzilay") on the site background, 1200×630 JPEG. The OG
- * wordmark source stays high-resolution; the 240px header asset is too small
- * to enlarge without softening the script lettering.
+ * source comes from the current brand kit rather than the retired wordmark.
  *
  * Usage: node scripts/generate-og-logo.mjs
  */
@@ -31,9 +30,10 @@ async function main() {
     .toBuffer();
 
   const wordmark = await sharp(
-    path.join(ROOT, "scripts/assets/logo-wordmark-light-cream-og.png"),
+    path.join(ROOT, "scripts/assets/logo-wordmark-light-cream-brand-kit.png"),
   )
-    .resize(WORD_W, null, { fit: "inside" })
+    .resize(WORD_W, null, { fit: "inside", kernel: "lanczos3" })
+    .sharpen({ sigma: 1 })
     .png()
     .toBuffer();
   const wm = await sharp(wordmark).metadata();
@@ -59,7 +59,7 @@ async function main() {
 </svg>`,
   );
 
-  const out = path.join(ROOT, "public/og/logo-horizontal.jpg");
+  const out = path.join(ROOT, "public/og/logo-horizontal-brand-kit.jpg");
   fs.mkdirSync(path.dirname(out), { recursive: true });
   await sharp({
     create: { width: WIDTH, height: HEIGHT, channels: 3, background: BACKGROUND },
@@ -74,7 +74,7 @@ async function main() {
 
   const info = await sharp(out).metadata();
   console.log(
-    `og/logo-horizontal.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
+    `og/logo-horizontal-brand-kit.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
   );
 }
 

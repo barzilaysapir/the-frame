@@ -5,7 +5,7 @@ import { SITE_URL } from "@/lib/site";
  * Site-wide share image: full lockup (mark + wordmark) at 1200×630.
  * Course and lesson pages override this with their own cover.
  */
-export const DEFAULT_SHARE_IMAGE = "/og/logo-horizontal.jpg";
+export const DEFAULT_SHARE_IMAGE = "/og/logo-horizontal-brand-kit.jpg";
 export const DEFAULT_SHARE_IMAGE_WIDTH = 1200;
 export const DEFAULT_SHARE_IMAGE_HEIGHT = 630;
 
