@@ -133,6 +133,11 @@ function toCatalogExternalCourse(
       id: lesson.id,
       title: localizeExternalCourseLessonTitle(locale, course.slug, lesson.id),
       allowMirror: lesson.allowMirror !== false,
+      chapters: (lesson.chapters ?? []).map((chapter) => ({
+        id: chapter.id,
+        time: chapter.time,
+        label: chapter.label,
+      })),
     })),
   };
 }

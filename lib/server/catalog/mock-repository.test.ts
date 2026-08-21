@@ -227,6 +227,7 @@ describe("mockCatalogRepository.getExternalCourse", () => {
         (lesson) =>
           lesson.id.length > 0 &&
           lesson.title.length > 0 &&
+          Array.isArray(lesson.chapters) &&
           !("r2Key" in lesson),
       ),
     ).toBe(true);
