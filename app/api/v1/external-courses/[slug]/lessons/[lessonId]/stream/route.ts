@@ -3,6 +3,8 @@ import { resolveCatalog } from "@/lib/server/catalog";
 import {
   getCourseVideosBucket,
   parseRangeHeader,
+  describeR2VideoRange,
+  applyR2VideoContentType,
   verifyLessonPlaybackSignature,
 } from "@/lib/server/course-videos";
 
@@ -85,27 +87,22 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   // R2 proxy tries to serialize the undici/Next Headers object with devalue
   // and throws `DevalueError: Cannot stringify arbitrary non-POJOs`.
   copyR2HttpMetadata(headers, object.httpMetadata);
-  if (!headers.get("content-type")) {
-    headers.set("content-type", "video/mp4");
-  }
+  applyR2VideoContentType(headers);
   headers.set("accept-ranges", "bytes");
   headers.set("etag", object.httpEtag);
-  // Playback URLs are per-viewer and short-lived — never let a shared cache
-  // (browser or CDN) retain the video body past this request.
-  headers.set("cache-control", "private, max-age=0, no-store");
+  headers.set("cache-control", "private, max-age=0");
 
-  if (range && object.range) {
-    const resolved = object.range;
-    const start = "offset" in resolved && resolved.offset !== undefined
-      ? resolved.offset
-      : object.size - ("suffix" in resolved ? resolved.suffix : 0);
-    const length = "length" in resolved && resolved.length !== undefined
-      ? resolved.length
-      : object.size - start;
-    const end = start + length - 1;
-
-    headers.set("content-range", `bytes ${start}-${end}/${object.size}`);
-    headers.set("content-length", String(length));
+  if (range) {
+    const described = describeR2VideoRange(range, object.size, object.range);
+    if (!described) {
+      headers.set("content-range", `bytes */${object.size}`);
+      return new NextResponse(null, { status: 416, headers });
+    }
+    headers.set(
+      "content-range",
+      `bytes ${described.start}-${described.end}/${object.size}`,
+    );
+    headers.set("content-length", String(described.length));
     return new NextResponse(object.body, { status: 206, headers });
   }
 

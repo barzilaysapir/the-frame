@@ -252,7 +252,8 @@ export function DanceVideoPlayer({
           ref={videoRef}
           src={src}
           poster={poster}
-          className="h-full w-full object-cover transition-transform duration-300"
+          preload="auto"
+          className="h-full w-full object-contain transition-transform duration-300"
           style={{ transform: isMirrored ? "scaleX(-1)" : "scaleX(1)" }}
           onClick={togglePlay}
           playsInline

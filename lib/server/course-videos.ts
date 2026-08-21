@@ -133,3 +133,54 @@ export function parseRangeHeader(header: string | null): ParsedByteRange | null 
   if (end < offset) return null;
   return { offset, length: end - offset + 1 };
 }
+
+/** R2's echoed range on a GET, or undefined when the binding omits it. */
+export type EchoedR2Range =
+  | { offset: number; length?: number }
+  | { offset?: number; length: number }
+  | { suffix: number };
+
+/**
+ * Byte window to advertise on a 206. Prefer R2's echoed range when present;
+ * otherwise derive it from the request. Returns null for an unsatisfiable
+ * range (HTTP 416). Always 206 when the client sent Range — a 200 on a
+ * Range request makes Safari/Chrome media playback stutter or stall.
+ */
+export function describeR2VideoRange(
+  requested: ParsedByteRange,
+  objectSize: number,
+  echoed?: EchoedR2Range,
+): { start: number; end: number; length: number } | null {
+  if (objectSize <= 0) return null;
+
+  let start: number;
+  let end: number;
+  if (echoed && "suffix" in echoed) {
+    start = Math.max(0, objectSize - echoed.suffix);
+    end = objectSize - 1;
+  } else if (echoed) {
+    start = echoed.offset ?? 0;
+    const length = echoed.length ?? objectSize - start;
+    end = start + length - 1;
+  } else if ("suffix" in requested) {
+    start = Math.max(0, objectSize - requested.suffix);
+    end = objectSize - 1;
+  } else {
+    start = requested.offset;
+    const length = requested.length ?? objectSize - start;
+    end = start + length - 1;
+  }
+
+  if (start < 0 || start >= objectSize) return null;
+  end = Math.min(end, objectSize - 1);
+  if (end < start) return null;
+  return { start, end, length: end - start + 1 };
+}
+
+/** Uploads often land as octet-stream; browsers need video/mp4 to play. */
+export function applyR2VideoContentType(headers: Headers): void {
+  const contentType = headers.get("content-type");
+  if (!contentType || contentType === "application/octet-stream") {
+    headers.set("content-type", "video/mp4");
+  }
+}
