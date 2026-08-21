@@ -63,6 +63,8 @@ export interface UpayFormParams {
   returnUrl: string;
   ipnUrl: string;
   method?: UpayPaymentMethod;
+  /** Israeli mobile `05xxxxxxxx` — required for Bit (uPay sends the charge to this phone). */
+  payerPhone?: string;
 }
 
 export interface UpayFormFields {
@@ -77,13 +79,13 @@ const UPAY_ACTION_URL = "https://app.upay.co.il/API6/clientsecure/redirectpage.p
  * The client renders these as hidden inputs in a real `<form>` and submits
  * it — this can't be a plain redirect URL since uPay's endpoint is a POST.
  *
- * Bit: live preview returned `wronginputpaymentmethod bit` for
- * `paymentmethod=bit`. That field only accepts `0` (card / default).
- * uPay's own Bit-capable POS page (`BANKRESOURCES/.../redirectpages`)
- * sends `providername=bit` to `/API6/clientsecure/json.php` when the
- * buyer picks Bit (radio value 1). `redirectpage.php` accepts that same
- * field (it does not return `wronginputprovidername`). Card checkout
- * omits it.
+ * Bit: uPay’s product is “enter the customer’s mobile + amount, send
+ * the charge to their Bit app” (not the hosted card page).
+ * `redirectpage.php` rejects `paymentmethod=bit` (`wronginputpaymentmethod bit`)
+ * and `phone=<mobile>` (`wronginputphone`). The POS page posts
+ * `providername=bit` plus `cellphone` / `cellphonenotify` to json.php.
+ * We put those fields on the same public form POST so a Bit-enabled
+ * merchant can send the request without a POS session.
  */
 export function buildUpayFormFields(
   config: UpayConfig,
@@ -108,6 +110,10 @@ export function buildUpayFormFields(
   };
   if (method === "bit") {
     fields.providername = "bit";
+    if (params.payerPhone) {
+      fields.cellphone = params.payerPhone;
+      fields.cellphonenotify = params.payerPhone;
+    }
   }
   return {
     action: UPAY_ACTION_URL,

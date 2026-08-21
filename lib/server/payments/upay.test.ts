@@ -33,11 +33,17 @@ describe("buildUpayFormFields", () => {
     expect(form.fields.providername).toBeUndefined();
   });
 
-  it("adds providername=bit for the Bit checkout path", () => {
-    const form = buildUpayFormFields(config, params({ method: "bit" }));
+  it("adds providername=bit and the buyer’s mobile for Bit", () => {
+    const form = buildUpayFormFields(
+      config,
+      params({ method: "bit", payerPhone: "0501234567" }),
+    );
 
     expect(form.fields.providername).toBe("bit");
     expect(form.fields.paymentmethod).toBeUndefined();
+    expect(form.fields.phone).toBeUndefined();
+    expect(form.fields.cellphone).toBe("0501234567");
+    expect(form.fields.cellphonenotify).toBe("0501234567");
     expect(form.fields.amount).toBe("200.00");
   });
 });
