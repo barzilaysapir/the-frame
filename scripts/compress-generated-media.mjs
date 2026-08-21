@@ -31,6 +31,7 @@ const NEW_AVATARS = [
   "tali-mizrahi.jpg",
   "tamir-levy.jpg",
   "yael-bar.jpg",
+  "yahel-hayat.jpg",
   "yasmin-kadosh.jpg",
   "yonatan-tesfaye.jpg",
 ];
