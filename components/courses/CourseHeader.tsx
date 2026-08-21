@@ -57,19 +57,23 @@ export function CourseHeader({ course, locale, labels }: CourseHeaderProps) {
           </Link>
         </p>
         {course.tagline ? (
-          <p className="mt-5 text-lg text-frame-silver">{course.tagline}</p>
+          <p className="mt-6 text-lg leading-snug text-frame-silver md:whitespace-nowrap">
+            {course.tagline}
+          </p>
         ) : null}
+        <CourseFeatureGrid
+          features={course.features}
+          className="mx-auto mt-8 max-w-2xl"
+        />
         {course.description ? (
-          <p className="mt-4 text-frame-silver">{course.description}</p>
+          <p className="mx-auto mt-8 max-w-xl text-pretty text-frame-silver">
+            {course.description}
+          </p>
         ) : null}
         <CourseTopicChips
           topics={course.curriculumTopics}
           heading={course.curriculumHeading}
-          className="mx-auto mt-6 max-w-lg"
-        />
-        <CourseFeatureGrid
-          features={course.features}
-          className="mx-auto mt-6 max-w-lg"
+          className="mx-auto mt-5 max-w-lg"
         />
         {course.promoVideo ? (
           <CoursePromoVideo

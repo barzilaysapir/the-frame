@@ -73,7 +73,16 @@ export interface CatalogExternalCourseLesson {
 }
 
 /** Icon keys mapped to a Lucide component in CourseFeatureGrid. */
-export type CourseFeatureIcon = "sparkles" | "footprints" | "home" | "infinity";
+export type CourseFeatureIcon =
+  | "sparkles"
+  | "footprints"
+  | "home"
+  | "infinity"
+  | "music"
+  | "heart"
+  | "standing"
+  | "users"
+  | "list";
 
 export interface CatalogExternalCourseFeature {
   icon: CourseFeatureIcon;

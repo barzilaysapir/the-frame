@@ -119,7 +119,7 @@
     ],
     "promoPlaceholder": "Coming soon",
     "checkingAccess": "Checking your access…",
-    "youOwnThis": "You already have access to this course."
+    "accessBadge": "Access unlocked"
   },
   "about": {
     "metaTitle": "About",
