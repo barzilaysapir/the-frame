@@ -15,3 +15,7 @@
 # catalog images so a same-URL replacement is picked up within a day.
 /course-promos/*
   Cache-Control: public,max-age=86400
+
+# Tiny uPay return hop (no Worker). Short cache so a script tweak is picked up.
+/pay-return.html
+  Cache-Control: public,max-age=3600

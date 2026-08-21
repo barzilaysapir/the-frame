@@ -17,7 +17,7 @@ describe("checkoutAfterPurchase", () => {
       fields: {
         amount: "1.00",
         returnurl:
-          "http://localhost:4127/he/external-courses/vibe-on-heels?payment=success",
+          "http://localhost:4127/pay-return.html?next=%2Fhe%2Fexternal-courses%2Fvibe-on-heels#/he/external-courses/vibe-on-heels",
       },
     };
     expect(checkoutAfterPurchase({ status: "pending", upayForm: form })).toEqual({
@@ -27,7 +27,7 @@ describe("checkoutAfterPurchase", () => {
         fields: {
           amount: "1.00",
           returnurl:
-            "https://the-frame.barzilaysapir.workers.dev/he/external-courses/vibe-on-heels?payment=success",
+            "https://the-frame.barzilaysapir.workers.dev/pay-return.html?next=%2Fhe%2Fexternal-courses%2Fvibe-on-heels#/he/external-courses/vibe-on-heels",
         },
       },
     });

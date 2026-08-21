@@ -10,6 +10,14 @@ import type {
   VideoChapter,
 } from "@/lib/routines";
 import type { Locale } from "@/lib/i18n/config";
+import {
+  COURSE_FEATURE_ICONS,
+  isCourseFeatureIcon,
+  type CourseFeatureIcon,
+} from "@/lib/catalog/course-feature-icons";
+
+export { COURSE_FEATURE_ICONS, isCourseFeatureIcon };
+export type { CourseFeatureIcon };
 
 export interface CatalogChapter extends VideoChapter {
   label: string;
@@ -71,18 +79,6 @@ export interface CatalogExternalCourseLesson {
   /** False hides the player mirror control. Defaults to true. */
   allowMirror: boolean;
 }
-
-/** Icon keys mapped to a Lucide component in CourseFeatureGrid. */
-export type CourseFeatureIcon =
-  | "sparkles"
-  | "footprints"
-  | "home"
-  | "infinity"
-  | "music"
-  | "heart"
-  | "standing"
-  | "users"
-  | "list";
 
 export interface CatalogExternalCourseFeature {
   icon: CourseFeatureIcon;

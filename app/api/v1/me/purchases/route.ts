@@ -31,6 +31,7 @@ import {
   setPendingPurchaseProvider,
   upsertUserFromClaims,
 } from "@/lib/server/users/repository";
+import { buildUpayBrowserReturnUrl } from "@/lib/payments/pay-return";
 import { WORKER_ORIGIN } from "@/lib/site";
 
 export const runtime = "nodejs";
@@ -44,7 +45,7 @@ interface PurchaseRequestBody {
   itemSlug?: unknown;
   planId?: unknown;
   locale?: unknown;
-  /** Path (not a full URL) appended to the production Worker origin after paying. */
+  /** In-app path after pay; sent to uPay as a hash on static `/pay-return.html`. */
   returnPath?: unknown;
   /** `card` (default) or `bit`. Bit requires `phone`. */
   paymentMethod?: unknown;
@@ -171,7 +172,7 @@ export async function POST(request: NextRequest) {
       amountIls: purchase.amountIls,
     };
 
-    const path = returnPath && returnPath.startsWith("/") ? returnPath : "/";
+    const path = returnPath && returnPath.startsWith("/") ? returnPath : "/he";
     const origin = WORKER_ORIGIN;
 
     const upayConfig = await getUpayConfig();
@@ -181,7 +182,7 @@ export async function POST(request: NextRequest) {
         description,
         method: paymentMethod,
         payerPhone: payerPhone ?? undefined,
-        returnUrl: `${origin}${path}?payment=success&provider=upay&purchaseId=${purchase.id}`,
+        returnUrl: buildUpayBrowserReturnUrl(path),
         ipnUrl: `${origin}/api/v1/webhooks/upay?purchaseId=${purchase.id}`,
       });
     }

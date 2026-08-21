@@ -57,11 +57,13 @@ describe("upayCallbackOrigin", () => {
 
   it("builds a real https returnurl from local checkout", () => {
     const origin = upayCallbackOrigin("http://localhost:4127");
-    const returnUrl = `${origin}/he/external-courses/vibe-on-heels?payment=success&provider=upay`;
+    const returnUrl = `${origin}/pay-return.html?next=${encodeURIComponent("/he/external-courses/vibe-on-heels")}#/he/external-courses/vibe-on-heels`;
     const parsed = new URL(returnUrl);
     expect(parsed.protocol).toBe("https:");
     expect(parsed.hostname).toBe("the-frame.barzilaysapir.workers.dev");
-    expect(parsed.pathname).toBe("/he/external-courses/vibe-on-heels");
+    expect(parsed.pathname).toBe("/pay-return.html");
+    expect(parsed.searchParams.get("next")).toBe("/he/external-courses/vibe-on-heels");
+    expect(parsed.hash).toBe("#/he/external-courses/vibe-on-heels");
   });
 });
 
