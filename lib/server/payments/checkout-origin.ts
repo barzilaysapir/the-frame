@@ -1,4 +1,4 @@
-import { WORKER_ORIGIN } from "@/lib/site";
+import { SITE_URL, WORKER_ORIGIN } from "@/lib/site";
 
 /**
  * Public origin of the incoming request. Used for logging/host detection.
@@ -42,6 +42,27 @@ export function isPublicHttpsOrigin(origin: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Origin WhatsApp/Facebook should fetch `og:image` from. PR preview Workers
+ * serve this branch's new OG asset; production 404s it until merge.
+ * Prefer the request host when it is a public https origin. Localhost falls
+ * back to SITE_URL so `next dev` still emits an absolute URL.
+ *
+ * uPay must not use this — see `upayCallbackOrigin`.
+ */
+export function shareOriginFromHeaders(input: {
+  host?: string | null;
+  proto?: string | null;
+}): string {
+  const host = input.host?.split(",")[0]?.trim();
+  if (!host) return SITE_URL.replace(/\/$/, "");
+  const proto = input.proto?.split(",")[0]?.trim() || "https";
+  const origin = `${proto}://${host}`.replace(/\/$/, "");
+  const httpsOrigin = origin.replace(/^http:\/\//i, "https://");
+  if (isPublicHttpsOrigin(httpsOrigin)) return httpsOrigin;
+  return SITE_URL.replace(/\/$/, "");
 }
 
 /** uPay only gets the production Worker host — not preview aliases or localhost. */

@@ -14,7 +14,14 @@ import {
   locales,
   type Locale,
 } from "@/lib/i18n/config";
-import { SITE_URL } from "@/lib/site";
+import { resolveShareOrigin } from "@/lib/server/share-origin";
+import {
+  DEFAULT_SHARE_IMAGE,
+  DEFAULT_SHARE_IMAGE_HEIGHT,
+  DEFAULT_SHARE_IMAGE_WIDTH,
+  absoluteAssetUrl,
+  shareImageFields,
+} from "@/lib/share-metadata";
 import { FAVICON_DARK, FAVICON_LIGHT } from "@/lib/favicon";
 import "../globals.css";
 
@@ -49,9 +56,10 @@ export async function generateMetadata({
   if (!isLocale(localeParam)) return {};
   const locale = localeParam;
   const dict = await getDictionary(locale);
+  const origin = await resolveShareOrigin();
 
   return {
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(origin),
     title: {
       default: dict.meta.siteTitle,
       template: "%s | The Frame by Barzilay",
@@ -63,11 +71,19 @@ export async function generateMetadata({
       siteName: "The Frame by Barzilay",
       locale: locale === "he" ? "he_IL" : "en_US",
       type: "website",
+      images: shareImageFields({
+        url: DEFAULT_SHARE_IMAGE,
+        alt: "The Frame by Barzilay",
+        width: DEFAULT_SHARE_IMAGE_WIDTH,
+        height: DEFAULT_SHARE_IMAGE_HEIGHT,
+        origin,
+      }),
     },
     twitter: {
       card: "summary_large_image",
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
+      images: [absoluteAssetUrl(DEFAULT_SHARE_IMAGE, origin)],
     },
     icons: {
       icon: [

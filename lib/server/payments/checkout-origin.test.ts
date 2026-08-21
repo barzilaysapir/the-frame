@@ -2,9 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   isPublicHttpsOrigin,
   publicOriginFromRequest,
+  shareOriginFromHeaders,
   upayCallbackOrigin,
 } from "@/lib/server/payments/checkout-origin";
-import { WORKER_ORIGIN } from "@/lib/site";
+import { SITE_URL, WORKER_ORIGIN } from "@/lib/site";
 
 describe("publicOriginFromRequest", () => {
   it("uses the request URL when no forwarded headers are present", () => {
@@ -70,5 +71,44 @@ describe("isPublicHttpsOrigin", () => {
     expect(isPublicHttpsOrigin("https://example.workers.dev")).toBe(true);
     expect(isPublicHttpsOrigin("http://localhost:4127")).toBe(false);
     expect(isPublicHttpsOrigin("https://localhost")).toBe(false);
+  });
+});
+
+describe("shareOriginFromHeaders", () => {
+  const previewHost =
+    "cursor-whatsapp-share-image-44fa-the-frame.barzilaysapir.workers.dev";
+
+  it("uses the forwarded preview host so og:image is fetchable before merge", () => {
+    expect(
+      shareOriginFromHeaders({
+        host: previewHost,
+        proto: "https",
+      }),
+    ).toBe(`https://${previewHost}`);
+  });
+
+  it("uses the first host when x-forwarded-host is a list", () => {
+    expect(
+      shareOriginFromHeaders({
+        host: `${previewHost}, the-frame.barzilaysapir.workers.dev`,
+        proto: "https, http",
+      }),
+    ).toBe(`https://${previewHost}`);
+  });
+
+  it("falls back to SITE_URL for localhost and missing host", () => {
+    expect(shareOriginFromHeaders({ host: "localhost:4127" })).toBe(
+      SITE_URL.replace(/\/$/, ""),
+    );
+    expect(shareOriginFromHeaders({})).toBe(SITE_URL.replace(/\/$/, ""));
+  });
+
+  it("upgrades http to https for public hosts", () => {
+    expect(
+      shareOriginFromHeaders({
+        host: "preview-the-frame.barzilaysapir.workers.dev",
+        proto: "http",
+      }),
+    ).toBe("https://preview-the-frame.barzilaysapir.workers.dev");
   });
 });
