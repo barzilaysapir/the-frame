@@ -119,7 +119,7 @@
     ],
     "promoPlaceholder": "בקרוב",
     "checkingAccess": "בודקים את הגישה שלכם…",
-    "youOwnThis": "כבר יש לכם גישה לקורס הזה."
+    "accessBadge": "יש גישה"
   },
   "about": {
     "metaTitle": "אודות",

@@ -1,4 +1,14 @@
-import { Footprints, Home, Infinity, Sparkles } from "lucide-react";
+import {
+  Footprints,
+  Heart,
+  Home,
+  Infinity,
+  ListOrdered,
+  Music,
+  PersonStanding,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import type { CourseFeatureIcon } from "@/lib/server/catalog/types";
 import { cn } from "@/lib/utils";
 
@@ -7,6 +17,11 @@ const ICONS: Record<CourseFeatureIcon, typeof Sparkles> = {
   footprints: Footprints,
   home: Home,
   infinity: Infinity,
+  music: Music,
+  heart: Heart,
+  standing: PersonStanding,
+  users: Users,
+  list: ListOrdered,
 };
 
 interface CourseFeatureGridProps {

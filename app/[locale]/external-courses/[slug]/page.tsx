@@ -39,9 +39,8 @@ export default async function ExternalCourseDetailPage({
   const course = await getCachedExternalCourse(locale, slug);
   if (!course) notFound();
 
-  const hasLessons = course.lessons.length > 0;
-
-  if (!hasLessons) {
+  const priceIls = parsePriceIls(course.priceDisplay);
+  if (priceIls == null) {
     return (
       <CourseComingSoon
         course={course}
@@ -56,9 +55,6 @@ export default async function ExternalCourseDetailPage({
       />
     );
   }
-
-  const priceIls = parsePriceIls(course.priceDisplay);
-  if (priceIls == null) notFound();
 
   return (
     <CourseAccessGate

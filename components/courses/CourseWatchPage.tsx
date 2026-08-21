@@ -33,6 +33,7 @@ export function CourseWatchPage({ course, locale, dict }: CourseWatchPageProps) 
           course={course}
           locale={locale}
           externalCourseLabel={dict.externalCourses.tag}
+          accessLabel={dict.externalCourses.accessBadge}
           className="mb-4"
         />
         <h1 className="text-balance font-display text-4xl font-black leading-[0.98] text-white sm:text-5xl">
@@ -40,9 +41,6 @@ export function CourseWatchPage({ course, locale, dict }: CourseWatchPageProps) 
         </h1>
         <p className="mt-3 text-sm text-frame-silver">
           {formatMessage(dict.tutorials.taughtBy, { name: course.provider })}
-        </p>
-        <p className="mt-4 text-sm font-medium text-frame-cyan">
-          {dict.externalCourses.youOwnThis}
         </p>
       </section>
 
