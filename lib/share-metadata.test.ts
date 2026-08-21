@@ -20,9 +20,7 @@ afterEach(() => {
 describe("absoluteAssetUrl", () => {
   it("joins a public path onto the canonical site origin", async () => {
     const { absoluteAssetUrl } = await loadShareMetadata(PRODUCTION_ORIGIN);
-    expect(absoluteAssetUrl("/routine-posters/routine-poster-frame-studio.png")).toBe(
-      `${PRODUCTION_ORIGIN}/routine-posters/routine-poster-frame-studio.png`,
-    );
+    expect(absoluteAssetUrl("/icon.png")).toBe(`${PRODUCTION_ORIGIN}/icon.png`);
   });
 
   it("leaves an already-absolute URL unchanged", async () => {
@@ -33,36 +31,50 @@ describe("absoluteAssetUrl", () => {
   });
 });
 
+describe("courseShareImage", () => {
+  it("uses dedicated course art", async () => {
+    const { courseShareImage } = await loadShareMetadata(PRODUCTION_ORIGIN);
+    expect(courseShareImage("/course-covers/gisha-gmisha-foundations.jpg")).toBe(
+      "/course-covers/gisha-gmisha-foundations.jpg",
+    );
+  });
+
+  it("falls back to the brand mark for recycled routine posters", async () => {
+    const { courseShareImage, DEFAULT_SHARE_IMAGE } =
+      await loadShareMetadata(PRODUCTION_ORIGIN);
+    expect(
+      courseShareImage("/routine-posters/routine-poster-frame-studio.png"),
+    ).toBe(DEFAULT_SHARE_IMAGE);
+  });
+});
+
 describe("pageShareMetadata", () => {
-  it("emits an absolute og:image that already exists on production", async () => {
-    const { pageShareMetadata } = await loadShareMetadata(PRODUCTION_ORIGIN);
+  it("emits the brand mark for pages without dedicated cover art", async () => {
+    const { pageShareMetadata, DEFAULT_SHARE_IMAGE } =
+      await loadShareMetadata(PRODUCTION_ORIGIN);
     const metadata = pageShareMetadata({
       title: "Internal test — do not purchase",
       description: "Payment system test",
-      image: "/routine-posters/routine-poster-frame-studio.png",
-      imageAlt: "Internal test — do not purchase",
+      image: DEFAULT_SHARE_IMAGE,
+      imageAlt: "The Frame by Barzilay",
     });
 
     const images = metadata.openGraph?.images;
     expect(Array.isArray(images)).toBe(true);
     expect(images).toEqual([
       {
-        url: `${PRODUCTION_ORIGIN}/routine-posters/routine-poster-frame-studio.png`,
-        secureUrl: `${PRODUCTION_ORIGIN}/routine-posters/routine-poster-frame-studio.png`,
-        alt: "Internal test — do not purchase",
-        width: 960,
-        height: 640,
+        url: `${PRODUCTION_ORIGIN}/icon.png`,
+        secureUrl: `${PRODUCTION_ORIGIN}/icon.png`,
+        alt: "The Frame by Barzilay",
+        width: 867,
+        height: 867,
         type: "image/png",
       },
     ]);
     expect(metadata.twitter).toMatchObject({
-      card: "summary_large_image",
-      images: [
-        `${PRODUCTION_ORIGIN}/routine-posters/routine-poster-frame-studio.png`,
-      ],
+      card: "summary",
+      images: [`${PRODUCTION_ORIGIN}/icon.png`],
     });
-    expect(metadata.openGraph?.title).toBe("Internal test — do not purchase");
-    expect(metadata.openGraph?.description).toBe("Payment system test");
   });
 
   it("keeps a distinct course cover as the share image", async () => {

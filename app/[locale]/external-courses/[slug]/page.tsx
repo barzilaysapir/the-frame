@@ -6,7 +6,7 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { parsePriceIls } from "@/lib/pricing";
 import { getCachedExternalCourse } from "@/lib/server/catalog";
-import { DEFAULT_SHARE_IMAGE, pageShareMetadata } from "@/lib/share-metadata";
+import { courseShareImage, pageShareMetadata } from "@/lib/share-metadata";
 
 export const revalidate = 3600;
 
@@ -26,7 +26,7 @@ export async function generateMetadata({
   return pageShareMetadata({
     title: course.title,
     description: course.description || course.tagline,
-    image: course.coverImage || DEFAULT_SHARE_IMAGE,
+    image: courseShareImage(course.coverImage),
     imageAlt: course.title,
   });
 }
