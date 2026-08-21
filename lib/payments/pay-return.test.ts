@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildUpayBrowserReturnUrl,
+  buildUpayIpnUrl,
   sanitizePayReturnPath,
 } from "@/lib/payments/pay-return";
 import { WORKER_ORIGIN } from "@/lib/site";
@@ -37,5 +38,13 @@ describe("buildUpayBrowserReturnUrl", () => {
     expect(
       buildUpayBrowserReturnUrl("/he/external-courses/gisha-gmisha-foundations"),
     ).toBe(`${WORKER_ORIGIN}/he/external-courses/gisha-gmisha-foundations`);
+  });
+});
+
+describe("buildUpayIpnUrl", () => {
+  it("points IPN at the production webhook with the purchase id", () => {
+    expect(buildUpayIpnUrl("abc-123")).toBe(
+      `${WORKER_ORIGIN}/api/v1/webhooks/upay?purchaseId=abc-123`,
+    );
   });
 });

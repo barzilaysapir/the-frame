@@ -9,9 +9,10 @@ function cannotSendToUpay(url: URL): boolean {
  * the production Worker. Preview aliases (`preview-the-frame…`) are a
  * different hostname — keep the path/query, move the origin.
  *
- * The live dashboard button leaves `returnurl` / `ipnurl` blank. Do not
- * turn a blank value into the Worker origin — that bounce is what uPay
- * reported as USER_NOT_EXISTS.
+ * The live dashboard button leaves `returnurl` / `ipnurl` blank. A blank
+ * value stays blank here so we never turn "" into the Worker origin.
+ * Card checkout now sends real production URLs; this rewrite still
+ * pins localhost / preview aliases onto the production Worker.
  */
 export function rewriteUpayCallbackUrl(urlString: string): string {
   const trimmed = urlString.trim();
