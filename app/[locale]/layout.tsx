@@ -58,6 +58,23 @@ export async function generateMetadata({
 
   return {
     metadataBase: new URL(origin),
+    icons: {
+      icon: [
+        {
+          url: "/favicon-light.png?v=2",
+          type: "image/png",
+          sizes: "32x32",
+          media: "(prefers-color-scheme: light)",
+        },
+        {
+          url: "/favicon-dark.png?v=2",
+          type: "image/png",
+          sizes: "32x32",
+          media: "(prefers-color-scheme: dark)",
+        },
+      ],
+      shortcut: "/favicon.ico?v=2",
+    },
     title: {
       default: dict.meta.siteTitle,
       template: "%s | The Frame by Barzilay",

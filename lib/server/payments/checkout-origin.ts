@@ -46,7 +46,7 @@ export function isPublicHttpsOrigin(origin: string): boolean {
 
 /**
  * Origin WhatsApp/Facebook should fetch `og:image` from. PR preview Workers
- * serve this branch's `/og/logo.jpg`; production 404s that file until merge.
+ * serve this branch's new OG asset; production 404s it until merge.
  * Prefer the request host when it is a public https origin. Localhost falls
  * back to SITE_URL so `next dev` still emits an absolute URL.
  *

@@ -20,7 +20,7 @@ const GAP = 40;
 const WORD_W = 520;
 
 async function main() {
-  const mark = await sharp(path.join(ROOT, "app/icon.png"))
+  const mark = await sharp(path.join(ROOT, "public/logos/logo-mark.png"))
     .resize(MARK, MARK, {
       fit: "contain",
       background: { r: 0, g: 0, b: 0, alpha: 0 },
@@ -57,7 +57,7 @@ async function main() {
 </svg>`,
   );
 
-  const out = path.join(ROOT, "public/og/logo.jpg");
+  const out = path.join(ROOT, "public/og/logo-silhouette.jpg");
   fs.mkdirSync(path.dirname(out), { recursive: true });
   await sharp({
     create: { width: WIDTH, height: HEIGHT, channels: 3, background: BACKGROUND },
@@ -72,7 +72,7 @@ async function main() {
 
   const info = await sharp(out).metadata();
   console.log(
-    `og/logo.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
+    `og/logo-silhouette.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
   );
 }
 

@@ -20,8 +20,8 @@ afterEach(() => {
 describe("absoluteAssetUrl", () => {
   it("joins a public path onto the canonical site origin", async () => {
     const { absoluteAssetUrl } = await loadShareMetadata(PRODUCTION_ORIGIN);
-    expect(absoluteAssetUrl("/og/logo.jpg")).toBe(
-      `${PRODUCTION_ORIGIN}/og/logo.jpg`,
+    expect(absoluteAssetUrl("/og/logo-silhouette.jpg")).toBe(
+      `${PRODUCTION_ORIGIN}/og/logo-silhouette.jpg`,
     );
   });
 
@@ -35,8 +35,8 @@ describe("absoluteAssetUrl", () => {
   it("joins onto a request origin so preview Workers are not production 404s", async () => {
     const { absoluteAssetUrl } = await loadShareMetadata(PRODUCTION_ORIGIN);
     const preview = "https://cursor-whatsapp-share-image-44fa-the-frame.barzilaysapir.workers.dev";
-    expect(absoluteAssetUrl("/og/logo.jpg", preview)).toBe(
-      `${preview}/og/logo.jpg`,
+    expect(absoluteAssetUrl("/og/logo-silhouette.jpg", preview)).toBe(
+      `${preview}/og/logo-silhouette.jpg`,
     );
   });
 });
@@ -57,9 +57,9 @@ describe("pageShareMetadata", () => {
     expect(Array.isArray(images)).toBe(true);
     expect(images).toEqual([
       {
-        url: "https://preview-the-frame.barzilaysapir.workers.dev/og/logo.jpg",
+        url: "https://preview-the-frame.barzilaysapir.workers.dev/og/logo-silhouette.jpg",
         secureUrl:
-          "https://preview-the-frame.barzilaysapir.workers.dev/og/logo.jpg",
+          "https://preview-the-frame.barzilaysapir.workers.dev/og/logo-silhouette.jpg",
         alt: "The Frame by Barzilay",
         width: 1200,
         height: 630,
@@ -69,7 +69,7 @@ describe("pageShareMetadata", () => {
     expect(metadata.twitter).toMatchObject({
       card: "summary_large_image",
       images: [
-        "https://preview-the-frame.barzilaysapir.workers.dev/og/logo.jpg",
+        "https://preview-the-frame.barzilaysapir.workers.dev/og/logo-silhouette.jpg",
       ],
     });
   });

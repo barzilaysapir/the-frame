@@ -5,8 +5,9 @@ import { shareOriginFromHeaders } from "@/lib/server/payments/checkout-origin";
 
 /**
  * Request host for share-image URLs. Calling `headers()` opts metadata out of
- * prerender so OpenNext cannot bake production `SITE_URL` (where `/og/logo.jpg`
- * 404s) into the HTML WhatsApp fetches. Do not wrap this in try/catch — a
+ * prerender so OpenNext cannot bake production `SITE_URL` (where a new OG
+ * asset 404s before merge) into the HTML WhatsApp fetches. Do not wrap this
+ * in try/catch — a
  * fallback to `SITE_URL` is how preview shares previously still pointed at a
  * 404.
  */
