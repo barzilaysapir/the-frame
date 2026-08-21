@@ -189,6 +189,15 @@
       "generic": "משהו השתבש. נסו שוב."
     }
   },
+  "siteAccess": {
+    "title": "תצוגה פרטית",
+    "signInPrompt": "התחברו עם חשבון Google מורשה כדי להמשיך.",
+    "signInCta": "התחברות עם גוגל",
+    "notAllowed": "אתם מחוברים, אבל החשבון הזה לא ברשימת הגישה.",
+    "signOut": "התנתקות",
+    "loading": "טוען...",
+    "unavailable": "התחברות עדיין לא מוגדרת."
+  },
   "account": {
     "metaTitle": "האזור האישי",
     "greeting": "שלום, {name}",

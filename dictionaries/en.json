@@ -189,6 +189,15 @@
       "generic": "Something went wrong. Please try again."
     }
   },
+  "siteAccess": {
+    "title": "Private preview",
+    "signInPrompt": "Sign in with an allowed Google account to continue.",
+    "signInCta": "Sign in with Google",
+    "notAllowed": "You’re signed in, but this account isn’t on the access list.",
+    "signOut": "Sign out",
+    "loading": "Loading…",
+    "unavailable": "Sign-in isn’t configured yet."
+  },
   "account": {
     "metaTitle": "My account",
     "greeting": "Hi, {name}",

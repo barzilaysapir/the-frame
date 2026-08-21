@@ -48,6 +48,13 @@ PREVIEW_CATALOG_TOKEN=
 # Missing/empty means nobody is an admin, not "allow everyone".
 ADMIN_EMAILS=
 
+# Soft site-wide gate: when set, only these Google emails can use the UI
+# and authenticated APIs (`requireFirebaseClaims`). Public catalog GETs and
+# payment webhooks stay open. Missing/empty = unrestricted. Put the same
+# secret on `the-frame` and `preview-the-frame` Workers:
+#   echo -n 'a@x.com,b@y.com' | npx wrangler secret put SITE_ACCESS_EMAILS --name the-frame
+SITE_ACCESS_EMAILS=
+
 # uPay (upay.co.il) — see lib/server/payments/upay.ts. The live dashboard
 # button email is hardcoded as theframe@bybarzilay.com (public embed field,
 # not a password). This secret is optional leftover config.

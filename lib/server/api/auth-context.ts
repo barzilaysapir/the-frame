@@ -6,6 +6,7 @@ import {
   type FirebaseIdTokenClaims,
 } from "@/lib/server/auth/firebase-token";
 import { getAppDb, type AppDb } from "@/lib/server/db";
+import { isAllowedSiteAccessEmail } from "@/lib/server/site-access";
 
 export class ApiError extends Error {
   constructor(
@@ -31,11 +32,18 @@ export async function requireFirebaseClaims(
   if (!token) {
     throw new ApiError(401, "Missing Authorization Bearer token");
   }
+  let claims: FirebaseIdTokenClaims;
   try {
-    return await verifyFirebaseIdToken(token);
+    claims = await verifyFirebaseIdToken(token);
   } catch {
     throw new ApiError(401, "Invalid or expired Firebase ID token");
   }
+
+  if (!(await isAllowedSiteAccessEmail(claims.email))) {
+    throw new ApiError(403, "Site access denied");
+  }
+
+  return claims;
 }
 
 export async function readJsonBody<T>(request: Request): Promise<T> {
