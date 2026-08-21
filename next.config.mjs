@@ -46,11 +46,11 @@ function buildCsp() {
     `frame-src 'self' https://accounts.google.com https://www.google.com${authFrame}`,
     `object-src 'none'`,
     `base-uri 'self'`,
-    // uPay's checkout is a POST to https://app.upay.co.il/API6/…. Chrome
-    // treats `https://app.upay.co.il` (no path) as origin-only, so that
-    // URL is blocked with form-action despite listing the host. A trailing
-    // slash allows any path; extra hosts cover post-submit redirects.
-    `form-action 'self' https://app.upay.co.il/ https://*.upay.co.il/ https://upay.co.il/`,
+    // Chrome’s form-action matching does not treat host sources as covering
+    // paths: both `https://app.upay.co.il` and `https://app.upay.co.il/` still
+    // block POST to /API6/clientsecure/redirectpage.php. A scheme source is
+    // the allow that actually works (javascript: / data: forms stay blocked).
+    `form-action 'self' https:`,
     `frame-ancestors 'self'`,
   ];
   // Rewrites every http:// sub-resource request on the page to https:// before
