@@ -31,30 +31,13 @@ describe("absoluteAssetUrl", () => {
   });
 });
 
-describe("courseShareImage", () => {
-  it("uses dedicated course art", async () => {
-    const { courseShareImage } = await loadShareMetadata(PRODUCTION_ORIGIN);
-    expect(courseShareImage("/course-covers/gisha-gmisha-foundations.jpg")).toBe(
-      "/course-covers/gisha-gmisha-foundations.jpg",
-    );
-  });
-
-  it("falls back to the brand mark for recycled routine posters", async () => {
-    const { courseShareImage, DEFAULT_SHARE_IMAGE } =
-      await loadShareMetadata(PRODUCTION_ORIGIN);
-    expect(
-      courseShareImage("/routine-posters/routine-poster-frame-studio.png"),
-    ).toBe(DEFAULT_SHARE_IMAGE);
-  });
-});
-
 describe("pageShareMetadata", () => {
-  it("emits the brand mark for pages without dedicated cover art", async () => {
+  it("emits the brand mark for chrome pages", async () => {
     const { pageShareMetadata, DEFAULT_SHARE_IMAGE } =
       await loadShareMetadata(PRODUCTION_ORIGIN);
     const metadata = pageShareMetadata({
-      title: "Internal test — do not purchase",
-      description: "Payment system test",
+      title: "The Frame by Barzilay",
+      description: "Learn the combo",
       image: DEFAULT_SHARE_IMAGE,
       imageAlt: "The Frame by Barzilay",
     });
@@ -77,7 +60,30 @@ describe("pageShareMetadata", () => {
     });
   });
 
-  it("keeps a distinct course cover as the share image", async () => {
+  it("uses a course cover, including recycled routine posters", async () => {
+    const { pageShareMetadata } = await loadShareMetadata(PRODUCTION_ORIGIN);
+    const metadata = pageShareMetadata({
+      title: "Internal test — do not purchase",
+      description: "Payment system test",
+      image: "/routine-posters/routine-poster-frame-studio.png",
+      imageAlt: "Internal test — do not purchase",
+    });
+    expect(metadata.openGraph?.images).toEqual([
+      {
+        url: `${PRODUCTION_ORIGIN}/routine-posters/routine-poster-frame-studio.png`,
+        secureUrl: `${PRODUCTION_ORIGIN}/routine-posters/routine-poster-frame-studio.png`,
+        alt: "Internal test — do not purchase",
+        width: 960,
+        height: 640,
+        type: "image/png",
+      },
+    ]);
+    expect(metadata.twitter).toMatchObject({
+      card: "summary_large_image",
+    });
+  });
+
+  it("keeps dedicated course art as the share image", async () => {
     const { pageShareMetadata } = await loadShareMetadata(PRODUCTION_ORIGIN);
     const metadata = pageShareMetadata({
       title: "Gisha Gmisha",

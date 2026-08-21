@@ -3,8 +3,8 @@ import { SITE_URL } from "@/lib/site";
 
 /**
  * Site-wide share image: the brand-kit mark (`app/icon.png`), already on
- * the production Worker at `/icon.png`. Do not use a catalog poster here —
- * Facebook/WhatsApp fetch this URL for homepage and other chrome pages.
+ * the production Worker at `/icon.png`. Used for homepage and other chrome
+ * pages. Course and lesson pages override this with their own cover.
  */
 export const DEFAULT_SHARE_IMAGE = "/icon.png";
 export const DEFAULT_SHARE_IMAGE_WIDTH = 867;
@@ -27,16 +27,6 @@ export function absoluteAssetUrl(path: string): string {
   const origin = SITE_URL.replace(/\/$/, "");
   const normalized = path.startsWith("/") ? path : `/${path}`;
   return `${origin}${normalized}`;
-}
-
-/**
- * Dedicated course art lives under `/course-covers/`. Recycled routine
- * posters used as placeholders should not become the WhatsApp thumbnail —
- * fall back to the brand mark instead.
- */
-export function courseShareImage(path: string | null | undefined): string {
-  if (path && path.startsWith("/course-covers/")) return path;
-  return DEFAULT_SHARE_IMAGE;
 }
 
 function shareImageSizeForPath(path: string): {
