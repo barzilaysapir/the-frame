@@ -26,6 +26,7 @@
 	"compatibility_date": "2026-08-04",
 	"compatibility_flags": [
 		"nodejs_compat",
+		"nodejs_compat_populate_process_env",
 		"global_fetch_strictly_public"
 	],
 	"assets": {
@@ -64,11 +65,14 @@
 		}
 	],
 	// Private bucket for real (non-mock) class videos. Public access must
-	// stay disabled. Playback mints a short-lived S3 GET URL
-	// (`lib/server/r2-presign.ts`) when `R2_ACCESS_KEY_ID` /
-	// `R2_SECRET_ACCESS_KEY` are set as Worker secrets; otherwise it falls
-	// back to the HMAC `/stream` proxy. Apply bucket CORS from `r2-cors.json`:
+	// stay disabled. Playback mints a same-origin `/stream` URL; that route
+	// 307s to a short-lived S3 GET (`lib/server/r2-presign.ts`) when
+	// `FRAME_R2_ACCESS_KEY_ID` / `FRAME_R2_SECRET_ACCESS_KEY` are set
+	// (legacy `R2_*` names still work). Never proxy class-length MP4s
+	// through the Worker (error 1102). Apply bucket CORS from `r2-cors.json`:
 	// `npx wrangler r2 bucket cors set the-frame --file r2-cors.json`.
+	// Preview Workers are a different name — secrets on `the-frame` do not
+	// apply: `npx wrangler secret put FRAME_R2_ACCESS_KEY_ID --name <preview>`.
 	// Objects live under the "class-videos/" prefix in the shared "the-frame"
 	// bucket (consolidated here during the Cloudflare account migration —
 	// migrations 0020/0021's r2_key seeds were updated to match, since

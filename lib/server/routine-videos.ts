@@ -1,13 +1,5 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { tryPresignR2Get } from "@/lib/server/r2-presign";
-
-export {
-  applyR2VideoContentType,
-  describeR2VideoRange,
-  getCourseVideosBucket as getRoutineVideosBucket,
-  parseRangeHeader,
-} from "@/lib/server/course-videos";
 
 /**
  * Gated video delivery for routines (issue #232 — routine video used to be
@@ -15,11 +7,10 @@ export {
  * courses which already had a signed-URL + `hasPaidPurchase` gate).
  *
  * Mirrors `lib/server/course-videos.ts`'s pattern: a logged-in-and-paid-only
- * route (`/api/v1/routines/[slug]/playback-url`) mints a short-lived URL
- * for a native `<video>` element (which cannot send an Authorization
- * header). Real R2 keys prefer a presigned R2 GET; HMAC `/stream` remains
- * the fallback, and also the path for demo/mock routines whose `videoSrc`
- * is a public `https://` URL.
+ * route (`/api/v1/routines/[slug]/playback-url`) mints a short-lived
+ * same-origin `/stream` URL for a native `<video>` element. Real R2 keys
+ * 307 from `/stream` to a presigned GET (never proxied — Worker 1102).
+ * Demo `https://` sources stay on `/stream` and are fetched upstream.
  *
  * Routines don't have their own R2 bucket/table the way external-course
  * lessons do (`external_course_lessons.r2_key`) — `routines.video_src` is
@@ -59,22 +50,14 @@ export interface SignedRoutinePlaybackUrl {
   expiresAt: number;
 }
 
-function isExternalUrl(src: string): boolean {
+export function isExternalRoutineVideoSrc(src: string): boolean {
   return /^https?:\/\//i.test(src);
 }
 
 export async function signRoutinePlaybackUrl(
   routineSlug: string,
-  videoSrc: string,
 ): Promise<SignedRoutinePlaybackUrl> {
   const expiresAt = Math.floor(Date.now() / 1000) + PLAYBACK_URL_TTL_SECONDS;
-  if (!isExternalUrl(videoSrc)) {
-    const presigned = await tryPresignR2Get(videoSrc, PLAYBACK_URL_TTL_SECONDS);
-    if (presigned) {
-      return { url: presigned, expiresAt };
-    }
-  }
-
   const key = await getSigningKey();
   const payload = buildSignaturePayload(routineSlug, expiresAt);
   const signatureBytes = await crypto.subtle.sign(

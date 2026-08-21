@@ -1,7 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { jsonError, requireAppDb, requireFirebaseClaims } from "@/lib/server/api/auth-context";
+import {
+  ApiError,
+  jsonError,
+  requireAppDb,
+  requireFirebaseClaims,
+} from "@/lib/server/api/auth-context";
 import { resolveCatalog } from "@/lib/server/catalog";
-import { signRoutinePlaybackUrl } from "@/lib/server/routine-videos";
+import { getVideoSigningKey } from "@/lib/server/course-videos";
+import {
+  mintPlaybackGateValue,
+  playbackGateSetCookie,
+} from "@/lib/server/playback-hotlink";
+import {
+  canPresignR2Playback,
+  readPlaybackStorageStatus,
+} from "@/lib/server/r2-presign";
+import {
+  isExternalRoutineVideoSrc,
+  signRoutinePlaybackUrl,
+} from "@/lib/server/routine-videos";
 import { hasPaidPurchase } from "@/lib/server/users/repository";
 
 export const runtime = "nodejs";
@@ -12,10 +29,10 @@ interface RouteParams {
 }
 
 /**
- * Mints a short-lived playback URL for a routine — requires a valid
- * Firebase ID token AND a paid purchase of the routine (issue #232). Real
- * R2 keys prefer a presigned GET; demo `https://` sources and missing R2
- * credentials fall back to HMAC `/stream`.
+ * Mints a short-lived same-origin `/stream` URL for a routine — requires a
+ * valid Firebase ID token AND a paid purchase (issue #232). `/stream` 307s
+ * to a presigned R2 GET for real keys. Demo `https://` sources stay on
+ * `/stream`.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
@@ -34,8 +51,31 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Purchase required" }, { status: 403 });
     }
 
-    const { url, expiresAt } = await signRoutinePlaybackUrl(slug, source.videoSrc);
-    return NextResponse.json({ url, expiresAt });
+    const playback = await readPlaybackStorageStatus();
+    if (!playback.videoSigningConfigured) {
+      throw new ApiError(503, "Video signing is not configured on this Worker");
+    }
+    if (
+      !isExternalRoutineVideoSrc(source.videoSrc) &&
+      !canPresignR2Playback(playback)
+    ) {
+      throw new ApiError(
+        503,
+        "R2 API token is not configured on this Worker",
+      );
+    }
+
+    const { url, expiresAt } = await signRoutinePlaybackUrl(slug);
+    const gate = await mintPlaybackGateValue(
+      await getVideoSigningKey(),
+      expiresAt,
+    );
+    const response = NextResponse.json({ url, expiresAt });
+    response.headers.append(
+      "set-cookie",
+      playbackGateSetCookie(gate, expiresAt, request.url),
+    );
+    return response;
   } catch (error) {
     return jsonError(error);
   }

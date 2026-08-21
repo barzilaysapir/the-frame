@@ -13,12 +13,19 @@ interface __BaseEnv_CloudflareEnv {
 	COURSE_VIDEOS: R2Bucket;
 	VIDEO_SIGNING_SECRET: string;
 	PREVIEW_CATALOG_TOKEN: string;
-	// R2 S3 API token for presigned lesson playback — see
-	// .dev.vars.example and lib/server/r2-presign.ts.
+	// R2 S3 API token for presigned lesson playback — prefer FRAME_R2_*
+	// (see .dev.vars.example and lib/server/r2-presign.ts). Legacy R2_*
+	// names are still read as a fallback.
+	FRAME_R2_ACCESS_KEY_ID: string;
+	FRAME_R2_SECRET_ACCESS_KEY: string;
 	R2_ACCESS_KEY_ID: string;
 	R2_SECRET_ACCESS_KEY: string;
 	R2_ACCOUNT_ID: string;
 	R2_BUCKET_NAME: string;
+	// Opt-out of presigned R2 playback. Unset = on (required; /stream
+	// never proxies class videos — that hits Worker 1102). Set "0" to
+	// disable class playback (503) instead of presigning.
+	R2_PRESIGN_PLAYBACK: string;
 	// ADMIN_EMAILS added by hand, same as the block above — see
 	// .dev.vars.example. Re-run `npm run cf-typegen` once a real value exists.
 	ADMIN_EMAILS: string;

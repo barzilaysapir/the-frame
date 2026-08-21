@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   awsUriEncode,
+  canPresignR2Playback,
+  playbackStorageStatus,
   presignR2GetUrl,
   readR2PresignConfig,
+  remainingPlaybackTtlSeconds,
   r2ObjectUrl,
   signAws4QueryGet,
 } from "@/lib/server/r2-presign";
@@ -21,8 +24,8 @@ describe("readR2PresignConfig", () => {
   it("defaults account and bucket to this project's wrangler values", () => {
     expect(
       readR2PresignConfig({
-        R2_ACCESS_KEY_ID: " id ",
-        R2_SECRET_ACCESS_KEY: " secret ",
+        FRAME_R2_ACCESS_KEY_ID: " id ",
+        FRAME_R2_SECRET_ACCESS_KEY: " secret ",
       }),
     ).toEqual({
       accessKeyId: "id",
@@ -30,6 +33,61 @@ describe("readR2PresignConfig", () => {
       accountId: "8541729902392a145a03f97a906af16f",
       bucket: "the-frame",
     });
+  });
+
+  it("still accepts legacy R2_* secret names", () => {
+    expect(
+      readR2PresignConfig({
+        R2_ACCESS_KEY_ID: "legacy-id",
+        R2_SECRET_ACCESS_KEY: "legacy-secret",
+      }),
+    ).toMatchObject({
+      accessKeyId: "legacy-id",
+      secretAccessKey: "legacy-secret",
+    });
+  });
+});
+
+describe("playbackStorageStatus", () => {
+  it("reports configured flags without exposing secret values", () => {
+    expect(playbackStorageStatus({})).toEqual({
+      r2ApiConfigured: false,
+      r2PresignEnabled: true,
+      videoSigningConfigured: false,
+      r2AccessKeyConfigured: false,
+      r2SecretKeyConfigured: false,
+    });
+    expect(
+      playbackStorageStatus({
+        FRAME_R2_ACCESS_KEY_ID: "id",
+        FRAME_R2_SECRET_ACCESS_KEY: "secret",
+        VIDEO_SIGNING_SECRET: "sign",
+        R2_PRESIGN_PLAYBACK: "0",
+      }),
+    ).toEqual({
+      r2ApiConfigured: true,
+      r2PresignEnabled: false,
+      videoSigningConfigured: true,
+      r2AccessKeyConfigured: true,
+      r2SecretKeyConfigured: true,
+    });
+    expect(
+      canPresignR2Playback(
+        playbackStorageStatus({
+          FRAME_R2_ACCESS_KEY_ID: "id",
+          FRAME_R2_SECRET_ACCESS_KEY: "secret",
+        }),
+      ),
+    ).toBe(true);
+    expect(canPresignR2Playback(playbackStorageStatus({}))).toBe(false);
+  });
+});
+
+describe("remainingPlaybackTtlSeconds", () => {
+  it("floors at 30s and defaults malformed exp to 60s", () => {
+    expect(remainingPlaybackTtlSeconds("nope")).toBe(60);
+    const exp = String(Math.floor(Date.now() / 1000) + 4000);
+    expect(remainingPlaybackTtlSeconds(exp)).toBeGreaterThanOrEqual(30);
   });
 });
 
