@@ -4,7 +4,8 @@ import { StyleCard } from "@/components/StyleCard";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
 import { resolveCatalog } from "@/lib/server/catalog";
-import { STYLE_COVER_POSTERS, type DanceStyleKey } from "@/lib/routines";
+import { STYLE_COVER_POSTERS, STYLE_ORDER, type DanceStyleKey } from "@/lib/routines";
+import { localizeStyle } from "@/lib/i18n/localize";
 
 // Seed-catalog data changes rarely (via migrations, not user writes) — cache
 // the rendered page for 1 hour instead of refetching D1 on every request.
@@ -79,11 +80,23 @@ export default async function StylesPage({ params }: StylesPageProps) {
     }
   }
 
-  const styles = [...styleCounts.values()].sort((a, b) =>
-    a.label.localeCompare(b.label, locale),
-  );
+  for (const style of STYLE_ORDER) {
+    if (styleCounts.has(style)) continue;
+    styleCounts.set(style, {
+      style,
+      label: localizeStyle(locale, style),
+      poster: STYLE_COVER_POSTERS[style],
+      routineCount: 0,
+      courseCount: 0,
+    });
+  }
+
+  const styles = STYLE_ORDER.map((style) => styleCounts.get(style)!);
 
   function countLabel(entry: (typeof styles)[number]): string {
+    if (entry.courseCount === 0 && entry.routineCount === 0) {
+      return dict.styles.comingSoon;
+    }
     if (entry.courseCount > 0 && entry.routineCount === 0) {
       return entry.courseCount === 1
         ? dict.styles.courseOne

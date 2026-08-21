@@ -147,9 +147,24 @@ export function RoutineLibrary({
   ];
 
   const total = filters.filteredItems.length;
+  const selectedStylesHaveNoContent =
+    filters.selectedStyles.length > 0 &&
+    filters.selectedStyles.every(
+      (style) =>
+        !allItems.some((item) =>
+          item.kind === "lesson"
+            ? item.routine.style === style
+            : item.course.style === style,
+        ),
+    );
+  const emptyMessage = selectedStylesHaveNoContent
+    ? dict.tutorials.styleComingSoon
+    : dict.tutorials.empty;
   const resultLabel =
     total === 0
-      ? dict.tutorials.resultNone
+      ? selectedStylesHaveNoContent
+        ? dict.tutorials.styleComingSoon
+        : dict.tutorials.resultNone
       : total === 1
         ? dict.tutorials.resultOne
         : formatMessage(dict.tutorials.resultMany, { count: total });
@@ -223,7 +238,7 @@ export function RoutineLibrary({
           </p>
         </>
       ) : (
-        <p className="text-frame-silver">{dict.tutorials.empty}</p>
+        <p className="text-frame-silver">{emptyMessage}</p>
       )}
     </>
   );

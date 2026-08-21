@@ -4,7 +4,7 @@ import { RoutineLibrary } from "@/components/routines/RoutineLibrary";
 import type { LibraryItem } from "@/components/routines/libraryItem";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { isLocale } from "@/lib/i18n/config";
-import { LEVEL_ORDER } from "@/lib/routines";
+import { LEVEL_ORDER, STYLE_ORDER } from "@/lib/routines";
 import { resolveCatalog } from "@/lib/server/catalog";
 
 // NOTE: this route reads `searchParams` only to seed the *initial* filter
@@ -56,12 +56,7 @@ export default async function RoutinesPage({ params, searchParams }: RoutinesPag
     repository.listExternalCourses(locale),
   ]);
 
-  const styles = [
-    ...new Set([
-      ...allRoutines.map((routine) => routine.style),
-      ...externalCourses.flatMap((course) => (course.style ? [course.style] : [])),
-    ]),
-  ];
+  const styles = STYLE_ORDER;
   // Fixed, always-shown, canonically ordered — not derived from which
   // routines currently exist, so a level with 0 routines today still shows.
   const levels = LEVEL_ORDER;

@@ -61,6 +61,7 @@
     "resultMany": "{count} תוצאות",
     "libraryLoadedStatus": "{shown} מתוך {total} פריטים מוצגים",
     "empty": "אין פריטים להצגה בספרייה כרגע.",
+    "styleComingSoon": "הסגנון הזה בקרוב.",
     "viewRoutine": "צפו בקומבינציה",
     "taughtBy": "בהנחיית {name}",
     "favoriteAdd": "הוספה למועדפים",
@@ -95,7 +96,8 @@
     "routineMany": "{count} שיעורים באתר",
     "browseAria": "עיינו בשיעורים בסגנון {name}",
     "courseOne": "קורס אחד באתר",
-    "courseMany": "{count} קורסים באתר"
+    "courseMany": "{count} קורסים באתר",
+    "comingSoon": "בקרוב"
   },
   "externalCourses": {
     "tag": "קורס חיצוני",

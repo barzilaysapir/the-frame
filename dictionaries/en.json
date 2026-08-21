@@ -61,6 +61,7 @@
     "resultMany": "{count} results",
     "libraryLoadedStatus": "Showing {shown} of {total} items",
     "empty": "No items to show in the library right now.",
+    "styleComingSoon": "This style is coming soon.",
     "viewRoutine": "View combination",
     "taughtBy": "Taught by {name}",
     "favoriteAdd": "Add to favorites",
@@ -95,7 +96,8 @@
     "routineMany": "{count} lessons on the site",
     "browseAria": "Browse {name} classes",
     "courseOne": "1 course on the site",
-    "courseMany": "{count} courses on the site"
+    "courseMany": "{count} courses on the site",
+    "comingSoon": "Coming soon"
   },
   "externalCourses": {
     "tag": "External course",
