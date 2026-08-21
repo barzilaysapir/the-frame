@@ -42,6 +42,8 @@ describe("playbackStorageStatus", () => {
       r2ApiConfigured: false,
       r2PresignEnabled: true,
       videoSigningConfigured: false,
+      r2AccessKeyConfigured: false,
+      r2SecretKeyConfigured: false,
     });
     expect(
       playbackStorageStatus({
@@ -54,6 +56,8 @@ describe("playbackStorageStatus", () => {
       r2ApiConfigured: true,
       r2PresignEnabled: false,
       videoSigningConfigured: true,
+      r2AccessKeyConfigured: true,
+      r2SecretKeyConfigured: true,
     });
     expect(
       canPresignR2Playback(

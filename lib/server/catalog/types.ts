@@ -139,4 +139,6 @@ export interface CatalogHealthResponse {
   r2ApiConfigured: boolean;
   r2PresignEnabled: boolean;
   videoSigningConfigured: boolean;
+  r2AccessKeyConfigured: boolean;
+  r2SecretKeyConfigured: boolean;
 }

@@ -43,17 +43,28 @@ export interface PlaybackStorageStatus {
   r2ApiConfigured: boolean;
   r2PresignEnabled: boolean;
   videoSigningConfigured: boolean;
+  /** Present as non-empty (no values). Helps debug Worker secret visibility. */
+  r2AccessKeyConfigured: boolean;
+  r2SecretKeyConfigured: boolean;
 }
 
 function isR2PresignPlaybackEnabled(env: R2PresignEnv): boolean {
   return env.R2_PRESIGN_PLAYBACK?.trim() !== "0";
 }
 
+function nonEmpty(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
 export function playbackStorageStatus(env: R2PresignEnv): PlaybackStorageStatus {
+  const r2AccessKeyConfigured = nonEmpty(env.R2_ACCESS_KEY_ID);
+  const r2SecretKeyConfigured = nonEmpty(env.R2_SECRET_ACCESS_KEY);
   return {
-    r2ApiConfigured: readR2PresignConfig(env) !== null,
+    r2ApiConfigured: r2AccessKeyConfigured && r2SecretKeyConfigured,
     r2PresignEnabled: isR2PresignPlaybackEnabled(env),
-    videoSigningConfigured: Boolean(env.VIDEO_SIGNING_SECRET?.trim()),
+    videoSigningConfigured: nonEmpty(env.VIDEO_SIGNING_SECRET),
+    r2AccessKeyConfigured,
+    r2SecretKeyConfigured,
   };
 }
 
@@ -61,13 +72,34 @@ export function canPresignR2Playback(status: PlaybackStorageStatus): boolean {
   return status.r2ApiConfigured && status.r2PresignEnabled;
 }
 
-export async function readPlaybackStorageStatus(): Promise<PlaybackStorageStatus> {
+/**
+ * Worker secrets + `process.env` (nodejs routes on Workers may expose
+ * bindings on either). Never logs values.
+ */
+export async function readWorkerPlaybackEnv(): Promise<R2PresignEnv> {
+  let binding: R2PresignEnv = {};
   try {
     const { env } = await getCloudflareContext({ async: true });
-    return playbackStorageStatus(env);
+    binding = env;
   } catch {
-    return playbackStorageStatus({});
+    // Local/ssg without a Cloudflare context — fall through to process.env.
   }
+  return {
+    R2_ACCESS_KEY_ID:
+      binding.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY:
+      binding.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY,
+    R2_ACCOUNT_ID: binding.R2_ACCOUNT_ID || process.env.R2_ACCOUNT_ID,
+    R2_BUCKET_NAME: binding.R2_BUCKET_NAME || process.env.R2_BUCKET_NAME,
+    R2_PRESIGN_PLAYBACK:
+      binding.R2_PRESIGN_PLAYBACK || process.env.R2_PRESIGN_PLAYBACK,
+    VIDEO_SIGNING_SECRET:
+      binding.VIDEO_SIGNING_SECRET || process.env.VIDEO_SIGNING_SECRET,
+  };
+}
+
+export async function readPlaybackStorageStatus(): Promise<PlaybackStorageStatus> {
+  return playbackStorageStatus(await readWorkerPlaybackEnv());
 }
 
 export function readR2PresignConfig(env: R2PresignEnv): R2PresignConfig | null {
@@ -201,7 +233,7 @@ export async function tryPresignR2Get(
   expiresInSeconds: number,
 ): Promise<string | null> {
   try {
-    const { env } = await getCloudflareContext({ async: true });
+    const env = await readWorkerPlaybackEnv();
     if (!isR2PresignPlaybackEnabled(env)) return null;
     const config = readR2PresignConfig(env);
     if (!config) return null;
