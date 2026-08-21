@@ -12,6 +12,8 @@ export function ChapterMarkers({
   activeChapterId,
   onJumpToChapter,
 }: ChapterMarkersProps) {
+  if (chapters.length === 0) return null;
+
   return (
     <div className="mb-3 flex flex-nowrap gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {chapters.map((chapter) => (
