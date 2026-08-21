@@ -11,9 +11,9 @@ import { tryPresignR2Get } from "@/lib/server/r2-presign";
  * a short-lived URL for a native `<video>` element (which cannot send an
  * Authorization header):
  *
- * 1. HMAC-signed same-origin `/stream` by default (a presigned R2 URL is a
- *    downloadable MP4). `/stream` also requires a cookie set by this mint.
- * 2. Presigned R2 GET only when `R2_PRESIGN_PLAYBACK=1`.
+ * 1. Presigned R2 GET when API credentials exist (the Worker cannot proxy
+ *    class-length MP4s — that is Cloudflare 1102).
+ * 2. HMAC `/stream` fallback, which 302s to a presigned URL when possible.
  */
 
 // Long enough to cover one uninterrupted watch session without forcing a

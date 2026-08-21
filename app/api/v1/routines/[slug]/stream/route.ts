@@ -12,6 +12,10 @@ import {
   PLAYBACK_GATE_COOKIE,
   verifyPlaybackGateValue,
 } from "@/lib/server/playback-hotlink";
+import {
+  remainingPlaybackTtlSeconds,
+  tryPresignR2Get,
+} from "@/lib/server/r2-presign";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -95,6 +99,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       status: upstream.status,
       headers,
     });
+  }
+
+  const presigned = await tryPresignR2Get(
+    source.videoSrc,
+    remainingPlaybackTtlSeconds(searchParams.get("exp")),
+  );
+  if (presigned) {
+    return NextResponse.redirect(presigned, 302);
   }
 
   const bucket = await getRoutineVideosBucket();

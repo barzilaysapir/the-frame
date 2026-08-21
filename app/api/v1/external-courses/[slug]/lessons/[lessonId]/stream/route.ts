@@ -12,6 +12,10 @@ import {
   PLAYBACK_GATE_COOKIE,
   verifyPlaybackGateValue,
 } from "@/lib/server/playback-hotlink";
+import {
+  remainingPlaybackTtlSeconds,
+  tryPresignR2Get,
+} from "@/lib/server/r2-presign";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -80,6 +84,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   );
   if (!source) {
     return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
+  }
+
+  const presigned = await tryPresignR2Get(
+    source.r2Key,
+    remainingPlaybackTtlSeconds(searchParams.get("exp")),
+  );
+  if (presigned) {
+    return NextResponse.redirect(presigned, 302);
   }
 
   const bucket = await getCourseVideosBucket();

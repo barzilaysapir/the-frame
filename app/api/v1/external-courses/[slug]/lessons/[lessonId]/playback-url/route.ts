@@ -25,9 +25,9 @@ interface RouteParams {
 /**
  * Mints a short-lived playback URL for one course lesson — requires a
  * valid Firebase ID token AND a paid purchase of the course (issue #232).
- * Prefers HMAC `/stream`. Set `R2_PRESIGN_PLAYBACK=1` to mint a direct R2
- * GET instead. Sets a short-lived cookie so `/stream` works in the player
- * but not as a pasted URL on another device.
+ * Prefers a presigned R2 GET when credentials exist (required to avoid
+ * Worker 1102). HMAC `/stream` 302s to R2 when it can. Sets a cookie so
+ * leftover `/stream` URLs still work in the player.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {

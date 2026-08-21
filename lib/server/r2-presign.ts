@@ -7,8 +7,10 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
  * The Worker binding (`COURSE_VIDEOS`) can only be read from Worker code —
  * a browser `<video>` cannot use it. HMAC `/stream` used to proxy every
  * byte through the Worker. Presigned URLs let the browser talk to R2
- * directly — they are also a downloadable MP4, so playback-url only mints
- * them when `R2_PRESIGN_PLAYBACK=1`.
+ * directly. Proxying a class-length MP4 through the Worker hits
+ * Cloudflare error 1102 (resource limits), so this is the default whenever
+ * R2 API credentials exist. Set `R2_PRESIGN_PLAYBACK=0` only to force
+ * `/stream` (not recommended).
  *
  * Requires an R2 S3 API token (`R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`).
  * Account + bucket default to wrangler.jsonc (`the-frame` on this account).
@@ -36,9 +38,9 @@ export interface R2PresignEnv {
   R2_PRESIGN_PLAYBACK?: string;
 }
 
-/** Direct R2 `<video src>` is opt-in: that URL is a downloadable MP4. */
+/** Direct R2 `<video src>` is the default. Set `R2_PRESIGN_PLAYBACK=0` to force `/stream`. */
 export function isR2PresignPlaybackEnabled(env: R2PresignEnv): boolean {
-  return env.R2_PRESIGN_PLAYBACK?.trim() === "1";
+  return env.R2_PRESIGN_PLAYBACK?.trim() !== "0";
 }
 
 export function readR2PresignConfig(env: R2PresignEnv): R2PresignConfig | null {
@@ -159,6 +161,12 @@ export async function presignR2GetUrl(
     now,
   });
   return `https://${host}${canonicalUri}?${canonicalQueryString(query)}`;
+}
+
+export function remainingPlaybackTtlSeconds(expRaw: string | null): number {
+  const exp = Number(expRaw);
+  if (!Number.isFinite(exp)) return 60;
+  return Math.max(30, exp - Math.floor(Date.now() / 1000));
 }
 
 export async function tryPresignR2Get(

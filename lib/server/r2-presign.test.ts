@@ -4,6 +4,7 @@ import {
   isR2PresignPlaybackEnabled,
   presignR2GetUrl,
   readR2PresignConfig,
+  remainingPlaybackTtlSeconds,
   r2ObjectUrl,
   signAws4QueryGet,
 } from "@/lib/server/r2-presign";
@@ -35,14 +36,22 @@ describe("readR2PresignConfig", () => {
 });
 
 describe("isR2PresignPlaybackEnabled", () => {
-  it("is off unless the opt-in flag is exactly 1", () => {
-    expect(isR2PresignPlaybackEnabled({})).toBe(false);
-    expect(isR2PresignPlaybackEnabled({ R2_PRESIGN_PLAYBACK: "true" })).toBe(
-      false,
-    );
+  it("is on by default and only off when set to 0", () => {
+    expect(isR2PresignPlaybackEnabled({})).toBe(true);
     expect(isR2PresignPlaybackEnabled({ R2_PRESIGN_PLAYBACK: "1" })).toBe(
       true,
     );
+    expect(isR2PresignPlaybackEnabled({ R2_PRESIGN_PLAYBACK: "0" })).toBe(
+      false,
+    );
+  });
+});
+
+describe("remainingPlaybackTtlSeconds", () => {
+  it("floors at 30s and defaults malformed exp to 60s", () => {
+    expect(remainingPlaybackTtlSeconds("nope")).toBe(60);
+    const exp = String(Math.floor(Date.now() / 1000) + 4000);
+    expect(remainingPlaybackTtlSeconds(exp)).toBeGreaterThanOrEqual(30);
   });
 });
 
