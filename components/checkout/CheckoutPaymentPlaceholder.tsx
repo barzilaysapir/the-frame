@@ -13,7 +13,6 @@ import {
   checkoutAfterPurchase,
   submitUpayForm,
 } from "@/lib/client/upay-checkout";
-import { rewriteUpayFormFields } from "@/lib/payments/upay-callback-url";
 import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -82,7 +81,7 @@ export function CheckoutPaymentPlaceholder({
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [returnPaid, setReturnPaid] = useState(false);
   const [phone, setPhone] = useState<string | null>(null);
-  const upayFormRef = useRef<HTMLFormElement>(null);
+  const payTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const planSupported = planId !== "subscription";
   const owned = result?.status === "paid" || returnPaid;
@@ -122,12 +121,11 @@ export function CheckoutPaymentPlaceholder({
     };
   }, [user, returnedFromPayment, itemType, itemSlug]);
 
-  // Backup if the imperative POST below is a no-op (e.g. the first submit
-  // raced the browser). The click handler is the primary navigation.
   useEffect(() => {
-    if (owned || !result?.upayForm) return;
-    upayFormRef.current?.submit();
-  }, [result, owned]);
+    return () => {
+      if (payTimeoutRef.current) clearTimeout(payTimeoutRef.current);
+    };
+  }, []);
 
   const handlePay = async (paymentMethod: UpayPaymentMethod) => {
     if (!user) return;
@@ -169,8 +167,14 @@ export function CheckoutPaymentPlaceholder({
       const data = (await res.json()) as PurchaseApiResponse;
       const step = checkoutAfterPurchase(data);
       if (step.type === "redirect") {
+        // Do not setState with upayForm — that remounts a second <form>
+        // and aborts this navigation, leaving “taking you to payment”.
         submitUpayForm(step.form.action, step.form.fields);
-        setResult({ ...data, upayForm: step.form });
+        if (payTimeoutRef.current) clearTimeout(payTimeoutRef.current);
+        payTimeoutRef.current = setTimeout(() => {
+          setError(labels.payError);
+          setBusyMethod(null);
+        }, 8000);
         return;
       }
       setResult(data);
@@ -217,22 +221,6 @@ export function CheckoutPaymentPlaceholder({
               <Button href={itemHref} className="w-full">
                 {labels.alreadyOwnedCta}
               </Button>
-            </>
-          ) : result?.upayForm ? (
-            <>
-              <form
-                ref={upayFormRef}
-                method="POST"
-                action={result.upayForm.action}
-                className="hidden"
-              >
-                {Object.entries(rewriteUpayFormFields(result.upayForm.fields)).map(([name, value]) => (
-                  <input key={name} type="hidden" name={name} value={value} />
-                ))}
-              </form>
-              <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-silver">
-                {labels.payBusy}
-              </p>
             </>
           ) : result ? (
             <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
