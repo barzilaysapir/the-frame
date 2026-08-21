@@ -8,10 +8,16 @@ function cannotSendToUpay(url: URL): boolean {
  * uPay `wronginputreturnurl` rejects localhost and any host that is not
  * the production Worker. Preview aliases (`preview-the-frame…`) are a
  * different hostname — keep the path/query, move the origin.
+ *
+ * The live dashboard button leaves `returnurl` / `ipnurl` blank. Do not
+ * turn a blank value into the Worker origin — that bounce is what uPay
+ * reported as USER_NOT_EXISTS.
  */
 export function rewriteUpayCallbackUrl(urlString: string): string {
+  const trimmed = urlString.trim();
+  if (!trimmed) return "";
   try {
-    const url = new URL(urlString);
+    const url = new URL(trimmed);
     if (!cannotSendToUpay(url)) return url.toString();
     return new URL(`${url.pathname}${url.search}${url.hash}`, WORKER_ORIGIN).toString();
   } catch {

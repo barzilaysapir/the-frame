@@ -22,6 +22,7 @@ import {
   type UpayPaymentMethod,
 } from "@/lib/payments/upay-method";
 import { toIsraeliMobileNational } from "@/lib/phone";
+import { upayReturnErrorMessage } from "@/lib/payments/upay-return-error";
 
 /** Mirrors `PurchasePlanId` in `lib/server/payments/price-resolver.ts` plus `"subscription"`, a valid UI plan choice that isn't wired to a real purchase yet (see that file for why). */
 type CheckoutPurchasePlanId = "rental" | "course" | "course-credits" | "subscription";
@@ -74,6 +75,14 @@ export function CheckoutPaymentPlaceholder({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const returnedFromPayment = searchParams.get("payment");
+  const upayReturnError = upayReturnErrorMessage(
+    searchParams.get("errormessage"),
+    searchParams.get("errordescription"),
+    {
+      userNotExists: labels.upayUserNotExists,
+      paymentNotCompleted: labels.paymentNotCompleted,
+    },
+  );
 
   const [error, setError] = useState<string | null>(null);
   const [busyMethod, setBusyMethod] = useState<UpayPaymentMethod | null>(null);
@@ -232,7 +241,11 @@ export function CheckoutPaymentPlaceholder({
             </p>
           ) : (
             <>
-              {returnedFromPayment === "success" ? (
+              {upayReturnError ? (
+                <p role="alert" className="text-sm font-medium text-frame-magenta">
+                  {upayReturnError}
+                </p>
+              ) : returnedFromPayment === "success" ? (
                 <p className="text-xs text-frame-muted">{labels.paymentNotCompleted}</p>
               ) : null}
               {returnedFromPayment === "cancelled" ? (

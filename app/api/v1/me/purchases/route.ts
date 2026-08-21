@@ -31,8 +31,6 @@ import {
   setPendingPurchaseProvider,
   upsertUserFromClaims,
 } from "@/lib/server/users/repository";
-import { buildUpayBrowserReturnUrl } from "@/lib/payments/pay-return";
-import { WORKER_ORIGIN } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,7 +43,7 @@ interface PurchaseRequestBody {
   itemSlug?: unknown;
   planId?: unknown;
   locale?: unknown;
-  /** In-app path after pay; uPay returnurl is this path on the production Worker. */
+  /** Ignored — the dashboard button leaves uPay returnurl blank. */
   returnPath?: unknown;
   /** `card` (default) or `bit`. Bit requires `phone`. */
   paymentMethod?: unknown;
@@ -96,7 +94,6 @@ export async function POST(request: NextRequest) {
     const locale = resolveCatalogLocale(
       typeof body.locale === "string" ? body.locale : null,
     );
-    const returnPath = typeof body.returnPath === "string" ? body.returnPath : null;
     const paymentMethod: UpayPaymentMethod = isUpayPaymentMethod(body.paymentMethod)
       ? body.paymentMethod
       : "card";
@@ -172,9 +169,6 @@ export async function POST(request: NextRequest) {
       amountIls: purchase.amountIls,
     };
 
-    const path = returnPath && returnPath.startsWith("/") ? returnPath : "/he";
-    const origin = WORKER_ORIGIN;
-
     const upayConfig = await getUpayConfig();
     if (upayConfig) {
       response.upayForm = buildUpayFormFields(upayConfig, {
@@ -182,8 +176,6 @@ export async function POST(request: NextRequest) {
         description,
         method: paymentMethod,
         payerPhone: payerPhone ?? undefined,
-        returnUrl: buildUpayBrowserReturnUrl(path),
-        ipnUrl: `${origin}/api/v1/webhooks/upay?purchaseId=${purchase.id}`,
       });
     }
 

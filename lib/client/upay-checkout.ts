@@ -36,6 +36,7 @@ export function submitUpayForm(
   const form = doc.createElement("form");
   form.method = "POST";
   form.action = action;
+  form.acceptCharset = "UTF-8";
   form.style.display = "none";
   const safeFields = rewriteUpayFormFields(fields);
   for (const [name, value] of Object.entries(safeFields)) {

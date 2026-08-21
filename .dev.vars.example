@@ -26,14 +26,7 @@ PREVIEW_CATALOG_TOKEN=
 # Missing/empty means nobody is an admin, not "allow everyone".
 ADMIN_EMAILS=
 
-# uPay (upay.co.il) — see lib/server/payments/upay.ts. uPay publishes no
-# API docs; this is built against a mechanism reverse-engineered from the
-# HTML "embed code" their dashboard generates for a manually-created
-# payment button, confirmed live with a real ₪200 test transaction on
-# 2026-08-18. Just your uPay account login email — no separate merchant ID
-# or API key exists for this flow. Leave unset to skip offering uPay.
-#
-# Bit: checkout collects the buyer’s Israeli mobile and POSTs
-# providername=bit + cellphone on the same form. Ask uPay support
-# to enable Bit on the merchant (they sometimes block it for new accounts).
+# uPay (upay.co.il) — see lib/server/payments/upay.ts. The live dashboard
+# button email is hardcoded as theframe@bybarzilay.com (public embed field,
+# not a password). This secret is optional leftover config.
 UPAY_MERCHANT_EMAIL=

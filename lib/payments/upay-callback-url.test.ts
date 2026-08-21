@@ -6,6 +6,11 @@ import {
 import { WORKER_ORIGIN } from "@/lib/site";
 
 describe("rewriteUpayCallbackUrl", () => {
+  it("leaves a blank returnurl blank", () => {
+    expect(rewriteUpayCallbackUrl("")).toBe("");
+    expect(rewriteUpayCallbackUrl("   ")).toBe("");
+  });
+
   it("rewrites localhost checkout returnurl to the Worker", () => {
     expect(
       rewriteUpayCallbackUrl(
@@ -35,6 +40,20 @@ describe("rewriteUpayCallbackUrl", () => {
 });
 
 describe("rewriteUpayFormFields", () => {
+  it("leaves blank dashboard callbacks blank", () => {
+    expect(
+      rewriteUpayFormFields({
+        amount: "1.00",
+        returnurl: "",
+        ipnurl: "",
+      }),
+    ).toEqual({
+      amount: "1.00",
+      returnurl: "",
+      ipnurl: "",
+    });
+  });
+
   it("rewrites returnurl and ipnurl together", () => {
     expect(
       rewriteUpayFormFields({

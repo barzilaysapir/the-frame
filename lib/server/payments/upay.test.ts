@@ -4,6 +4,7 @@ import {
   buildUpayFormFields,
   isUpayPaymentMethod,
   UPAY_BIT_MAX_ILS,
+  UPAY_DASHBOARD_MERCHANT_EMAIL,
   upayProviderForMethod,
 } from "@/lib/server/payments/upay";
 
@@ -13,14 +14,12 @@ function params(overrides: Partial<Parameters<typeof buildUpayFormFields>[1]> = 
   return {
     amountIls: 200,
     description: "Vibe on Heels",
-    returnUrl: "https://example.com/ok",
-    ipnUrl: "https://example.com/ipn",
     ...overrides,
   };
 }
 
 describe("buildUpayFormFields", () => {
-  it("posts the server-computed amount to uPay's hosted form", () => {
+  it("matches the dashboard button, with a live amount", () => {
     const form = buildUpayFormFields(config, params());
 
     expect(form.action).toBe(
@@ -28,27 +27,22 @@ describe("buildUpayFormFields", () => {
     );
     expect(form.fields.email).toBe("merchant@example.com");
     expect(form.fields.amount).toBe("200.00");
+    expect(form.fields.returnurl).toBe("");
+    expect(form.fields.ipnurl).toBe("");
     expect(form.fields.paymentdetails).toBe("Vibe on Heels");
     expect(form.fields.paymentmethod).toBeUndefined();
     expect(form.fields.providername).toBeUndefined();
   });
 
-  it("rewrites a localhost returnurl onto the live Worker", () => {
+  it("uses the dashboard merchant email", () => {
     const form = buildUpayFormFields(
-      config,
-      params({
-        returnUrl:
-          "http://localhost:4127/he/external-courses/vibe-on-heels",
-        ipnUrl: "http://localhost:4127/api/v1/webhooks/upay?purchaseId=x",
-      }),
+      { merchantEmail: UPAY_DASHBOARD_MERCHANT_EMAIL },
+      params({ amountIls: 1, description: "The Frame" }),
     );
-
-    expect(form.fields.returnurl).toBe(
-      "https://the-frame.barzilaysapir.workers.dev/he/external-courses/vibe-on-heels",
-    );
-    expect(form.fields.ipnurl).toBe(
-      "https://the-frame.barzilaysapir.workers.dev/api/v1/webhooks/upay?purchaseId=x",
-    );
+    expect(form.fields.email).toBe("theframe@bybarzilay.com");
+    expect(form.fields.amount).toBe("1.00");
+    expect(form.fields.returnurl).toBe("");
+    expect(form.fields.ipnurl).toBe("");
   });
 
   it("adds providername=bit and the buyer’s mobile for Bit", () => {
