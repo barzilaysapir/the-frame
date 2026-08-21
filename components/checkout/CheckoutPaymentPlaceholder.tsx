@@ -13,6 +13,7 @@ import {
   checkoutAfterPurchase,
   submitUpayForm,
 } from "@/lib/client/upay-checkout";
+import { rewriteUpayFormFields } from "@/lib/payments/upay-callback-url";
 import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { localePath } from "@/lib/i18n/path";
@@ -169,7 +170,7 @@ export function CheckoutPaymentPlaceholder({
       const step = checkoutAfterPurchase(data);
       if (step.type === "redirect") {
         submitUpayForm(step.form.action, step.form.fields);
-        setResult(data);
+        setResult({ ...data, upayForm: step.form });
         return;
       }
       setResult(data);
@@ -225,7 +226,7 @@ export function CheckoutPaymentPlaceholder({
                 action={result.upayForm.action}
                 className="hidden"
               >
-                {Object.entries(result.upayForm.fields).map(([name, value]) => (
+                {Object.entries(rewriteUpayFormFields(result.upayForm.fields)).map(([name, value]) => (
                   <input key={name} type="hidden" name={name} value={value} />
                 ))}
               </form>

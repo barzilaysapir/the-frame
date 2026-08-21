@@ -19,8 +19,18 @@ function configuredSiteUrl(): string | null {
   const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "") ?? "";
   if (!raw) return null;
   try {
-    const host = new URL(raw).hostname.toLowerCase();
+    const url = new URL(raw);
+    if (url.protocol !== "https:") return null;
+    const host = url.hostname.toLowerCase();
     if (UNWIRED_HOSTS.has(host)) return null;
+    if (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      host === "::1" ||
+      host.endsWith(".localhost")
+    ) {
+      return null;
+    }
     return raw;
   } catch {
     return null;
