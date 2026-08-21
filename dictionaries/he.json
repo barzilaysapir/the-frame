@@ -387,7 +387,9 @@
     "videoErrorBody": "בדקו את החיבור לאינטרנט ונסו שוב.",
     "retry": "נסה שוב",
     "captionsOn": "כבה כתוביות",
-    "captionsOff": "הפעל כתוביות"
+    "captionsOff": "הפעל כתוביות",
+    "showChapters": "הצג את כל הפרקים",
+    "hideChapters": "הסתר את רשימת הפרקים"
   },
   "admin": {
     "purchases": {

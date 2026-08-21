@@ -11,8 +11,11 @@ interface TimelineChapterMarkersProps {
 }
 
 /**
- * Clickable dots on the seek bar at each chapter time. The chip row above
- * still lists labels; these are the positional cues on the timeline itself.
+ * Chapter boundary dividers on the seek bar — thin ticks (YouTube-style),
+ * not dots, so the bar itself reads as segmented. Each sits inside a much
+ * larger invisible hit area than its visual mark: a 3px tick is unusable as
+ * a touch target on its own, so the button padding does the tapping work
+ * while the tick stays visually unobtrusive.
  */
 export function TimelineChapterMarkers({
   chapters,
@@ -44,15 +47,15 @@ export function TimelineChapterMarkers({
               event.stopPropagation();
               onJumpToChapter(chapter);
             }}
-            className="pointer-events-auto absolute top-1/2 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-frame-cyan"
+            className="pointer-events-auto absolute top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-frame-cyan"
             style={{ left: `${percent}%` }}
           >
             <span
               className={cn(
-                "block h-2.5 w-2.5 rounded-full border transition-[transform,background-color,border-color]",
+                "block w-[3px] rounded-full transition-[transform,background-color,height]",
                 active
-                  ? "scale-125 border-frame-magenta bg-frame-magenta"
-                  : "border-white/90 bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.35)] hover:scale-125 hover:border-frame-magenta hover:bg-frame-magenta",
+                  ? "h-3.5 bg-frame-magenta"
+                  : "h-1.5 bg-frame-bg",
               )}
             />
           </button>
