@@ -12,6 +12,7 @@ import type {
   CatalogRoutine,
   CatalogChapter,
 } from "@/lib/server/catalog/types";
+import { isCourseFeatureIcon } from "@/lib/catalog/course-feature-icons";
 import type { AppDb } from "@/lib/server/db";
 import type {
   ChapterId,
@@ -76,6 +77,7 @@ interface ExternalCourseRow {
   title: string | null;
   tagline: string | null;
   description: string | null;
+  curriculum_heading: string | null;
   curriculum_topics_json: string | null;
   features_json: string | null;
   style_label: string | null;
@@ -130,11 +132,16 @@ function parseFeatures(
     const parsed = JSON.parse(featuresJson) as unknown;
     if (!Array.isArray(parsed)) return [];
     return parsed.filter(
-      (item): item is CatalogExternalCourse["features"][number] =>
-        typeof item === "object" &&
-        item !== null &&
-        typeof (item as { icon?: unknown }).icon === "string" &&
-        typeof (item as { label?: unknown }).label === "string",
+      (item): item is CatalogExternalCourse["features"][number] => {
+        if (typeof item !== "object" || item === null) return false;
+        const icon = (item as { icon?: unknown }).icon;
+        const label = (item as { label?: unknown }).label;
+        return (
+          typeof icon === "string" &&
+          isCourseFeatureIcon(icon) &&
+          typeof label === "string"
+        );
+      },
     );
   } catch (error) {
     console.error(
@@ -210,6 +217,7 @@ function mapExternalCourse(
     instructorSlug: row.instructor_slug,
     tagline: row.tagline ?? "",
     description: row.description ?? "",
+    curriculumHeading: row.curriculum_heading ?? "",
     curriculumTopics: parseStringArray(
       row.curriculum_topics_json,
       "curriculum_topics_json",
@@ -535,7 +543,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                  -- instructor link (see migrations/0030).
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
-                 eci.curriculum_topics_json, eci.features_json,
+                 eci.curriculum_heading, eci.curriculum_topics_json, eci.features_json,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec
@@ -574,7 +582,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                  -- See the matching comment in listExternalCourses above.
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
-                 eci.curriculum_topics_json, eci.features_json,
+                 eci.curriculum_heading, eci.curriculum_topics_json, eci.features_json,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec

@@ -4,13 +4,13 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 /**
  * Gated video delivery for real (non-mock) external-course lessons.
  *
- * The R2 bucket (`the-frame-class-videos`) stays private — nothing is ever
- * served from a public bucket URL. Instead: a logged-in-only route
+ * The R2 bucket stays private — nothing is served from a public object URL.
+ * A logged-in-and-paid-only route
  * (`/api/v1/external-courses/[slug]/lessons/[lessonId]/playback-url`) mints
- * a short-lived HMAC-signed URL pointing at the streaming route
- * (`.../stream`), which validates the signature (not a Firebase token —
- * a native <video> element can't send an Authorization header) and then
- * proxies the R2 object, honoring Range requests for seeking.
+ * a short-lived same-origin `/stream` URL for a native `<video>` element
+ * (which cannot send an Authorization header). `/stream` 307s to a
+ * presigned R2 GET — the Worker must not copy class-length MP4 bytes
+ * (Cloudflare 1102).
  */
 
 // Long enough to cover one uninterrupted watch session without forcing a
@@ -19,20 +19,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 // a signed link is usable by whoever holds it until it expires.
 const PLAYBACK_URL_TTL_SECONDS = 4 * 60 * 60;
 
-export async function getCourseVideosBucket(): Promise<R2Bucket | null> {
-  try {
-    const { env } = await getCloudflareContext({ async: true });
-    return env.COURSE_VIDEOS ?? null;
-  } catch (error) {
-    console.error(
-      "Failed to resolve Cloudflare context for the COURSE_VIDEOS binding:",
-      error,
-    );
-    return null;
-  }
-}
-
-async function getSigningKey(): Promise<CryptoKey> {
+export async function getVideoSigningKey(): Promise<CryptoKey> {
   const { env } = await getCloudflareContext({ async: true });
   const secret = env.VIDEO_SIGNING_SECRET;
   if (!secret) {
@@ -64,8 +51,8 @@ export async function signLessonPlaybackUrl(
   courseSlug: string,
   lessonId: string,
 ): Promise<SignedLessonPlaybackUrl> {
-  const key = await getSigningKey();
   const expiresAt = Math.floor(Date.now() / 1000) + PLAYBACK_URL_TTL_SECONDS;
+  const key = await getVideoSigningKey();
   const payload = buildSignaturePayload(courseSlug, lessonId, expiresAt);
   const signatureBytes = await crypto.subtle.sign(
     "HMAC",
@@ -97,7 +84,7 @@ export async function verifyLessonPlaybackSignature(
     return false;
   }
 
-  const key = await getSigningKey();
+  const key = await getVideoSigningKey();
   const payload = buildSignaturePayload(courseSlug, lessonId, expiresAt);
   return crypto.subtle.verify(
     "HMAC",
@@ -132,4 +119,55 @@ export function parseRangeHeader(header: string | null): ParsedByteRange | null 
   const end = Number(endStr);
   if (end < offset) return null;
   return { offset, length: end - offset + 1 };
+}
+
+/** R2's echoed range on a GET, or undefined when the binding omits it. */
+export type EchoedR2Range =
+  | { offset: number; length?: number }
+  | { offset?: number; length: number }
+  | { suffix: number };
+
+/**
+ * Byte window to advertise on a 206. Prefer R2's echoed range when present;
+ * otherwise derive it from the request. Returns null for an unsatisfiable
+ * range (HTTP 416). Always 206 when the client sent Range — a 200 on a
+ * Range request makes Safari/Chrome media playback stutter or stall.
+ */
+export function describeR2VideoRange(
+  requested: ParsedByteRange,
+  objectSize: number,
+  echoed?: EchoedR2Range,
+): { start: number; end: number; length: number } | null {
+  if (objectSize <= 0) return null;
+
+  let start: number;
+  let end: number;
+  if (echoed && "suffix" in echoed) {
+    start = Math.max(0, objectSize - echoed.suffix);
+    end = objectSize - 1;
+  } else if (echoed) {
+    start = echoed.offset ?? 0;
+    const length = echoed.length ?? objectSize - start;
+    end = start + length - 1;
+  } else if ("suffix" in requested) {
+    start = Math.max(0, objectSize - requested.suffix);
+    end = objectSize - 1;
+  } else {
+    start = requested.offset;
+    const length = requested.length ?? objectSize - start;
+    end = start + length - 1;
+  }
+
+  if (start < 0 || start >= objectSize) return null;
+  end = Math.min(end, objectSize - 1);
+  if (end < start) return null;
+  return { start, end, length: end - start + 1 };
+}
+
+/** Uploads often land as octet-stream; browsers need video/mp4 to play. */
+export function applyR2VideoContentType(headers: Headers): void {
+  const contentType = headers.get("content-type");
+  if (!contentType || contentType === "application/octet-stream") {
+    headers.set("content-type", "video/mp4");
+  }
 }

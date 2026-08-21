@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import { RoutineFilterTag } from "@/components/routines/RoutineFilterTag";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -11,6 +12,8 @@ interface CourseTagsProps {
   size?: CourseTagsSize;
   externalCourseLabel: string;
   className?: string;
+  /** Compact “you have access” pill — watch page only, not the public landing. */
+  accessLabel?: string;
   /** When tags sit on a clickable card overlay, re-enable pointer events on the pills. */
   overlay?: boolean;
 }
@@ -26,6 +29,7 @@ export function CourseTags({
   size = "md",
   externalCourseLabel,
   className,
+  accessLabel,
   overlay = false,
 }: CourseTagsProps) {
   const interactive = overlay ? "pointer-events-auto" : undefined;
@@ -58,6 +62,17 @@ export function CourseTags({
       >
         {externalCourseLabel}
       </span>
+      {accessLabel ? (
+        <span
+          className={cn(
+            "inline-flex items-center gap-1 rounded-full border border-frame-cyan/70 bg-frame-cyan/15 font-bold text-frame-cyan",
+            sizeClass[size],
+          )}
+        >
+          <Check className="h-3 w-3" aria-hidden="true" />
+          {accessLabel}
+        </span>
+      ) : null}
     </div>
   );
 }

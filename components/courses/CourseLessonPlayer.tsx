@@ -160,6 +160,7 @@ export function CourseLessonPlayer({
       chapters={[]}
       labels={playerLabels}
       showMirror={lesson.allowMirror}
+      viewerLabel={user.email ?? user.uid}
     />
   );
 }

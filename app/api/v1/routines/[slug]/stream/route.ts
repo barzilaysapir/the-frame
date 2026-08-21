@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resolveCatalog } from "@/lib/server/catalog";
+import { getVideoSigningKey } from "@/lib/server/course-videos";
 import {
-  getRoutineVideosBucket,
-  parseRangeHeader,
+  PLAYBACK_GATE_COOKIE,
+  verifyPlaybackGateValue,
+} from "@/lib/server/playback-hotlink";
+import { redirectToPresignedR2 } from "@/lib/server/r2-stream-redirect";
+import {
+  isExternalRoutineVideoSrc,
   verifyRoutinePlaybackSignature,
 } from "@/lib/server/routine-videos";
 
@@ -13,37 +18,22 @@ interface RouteParams {
   params: Promise<{ slug: string }>;
 }
 
-function copyR2HttpMetadata(
-  headers: Headers,
-  metadata: R2HTTPMetadata | undefined,
-) {
-  if (!metadata) return;
-  if (metadata.contentType) headers.set("content-type", metadata.contentType);
-  if (metadata.contentLanguage) {
-    headers.set("content-language", metadata.contentLanguage);
-  }
-  if (metadata.contentDisposition) {
-    headers.set("content-disposition", metadata.contentDisposition);
-  }
-  if (metadata.contentEncoding) {
-    headers.set("content-encoding", metadata.contentEncoding);
-  }
-}
-
-/** Real routine video sources are private R2 keys; demo/mock ones are plain external URLs (see `lib/server/routine-videos.ts`). */
-function isExternalUrl(src: string): boolean {
-  return /^https?:\/\//i.test(src);
-}
-
-/**
- * Streams one routine's video, gated by a signed `exp`/`sig` query pair
- * (minted by `.../playback-url`) rather than a Firebase Bearer token — a
- * native <video src> request can't carry a custom Authorization header, so
- * the signature *is* the auth here. Mirrors the external-course lesson
- * stream route; see `lib/server/routine-videos.ts` for why this also has to
- * handle plain external URLs (demo/mock routines) alongside real R2 keys.
+/** Same-origin `<video src>` for a routine. Cookie + HMAC gate, then 307
+ * to a presigned R2 GET for real keys. Demo `https://` sources are fetched
+ * upstream (short sample clips, not class-length R2 objects).
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
+  const gateOk = await verifyPlaybackGateValue(
+    await getVideoSigningKey(),
+    request.cookies.get(PLAYBACK_GATE_COOKIE)?.value,
+  );
+  if (!gateOk) {
+    return NextResponse.json(
+      { error: "Playback is only available in the player" },
+      { status: 403 },
+    );
+  }
+
   const { slug } = await params;
   const { searchParams } = request.nextUrl;
 
@@ -65,15 +55,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: "Routine not found" }, { status: 404 });
   }
 
-  if (isExternalUrl(source.videoSrc)) {
+  if (isExternalRoutineVideoSrc(source.videoSrc)) {
     const rangeHeader = request.headers.get("range");
     const upstream = await fetch(
       source.videoSrc,
       rangeHeader ? { headers: { range: rangeHeader } } : undefined,
     );
     const headers = new Headers(upstream.headers);
-    // Playback URLs are per-viewer and short-lived — never let a shared
-    // cache (browser or CDN) retain the video body past this request.
+    headers.set("content-disposition", "inline");
     headers.set("cache-control", "private, max-age=0, no-store");
     return new NextResponse(upstream.body, {
       status: upstream.status,
@@ -81,50 +70,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     });
   }
 
-  const bucket = await getRoutineVideosBucket();
-  if (!bucket) {
-    return NextResponse.json(
-      { error: "Video storage unavailable" },
-      { status: 503 },
-    );
-  }
-
-  const range = parseRangeHeader(request.headers.get("range"));
-  const object = await bucket.get(
-    source.videoSrc,
-    range ? { range } : undefined,
-  );
-  if (!object) {
-    return NextResponse.json({ error: "Video not found" }, { status: 404 });
-  }
-
-  const headers = new Headers();
-  // Do not call `object.writeHttpMetadata(headers)` in next/dev: Miniflare's
-  // R2 proxy tries to serialize the undici/Next Headers object with devalue
-  // and throws `DevalueError: Cannot stringify arbitrary non-POJOs`.
-  copyR2HttpMetadata(headers, object.httpMetadata);
-  if (!headers.get("content-type")) {
-    headers.set("content-type", "video/mp4");
-  }
-  headers.set("accept-ranges", "bytes");
-  headers.set("etag", object.httpEtag);
-  headers.set("cache-control", "private, max-age=0, no-store");
-
-  if (range && object.range) {
-    const resolved = object.range;
-    const start = "offset" in resolved && resolved.offset !== undefined
-      ? resolved.offset
-      : object.size - ("suffix" in resolved ? resolved.suffix : 0);
-    const length = "length" in resolved && resolved.length !== undefined
-      ? resolved.length
-      : object.size - start;
-    const end = start + length - 1;
-
-    headers.set("content-range", `bytes ${start}-${end}/${object.size}`);
-    headers.set("content-length", String(length));
-    return new NextResponse(object.body, { status: 206, headers });
-  }
-
-  headers.set("content-length", String(object.size));
-  return new NextResponse(object.body, { status: 200, headers });
+  return redirectToPresignedR2(source.videoSrc, searchParams.get("exp"));
 }
+
+export { GET as HEAD };

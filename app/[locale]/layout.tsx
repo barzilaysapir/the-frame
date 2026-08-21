@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { FavoritesProvider } from "@/components/favorites/FavoritesProvider";
 import { LocalePrefSync } from "@/components/LocalePrefSync";
+import { ThemeFavicon } from "@/components/ThemeFavicon";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/Footer";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -13,7 +14,15 @@ import {
   locales,
   type Locale,
 } from "@/lib/i18n/config";
-import { SITE_URL } from "@/lib/site";
+import { resolveShareOrigin } from "@/lib/server/share-origin";
+import {
+  DEFAULT_SHARE_IMAGE,
+  DEFAULT_SHARE_IMAGE_HEIGHT,
+  DEFAULT_SHARE_IMAGE_WIDTH,
+  absoluteAssetUrl,
+  shareImageFields,
+} from "@/lib/share-metadata";
+import { FAVICON_DARK, FAVICON_LIGHT } from "@/lib/favicon";
 import "../globals.css";
 
 const heebo = Heebo({
@@ -47,9 +56,10 @@ export async function generateMetadata({
   if (!isLocale(localeParam)) return {};
   const locale = localeParam;
   const dict = await getDictionary(locale);
+  const origin = await resolveShareOrigin();
 
   return {
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(origin),
     title: {
       default: dict.meta.siteTitle,
       template: "%s | The Frame by Barzilay",
@@ -61,12 +71,37 @@ export async function generateMetadata({
       siteName: "The Frame by Barzilay",
       locale: locale === "he" ? "he_IL" : "en_US",
       type: "website",
+      images: shareImageFields({
+        url: DEFAULT_SHARE_IMAGE,
+        alt: "The Frame by Barzilay",
+        width: DEFAULT_SHARE_IMAGE_WIDTH,
+        height: DEFAULT_SHARE_IMAGE_HEIGHT,
+        origin,
+      }),
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
+      images: [absoluteAssetUrl(DEFAULT_SHARE_IMAGE, origin)],
     },
+    icons: {
+      icon: [
+        {
+          url: FAVICON_DARK,
+          type: "image/png",
+          sizes: "32x32",
+          media: "(prefers-color-scheme: dark)",
+        },
+        {
+          url: FAVICON_LIGHT,
+          type: "image/png",
+          sizes: "32x32",
+          media: "(prefers-color-scheme: light)",
+        },
+      ],
+    },
+    themeColor: "#0F0F11",
     alternates: {
       languages: {
         he: "/he",
@@ -97,6 +132,7 @@ export default async function LocaleLayout({
       <body className="flex min-h-screen flex-col bg-frame-bg pb-[calc(4rem+env(safe-area-inset-bottom))] font-sans antialiased lg:pb-0">
         <AuthProvider>
           <LocalePrefSync locale={locale} />
+          <ThemeFavicon />
           <FavoritesProvider locale={locale}>
             <Header
               locale={locale}

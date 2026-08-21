@@ -1,10 +1,6 @@
 /**
- * One-off: compress the "The Frame" script wordmark logos (4 color variants,
- * transparent PNG, script cursive text only — no icon mark) from their
- * source export size down to the site's asset convention before they land
- * in `public/`.
- *
- * Usage: node scripts/compress-logo-wordmarks.mjs
+ * @deprecated Use `scripts/generate-site-icons.mjs` — the site only ships
+ * the light-silver wordmark used in the header/footer.
  */
 import sharp from "sharp";
 import fs from "node:fs";
@@ -17,20 +13,8 @@ const ROOT = path.join(__dirname, "..");
 // [source absolute path, destination filename under public/]
 const WORDMARKS = [
   [
-    "C:/Users/sap/.cursor/projects/d-projects-dev-the-frame/assets/c__Users_sap_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_frame-title-only-dark-charcoal-2970fac5-2024-4e6d-9efb-8e58589285a0.png",
-    "logo-wordmark-dark-charcoal.png",
-  ],
-  [
-    "C:/Users/sap/.cursor/projects/d-projects-dev-the-frame/assets/c__Users_sap_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_frame-title-only-dark-black-00311e87-e506-4882-b6bc-09219a9f6f37.png",
-    "logo-wordmark-dark-black.png",
-  ],
-  [
-    "C:/Users/sap/.cursor/projects/d-projects-dev-the-frame/assets/c__Users_sap_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_frame-title-only-light-silver-4a91bd02-c5bb-4147-bb0f-4292c31d8789.png",
+    "C:/Users/sap/.cursor/projects/d-projects-dev-the-frame/assets/c__Users_sap_AppData_Roaming_Cursor_User_workspaceStorage_57f41323adce4e793ebbab7cf9ae87b0_images_frame-title-only-light-silver-ac1fb23b-93b5-4bec-a6e9-98b39f7f82ae-cfadd8f5-d30b-4652-b300-dabd3bf118fd.png",
     "logo-wordmark-light-silver.png",
-  ],
-  [
-    "C:/Users/sap/.cursor/projects/d-projects-dev-the-frame/assets/c__Users_sap_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_frame-title-only-light-cream-3d5526d1-6b97-4004-befc-98c3b50e9bb4.png",
-    "logo-wordmark-light-cream.png",
   ],
 ];
 

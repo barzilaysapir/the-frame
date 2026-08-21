@@ -81,7 +81,7 @@ export function RoutineFilterDropdown({
               <div className="relative flex-1">
                 <Search
                   aria-hidden="true"
-                  className="pointer-events-none absolute start-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-frame-muted"
+                  className="pointer-events-none absolute start-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-frame-muted"
                 />
                 <Command.Input
                   autoFocus
@@ -95,7 +95,7 @@ export function RoutineFilterDropdown({
                   }}
                   placeholder={searchPlaceholder}
                   aria-label={searchAriaLabel}
-                  className="w-full rounded-lg bg-transparent py-1.5 ps-7 pe-2 text-sm text-white placeholder:text-frame-muted focus:outline-none"
+                  className="w-full rounded-lg bg-transparent py-1.5 ps-9 pe-2 text-sm text-white placeholder:text-frame-muted focus:outline-none"
                 />
               </div>
             ) : (

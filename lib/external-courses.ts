@@ -88,15 +88,20 @@ export const EXTERNAL_COURSES: ExternalCourseRecord[] = [
         r2Key: "class-videos/external-courses/gisha-gmisha/foundations/spine-abs.mp4",
         allowMirror: false,
       },
+      {
+        id: "summary",
+        r2Key: "class-videos/external-courses/gisha-gmisha/foundations/summary.mp4",
+        allowMirror: false,
+      },
     ],
   },
   {
-    // Second real course — no lessons yet, card-only, same starting point as
-    // gisha-gmisha-foundations before migrations/0017.
+    // Second real course — lessons not uploaded yet; temporary ₪1 so
+    // checkout can be tested before the real price is set.
     slug: "vibe-on-heels",
     provider: "דניאל לאני",
     instructorSlug: "daniel-lani",
-    priceDisplay: "בקרוב",
+    priceDisplay: "₪1",
     sortOrder: 7,
     coverImage: "/course-covers/vibe-on-heels.png",
     promoVideo: "/course-promos/vibe-on-heels.mp4",

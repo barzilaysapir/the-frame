@@ -92,6 +92,7 @@ export function localizeExternalCourse(
   provider: string;
   tagline: string;
   description: string;
+  curriculumHeading: string;
   curriculumTopics: string[];
   features: CatalogExternalCourseFeature[];
 } {
@@ -105,6 +106,7 @@ export function localizeExternalCourse(
           provider?: string;
           tagline?: string;
           description?: string;
+          curriculumHeading?: string;
           curriculumTopics?: string[];
           features?: CatalogExternalCourseFeature[];
         }
@@ -115,6 +117,7 @@ export function localizeExternalCourse(
     provider: copy?.provider ?? course.provider,
     tagline: copy?.tagline ?? "",
     description: copy?.description ?? "",
+    curriculumHeading: copy?.curriculumHeading ?? "",
     curriculumTopics: copy?.curriculumTopics ?? [],
     features: copy?.features ?? [],
   };

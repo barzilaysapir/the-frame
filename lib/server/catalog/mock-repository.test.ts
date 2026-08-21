@@ -217,6 +217,10 @@ describe("mockCatalogRepository.getExternalCourse", () => {
       "en",
       "gisha-gmisha-foundations",
     );
+    expect(withLessons?.lessons.map((lesson) => lesson.id)).toContain("summary");
+    expect(withLessons?.lessons.find((lesson) => lesson.id === "summary")?.title).toBe(
+      "Summary",
+    );
     expect(withLessons?.lessons.length).toBeGreaterThan(0);
     expect(
       withLessons!.lessons.every(
