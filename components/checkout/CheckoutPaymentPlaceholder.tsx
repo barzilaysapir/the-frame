@@ -75,11 +75,42 @@ export function CheckoutPaymentPlaceholder({
   const [busyMethod, setBusyMethod] = useState<UpayPaymentMethod | null>(null);
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [returnPaid, setReturnPaid] = useState(false);
   const upayFormRef = useRef<HTMLFormElement>(null);
 
   const planSupported = planId !== "subscription";
   const bitAllowed = bitAmountAllowed(amountIls);
   const busy = busyMethod !== null;
+  const owned = result?.status === "paid" || returnPaid;
+
+  // uPay's returnurl always appends ?payment=success. That is not proof of
+  // payment — poll ownership and keep the pay buttons so a failed/cancelled
+  // return is not a dead end.
+  useEffect(() => {
+    if (!user || returnedFromPayment !== "success") return;
+    let cancelled = false;
+    const check = async () => {
+      try {
+        const res = await fetchWithAuth(
+          user,
+          `/api/v1/me/purchases/status?itemType=${encodeURIComponent(itemType)}&itemSlug=${encodeURIComponent(itemSlug)}`,
+        );
+        if (!res.ok) return;
+        const data = (await res.json()) as { status: "paid" | "none" };
+        if (!cancelled && data.status === "paid") setReturnPaid(true);
+      } catch (err) {
+        console.error("[CheckoutPaymentPlaceholder] return status check failed:", err);
+      }
+    };
+    void check();
+    const interval = setInterval(check, 2500);
+    const stop = setTimeout(() => clearInterval(interval), 15000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+      clearTimeout(stop);
+    };
+  }, [user, returnedFromPayment, itemType, itemSlug]);
 
   // Submit the hosted form as soon as fields arrive so the buyer isn't asked
   // to click a second time after choosing card vs Bit.
@@ -157,7 +188,7 @@ export function CheckoutPaymentPlaceholder({
         </div>
       ) : (
         <div className="mt-6 space-y-3">
-          {result?.status === "paid" ? (
+          {owned ? (
             <>
               <p className="text-sm font-medium text-white">{labels.alreadyOwned}</p>
               <Button href={itemHref} className="w-full">
@@ -187,17 +218,18 @@ export function CheckoutPaymentPlaceholder({
                 {CONTACT_EMAIL}
               </a>
             </p>
-          ) : returnedFromPayment === "success" ? (
-            <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
-              <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
-              <p className="mt-1 text-sm text-frame-silver">{labels.bitConfirmationBody}</p>
-            </div>
           ) : !planSupported ? (
             <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
               {labels.planUnavailable}
             </p>
           ) : (
             <>
+              {returnedFromPayment === "success" ? (
+                <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
+                  <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
+                  <p className="mt-1 text-sm text-frame-silver">{labels.bitConfirmationBody}</p>
+                </div>
+              ) : null}
               {returnedFromPayment === "cancelled" ? (
                 <p className="text-xs text-frame-muted">{labels.paymentCancelled}</p>
               ) : null}
