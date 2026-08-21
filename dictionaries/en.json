@@ -387,7 +387,9 @@
     "videoErrorBody": "Check your connection and try again.",
     "retry": "Try again",
     "captionsOn": "Turn off captions",
-    "captionsOff": "Turn on captions"
+    "captionsOff": "Turn on captions",
+    "showChapters": "Show all chapters",
+    "hideChapters": "Hide chapter list"
   },
   "admin": {
     "purchases": {

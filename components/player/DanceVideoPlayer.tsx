@@ -16,6 +16,7 @@ import {
   Minimize,
   FlipHorizontal2,
   Captions,
+  ChevronDown,
   RotateCw,
 } from "lucide-react";
 import { cn, formatTime } from "@/lib/utils";
@@ -94,6 +95,8 @@ export function DanceVideoPlayer({
   const [captionsEnabled, setCaptionsEnabled] = useState(
     Boolean(captions?.default),
   );
+  const [isScrubbing, setIsScrubbing] = useState(false);
+  const [chaptersExpanded, setChaptersExpanded] = useState(false);
 
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
@@ -163,14 +166,16 @@ export function DanceVideoPlayer({
   }, []);
 
   // Whichever chapter the current playhead is inside — derived directly from
-  // currentTime/chapters rather than mirrored into its own state.
-  const activeChapterId = useMemo(() => {
+  // currentTime/chapters rather than mirrored into its own state. Also drives
+  // the scrub preview, since currentTime already updates on every drag tick.
+  const activeChapter = useMemo(() => {
     const sorted = [...chapters].sort((a, b) => a.time - b.time);
     const current = sorted.reduce<PlayerChapter | undefined>((acc, chapter) => {
       return currentTime >= chapter.time ? chapter : acc;
     }, sorted[0]);
-    return current?.id ?? chapters[0]?.id ?? "";
+    return current ?? chapters[0];
   }, [currentTime, chapters]);
+  const activeChapterId = activeChapter?.id ?? "";
 
   const handleSeek = (event: ChangeEvent<HTMLInputElement>) => {
     const video = videoRef.current;
@@ -178,6 +183,21 @@ export function DanceVideoPlayer({
     const time = Number(event.target.value);
     video.currentTime = time;
     setCurrentTime(time);
+  };
+
+  // Keep controls (and the scrub preview bubble) on screen for the whole
+  // drag — touch scrubbing doesn't fire the mousemove events the auto-hide
+  // timer relies on — then let the normal auto-hide countdown resume once
+  // the finger/cursor lifts.
+  const handleScrubStart = () => {
+    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    setAreControlsVisible(true);
+    setIsScrubbing(true);
+  };
+
+  const handleScrubEnd = () => {
+    setIsScrubbing(false);
+    scheduleHideControls();
   };
 
   const handleVolumeChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -227,6 +247,7 @@ export function DanceVideoPlayer({
     video.currentTime = chapter.time;
     setCurrentTime(chapter.time);
     if (video.paused) video.play();
+    setChaptersExpanded(false);
   };
 
   const toggleFullscreen = () => {
@@ -323,14 +344,19 @@ export function DanceVideoPlayer({
               : "opacity-0 group-hover:opacity-100"
           )}
         >
-          <ChapterMarkers
-            chapters={chapters}
-            activeChapterId={activeChapterId}
-            onJumpToChapter={jumpToChapter}
-          />
-
-          {/* Seek bar + chapter dots on the track */}
+          {/* Seek bar + chapter dividers on the track */}
           <div className="relative flex h-4 items-center">
+            {isScrubbing && duration > 0 ? (
+              <div
+                className="pointer-events-none absolute bottom-full z-[2] mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-black/90 px-2 py-1 text-[11px] font-medium tabular-nums text-white shadow-lg backdrop-blur-sm"
+                style={{
+                  left: `${Math.min(94, Math.max(6, progressPercent))}%`,
+                }}
+              >
+                {formatTime(currentTime)}
+                {activeChapter ? ` · ${activeChapter.label}` : null}
+              </div>
+            ) : null}
             <input
               type="range"
               className="frame-range relative z-0 w-full cursor-pointer"
@@ -342,6 +368,9 @@ export function DanceVideoPlayer({
               step={0.01}
               value={currentTime}
               onChange={handleSeek}
+              onPointerDown={handleScrubStart}
+              onPointerUp={handleScrubEnd}
+              onPointerCancel={handleScrubEnd}
               aria-label={labels.seek}
             />
             <TimelineChapterMarkers
@@ -442,6 +471,41 @@ export function DanceVideoPlayer({
               </button>
             </div>
           </div>
+
+          {/* Current chapter, right under the time — tap to reveal the rest.
+              Only this one chapter shows over the video by default,
+              YouTube-mobile style, instead of the full list at all times. */}
+          {chapters.length > 0 && activeChapter ? (
+            <div className="mt-2 flex flex-col items-start gap-2">
+              <button
+                type="button"
+                onClick={() => setChaptersExpanded((expanded) => !expanded)}
+                aria-expanded={chaptersExpanded}
+                aria-label={
+                  chaptersExpanded ? labels.hideChapters : labels.showChapters
+                }
+                className="flex max-w-full items-center gap-1 rounded-full border border-white/15 py-1 pl-2.5 pr-1.5 text-xs font-medium text-white/80 transition-colors hover:border-white/40 hover:text-white"
+              >
+                <span className="max-w-[12rem] truncate sm:max-w-xs">
+                  {activeChapter.label}
+                </span>
+                <ChevronDown
+                  className={cn(
+                    "h-3.5 w-3.5 shrink-0 transition-transform",
+                    chaptersExpanded && "rotate-180",
+                  )}
+                />
+              </button>
+
+              {chaptersExpanded ? (
+                <ChapterMarkers
+                  chapters={chapters}
+                  activeChapterId={activeChapterId}
+                  onJumpToChapter={jumpToChapter}
+                />
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         {/* Playback error overlay — last in DOM order so it stacks above
