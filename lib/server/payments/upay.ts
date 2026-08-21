@@ -1,6 +1,5 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { rewriteUpayCallbackUrl } from "@/lib/payments/upay-callback-url";
 import type { UpayPaymentMethod } from "@/lib/payments/upay-method";
 
 export {
@@ -26,43 +25,36 @@ export {
  * means a real per-order dynamic payment page is possible here, not just
  * a handful of pre-created static links.
  *
- * NOT CONFIRMED: the exact behavior of `returnurl` (does uPay redirect the
- * browser there after payment, with what query params?) and `ipnurl`
- * (POST or GET, what payload?) — both were blank in every generated
- * snippet seen so far. There is also NO documented signature/secret
- * returned with a callback to prove it's genuinely from uPay, unlike
- * Grow's processId/processToken pairing. The purchase id embedded in the
- * URLs below (an unguessable v4 UUID, never exposed except to the buyer's
- * own browser) is the only available correlation/security mechanism —
- * treat it as a capability URL, not a verified webhook signature.
+ * The live dashboard button (2026-08-21) posts `email=theframe@bybarzilay.com`
+ * and leaves `returnurl` / `ipnurl` blank. Filling those URLs made uPay
+ * bounce with USER_NOT_EXISTS. Match the button: blank callbacks, that
+ * email, dynamic amount + paymentdetails.
  *
- * uPay has no sandbox at all (confirmed separately) — every real test of
- * `returnurl`/`ipnurl` behavior is a real charge. Verify with the smallest
- * possible amount, not repeated experiments.
+ * uPay has no sandbox at all (confirmed separately) — every real test is
+ * a real charge. Verify with the smallest possible amount.
  */
+
+/** Public merchant id from the dashboard embed — not a password. */
+export const UPAY_DASHBOARD_MERCHANT_EMAIL = "theframe@bybarzilay.com";
 
 export interface UpayConfig {
   merchantEmail: string;
 }
 
-/** Returns null if uPay isn't configured — callers should treat it as just another unavailable option, same as Grow. */
+/** Always the dashboard button email so a stale Cloudflare secret cannot 404 the merchant. */
 export async function getUpayConfig(): Promise<UpayConfig | null> {
   try {
-    const { env } = await getCloudflareContext({ async: true });
-    const merchantEmail = env.UPAY_MERCHANT_EMAIL;
-    if (!merchantEmail) return null;
-    return { merchantEmail };
+    await getCloudflareContext({ async: true });
+    return { merchantEmail: UPAY_DASHBOARD_MERCHANT_EMAIL };
   } catch (error) {
     console.error("Failed to resolve Cloudflare context for uPay config:", error);
-    return null;
+    return { merchantEmail: UPAY_DASHBOARD_MERCHANT_EMAIL };
   }
 }
 
 export interface UpayFormParams {
   amountIls: number;
   description: string;
-  returnUrl: string;
-  ipnUrl: string;
   method?: UpayPaymentMethod;
   /** Israeli mobile `05xxxxxxxx` — required for Bit (uPay sends the charge to this phone). */
   payerPhone?: string;
@@ -76,17 +68,11 @@ export interface UpayFormFields {
 const UPAY_ACTION_URL = "https://app.upay.co.il/API6/clientsecure/redirectpage.php";
 
 /**
- * Builds the field set for the reverse-engineered dynamic payment form.
- * The client renders these as hidden inputs in a real `<form>` and submits
- * it — this can't be a plain redirect URL since uPay's endpoint is a POST.
+ * Same hidden fields as the dashboard button, with a live amount and
+ * paymentdetails. Callbacks stay blank on purpose.
  *
- * Bit: uPay’s product is “enter the customer’s mobile + amount, send
- * the charge to their Bit app” (not the hosted card page).
- * `redirectpage.php` rejects `paymentmethod=bit` (`wronginputpaymentmethod bit`)
- * and `phone=<mobile>` (`wronginputphone`). The POS page posts
- * `providername=bit` plus `cellphone` / `cellphonenotify` to json.php.
- * We put those fields on the same public form POST so a Bit-enabled
- * merchant can send the request without a POS session.
+ * Bit: `redirectpage.php` rejects `paymentmethod=bit`. POS uses
+ * `providername=bit` plus `cellphone` / `cellphonenotify`.
  */
 export function buildUpayFormFields(
   config: UpayConfig,
@@ -96,8 +82,8 @@ export function buildUpayFormFields(
   const fields: Record<string, string> = {
     email: config.merchantEmail,
     amount: params.amountIls.toFixed(2),
-    returnurl: rewriteUpayCallbackUrl(params.returnUrl),
-    ipnurl: rewriteUpayCallbackUrl(params.ipnUrl),
+    returnurl: "",
+    ipnurl: "",
     paymentdetails: params.description,
     maxpayments: "1",
     livesystem: "1",

@@ -57,7 +57,7 @@ describe("upayCallbackOrigin", () => {
 
   it("builds a real https returnurl from local checkout", () => {
     const origin = upayCallbackOrigin("http://localhost:4127");
-    const returnUrl = `${origin}/he/external-courses/vibe-on-heels?payment=success&provider=upay`;
+    const returnUrl = `${origin}/he/external-courses/vibe-on-heels`;
     const parsed = new URL(returnUrl);
     expect(parsed.protocol).toBe("https:");
     expect(parsed.hostname).toBe("the-frame.barzilaysapir.workers.dev");

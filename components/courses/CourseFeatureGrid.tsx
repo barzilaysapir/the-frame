@@ -9,7 +9,10 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
-import type { CourseFeatureIcon } from "@/lib/server/catalog/types";
+import {
+  isCourseFeatureIcon,
+  type CourseFeatureIcon,
+} from "@/lib/catalog/course-feature-icons";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<CourseFeatureIcon, typeof Sparkles> = {
@@ -40,7 +43,9 @@ export function CourseFeatureGrid({
       className={cn("grid grid-cols-2 gap-3 sm:grid-cols-4", className)}
     >
       {features.map((feature) => {
-        const Icon = ICONS[feature.icon];
+        const Icon = isCourseFeatureIcon(feature.icon)
+          ? ICONS[feature.icon]
+          : Sparkles;
         return (
           <div
             key={feature.label}

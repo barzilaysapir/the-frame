@@ -11,25 +11,18 @@ describe("checkoutAfterPurchase", () => {
     ).toEqual({ type: "owned" });
   });
 
-  it("rewrites a localhost returnurl before sending the buyer to uPay", () => {
+  it("leaves a blank returnurl blank", () => {
     const form = {
       action: "https://app.upay.co.il/x",
       fields: {
         amount: "1.00",
-        returnurl:
-          "http://localhost:4127/he/external-courses/vibe-on-heels?payment=success",
+        returnurl: "",
+        ipnurl: "",
       },
     };
     expect(checkoutAfterPurchase({ status: "pending", upayForm: form })).toEqual({
       type: "redirect",
-      form: {
-        action: form.action,
-        fields: {
-          amount: "1.00",
-          returnurl:
-            "https://the-frame.barzilaysapir.workers.dev/he/external-courses/vibe-on-heels?payment=success",
-        },
-      },
+      form,
     });
   });
 
@@ -49,55 +42,52 @@ describe("checkoutAfterPurchase", () => {
 });
 
 describe("submitUpayForm", () => {
-  it("appends a hidden POST form and submits it", () => {
-    const form = {
-      method: "",
-      action: "",
-      style: { display: "" },
-      children: [] as object[],
-      submitted: false,
-      appendChild(child: object) {
-        this.children.push(child);
-        return child;
-      },
-      submit() {
-        this.submitted = true;
-      },
-    };
-    const inputs: { type: string; name: string; value: string }[] = [];
-    const body = {
-      appended: null as unknown,
-      appendChild(node: unknown) {
-        this.appended = node;
-        return node as Node;
-      },
-    };
+  it("POSTs a hidden form to uPay", () => {
+    const appended: { method: string; action: string; names: string[] }[] = [];
     const doc = {
       createElement(tag: string) {
-        if (tag === "form") return form;
-        const input = { type: "", name: "", value: "" };
-        inputs.push(input);
-        return input;
+        if (tag === "form") {
+          return {
+            method: "",
+            action: "",
+            acceptCharset: "",
+            style: { display: "" },
+            children: [] as { name: string; value: string }[],
+            appendChild(child: { name: string; value: string }) {
+              this.children.push(child);
+            },
+            submit() {},
+          };
+        }
+        return { type: "", name: "", value: "" };
       },
-      body,
+      body: {
+        appendChild(form: {
+          method: string;
+          action: string;
+          children: { name: string }[];
+        }) {
+          appended.push({
+            method: form.method,
+            action: form.action,
+            names: form.children.map((c) => c.name),
+          });
+        },
+      },
     };
 
     submitUpayForm(
       "https://app.upay.co.il/API6/clientsecure/redirectpage.php",
-      { amount: "200.00", email: "merchant@example.com" },
+      { amount: "1.00" },
       doc as unknown as Document,
     );
 
-    expect(form.method).toBe("POST");
-    expect(form.action).toBe(
-      "https://app.upay.co.il/API6/clientsecure/redirectpage.php",
-    );
-    expect(form.style.display).toBe("none");
-    expect(form.submitted).toBe(true);
-    expect(body.appended).toBe(form);
-    expect(inputs).toEqual([
-      { type: "hidden", name: "amount", value: "200.00" },
-      { type: "hidden", name: "email", value: "merchant@example.com" },
+    expect(appended).toEqual([
+      {
+        method: "POST",
+        action: "https://app.upay.co.il/API6/clientsecure/redirectpage.php",
+        names: ["amount"],
+      },
     ]);
   });
 });

@@ -12,6 +12,7 @@ import type {
   CatalogRoutine,
   CatalogChapter,
 } from "@/lib/server/catalog/types";
+import { isCourseFeatureIcon } from "@/lib/catalog/course-feature-icons";
 import type { AppDb } from "@/lib/server/db";
 import type {
   ChapterId,
@@ -131,11 +132,16 @@ function parseFeatures(
     const parsed = JSON.parse(featuresJson) as unknown;
     if (!Array.isArray(parsed)) return [];
     return parsed.filter(
-      (item): item is CatalogExternalCourse["features"][number] =>
-        typeof item === "object" &&
-        item !== null &&
-        typeof (item as { icon?: unknown }).icon === "string" &&
-        typeof (item as { label?: unknown }).label === "string",
+      (item): item is CatalogExternalCourse["features"][number] => {
+        if (typeof item !== "object" || item === null) return false;
+        const icon = (item as { icon?: unknown }).icon;
+        const label = (item as { label?: unknown }).label;
+        return (
+          typeof icon === "string" &&
+          isCourseFeatureIcon(icon) &&
+          typeof label === "string"
+        );
+      },
     );
   } catch (error) {
     console.error(

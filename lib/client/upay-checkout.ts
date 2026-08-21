@@ -26,8 +26,7 @@ export function checkoutAfterPurchase(data: {
 
 /**
  * uPay's checkout is a real POST (not a GET redirect). Build the form in JS
- * and submit immediately — a React ref + useEffect is easy to unmount before
- * submit() runs (e.g. if `owned` flips true on the same render).
+ * and submit immediately — same path as the 18 Aug working card charge.
  */
 export function submitUpayForm(
   action: string,
@@ -37,6 +36,7 @@ export function submitUpayForm(
   const form = doc.createElement("form");
   form.method = "POST";
   form.action = action;
+  form.acceptCharset = "UTF-8";
   form.style.display = "none";
   const safeFields = rewriteUpayFormFields(fields);
   for (const [name, value] of Object.entries(safeFields)) {
