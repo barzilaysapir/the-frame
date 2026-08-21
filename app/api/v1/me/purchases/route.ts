@@ -32,7 +32,6 @@ import {
   upsertUserFromClaims,
 } from "@/lib/server/users/repository";
 import { publicOriginFromRequest, upayCallbackOrigin } from "@/lib/server/payments/checkout-origin";
-import { SITE_URL } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -179,7 +178,6 @@ export async function POST(request: NextRequest) {
         forwardedHost: request.headers.get("x-forwarded-host"),
         forwardedProto: request.headers.get("x-forwarded-proto"),
       }),
-      SITE_URL,
     );
 
     const upayConfig = await getUpayConfig();

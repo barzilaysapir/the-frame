@@ -1,7 +1,38 @@
 /**
- * Canonical site URL, used for metadataBase, sitemap.xml, and robots.txt.
- * Falls back to a placeholder until a real production domain is wired up
- * via NEXT_PUBLIC_SITE_URL (set it once the site has a custom domain).
+ * Canonical site URL for metadataBase, sitemap.xml, robots.txt, and
+ * uPay callbacks when the request itself is not a public https host
+ * (local `next dev`).
+ *
+ * The app is on the Cloudflare Worker only. `theframe.bybarzilay.com`
+ * is not attached yet (see wrangler.jsonc). Set NEXT_PUBLIC_SITE_URL
+ * to that host after the custom domain is live. The old placeholder
+ * `theframebybarzilay.com` is ignored if still present in an env var.
  */
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://theframebybarzilay.com";
+export const WORKER_ORIGIN = "https://the-frame.barzilaysapir.workers.dev";
+
+const UNWIRED_HOSTS = new Set([
+  "theframebybarzilay.com",
+  "www.theframebybarzilay.com",
+]);
+
+function configuredSiteUrl(): string | null {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "") ?? "";
+  if (!raw) return null;
+  try {
+    const host = new URL(raw).hostname.toLowerCase();
+    if (UNWIRED_HOSTS.has(host)) return null;
+    return raw;
+  } catch {
+    return null;
+  }
+}
+
+export const SITE_URL = configuredSiteUrl() ?? WORKER_ORIGIN;
+
+export function isUnwiredPlaceholderOrigin(origin: string): boolean {
+  try {
+    return UNWIRED_HOSTS.has(new URL(origin).hostname.toLowerCase());
+  } catch {
+    return false;
+  }
+}
