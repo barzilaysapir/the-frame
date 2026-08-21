@@ -31,6 +31,14 @@ describe("absoluteAssetUrl", () => {
       "https://cdn.example/cover.png",
     );
   });
+
+  it("joins onto a request origin so preview Workers are not production 404s", async () => {
+    const { absoluteAssetUrl } = await loadShareMetadata(PRODUCTION_ORIGIN);
+    const preview = "https://cursor-whatsapp-share-image-44fa-the-frame.barzilaysapir.workers.dev";
+    expect(absoluteAssetUrl("/og/logo.jpg", preview)).toBe(
+      `${preview}/og/logo.jpg`,
+    );
+  });
 });
 
 describe("pageShareMetadata", () => {
@@ -42,14 +50,16 @@ describe("pageShareMetadata", () => {
       description: "Learn the combo",
       image: DEFAULT_SHARE_IMAGE,
       imageAlt: "The Frame by Barzilay",
+      origin: "https://preview-the-frame.barzilaysapir.workers.dev",
     });
 
     const images = metadata.openGraph?.images;
     expect(Array.isArray(images)).toBe(true);
     expect(images).toEqual([
       {
-        url: `${PRODUCTION_ORIGIN}/og/logo.jpg`,
-        secureUrl: `${PRODUCTION_ORIGIN}/og/logo.jpg`,
+        url: "https://preview-the-frame.barzilaysapir.workers.dev/og/logo.jpg",
+        secureUrl:
+          "https://preview-the-frame.barzilaysapir.workers.dev/og/logo.jpg",
         alt: "The Frame by Barzilay",
         width: 1200,
         height: 630,
@@ -58,7 +68,9 @@ describe("pageShareMetadata", () => {
     ]);
     expect(metadata.twitter).toMatchObject({
       card: "summary_large_image",
-      images: [`${PRODUCTION_ORIGIN}/og/logo.jpg`],
+      images: [
+        "https://preview-the-frame.barzilaysapir.workers.dev/og/logo.jpg",
+      ],
     });
   });
 

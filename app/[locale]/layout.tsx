@@ -13,6 +13,7 @@ import {
   locales,
   type Locale,
 } from "@/lib/i18n/config";
+import { resolveShareOrigin } from "@/lib/server/share-origin";
 import {
   DEFAULT_SHARE_IMAGE,
   DEFAULT_SHARE_IMAGE_HEIGHT,
@@ -20,7 +21,6 @@ import {
   absoluteAssetUrl,
   shareImageFields,
 } from "@/lib/share-metadata";
-import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
 const heebo = Heebo({
@@ -54,9 +54,10 @@ export async function generateMetadata({
   if (!isLocale(localeParam)) return {};
   const locale = localeParam;
   const dict = await getDictionary(locale);
+  const origin = await resolveShareOrigin();
 
   return {
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(origin),
     title: {
       default: dict.meta.siteTitle,
       template: "%s | The Frame by Barzilay",
@@ -73,13 +74,14 @@ export async function generateMetadata({
         alt: "The Frame by Barzilay",
         width: DEFAULT_SHARE_IMAGE_WIDTH,
         height: DEFAULT_SHARE_IMAGE_HEIGHT,
+        origin,
       }),
     },
     twitter: {
       card: "summary_large_image",
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
-      images: [absoluteAssetUrl(DEFAULT_SHARE_IMAGE)],
+      images: [absoluteAssetUrl(DEFAULT_SHARE_IMAGE, origin)],
     },
     alternates: {
       languages: {

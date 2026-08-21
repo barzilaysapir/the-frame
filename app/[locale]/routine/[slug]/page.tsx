@@ -12,6 +12,7 @@ import { isLocale } from "@/lib/i18n/config";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
 import { getCachedInstructor, getCachedRoutine } from "@/lib/server/catalog";
+import { resolveShareOrigin } from "@/lib/server/share-origin";
 import { pageShareMetadata } from "@/lib/share-metadata";
 
 // Seed-catalog data changes rarely (via migrations, not user writes) — cache
@@ -47,11 +48,13 @@ export async function generateMetadata({
     instructor: instructor?.name ?? "",
   });
 
+  const origin = await resolveShareOrigin();
   return pageShareMetadata({
     title,
     description,
     image: routine.poster,
     imageAlt: routine.title,
+    origin,
   });
 }
 

@@ -18,14 +18,18 @@ const COURSE_SHARE_IMAGE_WIDTH = 960;
 const COURSE_SHARE_IMAGE_HEIGHT = 540;
 
 /**
- * Resolve a `public/` path against the canonical site origin. WhatsApp
- * rejects relative `og:image` URLs; it fetches this host, not the page URL.
+ * Resolve a `public/` path against `origin`. WhatsApp rejects relative
+ * `og:image` URLs and fetches that host, not the page URL — so preview
+ * deploys must pass the request origin, not production `SITE_URL`.
  */
-export function absoluteAssetUrl(path: string): string {
+export function absoluteAssetUrl(
+  path: string,
+  origin: string = SITE_URL,
+): string {
   if (/^https?:\/\//i.test(path)) return path;
-  const origin = SITE_URL.replace(/\/$/, "");
+  const base = origin.replace(/\/$/, "");
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  return `${origin}${normalized}`;
+  return `${base}${normalized}`;
 }
 
 function shareImageSizeForPath(path: string): {
@@ -64,8 +68,9 @@ export function shareImageFields(image: {
   alt: string;
   width: number;
   height: number;
+  origin?: string;
 }): NonNullable<NonNullable<Metadata["openGraph"]>["images"]> {
-  const url = absoluteAssetUrl(image.url);
+  const url = absoluteAssetUrl(image.url, image.origin);
   const type = mimeTypeForPath(image.url);
   return [
     {
@@ -90,6 +95,7 @@ export function pageShareMetadata({
   imageAlt,
   imageWidth,
   imageHeight,
+  origin,
 }: {
   title: string;
   description: string;
@@ -97,6 +103,7 @@ export function pageShareMetadata({
   imageAlt?: string;
   imageWidth?: number;
   imageHeight?: number;
+  origin?: string;
 }): Metadata {
   const size = shareImageSizeForPath(image);
   const images = shareImageFields({
@@ -104,8 +111,9 @@ export function pageShareMetadata({
     alt: imageAlt ?? title,
     width: imageWidth ?? size.width,
     height: imageHeight ?? size.height,
+    origin,
   });
-  const imageUrl = absoluteAssetUrl(image);
+  const imageUrl = absoluteAssetUrl(image, origin);
 
   return {
     title,
