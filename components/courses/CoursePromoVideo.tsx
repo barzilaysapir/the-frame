@@ -1,3 +1,4 @@
+import { PlayerLogoWatermark } from "@/components/player/PlayerLogoWatermark";
 import { cn } from "@/lib/utils";
 
 interface CoursePromoVideoProps {
@@ -20,7 +21,7 @@ export function CoursePromoVideo({
   return (
     <div
       className={cn(
-        "mx-auto w-full max-w-[20rem] overflow-hidden rounded-2xl border border-frame-border bg-black",
+        "relative mx-auto w-full max-w-[20rem] overflow-hidden rounded-2xl border border-frame-border bg-black",
         className,
       )}
     >
@@ -35,6 +36,7 @@ export function CoursePromoVideo({
         className="aspect-[9/16] h-auto w-full"
         aria-label={label}
       />
+      <PlayerLogoWatermark />
     </div>
   );
 }
