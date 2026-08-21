@@ -1,6 +1,5 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { upaySafeInvoiceName } from "@/lib/payments/upay-invoice-name";
 import type { UpayPaymentMethod } from "@/lib/payments/upay-method";
 
 export {
@@ -59,8 +58,6 @@ export interface UpayFormParams {
   method?: UpayPaymentMethod;
   /** Israeli mobile `05xxxxxxxx` — required for Bit (uPay sends the charge to this phone). */
   payerPhone?: string;
-  /** Invoice “לכבוד” on the hosted page. Latin only — Hebrew bounces. */
-  payerName?: string;
 }
 
 export interface UpayFormFields {
@@ -78,6 +75,10 @@ export function formatUpayAmount(amountIls: number): string {
 /**
  * Same hidden fields as the dashboard button, with a live amount and
  * paymentdetails. Callbacks stay blank on purpose.
+ *
+ * Do not POST buyer לכבוד / email here. Those inputs live on uPay’s hosted
+ * page. Stuffing `invoicename` / `invoiceemail` into this form bounced with
+ * `wronginputinvoicename` / `wronginputinvoiceemail`.
  *
  * Bit: `redirectpage.php` rejects `paymentmethod=bit`. POS uses
  * `providername=bit` plus `cellphone` / `cellphonenotify`.
@@ -103,16 +104,6 @@ export function buildUpayFormFields(
     lang: "HE",
     currency: "NIS",
   };
-  // `wronginputinvoicename` on Hebrew (e.g. ספיר ברזילי). Latin only.
-  const payerName = params.payerName
-    ? upaySafeInvoiceName(params.payerName)
-    : null;
-  if (payerName) {
-    fields.invoicename = payerName;
-    fields.fullname = payerName;
-  }
-  // Do not send `invoiceemail` / `payeremail`. A valid Gmail
-  // (`wronginputinvoiceemail barzilaysapir@gmail.com`) still bounces.
   if (method === "bit") {
     fields.providername = "bit";
     if (params.payerPhone) {

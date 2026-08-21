@@ -184,7 +184,6 @@ export async function POST(request: NextRequest) {
         description,
         method: paymentMethod,
         payerPhone: payerPhone ?? undefined,
-        payerName: claims.name ?? undefined,
       });
     }
 
