@@ -1,10 +1,11 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { CourseLandingPreview } from "@/components/courses/CourseLandingPreview";
 import { CourseWatchPage } from "@/components/courses/CourseWatchPage";
-import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
+import { completeUpayReturn } from "@/lib/client/complete-upay-return";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { CatalogExternalCourse } from "@/lib/server/catalog/types";
@@ -34,6 +35,9 @@ export function CourseAccessGate({
   dict,
 }: CourseAccessGateProps) {
   const { user, loading: authLoading } = useAuth();
+  const searchParams = useSearchParams();
+  const returnedFromPayment = searchParams.get("payment");
+  const purchaseId = searchParams.get("purchaseId");
   // Only the async fetch result needs state — "not signed in" is derived
   // directly below instead of set via an effect, since there's no async
   // work involved and setState synchronously inside an effect body is
@@ -47,15 +51,13 @@ export function CourseAccessGate({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetchWithAuth(
+        const paid = await completeUpayReturn(
           user,
-          `/api/v1/me/purchases/status?itemType=external_course&itemSlug=${encodeURIComponent(course.slug)}`,
+          "external_course",
+          course.slug,
+          returnedFromPayment === "success" ? purchaseId : null,
         );
-        if (!res.ok) {
-          throw new Error(`purchase status check failed with ${res.status}`);
-        }
-        const data = (await res.json()) as { status: "paid" | "none" };
-        if (!cancelled) setFetchedStatus(data.status);
+        if (!cancelled) setFetchedStatus(paid ? "paid" : "none");
       } catch (error) {
         console.error("[CourseAccessGate] purchase status check failed:", error);
         if (!cancelled) setFetchedStatus("none");
@@ -64,7 +66,7 @@ export function CourseAccessGate({
     return () => {
       cancelled = true;
     };
-  }, [user, authLoading, course.slug]);
+  }, [user, authLoading, course.slug, returnedFromPayment, purchaseId]);
 
   const status: AccessStatus = authLoading
     ? "checking"

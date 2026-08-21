@@ -9,6 +9,7 @@ import { TermsDialog } from "@/components/checkout/TermsDialog";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
+import { completeUpayReturn } from "@/lib/client/complete-upay-return";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
@@ -74,34 +75,28 @@ export function CheckoutPaymentPlaceholder({
   const planSupported = planId !== "subscription";
   const owned = result?.status === "paid" || returnPaid;
 
-  // uPay's returnurl always appends ?payment=success. That is not proof of
-  // payment — poll ownership and keep the pay buttons so a failed/cancelled
-  // return is not a dead end.
+  // uPay always comes back with ?payment=success. Confirm the buyer's own
+  // pending purchase (IPN is unreliable) and only then treat them as paid.
   useEffect(() => {
     if (!user || returnedFromPayment !== "success") return;
     let cancelled = false;
-    const check = async () => {
+    void (async () => {
       try {
-        const res = await fetchWithAuth(
+        const paid = await completeUpayReturn(
           user,
-          `/api/v1/me/purchases/status?itemType=${encodeURIComponent(itemType)}&itemSlug=${encodeURIComponent(itemSlug)}`,
+          itemType,
+          itemSlug,
+          searchParams.get("purchaseId"),
         );
-        if (!res.ok) return;
-        const data = (await res.json()) as { status: "paid" | "none" };
-        if (!cancelled && data.status === "paid") setReturnPaid(true);
+        if (!cancelled && paid) setReturnPaid(true);
       } catch (err) {
-        console.error("[CheckoutPaymentPlaceholder] return status check failed:", err);
+        console.error("[CheckoutPaymentPlaceholder] return confirm failed:", err);
       }
-    };
-    void check();
-    const interval = setInterval(check, 2500);
-    const stop = setTimeout(() => clearInterval(interval), 15000);
+    })();
     return () => {
       cancelled = true;
-      clearInterval(interval);
-      clearTimeout(stop);
     };
-  }, [user, returnedFromPayment, itemType, itemSlug]);
+  }, [user, returnedFromPayment, itemType, itemSlug, searchParams]);
 
   // Submit the hosted form as soon as fields arrive so the buyer isn't asked
   // to click a second time.
@@ -209,10 +204,7 @@ export function CheckoutPaymentPlaceholder({
           ) : (
             <>
               {returnedFromPayment === "success" ? (
-                <div className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3">
-                  <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
-                  <p className="mt-1 text-sm text-frame-silver">{labels.bitConfirmationBody}</p>
-                </div>
+                <p className="text-xs text-frame-muted">{labels.paymentNotCompleted}</p>
               ) : null}
               {returnedFromPayment === "cancelled" ? (
                 <p className="text-xs text-frame-muted">{labels.paymentCancelled}</p>

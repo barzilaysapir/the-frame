@@ -245,6 +245,7 @@
     "payBusy": "Taking you to payment…",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
     "paymentCancelled": "Payment was cancelled — you can try again below.",
+    "paymentNotCompleted": "Payment wasn’t completed. You can try again below.",
     "termsPrefix": "I agree to the",
     "termsLinkText": "Terms & Conditions",
     "termsRequired": "You need to agree to the Terms & Conditions to continue.",
