@@ -29,6 +29,9 @@ interface __BaseEnv_CloudflareEnv {
 	// ADMIN_EMAILS added by hand, same as the block above — see
 	// .dev.vars.example. Re-run `npm run cf-typegen` once a real value exists.
 	ADMIN_EMAILS: string;
+	// Soft site-wide Google email allowlist — see .dev.vars.example and
+	// lib/server/site-access.ts. Empty = unrestricted.
+	SITE_ACCESS_EMAILS: string;
 	// UPAY_MERCHANT_EMAIL added by hand, same convention — see
 	// .dev.vars.example and lib/server/payments/upay.ts. Re-run
 	// `npm run cf-typegen` once a real value exists.

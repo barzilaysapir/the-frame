@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Heebo, Rubik, Alex_Brush } from "next/font/google";
 import { notFound } from "next/navigation";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { SiteAccessGate } from "@/components/auth/SiteAccessGate";
 import { FavoritesProvider } from "@/components/favorites/FavoritesProvider";
 import { LocalePrefSync } from "@/components/LocalePrefSync";
 import { ThemeFavicon } from "@/components/ThemeFavicon";
@@ -15,6 +16,7 @@ import {
   type Locale,
 } from "@/lib/i18n/config";
 import { resolveShareOrigin } from "@/lib/server/share-origin";
+import { isSiteAccessRestricted } from "@/lib/server/site-access";
 import {
   DEFAULT_SHARE_IMAGE,
   DEFAULT_SHARE_IMAGE_HEIGHT,
@@ -122,6 +124,23 @@ export default async function LocaleLayout({
   if (!isLocale(localeParam)) notFound();
   const locale: Locale = localeParam;
   const dict = await getDictionary(locale);
+  const siteAccessRestricted = await isSiteAccessRestricted();
+
+  const shell = (
+    <>
+      <LocalePrefSync locale={locale} />
+      <ThemeFavicon />
+      <FavoritesProvider locale={locale}>
+        <Header
+          locale={locale}
+          labels={dict.nav}
+          profileLabel={dict.account.nav.profile}
+        />
+        <div className="flex-1">{children}</div>
+        <Footer locale={locale} footer={dict.footer} />
+      </FavoritesProvider>
+    </>
+  );
 
   return (
     <html
@@ -131,17 +150,16 @@ export default async function LocaleLayout({
     >
       <body className="flex min-h-screen flex-col bg-frame-bg pb-[calc(4rem+env(safe-area-inset-bottom))] font-sans antialiased lg:pb-0">
         <AuthProvider>
-          <LocalePrefSync locale={locale} />
-          <ThemeFavicon />
-          <FavoritesProvider locale={locale}>
-            <Header
-              locale={locale}
-              labels={dict.nav}
-              profileLabel={dict.account.nav.profile}
-            />
-            <div className="flex-1">{children}</div>
-            <Footer locale={locale} footer={dict.footer} />
-          </FavoritesProvider>
+          {siteAccessRestricted ? (
+            <SiteAccessGate
+              labels={dict.siteAccess}
+              loginErrors={dict.login.errors}
+            >
+              {shell}
+            </SiteAccessGate>
+          ) : (
+            shell
+          )}
         </AuthProvider>
       </body>
     </html>
