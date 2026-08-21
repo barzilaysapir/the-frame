@@ -1,14 +1,8 @@
-import {
-  isUnwiredPlaceholderOrigin,
-  WORKER_ORIGIN,
-} from "@/lib/site";
+import { WORKER_ORIGIN } from "@/lib/site";
 
 /**
- * Public origin of the checkout request. uPay returnurl/ipnurl must be a
- * public https URL — `http://localhost:4127` is rejected as
- * `wronginputreturnurl`. Prefer the request host (preview/production
- * Worker), and fall back to the live Worker when the request is
- * loopback, private LAN, plain HTTP, or a domain that is not attached.
+ * Public origin of the incoming request. Used for logging/host detection.
+ * uPay callbacks do not use this — they always go to WORKER_ORIGIN.
  */
 export function publicOriginFromRequest(input: {
   url: string;
@@ -50,12 +44,7 @@ export function isPublicHttpsOrigin(origin: string): boolean {
   }
 }
 
-export function upayCallbackOrigin(requestOrigin: string): string {
-  if (
-    isPublicHttpsOrigin(requestOrigin) &&
-    !isUnwiredPlaceholderOrigin(requestOrigin)
-  ) {
-    return requestOrigin.replace(/\/$/, "");
-  }
+/** uPay only gets the production Worker host — not preview aliases or localhost. */
+export function upayCallbackOrigin(_requestOrigin?: string): string {
   return WORKER_ORIGIN;
 }

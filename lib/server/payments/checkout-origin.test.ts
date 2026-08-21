@@ -27,19 +27,17 @@ describe("publicOriginFromRequest", () => {
 });
 
 describe("upayCallbackOrigin", () => {
-  it("keeps a public Worker origin", () => {
+  it("always uses the production Worker, including from preview", () => {
     expect(
       upayCallbackOrigin("https://the-frame.barzilaysapir.workers.dev"),
     ).toBe(WORKER_ORIGIN);
     expect(
       upayCallbackOrigin("https://preview-the-frame.barzilaysapir.workers.dev"),
-    ).toBe("https://preview-the-frame.barzilaysapir.workers.dev");
-  });
-
-  it("keeps the future custom domain when that is the request host", () => {
+    ).toBe(WORKER_ORIGIN);
     expect(upayCallbackOrigin("https://theframe.bybarzilay.com")).toBe(
-      "https://theframe.bybarzilay.com",
+      WORKER_ORIGIN,
     );
+    expect(upayCallbackOrigin("http://localhost:4127")).toBe(WORKER_ORIGIN);
   });
 
   it("does not send localhost http to uPay", () => {

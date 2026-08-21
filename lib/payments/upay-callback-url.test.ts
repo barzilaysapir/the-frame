@@ -16,9 +16,19 @@ describe("rewriteUpayCallbackUrl", () => {
     );
   });
 
-  it("keeps a live Worker https URL", () => {
+  it("keeps the production Worker https URL", () => {
     const live = `${WORKER_ORIGIN}/he/external-courses/vibe-on-heels?payment=success`;
     expect(rewriteUpayCallbackUrl(live)).toBe(live);
+  });
+
+  it("rewrites the preview Worker alias onto the production Worker", () => {
+    expect(
+      rewriteUpayCallbackUrl(
+        "https://preview-the-frame.barzilaysapir.workers.dev/he/external-courses/vibe-on-heels?payment=success",
+      ),
+    ).toBe(
+      `${WORKER_ORIGIN}/he/external-courses/vibe-on-heels?payment=success`,
+    );
   });
 
   it("rewrites the unwired placeholder domain", () => {
