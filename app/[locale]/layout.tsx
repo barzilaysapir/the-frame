@@ -18,6 +18,7 @@ import {
   DEFAULT_SHARE_IMAGE_HEIGHT,
   DEFAULT_SHARE_IMAGE_WIDTH,
   absoluteAssetUrl,
+  resolveShareOrigin,
   shareImageFields,
 } from "@/lib/share-metadata";
 import { SITE_URL } from "@/lib/site";
@@ -54,6 +55,7 @@ export async function generateMetadata({
   if (!isLocale(localeParam)) return {};
   const locale = localeParam;
   const dict = await getDictionary(locale);
+  const origin = await resolveShareOrigin();
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -73,13 +75,14 @@ export async function generateMetadata({
         alt: "The Frame by Barzilay",
         width: DEFAULT_SHARE_IMAGE_WIDTH,
         height: DEFAULT_SHARE_IMAGE_HEIGHT,
+        origin,
       }),
     },
     twitter: {
       card: "summary_large_image",
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
-      images: [absoluteAssetUrl(DEFAULT_SHARE_IMAGE)],
+      images: [absoluteAssetUrl(DEFAULT_SHARE_IMAGE, origin)],
     },
     alternates: {
       languages: {

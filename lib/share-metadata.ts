@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { isPublicHttpsOrigin } from "@/lib/server/payments/checkout-origin";
 import { SITE_URL } from "@/lib/site";
 
 /** Site-wide WhatsApp/Facebook share image (1200×630 JPEG). */
@@ -18,17 +19,62 @@ const POSTER_SHARE_IMAGE_HEIGHT = 640;
 const COURSE_SHARE_IMAGE_WIDTH = 960;
 const COURSE_SHARE_IMAGE_HEIGHT = 540;
 
+function canonicalOrigin(): string {
+  return SITE_URL.replace(/\/$/, "");
+}
+
 /**
- * Resolve a `public/` path (or already-absolute URL) against the canonical
- * site origin. WhatsApp's scraper rejects relative `og:image` URLs, and
- * preview aliases send `X-Robots-Tag: noindex` on every asset — pointing
- * at the production origin keeps the image fetchable.
+ * Origin WhatsApp should fetch `og:image` from. PR / preview Worker
+ * aliases serve this branch's assets (including `/og/default.jpg`); the
+ * production host 404s those until the branch is merged. Prefer the
+ * request host when it is a public https origin.
  */
-export function absoluteAssetUrl(path: string): string {
+export function shareOriginFromHeaders(input: {
+  host?: string | null;
+  forwardedHost?: string | null;
+  forwardedProto?: string | null;
+}): string {
+  const host =
+    input.forwardedHost?.split(",")[0]?.trim() ||
+    input.host?.split(",")[0]?.trim();
+  if (!host) return canonicalOrigin();
+  const proto = input.forwardedProto?.split(",")[0]?.trim() || "https";
+  const origin = `${proto}://${host}`.replace(/\/$/, "");
+  const httpsOrigin = origin.replace(/^http:\/\//i, "https://");
+  if (isPublicHttpsOrigin(httpsOrigin)) return httpsOrigin;
+  return canonicalOrigin();
+}
+
+export async function resolveShareOrigin(): Promise<string> {
+  try {
+    const { connection } = await import("next/server");
+    // Defer until a real request so PR/preview hosts are not baked as
+    // production `SITE_URL` during prerender (that 404s `/og/default.jpg`).
+    await connection();
+    const { headers } = await import("next/headers");
+    const headerList = await headers();
+    return shareOriginFromHeaders({
+      host: headerList.get("host"),
+      forwardedHost: headerList.get("x-forwarded-host"),
+      forwardedProto: headerList.get("x-forwarded-proto"),
+    });
+  } catch {
+    return canonicalOrigin();
+  }
+}
+
+/**
+ * Resolve a `public/` path (or already-absolute URL) against `origin`.
+ * WhatsApp's scraper rejects relative `og:image` URLs.
+ */
+export function absoluteAssetUrl(
+  path: string,
+  origin: string = SITE_URL,
+): string {
   if (/^https?:\/\//i.test(path)) return path;
-  const origin = SITE_URL.replace(/\/$/, "");
+  const base = origin.replace(/\/$/, "");
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  return `${origin}${normalized}`;
+  return `${base}${normalized}`;
 }
 
 /** Prefer the JPEG OG card when the catalog asset is the photo we encoded into it. */
@@ -74,8 +120,9 @@ export function shareImageFields(image: {
   alt: string;
   width: number;
   height: number;
+  origin?: string;
 }): NonNullable<NonNullable<Metadata["openGraph"]>["images"]> {
-  const url = absoluteAssetUrl(image.url);
+  const url = absoluteAssetUrl(image.url, image.origin);
   const type = mimeTypeForPath(image.url);
   return [
     {
@@ -100,6 +147,7 @@ export function pageShareMetadata({
   imageAlt,
   imageWidth,
   imageHeight,
+  origin,
 }: {
   title: string;
   description: string;
@@ -107,6 +155,7 @@ export function pageShareMetadata({
   imageAlt?: string;
   imageWidth?: number;
   imageHeight?: number;
+  origin?: string;
 }): Metadata {
   const resolvedImage = resolveShareImage(image);
   const size = shareImageSizeForPath(resolvedImage);
@@ -115,8 +164,9 @@ export function pageShareMetadata({
     alt: imageAlt ?? title,
     width: imageWidth ?? size.width,
     height: imageHeight ?? size.height,
+    origin,
   });
-  const imageUrl = absoluteAssetUrl(resolvedImage);
+  const imageUrl = absoluteAssetUrl(resolvedImage, origin);
 
   return {
     title,
