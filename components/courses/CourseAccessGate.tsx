@@ -16,7 +16,7 @@ interface CourseAccessGateProps {
   dict: Dictionary;
 }
 
-type AccessStatus = "checking" | "none" | "paid";
+type AccessStatus = "none" | "paid";
 
 /**
  * Decides which full page layout to show for a purchasable external
@@ -41,9 +41,7 @@ export function CourseAccessGate({
   // directly below instead of set via an effect, since there's no async
   // work involved and setState synchronously inside an effect body is
   // flagged by react-hooks/set-state-in-effect.
-  const [fetchedStatus, setFetchedStatus] = useState<"checking" | "none" | "paid">(
-    "checking",
-  );
+  const [fetchedStatus, setFetchedStatus] = useState<AccessStatus>("none");
 
   useEffect(() => {
     if (authLoading || !user) return;
@@ -69,24 +67,10 @@ export function CourseAccessGate({
     };
   }, [user, authLoading, course.slug]);
 
-  const status: AccessStatus = authLoading
-    ? "checking"
-    : !user
-      ? "none"
-      : fetchedStatus;
+  const owned = !authLoading && !!user && fetchedStatus === "paid";
 
-  if (status === "paid") {
+  if (owned) {
     return <CourseWatchPage course={course} locale={locale} dict={dict} />;
-  }
-
-  if (status === "checking") {
-    return (
-      <main className="mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
-        <p className="text-sm text-frame-silver">
-          {dict.externalCourses.checkingAccess}
-        </p>
-      </main>
-    );
   }
 
   return (
