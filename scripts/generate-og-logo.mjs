@@ -54,12 +54,12 @@ async function main() {
     `<svg width="${wmW}" height="${subtitleH}" xmlns="http://www.w3.org/2000/svg">
   <text x="${wmW}" y="34" text-anchor="end"
     font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
-    font-size="30" font-weight="600" letter-spacing="4"
+    font-size="30" font-weight="400" letter-spacing="4"
     fill="#B8B8BC">BY BARZILAY</text>
 </svg>`,
   );
 
-  const out = path.join(ROOT, "public/og/logo-horizontal-brand-kit-v3.jpg");
+  const out = path.join(ROOT, "public/og/logo-horizontal-brand-kit-v4.jpg");
   fs.mkdirSync(path.dirname(out), { recursive: true });
   await sharp({
     create: { width: WIDTH, height: HEIGHT, channels: 3, background: BACKGROUND },
@@ -74,7 +74,7 @@ async function main() {
 
   const info = await sharp(out).metadata();
   console.log(
-    `og/logo-horizontal-brand-kit-v3.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
+    `og/logo-horizontal-brand-kit-v4.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
   );
 }
 
