@@ -11,7 +11,7 @@ import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import {
   checkoutAfterPurchase,
-  launchUpayCheckout,
+  submitUpayForm,
 } from "@/lib/client/upay-checkout";
 import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -169,7 +169,9 @@ export function CheckoutPaymentPlaceholder({
       const data = (await res.json()) as PurchaseApiResponse;
       const step = checkoutAfterPurchase(data);
       if (step.type === "redirect") {
-        launchUpayCheckout(step.form);
+        // Do not setState with upayForm — remounting a second <form>
+        // aborts this POST (the 18 Aug Continue path).
+        submitUpayForm(step.form.action, step.form.fields);
         return;
       }
       setResult(data);

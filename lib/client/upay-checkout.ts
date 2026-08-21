@@ -1,5 +1,4 @@
 import { rewriteUpayFormFields } from "@/lib/payments/upay-callback-url";
-import { renderUpayLaunchHtml } from "@/lib/payments/upay-launch-html";
 
 /**
  * After POST /api/v1/me/purchases: either the buyer already owns the item,
@@ -26,19 +25,26 @@ export function checkoutAfterPurchase(data: {
 }
 
 /**
- * Replace the current document with an auto-submit uPay form.
- * Programmatic form.submit() after an async fetch does not navigate
- * away from the Cloudflare Worker host.
+ * uPay's checkout is a real POST (not a GET redirect). Build the form in JS
+ * and submit immediately — same path as the 18 Aug working card charge.
  */
-export function launchUpayCheckout(
-  form: { action: string; fields: Record<string, string> },
+export function submitUpayForm(
+  action: string,
+  fields: Record<string, string>,
   doc: Document = document,
 ): void {
-  const html = renderUpayLaunchHtml({
-    action: form.action,
-    fields: rewriteUpayFormFields(form.fields),
-  });
-  doc.open();
-  doc.write(html);
-  doc.close();
+  const form = doc.createElement("form");
+  form.method = "POST";
+  form.action = action;
+  form.style.display = "none";
+  const safeFields = rewriteUpayFormFields(fields);
+  for (const [name, value] of Object.entries(safeFields)) {
+    const input = doc.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  }
+  doc.body.appendChild(form);
+  form.submit();
 }

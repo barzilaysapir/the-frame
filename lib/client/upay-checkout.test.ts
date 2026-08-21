@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkoutAfterPurchase, launchUpayCheckout } from "@/lib/client/upay-checkout";
+import { checkoutAfterPurchase, submitUpayForm } from "@/lib/client/upay-checkout";
 
 describe("checkoutAfterPurchase", () => {
   it("does not send an already-paid buyer to uPay, even if a form is present", () => {
@@ -48,30 +48,52 @@ describe("checkoutAfterPurchase", () => {
   });
 });
 
-describe("launchUpayCheckout", () => {
-  it("replaces the document with an auto-submit uPay form", () => {
-    const written: string[] = [];
+describe("submitUpayForm", () => {
+  it("POSTs a hidden form to uPay", () => {
+    const appended: { method: string; action: string; names: string[] }[] = [];
     const doc = {
-      open() {},
-      write(html: string) {
-        written.push(html);
+      createElement(tag: string) {
+        if (tag === "form") {
+          return {
+            method: "",
+            action: "",
+            style: { display: "" },
+            children: [] as { name: string; value: string }[],
+            appendChild(child: { name: string; value: string }) {
+              this.children.push(child);
+            },
+            submit() {},
+          };
+        }
+        return { type: "", name: "", value: "" };
       },
-      close() {},
+      body: {
+        appendChild(form: {
+          method: string;
+          action: string;
+          children: { name: string }[];
+        }) {
+          appended.push({
+            method: form.method,
+            action: form.action,
+            names: form.children.map((c) => c.name),
+          });
+        },
+      },
     };
 
-    launchUpayCheckout(
-      {
-        action: "https://app.upay.co.il/API6/clientsecure/redirectpage.php",
-        fields: { amount: "1.00" },
-      },
+    submitUpayForm(
+      "https://app.upay.co.il/API6/clientsecure/redirectpage.php",
+      { amount: "1.00" },
       doc as unknown as Document,
     );
 
-    expect(written).toHaveLength(1);
-    expect(written[0]).toContain(
-      'action="https://app.upay.co.il/API6/clientsecure/redirectpage.php"',
-    );
-    expect(written[0]).toContain('name="amount" value="1.00"');
-    expect(written[0]).toContain("document.getElementById(\"upay\").submit()");
+    expect(appended).toEqual([
+      {
+        method: "POST",
+        action: "https://app.upay.co.il/API6/clientsecure/redirectpage.php",
+        names: ["amount"],
+      },
+    ]);
   });
 });
