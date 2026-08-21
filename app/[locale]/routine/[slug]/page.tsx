@@ -12,6 +12,7 @@ import { isLocale } from "@/lib/i18n/config";
 import { formatMessage, getDictionary } from "@/lib/i18n/get-dictionary";
 import { localePath } from "@/lib/i18n/path";
 import { getCachedInstructor, getCachedRoutine } from "@/lib/server/catalog";
+import { pageShareMetadata } from "@/lib/share-metadata";
 
 // Seed-catalog data changes rarely (via migrations, not user writes) — cache
 // the rendered page for 1 hour instead of refetching D1 on every request.
@@ -36,17 +37,22 @@ export async function generateMetadata({
   );
   const dict = await getDictionary(localeParam);
 
-  return {
-    title: formatMessage(dict.routine.metaTitle, {
-      title: routine.title,
-      style: routine.styleLabel,
-    }),
-    description: formatMessage(dict.routine.metaDescription, {
-      title: routine.title,
-      style: routine.styleLabel,
-      instructor: instructor?.name ?? "",
-    }),
-  };
+  const title = formatMessage(dict.routine.metaTitle, {
+    title: routine.title,
+    style: routine.styleLabel,
+  });
+  const description = formatMessage(dict.routine.metaDescription, {
+    title: routine.title,
+    style: routine.styleLabel,
+    instructor: instructor?.name ?? "",
+  });
+
+  return pageShareMetadata({
+    title,
+    description,
+    image: routine.poster,
+    imageAlt: routine.title,
+  });
 }
 
 export default async function RoutinePage({ params }: RoutinePageProps) {

@@ -13,6 +13,13 @@ import {
   locales,
   type Locale,
 } from "@/lib/i18n/config";
+import {
+  DEFAULT_SHARE_IMAGE,
+  DEFAULT_SHARE_IMAGE_HEIGHT,
+  DEFAULT_SHARE_IMAGE_WIDTH,
+  absoluteAssetUrl,
+  shareImageFields,
+} from "@/lib/share-metadata";
 import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
@@ -61,11 +68,18 @@ export async function generateMetadata({
       siteName: "The Frame by Barzilay",
       locale: locale === "he" ? "he_IL" : "en_US",
       type: "website",
+      images: shareImageFields({
+        url: DEFAULT_SHARE_IMAGE,
+        alt: "The Frame by Barzilay",
+        width: DEFAULT_SHARE_IMAGE_WIDTH,
+        height: DEFAULT_SHARE_IMAGE_HEIGHT,
+      }),
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
+      images: [absoluteAssetUrl(DEFAULT_SHARE_IMAGE)],
     },
     alternates: {
       languages: {
