@@ -1,9 +1,13 @@
 import "server-only";
 import type { Locale } from "@/lib/i18n/config";
 import { isLocale } from "@/lib/i18n/config";
+import { UNVERIFIED_UPAY_RETURN_ID } from "@/lib/payments/verified-paid";
 import type { FirebaseIdTokenClaims } from "@/lib/server/auth/firebase-token";
 import type { CatalogItemType } from "@/lib/server/catalog/types";
 import type { AppDb } from "@/lib/server/db";
+
+/** Paid rows created from uPay's returnurl are not a real charge — see #323. */
+const TRUSTED_PAID_SQL = `status = 'paid' AND IFNULL(provider_payment_id, '') != '${UNVERIFIED_UPAY_RETURN_ID}'`;
 
 export interface AppUser {
   firebaseUid: string;
@@ -154,7 +158,7 @@ export async function listPaidPurchases(
     .prepare(
       `SELECT id, item_type, item_slug, provider, amount_ils, currency, paid_at, created_at
        FROM purchases
-       WHERE firebase_uid = ? AND status = 'paid'
+       WHERE firebase_uid = ? AND ${TRUSTED_PAID_SQL}
        ORDER BY COALESCE(paid_at, created_at) DESC`,
     )
     .bind(firebaseUid)
@@ -182,7 +186,7 @@ export async function hasPaidPurchase(
   const row = await db
     .prepare(
       `SELECT 1 FROM purchases
-       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND status = 'paid'
+       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND ${TRUSTED_PAID_SQL}
        LIMIT 1`,
     )
     .bind(firebaseUid, itemType, itemSlug)
@@ -254,12 +258,30 @@ export async function findPaidPurchase(
               provider_process_id, provider_process_token,
               amount_ils, currency, status, created_at, paid_at
        FROM purchases
-       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND status = 'paid'
+       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND ${TRUSTED_PAID_SQL}
        LIMIT 1`,
     )
     .bind(firebaseUid, itemType, itemSlug)
     .first<FullPurchaseRow>();
   return row ? mapPurchase(row) : null;
+}
+
+/** Puts #320's false paid rows back to pending so Continue can reopen uPay. */
+export async function reopenUnverifiedUpayReturnPurchases(
+  db: AppDb,
+  firebaseUid: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE purchases
+       SET status = 'pending', provider_payment_id = NULL, paid_at = NULL
+       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ?
+         AND status = 'paid' AND provider_payment_id = ?`,
+    )
+    .bind(firebaseUid, itemType, itemSlug, UNVERIFIED_UPAY_RETURN_ID)
+    .run();
 }
 
 /** The most recent `pending` purchase for this exact item, if any — reused instead of creating a duplicate when the buyer retries checkout. */

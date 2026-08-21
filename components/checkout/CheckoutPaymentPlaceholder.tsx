@@ -47,9 +47,8 @@ interface CheckoutPaymentPlaceholderProps {
 
 /**
  * Submits uPay's card payment form (see POST /api/v1/me/purchases).
- * Bit is not offered here — uPay rejected paymentmethod=bit and the
- * providername=bit attempt did not restore a working Bit checkout.
- * app/[locale]/admin/purchases remains the manual override if IPN misses.
+ * Same flow as before Bit: one Continue-to-payment button. Keep the
+ * button after returnurl — `?payment=success` is not proof of payment.
  */
 export function CheckoutPaymentPlaceholder({
   locale,
@@ -80,8 +79,7 @@ export function CheckoutPaymentPlaceholder({
 
   // uPay's returnurl always appends ?payment=success. That is not proof of
   // payment — poll ownership (IPN / admin) and keep the pay button so a
-  // cancelled return is not a dead end. Do not POST /purchases/confirm here:
-  // that marked pending rows paid and Continue then skipped the uPay form.
+  // cancelled return is not a dead end.
   useEffect(() => {
     if (!user || returnedFromPayment !== "success") return;
     let cancelled = false;
