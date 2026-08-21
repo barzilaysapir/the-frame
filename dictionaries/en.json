@@ -85,8 +85,8 @@
     "courseMany": "{count} courses on the site",
     "instagramAria": "{name} on Instagram",
     "tutorialsAria": "{name}'s library",
-    "avatarEnlargeAria": "Enlarge {name}'s photo",
-    "avatarLightboxClose": "Close the enlarged photo"
+    "detailsAria": "Details about {name}",
+    "detailsClose": "Close"
   },
   "styles": {
     "title": "Dance styles",

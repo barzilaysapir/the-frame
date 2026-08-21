@@ -16,8 +16,8 @@ interface InstructorCardProps {
     courseMany: string;
     instagramAria: string;
     tutorialsAria: string;
-    avatarEnlargeAria: string;
-    avatarLightboxClose: string;
+    detailsAria: string;
+    detailsClose: string;
   };
 }
 
@@ -26,30 +26,45 @@ export function InstructorCard({
   locale,
   labels,
 }: InstructorCardProps) {
+  const libraryHref = routinesFilterHref({ instructor: instructor.slug, locale });
+  const libraryAriaLabel = formatMessage(labels.tutorialsAria, {
+    name: instructor.name,
+  });
+  const countLabels = {
+    routineOne: labels.routineOne,
+    routineMany: labels.routineMany,
+    courseOne: labels.courseOne,
+    courseMany: labels.courseMany,
+  };
+
   return (
     <Panel as="article" className="p-6">
       <InstructorCardHeader
         name={instructor.name}
         role={instructor.role}
+        bio={instructor.bio}
         avatar={instructor.avatar}
         instagramUrl={instructor.instagramUrl}
         instagramAriaLabel={formatMessage(labels.instagramAria, {
           name: instructor.name,
         })}
-        avatarEnlargeAriaLabel={formatMessage(labels.avatarEnlargeAria, {
+        detailsAriaLabel={formatMessage(labels.detailsAria, {
           name: instructor.name,
         })}
-        avatarLightboxCloseAriaLabel={labels.avatarLightboxClose}
+        detailsCloseAriaLabel={labels.detailsClose}
+        routineCount={instructor.routineCount}
+        courseCount={instructor.courseCount}
+        libraryHref={libraryHref}
+        libraryAriaLabel={libraryAriaLabel}
+        countLabels={countLabels}
       />
 
       <InstructorContentCounts
         routineCount={instructor.routineCount}
         courseCount={instructor.courseCount}
-        href={routinesFilterHref({ instructor: instructor.slug, locale })}
-        ariaLabel={formatMessage(labels.tutorialsAria, {
-          name: instructor.name,
-        })}
-        labels={labels}
+        href={libraryHref}
+        ariaLabel={libraryAriaLabel}
+        labels={countLabels}
       />
     </Panel>
   );

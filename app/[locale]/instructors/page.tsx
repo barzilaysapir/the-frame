@@ -55,8 +55,8 @@ export default async function InstructorsPage({ params }: InstructorsPageProps) 
               courseMany: dict.teachers.courseMany,
               instagramAria: dict.teachers.instagramAria,
               tutorialsAria: dict.teachers.tutorialsAria,
-              avatarEnlargeAria: dict.teachers.avatarEnlargeAria,
-              avatarLightboxClose: dict.teachers.avatarLightboxClose,
+              detailsAria: dict.teachers.detailsAria,
+              detailsClose: dict.teachers.detailsClose,
             }}
           />
         ))}
