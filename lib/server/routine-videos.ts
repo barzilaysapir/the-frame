@@ -1,8 +1,5 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getCourseVideosBucket, parseRangeHeader } from "@/lib/server/course-videos";
-
-export { getCourseVideosBucket as getRoutineVideosBucket, parseRangeHeader };
 
 /**
  * Gated video delivery for routines (issue #232 — routine video used to be
@@ -11,9 +8,9 @@ export { getCourseVideosBucket as getRoutineVideosBucket, parseRangeHeader };
  *
  * Mirrors `lib/server/course-videos.ts`'s pattern: a logged-in-and-paid-only
  * route (`/api/v1/routines/[slug]/playback-url`) mints a short-lived
- * HMAC-signed URL pointing at the streaming route (`.../stream`), which
- * validates the signature (not a Firebase token — a native <video> element
- * can't send an Authorization header) and then serves the video.
+ * same-origin `/stream` URL for a native `<video>` element. Real R2 keys
+ * 307 from `/stream` to a presigned GET (never proxied — Worker 1102).
+ * Demo `https://` sources stay on `/stream` and are fetched upstream.
  *
  * Routines don't have their own R2 bucket/table the way external-course
  * lessons do (`external_course_lessons.r2_key`) — `routines.video_src` is
@@ -53,11 +50,15 @@ export interface SignedRoutinePlaybackUrl {
   expiresAt: number;
 }
 
+export function isExternalRoutineVideoSrc(src: string): boolean {
+  return /^https?:\/\//i.test(src);
+}
+
 export async function signRoutinePlaybackUrl(
   routineSlug: string,
 ): Promise<SignedRoutinePlaybackUrl> {
-  const key = await getSigningKey();
   const expiresAt = Math.floor(Date.now() / 1000) + PLAYBACK_URL_TTL_SECONDS;
+  const key = await getSigningKey();
   const payload = buildSignaturePayload(routineSlug, expiresAt);
   const signatureBytes = await crypto.subtle.sign(
     "HMAC",

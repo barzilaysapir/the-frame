@@ -22,6 +22,7 @@ import { cn, formatTime } from "@/lib/utils";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { ChapterMarkers } from "@/components/player/ChapterMarkers";
 import { PlayerTitlePoster } from "@/components/player/PlayerTitlePoster";
+import { PlayerViewerWatermark } from "@/components/player/PlayerViewerWatermark";
 import { VolumeControl } from "@/components/player/VolumeControl";
 import { SpeedMenu } from "@/components/player/SpeedMenu";
 import type { PlayerChapter } from "@/components/player/types";
@@ -56,6 +57,8 @@ interface DanceVideoPlayerProps {
    * Set false for footage that is already mirrored or has burned-in captions.
    */
   showMirror?: boolean;
+  /** Signed-in email (or uid) drawn on the picture — deterrent, not DRM. */
+  viewerLabel?: string;
 }
 
 export function DanceVideoPlayer({
@@ -67,6 +70,7 @@ export function DanceVideoPlayer({
   className,
   captions,
   showMirror = true,
+  viewerLabel,
 }: DanceVideoPlayerProps) {
   const resolvedTitle = title ?? labels.defaultTitle;
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -246,13 +250,19 @@ export function DanceVideoPlayer({
       )}
       onMouseMove={scheduleHideControls}
       onMouseLeave={() => isPlaying && setAreControlsVisible(false)}
+      onContextMenu={(event) => event.preventDefault()}
     >
       <div className="relative aspect-video w-full">
         <video
           ref={videoRef}
           src={src}
           poster={poster}
-          className="h-full w-full object-cover transition-transform duration-300"
+          preload="auto"
+          controlsList="nodownload"
+          disablePictureInPicture
+          disableRemotePlayback
+          onContextMenu={(event) => event.preventDefault()}
+          className="h-full w-full object-contain transition-transform duration-300"
           style={{ transform: isMirrored ? "scaleX(-1)" : "scaleX(1)" }}
           onClick={togglePlay}
           playsInline
@@ -268,6 +278,10 @@ export function DanceVideoPlayer({
             />
           ) : null}
         </video>
+
+        {viewerLabel && !hasError ? (
+          <PlayerViewerWatermark label={viewerLabel} />
+        ) : null}
 
         <PlayerTitlePoster
           title={resolvedTitle}
