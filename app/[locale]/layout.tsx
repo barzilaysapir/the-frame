@@ -63,10 +63,11 @@ export async function generateMetadata({
       type: "website",
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
     },
+    themeColor: "#0F0F11",
     alternates: {
       languages: {
         he: "/he",
