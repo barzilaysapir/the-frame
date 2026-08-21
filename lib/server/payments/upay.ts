@@ -58,6 +58,10 @@ export interface UpayFormParams {
   method?: UpayPaymentMethod;
   /** Israeli mobile `05xxxxxxxx` — required for Bit (uPay sends the charge to this phone). */
   payerPhone?: string;
+  /** Invoice “לכבוד” on the hosted page. */
+  payerName?: string;
+  /** Buyer email on the hosted page (not the merchant `email` field). */
+  payerEmail?: string;
 }
 
 export interface UpayFormFields {
@@ -66,6 +70,11 @@ export interface UpayFormFields {
 }
 
 const UPAY_ACTION_URL = "https://app.upay.co.il/API6/clientsecure/redirectpage.php";
+
+/** Dashboard buttons use `1`, not `1.00`. Whole shekels stay integers. */
+export function formatUpayAmount(amountIls: number): string {
+  return Number.isInteger(amountIls) ? String(amountIls) : amountIls.toFixed(2);
+}
 
 /**
  * Same hidden fields as the dashboard button, with a live amount and
@@ -81,7 +90,7 @@ export function buildUpayFormFields(
   const method = params.method ?? "card";
   const fields: Record<string, string> = {
     email: config.merchantEmail,
-    amount: params.amountIls.toFixed(2),
+    amount: formatUpayAmount(params.amountIls),
     returnurl: "",
     ipnurl: "",
     paymentdetails: params.description,
@@ -95,6 +104,16 @@ export function buildUpayFormFields(
     lang: "HE",
     currency: "NIS",
   };
+  const payerName = params.payerName?.trim();
+  const payerEmail = params.payerEmail?.trim();
+  if (payerName) {
+    fields.invoicename = payerName;
+    fields.fullname = payerName;
+  }
+  if (payerEmail) {
+    fields.invoiceemail = payerEmail;
+    fields.payeremail = payerEmail;
+  }
   if (method === "bit") {
     fields.providername = "bit";
     if (params.payerPhone) {

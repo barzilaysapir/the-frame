@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   bitAmountAllowed,
   buildUpayFormFields,
+  formatUpayAmount,
   isUpayPaymentMethod,
   UPAY_BIT_MAX_ILS,
   UPAY_DASHBOARD_MERCHANT_EMAIL,
@@ -26,7 +27,7 @@ describe("buildUpayFormFields", () => {
       "https://app.upay.co.il/API6/clientsecure/redirectpage.php",
     );
     expect(form.fields.email).toBe("merchant@example.com");
-    expect(form.fields.amount).toBe("200.00");
+    expect(form.fields.amount).toBe("200");
     expect(form.fields.returnurl).toBe("");
     expect(form.fields.ipnurl).toBe("");
     expect(form.fields.paymentdetails).toBe("Vibe on Heels");
@@ -40,7 +41,7 @@ describe("buildUpayFormFields", () => {
       params({ amountIls: 1, description: "The Frame" }),
     );
     expect(form.fields.email).toBe("theframe@bybarzilay.com");
-    expect(form.fields.amount).toBe("1.00");
+    expect(form.fields.amount).toBe("1");
     expect(form.fields.returnurl).toBe("");
     expect(form.fields.ipnurl).toBe("");
   });
@@ -56,7 +57,29 @@ describe("buildUpayFormFields", () => {
     expect(form.fields.phone).toBeUndefined();
     expect(form.fields.cellphone).toBe("0501234567");
     expect(form.fields.cellphonenotify).toBe("0501234567");
-    expect(form.fields.amount).toBe("200.00");
+    expect(form.fields.amount).toBe("200");
+  });
+
+  it("prefills invoice name and buyer email", () => {
+    const form = buildUpayFormFields(
+      config,
+      params({
+        payerName: "Sapir Barzilay",
+        payerEmail: "sapir@example.com",
+      }),
+    );
+    expect(form.fields.invoicename).toBe("Sapir Barzilay");
+    expect(form.fields.fullname).toBe("Sapir Barzilay");
+    expect(form.fields.invoiceemail).toBe("sapir@example.com");
+    expect(form.fields.payeremail).toBe("sapir@example.com");
+    expect(form.fields.email).toBe("merchant@example.com");
+  });
+});
+
+describe("formatUpayAmount", () => {
+  it("sends whole shekels like the dashboard button", () => {
+    expect(formatUpayAmount(1)).toBe("1");
+    expect(formatUpayAmount(200)).toBe("200");
   });
 });
 

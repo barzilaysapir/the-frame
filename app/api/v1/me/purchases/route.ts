@@ -28,6 +28,7 @@ import {
   findPaidPurchase,
   findPendingPurchase,
   reopenUnverifiedUpayReturnPurchases,
+  setPendingPurchaseAmount,
   setPendingPurchaseProvider,
   upsertUserFromClaims,
 } from "@/lib/server/users/repository";
@@ -159,23 +160,32 @@ export async function POST(request: NextRequest) {
         amountIls,
         provider,
       );
-    } else if (purchase.provider !== provider) {
-      await setPendingPurchaseProvider(db, purchase.id, provider);
+    } else {
+      if (purchase.provider !== provider) {
+        await setPendingPurchaseProvider(db, purchase.id, provider);
+        purchase = { ...purchase, provider };
+      }
+      if (purchase.amountIls !== amountIls) {
+        await setPendingPurchaseAmount(db, purchase.id, amountIls);
+        purchase = { ...purchase, amountIls };
+      }
     }
 
     const response: PurchaseResponse = {
       purchaseId: purchase.id,
       status: "pending",
-      amountIls: purchase.amountIls,
+      amountIls,
     };
 
     const upayConfig = await getUpayConfig();
     if (upayConfig) {
       response.upayForm = buildUpayFormFields(upayConfig, {
-        amountIls: purchase.amountIls ?? amountIls,
+        amountIls,
         description,
         method: paymentMethod,
         payerPhone: payerPhone ?? undefined,
+        payerName: claims.name ?? undefined,
+        payerEmail: claims.email ?? undefined,
       });
     }
 
