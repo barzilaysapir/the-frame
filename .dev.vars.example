@@ -16,19 +16,20 @@ VIDEO_SIGNING_SECRET=
 # S3 API token for the `the-frame` R2 bucket (Dashboard → R2 → Manage
 # R2 API Tokens). Object Read on `the-frame` only. `/stream` 307s to a
 # short-lived GET so the browser streams from R2 instead of through the
-# Worker (proxying a class MP4 hits error 1102). Also set these as Worker
-# secrets — **each Worker name needs its own copy** (PR previews are not
-# `the-frame`):
-#   npx wrangler secret put R2_ACCESS_KEY_ID
-#   npx wrangler secret put R2_SECRET_ACCESS_KEY
-#   npx wrangler secret put R2_ACCESS_KEY_ID --name <preview-worker-name>
-# After the first deploy, apply CORS so Range requests from the site work:
+# Worker (proxying a class MP4 hits error 1102).
+#
+# Prefer FRAME_R2_* names (OpenNext reserves R2_ACCESS_KEY_ID /
+# R2_SECRET_ACCESS_KEY for its rclone cache tooling). Legacy R2_* still
+# works as a fallback. Set on each Worker name (PR previews ≠ the-frame):
+#   npx wrangler secret put FRAME_R2_ACCESS_KEY_ID --name <worker>
+#   npx wrangler secret put FRAME_R2_SECRET_ACCESS_KEY --name <worker>
+# After the first deploy, apply CORS:
 #   npx wrangler r2 bucket cors set the-frame --file r2-cors.json
 # Optional overrides (defaults match wrangler.jsonc):
 # R2_ACCOUNT_ID=8541729902392a145a03f97a906af16f
 # R2_BUCKET_NAME=the-frame
-R2_ACCESS_KEY_ID=
-R2_SECRET_ACCESS_KEY=
+FRAME_R2_ACCESS_KEY_ID=
+FRAME_R2_SECRET_ACCESS_KEY=
 
 # Class playback requires the S3 token above. Set to 0 only to disable
 # presign (playback will 503 — there is no Worker-proxy fallback).

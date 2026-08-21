@@ -24,14 +24,26 @@ describe("readR2PresignConfig", () => {
   it("defaults account and bucket to this project's wrangler values", () => {
     expect(
       readR2PresignConfig({
-        R2_ACCESS_KEY_ID: " id ",
-        R2_SECRET_ACCESS_KEY: " secret ",
+        FRAME_R2_ACCESS_KEY_ID: " id ",
+        FRAME_R2_SECRET_ACCESS_KEY: " secret ",
       }),
     ).toEqual({
       accessKeyId: "id",
       secretAccessKey: "secret",
       accountId: "8541729902392a145a03f97a906af16f",
       bucket: "the-frame",
+    });
+  });
+
+  it("still accepts legacy R2_* secret names", () => {
+    expect(
+      readR2PresignConfig({
+        R2_ACCESS_KEY_ID: "legacy-id",
+        R2_SECRET_ACCESS_KEY: "legacy-secret",
+      }),
+    ).toMatchObject({
+      accessKeyId: "legacy-id",
+      secretAccessKey: "legacy-secret",
     });
   });
 });
@@ -47,8 +59,8 @@ describe("playbackStorageStatus", () => {
     });
     expect(
       playbackStorageStatus({
-        R2_ACCESS_KEY_ID: "id",
-        R2_SECRET_ACCESS_KEY: "secret",
+        FRAME_R2_ACCESS_KEY_ID: "id",
+        FRAME_R2_SECRET_ACCESS_KEY: "secret",
         VIDEO_SIGNING_SECRET: "sign",
         R2_PRESIGN_PLAYBACK: "0",
       }),
@@ -62,8 +74,8 @@ describe("playbackStorageStatus", () => {
     expect(
       canPresignR2Playback(
         playbackStorageStatus({
-          R2_ACCESS_KEY_ID: "id",
-          R2_SECRET_ACCESS_KEY: "secret",
+          FRAME_R2_ACCESS_KEY_ID: "id",
+          FRAME_R2_SECRET_ACCESS_KEY: "secret",
         }),
       ),
     ).toBe(true);

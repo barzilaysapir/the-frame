@@ -7,14 +7,17 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
  * The Worker binding (`COURSE_VIDEOS`) can only be read from Worker code —
  * a browser `<video>` cannot use it. Class-length MP4s must never be
  * proxied through `/stream` (Cloudflare error 1102). The player keeps a
- * same-origin `/stream` src; that route 307s to a presigned GET. Putting
- * the R2 URL on `<video src>` directly is a CORS footgun when bucket CORS
- * is missing.
+ * same-origin `/stream` src; that route 307s to a presigned GET.
  *
- * Requires an R2 S3 API token (`R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`).
- * Account + bucket default to wrangler.jsonc (`the-frame` on this account).
- * Apply `r2-cors.json` on the bucket so Range GETs from the site origin
- * are allowed: `npx wrangler r2 bucket cors set the-frame --file r2-cors.json`.
+ * Requires an R2 S3 API token as Worker secrets. Prefer
+ * `FRAME_R2_ACCESS_KEY_ID` / `FRAME_R2_SECRET_ACCESS_KEY` — OpenNext
+ * documents `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` for its own
+ * rclone cache tooling, and those names were invisible at runtime on
+ * the preview Worker even when `wrangler secret list` showed them.
+ * Legacy `R2_*` names are still accepted as a fallback.
+ *
+ * Account + bucket default to wrangler.jsonc (`the-frame`). Apply
+ * `r2-cors.json`: `npx wrangler r2 bucket cors set the-frame --file r2-cors.json`.
  * Secrets are per Worker name — a PR preview is not `the-frame`.
  */
 
@@ -22,6 +25,10 @@ export const R2_DEFAULT_ACCOUNT_ID = "8541729902392a145a03f97a906af16f";
 export const R2_DEFAULT_BUCKET = "the-frame";
 export const R2_S3_REGION = "auto";
 export const R2_S3_SERVICE = "s3";
+
+/** Preferred Worker secret names (avoid OpenNext's R2_* cache credentials). */
+export const FRAME_R2_ACCESS_KEY_SECRET = "FRAME_R2_ACCESS_KEY_ID";
+export const FRAME_R2_SECRET_KEY_SECRET = "FRAME_R2_SECRET_ACCESS_KEY";
 
 export interface R2PresignConfig {
   accessKeyId: string;
@@ -31,6 +38,8 @@ export interface R2PresignConfig {
 }
 
 export interface R2PresignEnv {
+  FRAME_R2_ACCESS_KEY_ID?: string;
+  FRAME_R2_SECRET_ACCESS_KEY?: string;
   R2_ACCESS_KEY_ID?: string;
   R2_SECRET_ACCESS_KEY?: string;
   R2_ACCOUNT_ID?: string;
@@ -49,20 +58,44 @@ export interface PlaybackStorageStatus {
 }
 
 function isR2PresignPlaybackEnabled(env: R2PresignEnv): boolean {
-  return env.R2_PRESIGN_PLAYBACK?.trim() !== "0";
+  return pickEnvString(env, "R2_PRESIGN_PLAYBACK") !== "0";
 }
 
 function nonEmpty(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+/** Dynamic key read — avoids Next.js build-time inlining of `process.env.NAME`. */
+function pickEnvString(
+  source: object | undefined,
+  key: string,
+): string | undefined {
+  if (!source) return undefined;
+  const value = (source as Record<string, unknown>)[key];
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
+function resolveAccessKeyId(env: R2PresignEnv): string | undefined {
+  return (
+    pickEnvString(env, FRAME_R2_ACCESS_KEY_SECRET) ||
+    pickEnvString(env, "R2_ACCESS_KEY_ID")
+  );
+}
+
+function resolveSecretAccessKey(env: R2PresignEnv): string | undefined {
+  return (
+    pickEnvString(env, FRAME_R2_SECRET_KEY_SECRET) ||
+    pickEnvString(env, "R2_SECRET_ACCESS_KEY")
+  );
+}
+
 export function playbackStorageStatus(env: R2PresignEnv): PlaybackStorageStatus {
-  const r2AccessKeyConfigured = nonEmpty(env.R2_ACCESS_KEY_ID);
-  const r2SecretKeyConfigured = nonEmpty(env.R2_SECRET_ACCESS_KEY);
+  const r2AccessKeyConfigured = nonEmpty(resolveAccessKeyId(env));
+  const r2SecretKeyConfigured = nonEmpty(resolveSecretAccessKey(env));
   return {
     r2ApiConfigured: r2AccessKeyConfigured && r2SecretKeyConfigured,
     r2PresignEnabled: isR2PresignPlaybackEnabled(env),
-    videoSigningConfigured: nonEmpty(env.VIDEO_SIGNING_SECRET),
+    videoSigningConfigured: nonEmpty(pickEnvString(env, "VIDEO_SIGNING_SECRET")),
     r2AccessKeyConfigured,
     r2SecretKeyConfigured,
   };
@@ -73,29 +106,34 @@ export function canPresignR2Playback(status: PlaybackStorageStatus): boolean {
 }
 
 /**
- * Worker secrets + `process.env` (nodejs routes on Workers may expose
- * bindings on either). Never logs values.
+ * Merge Cloudflare `env` with `process.env` using dynamic keys so Next
+ * cannot replace secret names with build-time empties.
  */
 export async function readWorkerPlaybackEnv(): Promise<R2PresignEnv> {
-  let binding: R2PresignEnv = {};
+  let binding: object | undefined;
   try {
-    const { env } = await getCloudflareContext({ async: true });
-    binding = env;
+    binding = (await getCloudflareContext({ async: true })).env;
   } catch {
     // Local/ssg without a Cloudflare context — fall through to process.env.
   }
-  return {
-    R2_ACCESS_KEY_ID:
-      binding.R2_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID,
-    R2_SECRET_ACCESS_KEY:
-      binding.R2_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY,
-    R2_ACCOUNT_ID: binding.R2_ACCOUNT_ID || process.env.R2_ACCOUNT_ID,
-    R2_BUCKET_NAME: binding.R2_BUCKET_NAME || process.env.R2_BUCKET_NAME,
-    R2_PRESIGN_PLAYBACK:
-      binding.R2_PRESIGN_PLAYBACK || process.env.R2_PRESIGN_PLAYBACK,
-    VIDEO_SIGNING_SECRET:
-      binding.VIDEO_SIGNING_SECRET || process.env.VIDEO_SIGNING_SECRET,
-  };
+  const proc = process.env;
+  const merged: R2PresignEnv = {};
+  for (const key of [
+    FRAME_R2_ACCESS_KEY_SECRET,
+    FRAME_R2_SECRET_KEY_SECRET,
+    "R2_ACCESS_KEY_ID",
+    "R2_SECRET_ACCESS_KEY",
+    "R2_ACCOUNT_ID",
+    "R2_BUCKET_NAME",
+    "R2_PRESIGN_PLAYBACK",
+    "VIDEO_SIGNING_SECRET",
+  ] as const) {
+    const value = pickEnvString(binding, key) || pickEnvString(proc, key);
+    if (value) {
+      (merged as Record<string, string>)[key] = value;
+    }
+  }
+  return merged;
 }
 
 export async function readPlaybackStorageStatus(): Promise<PlaybackStorageStatus> {
@@ -103,14 +141,14 @@ export async function readPlaybackStorageStatus(): Promise<PlaybackStorageStatus
 }
 
 export function readR2PresignConfig(env: R2PresignEnv): R2PresignConfig | null {
-  const accessKeyId = env.R2_ACCESS_KEY_ID?.trim();
-  const secretAccessKey = env.R2_SECRET_ACCESS_KEY?.trim();
+  const accessKeyId = resolveAccessKeyId(env);
+  const secretAccessKey = resolveSecretAccessKey(env);
   if (!accessKeyId || !secretAccessKey) return null;
   return {
     accessKeyId,
     secretAccessKey,
-    accountId: env.R2_ACCOUNT_ID?.trim() || R2_DEFAULT_ACCOUNT_ID,
-    bucket: env.R2_BUCKET_NAME?.trim() || R2_DEFAULT_BUCKET,
+    accountId: pickEnvString(env, "R2_ACCOUNT_ID") || R2_DEFAULT_ACCOUNT_ID,
+    bucket: pickEnvString(env, "R2_BUCKET_NAME") || R2_DEFAULT_BUCKET,
   };
 }
 
