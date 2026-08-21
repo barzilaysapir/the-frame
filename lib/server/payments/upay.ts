@@ -59,10 +59,8 @@ export interface UpayFormParams {
   method?: UpayPaymentMethod;
   /** Israeli mobile `05xxxxxxxx` — required for Bit (uPay sends the charge to this phone). */
   payerPhone?: string;
-  /** Invoice “לכבוד” on the hosted page. */
+  /** Invoice “לכבוד” on the hosted page. Latin only — Hebrew bounces. */
   payerName?: string;
-  /** Buyer email on the hosted page (not the merchant `email` field). */
-  payerEmail?: string;
 }
 
 export interface UpayFormFields {
@@ -109,15 +107,12 @@ export function buildUpayFormFields(
   const payerName = params.payerName
     ? upaySafeInvoiceName(params.payerName)
     : null;
-  const payerEmail = params.payerEmail?.trim();
   if (payerName) {
     fields.invoicename = payerName;
     fields.fullname = payerName;
   }
-  if (payerEmail) {
-    fields.invoiceemail = payerEmail;
-    fields.payeremail = payerEmail;
-  }
+  // Do not send `invoiceemail` / `payeremail`. A valid Gmail
+  // (`wronginputinvoiceemail barzilaysapir@gmail.com`) still bounces.
   if (method === "bit") {
     fields.providername = "bit";
     if (params.payerPhone) {

@@ -185,7 +185,6 @@ export async function POST(request: NextRequest) {
         method: paymentMethod,
         payerPhone: payerPhone ?? undefined,
         payerName: claims.name ?? undefined,
-        payerEmail: claims.email ?? undefined,
       });
     }
 

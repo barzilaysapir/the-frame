@@ -60,18 +60,17 @@ describe("buildUpayFormFields", () => {
     expect(form.fields.amount).toBe("200");
   });
 
-  it("prefills invoice name and buyer email", () => {
+  it("prefills a Latin invoice name and never sends buyer invoiceemail", () => {
     const form = buildUpayFormFields(
       config,
       params({
         payerName: "Sapir Barzilay",
-        payerEmail: "sapir@example.com",
       }),
     );
     expect(form.fields.invoicename).toBe("Sapir Barzilay");
     expect(form.fields.fullname).toBe("Sapir Barzilay");
-    expect(form.fields.invoiceemail).toBe("sapir@example.com");
-    expect(form.fields.payeremail).toBe("sapir@example.com");
+    expect(form.fields.invoiceemail).toBeUndefined();
+    expect(form.fields.payeremail).toBeUndefined();
     expect(form.fields.email).toBe("merchant@example.com");
   });
 
@@ -80,12 +79,11 @@ describe("buildUpayFormFields", () => {
       config,
       params({
         payerName: "ספיר ברזילי",
-        payerEmail: "sapir@example.com",
       }),
     );
     expect(form.fields.invoicename).toBeUndefined();
     expect(form.fields.fullname).toBeUndefined();
-    expect(form.fields.invoiceemail).toBe("sapir@example.com");
+    expect(form.fields.invoiceemail).toBeUndefined();
   });
 });
 
