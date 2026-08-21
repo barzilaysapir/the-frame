@@ -22,10 +22,13 @@ interface ConfirmBody {
 }
 
 /**
- * Fallback when uPay's unsigned IPN never arrives: the signed-in buyer
- * who just landed on our returnurl with their own pending purchase id
- * can mark it paid. The UUID is a capability token (same as the IPN
- * query string); this additionally requires their Firebase session.
+ * Manual/self-serve fallback when uPay's unsigned IPN never arrives.
+ * Do NOT call this from checkout just because returnurl has
+ * `?payment=success` — uPay always appends that, paid or not. Doing so
+ * marked pending rows paid and Continue to payment skipped the hosted
+ * form (#321). Ownership on return is GET /api/v1/me/purchases/status
+ * plus admin mark-paid. This endpoint stays for an explicit, future
+ * confirmed-payment signal, not the return query string.
  */
 export async function POST(request: NextRequest) {
   try {

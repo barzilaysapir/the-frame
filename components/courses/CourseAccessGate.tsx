@@ -1,11 +1,10 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { CourseLandingPreview } from "@/components/courses/CourseLandingPreview";
 import { CourseWatchPage } from "@/components/courses/CourseWatchPage";
-import { completeUpayReturn } from "@/lib/client/complete-upay-return";
+import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { CatalogExternalCourse } from "@/lib/server/catalog/types";
@@ -27,6 +26,9 @@ type AccessStatus = "checking" | "none" | "paid";
  * the check happens client-side against the lightweight
  * GET /api/v1/me/purchases/status — defaults to the preview layout while
  * checking (and for signed-out visitors) rather than flashing watch UI.
+ *
+ * Do not treat uPay's `?payment=success` as ownership — that query is
+ * always present on returnurl, paid or not.
  */
 export function CourseAccessGate({
   course,
@@ -35,9 +37,6 @@ export function CourseAccessGate({
   dict,
 }: CourseAccessGateProps) {
   const { user, loading: authLoading } = useAuth();
-  const searchParams = useSearchParams();
-  const returnedFromPayment = searchParams.get("payment");
-  const purchaseId = searchParams.get("purchaseId");
   // Only the async fetch result needs state — "not signed in" is derived
   // directly below instead of set via an effect, since there's no async
   // work involved and setState synchronously inside an effect body is
@@ -51,13 +50,15 @@ export function CourseAccessGate({
     let cancelled = false;
     (async () => {
       try {
-        const paid = await completeUpayReturn(
+        const res = await fetchWithAuth(
           user,
-          "external_course",
-          course.slug,
-          returnedFromPayment === "success" ? purchaseId : null,
+          `/api/v1/me/purchases/status?itemType=external_course&itemSlug=${encodeURIComponent(course.slug)}`,
         );
-        if (!cancelled) setFetchedStatus(paid ? "paid" : "none");
+        if (!res.ok) {
+          throw new Error(`purchase status check failed with ${res.status}`);
+        }
+        const data = (await res.json()) as { status: "paid" | "none" };
+        if (!cancelled) setFetchedStatus(data.status);
       } catch (error) {
         console.error("[CourseAccessGate] purchase status check failed:", error);
         if (!cancelled) setFetchedStatus("none");
@@ -66,7 +67,7 @@ export function CourseAccessGate({
     return () => {
       cancelled = true;
     };
-  }, [user, authLoading, course.slug, returnedFromPayment, purchaseId]);
+  }, [user, authLoading, course.slug]);
 
   const status: AccessStatus = authLoading
     ? "checking"
