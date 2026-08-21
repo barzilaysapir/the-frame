@@ -5,6 +5,7 @@ interface InstructorAvatarProps {
   name: string;
   src?: string;
   className?: string;
+  sizes?: string;
 }
 
 function getInitials(name: string): string {
@@ -16,7 +17,7 @@ function getInitials(name: string): string {
     .join("");
 }
 
-export function InstructorAvatar({ name, src, className }: InstructorAvatarProps) {
+export function InstructorAvatar({ name, src, className, sizes = "48px" }: InstructorAvatarProps) {
   const sizeClass = className ?? "h-9 w-9";
 
   if (src) {
@@ -31,7 +32,7 @@ export function InstructorAvatar({ name, src, className }: InstructorAvatarProps
           src={src}
           alt={name}
           fill
-          sizes="48px"
+          sizes={sizes}
           className="object-cover object-top"
         />
       </span>

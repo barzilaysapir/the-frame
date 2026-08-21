@@ -85,8 +85,8 @@
     "courseMany": "{count} קורסים באתר",
     "instagramAria": "{name} באינסטגרם",
     "tutorialsAria": "ספריית {name}",
-    "avatarEnlargeAria": "הגדלת התמונה של {name}",
-    "avatarLightboxClose": "סגירת התמונה המוגדלת"
+    "detailsAria": "פרטים על {name}",
+    "detailsClose": "סגירה"
   },
   "styles": {
     "title": "סגנונות ריקוד",
