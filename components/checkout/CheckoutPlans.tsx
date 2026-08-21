@@ -69,7 +69,6 @@ export function CheckoutPlans({
         itemType="lesson"
         itemSlug={routineSlug}
         planId={plan}
-        amountIls={plan === "rental" ? rentalPrice : MONTHLY_SUBSCRIPTION.earlyBird}
         itemHref={localePath(locale, `/routine/${routineSlug}`)}
       />
     </div>

@@ -343,10 +343,8 @@ export async function createPendingPurchase(
  * Flips a `pending` purchase to `paid` (idempotent — a purchase already
  * `paid` is left as-is, so a retried/duplicate webhook delivery is safe).
  *
- * Not called anywhere yet — Phase 1 confirms payments manually via
- * `markPurchasePaidManually` on the admin page. Kept ready for a future
- * automated-gateway webhook (see lib/server/payments/ history) so that
- * work doesn't have to touch the repository layer again.
+ * Called from the uPay IPN route. Admin can still override with
+ * `markPurchasePaidManually` if the callback never arrives.
  */
 export async function markPurchasePaid(
   db: AppDb,

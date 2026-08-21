@@ -29,7 +29,7 @@ import {
   setPendingPurchaseProvider,
   upsertUserFromClaims,
 } from "@/lib/server/users/repository";
-import { SITE_URL } from "@/lib/site";
+import { publicOriginFromRequest } from "@/lib/server/payments/checkout-origin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,7 +42,7 @@ interface PurchaseRequestBody {
   itemSlug?: unknown;
   planId?: unknown;
   locale?: unknown;
-  /** Path (not a full URL) the buyer should land back on after paying/cancelling — always resolved against our own SITE_URL server-side, so a client-supplied value can't redirect off-site. */
+  /** Path (not a full URL) the buyer should land back on after paying/cancelling — always resolved against this request's public origin, so a client-supplied value can't redirect off-site. */
   returnPath?: unknown;
   /** `card` (default) or `bit` — both go through uPay. */
   paymentMethod?: unknown;
@@ -154,6 +154,11 @@ export async function POST(request: NextRequest) {
     };
 
     const path = returnPath && returnPath.startsWith("/") ? returnPath : "/";
+    const origin = publicOriginFromRequest({
+      url: request.url,
+      forwardedHost: request.headers.get("x-forwarded-host"),
+      forwardedProto: request.headers.get("x-forwarded-proto"),
+    });
 
     const upayConfig = await getUpayConfig();
     if (upayConfig) {
@@ -161,8 +166,8 @@ export async function POST(request: NextRequest) {
         amountIls: purchase.amountIls ?? amountIls,
         description,
         method: paymentMethod,
-        returnUrl: `${SITE_URL}${path}?payment=success&provider=upay&purchaseId=${purchase.id}`,
-        ipnUrl: `${SITE_URL}/api/v1/webhooks/upay?purchaseId=${purchase.id}`,
+        returnUrl: `${origin}${path}?payment=success&provider=upay&purchaseId=${purchase.id}`,
+        ipnUrl: `${origin}/api/v1/webhooks/upay?purchaseId=${purchase.id}`,
       });
     }
 
