@@ -9,6 +9,7 @@ import { TermsDialog } from "@/components/checkout/TermsDialog";
 import { Button } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
+import { startPurchaseStatusPoll } from "@/lib/client/poll-purchase-status";
 import {
   checkoutAfterPurchase,
   submitUpayForm,
@@ -34,8 +35,9 @@ interface PurchaseApiResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
-  /** Present once uPay is configured — must be submitted as a real POST form (uPay's endpoint isn't a plain redirect link), see the hidden form below. */
+  /** Card only — POST this hosted form. Bit never returns it. */
   upayForm?: { action: string; fields: Record<string, string> };
+  bitRequested?: boolean;
 }
 
 interface CheckoutPaymentPlaceholderProps {
@@ -55,8 +57,8 @@ interface CheckoutPaymentPlaceholderProps {
 }
 
 /**
- * Card: POST uPay’s hosted form. Bit: same form plus the buyer’s mobile
- * so uPay can send a payment request to that phone.
+ * Card: POST uPay’s hosted form (returnurl brings the buyer back here).
+ * Bit: the server requests the charge; we stay on the waiting UI and poll.
  */
 export function CheckoutPaymentPlaceholder({
   locale,
@@ -89,6 +91,7 @@ export function CheckoutPaymentPlaceholder({
   const [result, setResult] = useState<PurchaseApiResponse | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [returnPaid, setReturnPaid] = useState(false);
+  const [bitWaiting, setBitWaiting] = useState(false);
   const [phone, setPhone] = useState<string | null>(null);
 
   const planSupported = planId !== "subscription";
@@ -100,34 +103,25 @@ export function CheckoutPaymentPlaceholder({
     : null;
   const phoneValue = phone ?? authPhone ?? "";
 
-  // uPay's returnurl always appends ?payment=success. That is not proof of
-  // payment — poll ownership (IPN / admin) and keep the pay button so a
-  // cancelled return is not a dead end.
+  // Browser return and Bit waiting are not proof of payment — poll
+  // ownership (IPN / admin) until watch UI can take over.
   useEffect(() => {
-    if (!user || returnedFromPayment !== "success") return;
-    let cancelled = false;
-    const check = async () => {
-      try {
+    if (!user || owned) return;
+    if (!bitWaiting && returnedFromPayment !== "success") return;
+    return startPurchaseStatusPoll({
+      check: async () => {
         const res = await fetchWithAuth(
           user,
           `/api/v1/me/purchases/status?itemType=${encodeURIComponent(itemType)}&itemSlug=${encodeURIComponent(itemSlug)}`,
         );
-        if (!res.ok) return;
+        if (!res.ok) return "none";
         const data = (await res.json()) as { status: "paid" | "none" };
-        if (!cancelled && data.status === "paid") setReturnPaid(true);
-      } catch (err) {
-        console.error("[CheckoutPaymentPlaceholder] return status check failed:", err);
-      }
-    };
-    void check();
-    const interval = setInterval(check, 2500);
-    const stop = setTimeout(() => clearInterval(interval), 15000);
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-      clearTimeout(stop);
-    };
-  }, [user, returnedFromPayment, itemType, itemSlug]);
+        return data.status;
+      },
+      onPaid: () => setReturnPaid(true),
+      timeoutMs: bitWaiting ? 180_000 : 120_000,
+    });
+  }, [user, owned, bitWaiting, returnedFromPayment, itemType, itemSlug]);
 
   const handlePay = async (paymentMethod: UpayPaymentMethod) => {
     if (!user) return;
@@ -183,6 +177,11 @@ export function CheckoutPaymentPlaceholder({
         submitUpayForm(step.form.action, step.form.fields);
         return;
       }
+      if (step.type === "bit-pending") {
+        setBitWaiting(true);
+        setBusyMethod(null);
+        return;
+      }
       setResult(data);
       setBusyMethod(null);
     } catch (err) {
@@ -228,6 +227,21 @@ export function CheckoutPaymentPlaceholder({
                 {labels.alreadyOwnedCta}
               </Button>
             </>
+          ) : bitWaiting ? (
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-white">{labels.bitConfirmationTitle}</p>
+              <p className="text-sm text-frame-silver">{labels.bitConfirmationBody}</p>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setBitWaiting(false);
+                  setError(null);
+                }}
+                className="w-full"
+              >
+                {labels.paymentNotCompleted}
+              </Button>
+            </div>
           ) : result ? (
             <p className="rounded-xl border border-frame-border bg-frame-bg px-4 py-3 text-sm text-frame-muted">
               {labels.noPaymentMethod}{" "}
@@ -305,7 +319,7 @@ export function CheckoutPaymentPlaceholder({
                   aria-busy={busyMethod === "bit"}
                   className="w-full disabled:opacity-60"
                 >
-                  {busyMethod === "bit" ? labels.payBusy : labels.payWithBit}
+                  {busyMethod === "bit" ? labels.bitSending : labels.payWithBit}
                 </Button>
                 {!bitAllowed ? (
                   <p className="text-xs text-frame-muted">

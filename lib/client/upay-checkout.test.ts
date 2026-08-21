@@ -26,6 +26,16 @@ describe("checkoutAfterPurchase", () => {
     });
   });
 
+  it("keeps the buyer on-site after a server Bit request", () => {
+    expect(
+      checkoutAfterPurchase({
+        status: "pending",
+        bitRequested: true,
+        upayForm: { action: "https://app.upay.co.il/x", fields: { amount: "1.00" } },
+      }),
+    ).toEqual({ type: "bit-pending" });
+  });
+
   it("redirects a pending purchase that has a uPay form", () => {
     const form = { action: "https://app.upay.co.il/x", fields: { amount: "200.00" } };
     expect(checkoutAfterPurchase({ status: "pending", upayForm: form })).toEqual({

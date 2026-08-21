@@ -5,6 +5,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { CourseLandingPreview } from "@/components/courses/CourseLandingPreview";
 import { CourseWatchPage } from "@/components/courses/CourseWatchPage";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
+import { startPurchaseStatusPoll } from "@/lib/client/poll-purchase-status";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { CatalogExternalCourse } from "@/lib/server/catalog/types";
@@ -27,8 +28,8 @@ type AccessStatus = "none" | "paid";
  * GET /api/v1/me/purchases/status — defaults to the preview layout while
  * checking (and for signed-out visitors) rather than flashing watch UI.
  *
- * Do not treat uPay's `?payment=success` as ownership — that query is
- * always present on returnurl, paid or not.
+ * Do not treat uPay's browser return as ownership. Poll until IPN/admin
+ * marks paid so watch UI appears after card return or a Bit approval.
  */
 export function CourseAccessGate({
   course,
@@ -44,10 +45,9 @@ export function CourseAccessGate({
   const [fetchedStatus, setFetchedStatus] = useState<AccessStatus>("none");
 
   useEffect(() => {
-    if (authLoading || !user) return;
-    let cancelled = false;
-    (async () => {
-      try {
+    if (authLoading || !user || fetchedStatus === "paid") return;
+    return startPurchaseStatusPoll({
+      check: async () => {
         const res = await fetchWithAuth(
           user,
           `/api/v1/me/purchases/status?itemType=external_course&itemSlug=${encodeURIComponent(course.slug)}`,
@@ -56,16 +56,12 @@ export function CourseAccessGate({
           throw new Error(`purchase status check failed with ${res.status}`);
         }
         const data = (await res.json()) as { status: "paid" | "none" };
-        if (!cancelled) setFetchedStatus(data.status);
-      } catch (error) {
-        console.error("[CourseAccessGate] purchase status check failed:", error);
-        if (!cancelled) setFetchedStatus("none");
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [user, authLoading, course.slug]);
+        return data.status;
+      },
+      onPaid: () => setFetchedStatus("paid"),
+      timeoutMs: 180_000,
+    });
+  }, [user, authLoading, course.slug, fetchedStatus]);
 
   const owned = !authLoading && !!user && fetchedStatus === "paid";
 

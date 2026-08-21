@@ -46,3 +46,7 @@ export function buildUpayBrowserReturnUrl(returnPath: string): string {
   );
   return `${WORKER_ORIGIN}${path}`;
 }
+
+export function buildUpayIpnUrl(purchaseId: string): string {
+  return `${WORKER_ORIGIN}/api/v1/webhooks/upay?purchaseId=${encodeURIComponent(purchaseId)}`;
+}

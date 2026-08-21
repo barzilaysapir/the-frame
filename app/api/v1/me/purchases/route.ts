@@ -15,10 +15,15 @@ import {
 } from "@/lib/server/payments/price-resolver";
 import { toIsraeliMobileNational } from "@/lib/phone";
 import {
+  buildUpayBrowserReturnUrl,
+  buildUpayIpnUrl,
+} from "@/lib/payments/pay-return";
+import {
   bitAmountAllowed,
   buildUpayFormFields,
   getUpayConfig,
   isUpayPaymentMethod,
+  requestUpayBitCharge,
   UPAY_BIT_MAX_ILS,
   upayProviderForMethod,
   type UpayPaymentMethod,
@@ -43,7 +48,7 @@ interface PurchaseRequestBody {
   itemSlug?: unknown;
   planId?: unknown;
   locale?: unknown;
-  /** Ignored — the dashboard button leaves uPay returnurl blank. */
+  /** Locale-prefixed in-app path; used as uPay returnurl (production host). */
   returnPath?: unknown;
   /** `card` (default) or `bit`. Bit requires `phone`. */
   paymentMethod?: unknown;
@@ -55,15 +60,17 @@ interface PurchaseResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
-  /** Present once uPay is configured (see lib/server/payments/upay.ts) — the client must render these as hidden inputs in a real `<form method="post">` and submit it (uPay's endpoint isn't a simple GET redirect). */
+  /** Card only — POST this hosted form. Bit never returns it. */
   upayForm?: { action: string; fields: Record<string, string> };
+  /** Bit: the charge was requested from the server; keep the buyer here and poll. */
+  bitRequested?: boolean;
 }
 
 /**
  * Creates/reuses a `pending` purchases row after recomputing the price
- * server-side, then returns a uPay form. Card is the hosted page. Bit
- * adds providername=bit plus the buyer’s mobile so uPay can send a
- * payment request to that phone. Grow was dropped (monthly fee).
+ * server-side. Card returns a uPay hosted form (returnurl + ipnurl on
+ * production). Bit asks uPay from the server and does not open the card
+ * page. Grow was dropped (monthly fee).
  *
  * A client-supplied amount is never trusted — see
  * `.cursor/rules/security-conventions.mdc`.
@@ -94,6 +101,8 @@ export async function POST(request: NextRequest) {
     const locale = resolveCatalogLocale(
       typeof body.locale === "string" ? body.locale : null,
     );
+    const returnPath =
+      typeof body.returnPath === "string" ? body.returnPath : `/${locale}`;
     const paymentMethod: UpayPaymentMethod = isUpayPaymentMethod(body.paymentMethod)
       ? body.paymentMethod
       : "card";
@@ -171,12 +180,28 @@ export async function POST(request: NextRequest) {
 
     const upayConfig = await getUpayConfig();
     if (upayConfig) {
-      response.upayForm = buildUpayFormFields(upayConfig, {
+      const formParams = {
         amountIls: purchase.amountIls ?? amountIls,
         description,
         method: paymentMethod,
         payerPhone: payerPhone ?? undefined,
-      });
+        returnUrl: buildUpayBrowserReturnUrl(returnPath),
+        ipnUrl: buildUpayIpnUrl(purchase.id),
+      };
+      if (paymentMethod === "bit") {
+        try {
+          await requestUpayBitCharge(upayConfig, formParams);
+        } catch (error) {
+          console.error("[purchases] Bit request failed:", error);
+          throw new ApiError(
+            502,
+            "Could not send the Bit payment request. Please try again.",
+          );
+        }
+        response.bitRequested = true;
+      } else {
+        response.upayForm = buildUpayFormFields(upayConfig, formParams);
+      }
     }
 
     return NextResponse.json(response);
