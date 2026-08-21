@@ -1,6 +1,8 @@
 /**
  * Builds the default Open Graph share card: full lockup (mark + "The Frame"
- * wordmark + "by Barzilay") on the site background, 1200×630 JPEG.
+ * wordmark + "by Barzilay") on the site background, 1200×630 JPEG. The OG
+ * wordmark source stays high-resolution; the 240px header asset is too small
+ * to enlarge without softening the script lettering.
  *
  * Usage: node scripts/generate-og-logo.mjs
  */
@@ -29,7 +31,7 @@ async function main() {
     .toBuffer();
 
   const wordmark = await sharp(
-    path.join(ROOT, "public/logos/logo-wordmark-light-cream.png"),
+    path.join(ROOT, "scripts/assets/logo-wordmark-light-cream-og.png"),
   )
     .resize(WORD_W, null, { fit: "inside" })
     .png()
@@ -57,7 +59,7 @@ async function main() {
 </svg>`,
   );
 
-  const out = path.join(ROOT, "public/og/logo-silhouette.jpg");
+  const out = path.join(ROOT, "public/og/logo-silhouette-hq.jpg");
   fs.mkdirSync(path.dirname(out), { recursive: true });
   await sharp({
     create: { width: WIDTH, height: HEIGHT, channels: 3, background: BACKGROUND },
@@ -67,12 +69,12 @@ async function main() {
       { input: wordmark, left: textX, top: textY },
       { input: subtitle, left: textX, top: textY + wmH + 10 },
     ])
-    .jpeg({ quality: 88, progressive: false })
+    .jpeg({ quality: 92, chromaSubsampling: "4:4:4", progressive: false })
     .toFile(out);
 
   const info = await sharp(out).metadata();
   console.log(
-    `og/logo-silhouette.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
+    `og/logo-silhouette-hq.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
   );
 }
 
