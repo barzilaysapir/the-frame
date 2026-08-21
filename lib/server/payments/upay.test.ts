@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   bitAmountAllowed,
   buildUpayFormFields,
+  formatUpayAmount,
   isUpayPaymentMethod,
   UPAY_BIT_MAX_ILS,
   UPAY_DASHBOARD_MERCHANT_EMAIL,
@@ -26,12 +27,30 @@ describe("buildUpayFormFields", () => {
       "https://app.upay.co.il/API6/clientsecure/redirectpage.php",
     );
     expect(form.fields.email).toBe("merchant@example.com");
-    expect(form.fields.amount).toBe("200.00");
+    expect(form.fields.amount).toBe("200");
     expect(form.fields.returnurl).toBe("");
     expect(form.fields.ipnurl).toBe("");
     expect(form.fields.paymentdetails).toBe("Vibe on Heels");
     expect(form.fields.paymentmethod).toBeUndefined();
     expect(form.fields.providername).toBeUndefined();
+  });
+
+  it("sends production returnurl and ipnurl when provided", () => {
+    const form = buildUpayFormFields(
+      config,
+      params({
+        returnUrl:
+          "https://the-frame.barzilaysapir.workers.dev/he/external-courses/gisha-gmisha-foundations",
+        ipnUrl:
+          "https://the-frame.barzilaysapir.workers.dev/api/v1/webhooks/upay?purchaseId=x",
+      }),
+    );
+    expect(form.fields.returnurl).toBe(
+      "https://the-frame.barzilaysapir.workers.dev/he/external-courses/gisha-gmisha-foundations",
+    );
+    expect(form.fields.ipnurl).toBe(
+      "https://the-frame.barzilaysapir.workers.dev/api/v1/webhooks/upay?purchaseId=x",
+    );
   });
 
   it("uses the dashboard merchant email", () => {
@@ -40,7 +59,7 @@ describe("buildUpayFormFields", () => {
       params({ amountIls: 1, description: "The Frame" }),
     );
     expect(form.fields.email).toBe("theframe@bybarzilay.com");
-    expect(form.fields.amount).toBe("1.00");
+    expect(form.fields.amount).toBe("1");
     expect(form.fields.returnurl).toBe("");
     expect(form.fields.ipnurl).toBe("");
   });
@@ -56,7 +75,25 @@ describe("buildUpayFormFields", () => {
     expect(form.fields.phone).toBeUndefined();
     expect(form.fields.cellphone).toBe("0501234567");
     expect(form.fields.cellphonenotify).toBe("0501234567");
-    expect(form.fields.amount).toBe("200.00");
+    expect(form.fields.amount).toBe("200");
+    expect(form.action).toBe(
+      "https://app.upay.co.il/API6/clientsecure/json.php",
+    );
+  });
+
+  it("does not send buyer invoice fields on the merchant button POST", () => {
+    const form = buildUpayFormFields(config, params());
+    expect(form.fields.invoicename).toBeUndefined();
+    expect(form.fields.fullname).toBeUndefined();
+    expect(form.fields.invoiceemail).toBeUndefined();
+    expect(form.fields.payeremail).toBeUndefined();
+  });
+});
+
+describe("formatUpayAmount", () => {
+  it("sends whole shekels like the dashboard button", () => {
+    expect(formatUpayAmount(1)).toBe("1");
+    expect(formatUpayAmount(200)).toBe("200");
   });
 });
 

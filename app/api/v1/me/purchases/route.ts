@@ -13,21 +13,18 @@ import {
   resolvePurchasePrice,
   type PurchasePlanId,
 } from "@/lib/server/payments/price-resolver";
-import { toIsraeliMobileNational } from "@/lib/phone";
+import { buildUpayBrowserReturnUrl, buildUpayIpnUrl } from "@/lib/payments/pay-return";
 import {
-  bitAmountAllowed,
   buildUpayFormFields,
   getUpayConfig,
-  isUpayPaymentMethod,
-  UPAY_BIT_MAX_ILS,
   upayProviderForMethod,
-  type UpayPaymentMethod,
 } from "@/lib/server/payments/upay";
 import {
   createPendingPurchase,
   findPaidPurchase,
   findPendingPurchase,
   reopenUnverifiedUpayReturnPurchases,
+  setPendingPurchaseAmount,
   setPendingPurchaseProvider,
   upsertUserFromClaims,
 } from "@/lib/server/users/repository";
@@ -43,27 +40,26 @@ interface PurchaseRequestBody {
   itemSlug?: unknown;
   planId?: unknown;
   locale?: unknown;
-  /** Ignored — the dashboard button leaves uPay returnurl blank. */
+  /** In-app path after card pay — rewritten to the production course URL. */
   returnPath?: unknown;
-  /** `card` (default) or `bit`. Bit requires `phone`. */
+  /** Card only for now. Bit returns 400 until a later PSP (e.g. Grow). */
   paymentMethod?: unknown;
-  /** Israeli mobile for Bit — server-normalized; never used as a price. */
-  phone?: unknown;
 }
 
 interface PurchaseResponse {
   purchaseId: string;
   status: "pending" | "paid";
   amountIls: number | null;
-  /** Present once uPay is configured (see lib/server/payments/upay.ts) — the client must render these as hidden inputs in a real `<form method="post">` and submit it (uPay's endpoint isn't a simple GET redirect). */
+  /** Present for card checkout — the client POSTs this form to uPay. */
   upayForm?: { action: string; fields: Record<string, string> };
 }
 
 /**
  * Creates/reuses a `pending` purchases row after recomputing the price
- * server-side, then returns a uPay form. Card is the hosted page. Bit
- * adds providername=bit plus the buyer’s mobile so uPay can send a
- * payment request to that phone. Grow was dropped (monthly fee).
+ * server-side, then returns a uPay card hosted-page form.
+ *
+ * Bit is not offered while on uPay’s public button API. Revisit with a
+ * monthly-fee PSP (Grow, etc.) once the site has paying customers.
  *
  * A client-supplied amount is never trusted — see
  * `.cursor/rules/security-conventions.mdc`.
@@ -91,19 +87,12 @@ export async function POST(request: NextRequest) {
     if (typeof planId !== "string" || !PLAN_IDS.includes(planId as PurchasePlanId)) {
       throw new ApiError(400, "planId must be one of: " + PLAN_IDS.join(", "));
     }
+    if (body.paymentMethod === "bit") {
+      throw new ApiError(400, "Bit is not available yet — pay with card");
+    }
     const locale = resolveCatalogLocale(
       typeof body.locale === "string" ? body.locale : null,
     );
-    const paymentMethod: UpayPaymentMethod = isUpayPaymentMethod(body.paymentMethod)
-      ? body.paymentMethod
-      : "card";
-    const payerPhone =
-      paymentMethod === "bit" && typeof body.phone === "string"
-        ? toIsraeliMobileNational(body.phone)
-        : null;
-    if (paymentMethod === "bit" && !payerPhone) {
-      throw new ApiError(400, "phone must be a valid Israeli mobile number");
-    }
 
     // #320 marked pending rows paid from returnurl. Reopen those so Continue
     // can POST the card form again; IPN/admin paid rows stay paid.
@@ -136,14 +125,7 @@ export async function POST(request: NextRequest) {
       planId as PurchasePlanId,
     );
 
-    if (paymentMethod === "bit" && !bitAmountAllowed(amountIls)) {
-      throw new ApiError(
-        400,
-        `Bit payments are limited to ₪${UPAY_BIT_MAX_ILS}`,
-      );
-    }
-
-    const provider = upayProviderForMethod(paymentMethod);
+    const provider = upayProviderForMethod("card");
     let purchase = await findPendingPurchase(
       db,
       claims.uid,
@@ -159,23 +141,33 @@ export async function POST(request: NextRequest) {
         amountIls,
         provider,
       );
-    } else if (purchase.provider !== provider) {
-      await setPendingPurchaseProvider(db, purchase.id, provider);
+    } else {
+      if (purchase.provider !== provider) {
+        await setPendingPurchaseProvider(db, purchase.id, provider);
+        purchase = { ...purchase, provider };
+      }
+      if (purchase.amountIls !== amountIls) {
+        await setPendingPurchaseAmount(db, purchase.id, amountIls);
+        purchase = { ...purchase, amountIls };
+      }
     }
 
     const response: PurchaseResponse = {
       purchaseId: purchase.id,
       status: "pending",
-      amountIls: purchase.amountIls,
+      amountIls,
     };
 
     const upayConfig = await getUpayConfig();
     if (upayConfig) {
+      const returnPath =
+        typeof body.returnPath === "string" ? body.returnPath : "/he";
       response.upayForm = buildUpayFormFields(upayConfig, {
-        amountIls: purchase.amountIls ?? amountIls,
+        amountIls,
         description,
-        method: paymentMethod,
-        payerPhone: payerPhone ?? undefined,
+        method: "card",
+        returnUrl: buildUpayBrowserReturnUrl(returnPath),
+        ipnUrl: buildUpayIpnUrl(purchase.id),
       });
     }
 

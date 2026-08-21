@@ -322,6 +322,20 @@ export async function getPurchaseById(
   return row ? mapPurchase(row) : null;
 }
 
+/** Updates the charged amount on a reused pending purchase. */
+export async function setPendingPurchaseAmount(
+  db: AppDb,
+  purchaseId: string,
+  amountIls: number,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE purchases SET amount_ils = ? WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(amountIls, purchaseId)
+    .run();
+}
+
 /** Updates the gateway label on a reused pending purchase (card vs Bit). */
 export async function setPendingPurchaseProvider(
   db: AppDb,

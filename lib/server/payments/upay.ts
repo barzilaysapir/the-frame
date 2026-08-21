@@ -1,5 +1,6 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { isUpayBitAccepted } from "@/lib/payments/upay-bit-response";
 import type { UpayPaymentMethod } from "@/lib/payments/upay-method";
 
 export {
@@ -25,10 +26,16 @@ export {
  * means a real per-order dynamic payment page is possible here, not just
  * a handful of pre-created static links.
  *
- * The live dashboard button (2026-08-21) posts `email=theframe@bybarzilay.com`
- * and leaves `returnurl` / `ipnurl` blank. Filling those URLs made uPay
- * bounce with USER_NOT_EXISTS. Match the button: blank callbacks, that
- * email, dynamic amount + paymentdetails.
+ * The live dashboard button (2026-08-21) posts `email=theframe@bybarzilay.com`.
+ * Buyer לכבוד / email stay on uPay’s hosted page — stuffing them into this
+ * POST bounced (`wronginputinvoicename` / `wronginputinvoiceemail`).
+ *
+ * Card: send `returnurl` (course path) and `ipnurl` so the buyer leaves
+ * uPay’s success popup and IPN can mark the purchase paid. Do not treat
+ * the browser return as paid.
+ *
+ * Bit: do not POST `redirectpage.php` (that is the card page). POS uses
+ * `json.php` with `providername=bit` plus `cellphone` / `cellphonenotify`.
  *
  * uPay has no sandbox at all (confirmed separately) — every real test is
  * a real charge. Verify with the smallest possible amount.
@@ -58,6 +65,10 @@ export interface UpayFormParams {
   method?: UpayPaymentMethod;
   /** Israeli mobile `05xxxxxxxx` — required for Bit (uPay sends the charge to this phone). */
   payerPhone?: string;
+  /** Production course URL — omit to match the dashboard button’s blank return. */
+  returnUrl?: string;
+  /** Production IPN URL with our purchase id. */
+  ipnUrl?: string;
 }
 
 export interface UpayFormFields {
@@ -65,14 +76,21 @@ export interface UpayFormFields {
   fields: Record<string, string>;
 }
 
-const UPAY_ACTION_URL = "https://app.upay.co.il/API6/clientsecure/redirectpage.php";
+const UPAY_CARD_ACTION_URL =
+  "https://app.upay.co.il/API6/clientsecure/redirectpage.php";
+const UPAY_BIT_ACTION_URL =
+  "https://app.upay.co.il/API6/clientsecure/json.php";
+
+/** Dashboard buttons use `1`, not `1.00`. Whole shekels stay integers. */
+export function formatUpayAmount(amountIls: number): string {
+  return Number.isInteger(amountIls) ? String(amountIls) : amountIls.toFixed(2);
+}
 
 /**
- * Same hidden fields as the dashboard button, with a live amount and
- * paymentdetails. Callbacks stay blank on purpose.
+ * Same hidden fields as the dashboard button, with a live amount,
+ * paymentdetails, and optional callbacks. Do not POST buyer לכבוד / email.
  *
- * Bit: `redirectpage.php` rejects `paymentmethod=bit`. POS uses
- * `providername=bit` plus `cellphone` / `cellphonenotify`.
+ * Bit posts to `json.php`, not the card hosted page.
  */
 export function buildUpayFormFields(
   config: UpayConfig,
@@ -81,9 +99,9 @@ export function buildUpayFormFields(
   const method = params.method ?? "card";
   const fields: Record<string, string> = {
     email: config.merchantEmail,
-    amount: params.amountIls.toFixed(2),
-    returnurl: "",
-    ipnurl: "",
+    amount: formatUpayAmount(params.amountIls),
+    returnurl: params.returnUrl ?? "",
+    ipnurl: params.ipnUrl ?? "",
     paymentdetails: params.description,
     maxpayments: "1",
     livesystem: "1",
@@ -103,7 +121,30 @@ export function buildUpayFormFields(
     }
   }
   return {
-    action: UPAY_ACTION_URL,
+    action: method === "bit" ? UPAY_BIT_ACTION_URL : UPAY_CARD_ACTION_URL,
     fields,
   };
+}
+
+/** Send a Bit charge request to the buyer’s phone. Does not open the card page. */
+export async function requestUpayBitPayment(
+  config: UpayConfig,
+  params: UpayFormParams,
+): Promise<void> {
+  const form = buildUpayFormFields(config, { ...params, method: "bit" });
+  const res = await fetch(form.action, {
+    method: "POST",
+    headers: {
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
+    },
+    body: new URLSearchParams(form.fields),
+  });
+  const text = await res.text();
+  if (!res.ok || !isUpayBitAccepted(text)) {
+    console.error("[upay] Bit request rejected", {
+      status: res.status,
+      preview: text.slice(0, 40),
+    });
+    throw new Error("UPAY_BIT_REJECTED");
+  }
 }

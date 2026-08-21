@@ -27,8 +27,8 @@ type AccessStatus = "none" | "paid";
  * GET /api/v1/me/purchases/status — defaults to the preview layout while
  * checking (and for signed-out visitors) rather than flashing watch UI.
  *
- * Do not treat uPay's `?payment=success` as ownership — that query is
- * always present on returnurl, paid or not.
+ * After card pay, uPay returns to this page; IPN may land a second later.
+ * Poll briefly. Do not treat a return query as ownership.
  */
 export function CourseAccessGate({
   course,
@@ -44,9 +44,9 @@ export function CourseAccessGate({
   const [fetchedStatus, setFetchedStatus] = useState<AccessStatus>("none");
 
   useEffect(() => {
-    if (authLoading || !user) return;
+    if (authLoading || !user || fetchedStatus === "paid") return;
     let cancelled = false;
-    (async () => {
+    const check = async () => {
       try {
         const res = await fetchWithAuth(
           user,
@@ -56,16 +56,20 @@ export function CourseAccessGate({
           throw new Error(`purchase status check failed with ${res.status}`);
         }
         const data = (await res.json()) as { status: "paid" | "none" };
-        if (!cancelled) setFetchedStatus(data.status);
+        if (!cancelled && data.status === "paid") setFetchedStatus("paid");
       } catch (error) {
         console.error("[CourseAccessGate] purchase status check failed:", error);
-        if (!cancelled) setFetchedStatus("none");
       }
-    })();
+    };
+    void check();
+    const interval = setInterval(check, 2500);
+    const stop = setTimeout(() => clearInterval(interval), 20000);
     return () => {
       cancelled = true;
+      clearInterval(interval);
+      clearTimeout(stop);
     };
-  }, [user, authLoading, course.slug]);
+  }, [user, authLoading, course.slug, fetchedStatus]);
 
   const owned = !authLoading && !!user && fetchedStatus === "paid";
 
