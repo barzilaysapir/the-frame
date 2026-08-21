@@ -3,9 +3,21 @@ import {
   jsonError,
   requireAppDb,
   requireFirebaseClaims,
+  ApiError,
 } from "@/lib/server/api/auth-context";
 import { resolveCatalog } from "@/lib/server/catalog";
-import { signLessonPlaybackUrl } from "@/lib/server/course-videos";
+import {
+  getVideoSigningKey,
+  signLessonPlaybackUrl,
+} from "@/lib/server/course-videos";
+import {
+  mintPlaybackGateValue,
+  playbackGateSetCookie,
+} from "@/lib/server/playback-hotlink";
+import {
+  canPresignR2Playback,
+  readPlaybackStorageStatus,
+} from "@/lib/server/r2-presign";
 import { hasPaidPurchase } from "@/lib/server/users/repository";
 
 export const runtime = "nodejs";
@@ -16,11 +28,9 @@ interface RouteParams {
 }
 
 /**
- * Mints a short-lived signed playback URL for one course lesson — requires
- * a valid Firebase ID token AND a paid purchase of the course (issue #232:
- * being signed in used to be enough, which let anyone watch any course for
- * free). The URL itself (not this endpoint) is what a native <video>
- * element loads, since it can't send an Authorization header.
+ * Mints a short-lived same-origin `/stream` URL for one course lesson —
+ * requires a valid Firebase ID token AND a paid purchase (issue #232).
+ * Sets a cookie so `<video>` can GET `/stream`, which 307s to R2.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
@@ -45,8 +55,28 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
+    const playback = await readPlaybackStorageStatus();
+    if (!playback.videoSigningConfigured) {
+      throw new ApiError(503, "Video signing is not configured on this Worker");
+    }
+    if (!canPresignR2Playback(playback)) {
+      throw new ApiError(
+        503,
+        "R2 API token is not configured on this Worker",
+      );
+    }
+
     const { url, expiresAt } = await signLessonPlaybackUrl(slug, lessonId);
-    return NextResponse.json({ url, expiresAt });
+    const gate = await mintPlaybackGateValue(
+      await getVideoSigningKey(),
+      expiresAt,
+    );
+    const response = NextResponse.json({ url, expiresAt });
+    response.headers.append(
+      "set-cookie",
+      playbackGateSetCookie(gate, expiresAt, request.url),
+    );
+    return response;
   } catch (error) {
     return jsonError(error);
   }

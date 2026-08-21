@@ -157,9 +157,10 @@ export function CourseLessonPlayer({
     <DanceVideoPlayer
       src={playbackUrl}
       title={lesson.title}
-      chapters={[]}
+      chapters={lesson.chapters}
       labels={playerLabels}
       showMirror={lesson.allowMirror}
+      viewerLabel={user.email ?? user.uid}
     />
   );
 }

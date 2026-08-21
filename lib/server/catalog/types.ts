@@ -7,11 +7,21 @@ import type {
   DanceStyleKey,
   LevelKey,
   TagKey,
-  VideoChapter,
 } from "@/lib/routines";
 import type { Locale } from "@/lib/i18n/config";
+import {
+  COURSE_FEATURE_ICONS,
+  isCourseFeatureIcon,
+  type CourseFeatureIcon,
+} from "@/lib/catalog/course-feature-icons";
 
-export interface CatalogChapter extends VideoChapter {
+export { COURSE_FEATURE_ICONS, isCourseFeatureIcon };
+export type { CourseFeatureIcon };
+
+export interface CatalogChapter {
+  id: string;
+  /** Timestamp in seconds where this section begins. */
+  time: number;
   label: string;
 }
 
@@ -70,10 +80,9 @@ export interface CatalogExternalCourseLesson {
   title: string;
   /** False hides the player mirror control. Defaults to true. */
   allowMirror: boolean;
+  /** In-video chapter markers for the player timeline (empty when none seeded). */
+  chapters: CatalogChapter[];
 }
-
-/** Icon keys mapped to a Lucide component in CourseFeatureGrid. */
-export type CourseFeatureIcon = "sparkles" | "footprints" | "home" | "infinity";
 
 export interface CatalogExternalCourseFeature {
   icon: CourseFeatureIcon;
@@ -87,6 +96,8 @@ export interface CatalogExternalCourse {
   instructorSlug: string | null;
   tagline: string;
   description: string;
+  /** Optional caption above the curriculum chips (empty when unused). */
+  curriculumHeading: string;
   /** Short curriculum topic labels, shown as chips below the description. */
   curriculumTopics: string[];
   /** Short icon+label format/logistics callouts (e.g. "no experience needed"). */
@@ -129,4 +140,9 @@ export interface CatalogHealthResponse {
   service: "the-frame-catalog";
   source: CatalogSource;
   now: string;
+  r2ApiConfigured: boolean;
+  r2PresignEnabled: boolean;
+  videoSigningConfigured: boolean;
+  r2AccessKeyConfigured: boolean;
+  r2SecretKeyConfigured: boolean;
 }

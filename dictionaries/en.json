@@ -118,8 +118,7 @@
       "7-day money-back guarantee"
     ],
     "promoPlaceholder": "Coming soon",
-    "checkingAccess": "Checking your access…",
-    "youOwnThis": "You already have access to this course."
+    "accessBadge": "Access unlocked"
   },
   "about": {
     "metaTitle": "About",
@@ -190,6 +189,15 @@
       "generic": "Something went wrong. Please try again."
     }
   },
+  "siteAccess": {
+    "title": "Private preview",
+    "signInPrompt": "Sign in with an allowed Google account to continue.",
+    "signInCta": "Sign in with Google",
+    "notAllowed": "You’re signed in, but this account isn’t on the access list.",
+    "signOut": "Sign out",
+    "loading": "Loading…",
+    "unavailable": "Sign-in isn’t configured yet."
+  },
   "account": {
     "metaTitle": "My account",
     "greeting": "Hi, {name}",
@@ -240,17 +248,24 @@
     "payWithCard": "Pay with card",
     "payWithBit": "Pay with Bit",
     "payMethodLabel": "How would you like to pay?",
-    "bitHint": "On a phone this may open the Bit app. On a computer you'll get an SMS or a QR code. Bit has to be enabled on the uPay merchant account.",
+    "phoneLabel": "Mobile number for Bit",
+    "phonePlaceholder": "050-1234567",
+    "phoneError": "Enter a valid Israeli mobile number, e.g. 050-1234567.",
+    "bitHint": "We’ll send a Bit payment request to this number. Approve it in the Bit app.",
     "bitTooExpensive": "Bit only accepts charges up to ₪{max}. Pay with a card instead.",
     "payBusy": "Taking you to payment…",
+    "payBusyBit": "Sending a Bit request to your phone…",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
     "paymentCancelled": "Payment was cancelled — you can try again below.",
+    "paymentNotCompleted": "Payment wasn’t completed. You can try again below.",
+    "upayUserNotExists": "uPay does not recognize this merchant. Try again, and if it keeps happening, contact us.",
     "termsPrefix": "I agree to the",
     "termsLinkText": "Terms & Conditions",
     "termsRequired": "You need to agree to the Terms & Conditions to continue.",
     "noPaymentMethod": "Payment isn’t available yet — please contact us to complete this purchase:",
-    "bitConfirmationTitle": "Thanks — payment recorded",
-    "bitConfirmationBody": "We’ll confirm your payment and unlock access shortly. If it’s urgent, feel free to reach out directly.",
+    "bitConfirmationTitle": "Bit request sent",
+    "bitConfirmationBody": "Approve the charge in the Bit app. Watching will unlock here after you confirm.",
+    "bitSendError": "We couldn’t send a Bit request to that phone. Try again, or pay with a card.",
     "payError": "Something went wrong recording your payment. Please try again.",
     "planUnavailable": "This plan isn’t available for payment yet — choose another plan above, or contact us.",
     "alreadyOwned": "You already have access to this.",

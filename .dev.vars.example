@@ -3,15 +3,37 @@
 # .env.local, these are never exposed to the browser — server-only.
 #
 # Copy this file to `.dev.vars` (gitignored) and fill in a real value.
-# `.dev.vars` is NOT read in production — for that, set the same name as a
-# Worker secret: `npx wrangler secret put VIDEO_SIGNING_SECRET`.
+# `.dev.vars` is NOT read in production — for that, `npx wrangler secret put`
+# the same names (`VIDEO_SIGNING_SECRET`, `R2_ACCESS_KEY_ID`, …).
 
-# Signs/verifies the short-lived playback URLs used to gate real (non-mock)
-# external-course video lessons stored in the private R2 bucket
-# `the-frame-class-videos` — see lib/server/course-videos.ts. Any long random
-# string works; generate one with:
+# Signs/verifies HMAC fallback playback URLs (`.../stream`) used when the
+# R2 S3 API token below is not set. Real (non-mock) class videos live in
+# the private R2 bucket `the-frame` — see lib/server/course-videos.ts.
+# Any long random string works; generate one with:
 #   node -e "console.log(crypto.randomUUID() + crypto.randomUUID())"
 VIDEO_SIGNING_SECRET=
+
+# S3 API token for the `the-frame` R2 bucket (Dashboard → R2 → Manage
+# R2 API Tokens). Object Read on `the-frame` only. `/stream` 307s to a
+# short-lived GET so the browser streams from R2 instead of through the
+# Worker (proxying a class MP4 hits error 1102).
+#
+# Prefer FRAME_R2_* names (OpenNext reserves R2_ACCESS_KEY_ID /
+# R2_SECRET_ACCESS_KEY for its rclone cache tooling). Legacy R2_* still
+# works as a fallback. Set on each Worker name (PR previews ≠ the-frame):
+#   npx wrangler secret put FRAME_R2_ACCESS_KEY_ID --name <worker>
+#   npx wrangler secret put FRAME_R2_SECRET_ACCESS_KEY --name <worker>
+# After the first deploy, apply CORS:
+#   npx wrangler r2 bucket cors set the-frame --file r2-cors.json
+# Optional overrides (defaults match wrangler.jsonc):
+# R2_ACCOUNT_ID=8541729902392a145a03f97a906af16f
+# R2_BUCKET_NAME=the-frame
+FRAME_R2_ACCESS_KEY_ID=
+FRAME_R2_SECRET_ACCESS_KEY=
+
+# Class playback requires the S3 token above. Set to 0 only to disable
+# presign (playback will 503 — there is no Worker-proxy fallback).
+# R2_PRESIGN_PLAYBACK=0
 
 # Gates the `/api/preview?token=...` link that unlocks the demo/mock catalog
 # (routines, instructors) — hidden by default everywhere, including this
@@ -26,14 +48,14 @@ PREVIEW_CATALOG_TOKEN=
 # Missing/empty means nobody is an admin, not "allow everyone".
 ADMIN_EMAILS=
 
-# uPay (upay.co.il) — see lib/server/payments/upay.ts. uPay publishes no
-# API docs; this is built against a mechanism reverse-engineered from the
-# HTML "embed code" their dashboard generates for a manually-created
-# payment button, confirmed live with a real ₪200 test transaction on
-# 2026-08-18. Just your uPay account login email — no separate merchant ID
-# or API key exists for this flow. Leave unset to skip offering uPay.
-#
-# Bit checkout uses the same form plus providername=bit (uPay rejects
-# paymentmethod=bit with "wronginputpaymentmethod bit"). Ask uPay support
-# to enable Bit on the merchant (they sometimes block it for new accounts).
+# Soft site-wide gate: when set, only these Google emails can use the UI
+# and authenticated APIs (`requireFirebaseClaims`). Public catalog GETs and
+# payment webhooks stay open. Missing/empty = unrestricted. Put the same
+# secret on `the-frame` and `preview-the-frame` Workers:
+#   echo -n 'a@x.com,b@y.com' | npx wrangler secret put SITE_ACCESS_EMAILS --name the-frame
+SITE_ACCESS_EMAILS=
+
+# uPay (upay.co.il) — see lib/server/payments/upay.ts. The live dashboard
+# button email is hardcoded as theframe@bybarzilay.com (public embed field,
+# not a password). This secret is optional leftover config.
 UPAY_MERCHANT_EMAIL=

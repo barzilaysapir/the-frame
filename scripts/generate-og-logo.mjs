@@ -1,0 +1,81 @@
+/**
+ * Builds the default Open Graph share card: full lockup (mark + "The Frame"
+ * wordmark + "by Barzilay") on the site background, 1200×630 JPEG. The OG
+ * source comes from the current brand kit rather than the retired wordmark.
+ *
+ * Usage: node scripts/generate-og-logo.mjs
+ */
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import sharp from "sharp";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.join(__dirname, "..");
+
+const WIDTH = 1200;
+const HEIGHT = 630;
+const BACKGROUND = { r: 15, g: 15, b: 17 };
+const MARK = 360;
+const GAP = 35;
+const WORD_W = 570;
+
+async function main() {
+  const mark = await sharp(path.join(ROOT, "public/logos/logo-mark.png"))
+    .resize(MARK, MARK, {
+      fit: "contain",
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
+
+  const wordmark = await sharp(
+    path.join(ROOT, "scripts/assets/logo-wordmark-light-cream-brand-kit.png"),
+  )
+    .resize(WORD_W, null, { fit: "inside", kernel: "lanczos3" })
+    .sharpen({ sigma: 1 })
+    .png()
+    .toBuffer();
+  const wm = await sharp(wordmark).metadata();
+  const wmH = wm.height ?? 124;
+  const wmW = wm.width ?? WORD_W;
+
+  const subtitleH = 46;
+  const textBlockH = wmH + 14 + subtitleH;
+  const lockupW = MARK + GAP + wmW;
+  const lockupH = Math.max(MARK, textBlockH);
+  const originX = Math.round((WIDTH - lockupW) / 2);
+  const originY = Math.round((HEIGHT - lockupH) / 2);
+  const markY = originY + Math.round((lockupH - MARK) / 2);
+  const textX = originX + MARK + GAP;
+  const textY = originY + Math.round((lockupH - textBlockH) / 2);
+
+  const subtitle = Buffer.from(
+    `<svg width="${wmW}" height="${subtitleH}" xmlns="http://www.w3.org/2000/svg">
+  <text x="${wmW}" y="34" text-anchor="end"
+    font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+    font-size="30" font-weight="400" letter-spacing="4"
+    fill="#B8B8BC">BY BARZILAY</text>
+</svg>`,
+  );
+
+  const out = path.join(ROOT, "public/og/logo-horizontal-brand-kit-v4.jpg");
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  await sharp({
+    create: { width: WIDTH, height: HEIGHT, channels: 3, background: BACKGROUND },
+  })
+    .composite([
+      { input: mark, left: originX, top: markY },
+      { input: wordmark, left: textX, top: textY },
+      { input: subtitle, left: textX, top: textY + wmH + 10 },
+    ])
+    .jpeg({ quality: 92, chromaSubsampling: "4:4:4", progressive: false })
+    .toFile(out);
+
+  const info = await sharp(out).metadata();
+  console.log(
+    `og/logo-horizontal-brand-kit-v4.jpg ${info.width}x${info.height} ${(fs.statSync(out).size / 1024).toFixed(0)}KB`,
+  );
+}
+
+main();

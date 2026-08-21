@@ -165,6 +165,7 @@ export function RoutineVideoPlayer({
       chapters={chapters}
       labels={playerLabels}
       className="mb-10"
+      viewerLabel={user.email ?? user.uid}
     />
   );
 }

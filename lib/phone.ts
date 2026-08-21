@@ -17,3 +17,13 @@ export function toIsraeliE164(rawInput: string): string | null {
   }
   return null;
 }
+
+/**
+ * Israeli mobile in national form (`05xxxxxxxx`) for Bit / uPay.
+ * Landlines are rejected — Bit only charges a mobile that has the app.
+ */
+export function toIsraeliMobileNational(rawInput: string): string | null {
+  const e164 = toIsraeliE164(rawInput);
+  if (!e164 || !e164.startsWith("+9725") || e164.length !== 13) return null;
+  return `0${e164.slice(4)}`;
+}

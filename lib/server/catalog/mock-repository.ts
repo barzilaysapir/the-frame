@@ -118,6 +118,7 @@ function toCatalogExternalCourse(
     instructorSlug: course.instructorSlug ?? null,
     tagline: localized.tagline,
     description: localized.description,
+    curriculumHeading: localized.curriculumHeading,
     curriculumTopics: localized.curriculumTopics,
     features: localized.features,
     priceDisplay: course.priceDisplay,
@@ -132,6 +133,11 @@ function toCatalogExternalCourse(
       id: lesson.id,
       title: localizeExternalCourseLessonTitle(locale, course.slug, lesson.id),
       allowMirror: lesson.allowMirror !== false,
+      chapters: (lesson.chapters ?? []).map((chapter) => ({
+        id: chapter.id,
+        time: chapter.time,
+        label: chapter.label,
+      })),
     })),
   };
 }

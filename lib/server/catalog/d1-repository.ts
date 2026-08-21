@@ -12,9 +12,9 @@ import type {
   CatalogRoutine,
   CatalogChapter,
 } from "@/lib/server/catalog/types";
+import { isCourseFeatureIcon } from "@/lib/catalog/course-feature-icons";
 import type { AppDb } from "@/lib/server/db";
 import type {
-  ChapterId,
   DanceStyleKey,
   LevelKey,
   TagKey,
@@ -76,6 +76,7 @@ interface ExternalCourseRow {
   title: string | null;
   tagline: string | null;
   description: string | null;
+  curriculum_heading: string | null;
   curriculum_topics_json: string | null;
   features_json: string | null;
   style_label: string | null;
@@ -86,6 +87,77 @@ interface ExternalCourseLessonRow {
   lesson_id: string;
   title: string | null;
   allow_mirror: number | null;
+}
+
+const EXTERNAL_COURSE_KIND = "external_course" as const;
+
+function mapChapterRow(chapter: ChapterRow): CatalogChapter {
+  return {
+    id: chapter.chapter_id,
+    time: chapter.time_seconds,
+    label: chapter.label ?? chapter.chapter_id,
+  };
+}
+
+/**
+ * In-video chapters for every lesson of one course (one round trip).
+ * `course_kind` keeps external + future internal courses in one table.
+ */
+async function fetchChaptersForCourseLessons(
+  db: AppDb,
+  locale: Locale,
+  courseKind: "external_course" | "internal_course",
+  courseSlug: string,
+): Promise<Map<string, CatalogChapter[]>> {
+  const result = await db
+    .prepare(
+      `SELECT c.lesson_id, c.chapter_id, c.time_seconds, ci.label
+       FROM course_lesson_chapters c
+       LEFT JOIN chapter_i18n ci
+         ON ci.chapter_id = c.chapter_id AND ci.locale = ?
+       WHERE c.course_kind = ? AND c.course_slug = ?
+       ORDER BY c.lesson_id ASC, c.sort_order ASC`,
+    )
+    .bind(locale, courseKind, courseSlug)
+    .all<ChapterRow & { lesson_id: string }>();
+
+  const byLesson = new Map<string, CatalogChapter[]>();
+  for (const chapter of result.results ?? []) {
+    const list = byLesson.get(chapter.lesson_id) ?? [];
+    list.push(mapChapterRow(chapter));
+    byLesson.set(chapter.lesson_id, list);
+  }
+  return byLesson;
+}
+
+/**
+ * Chapters for every external-course lesson in one round trip, keyed by
+ * `${courseSlug}\0${lessonId}` — avoids N+1 when listing courses.
+ */
+async function fetchChaptersForAllExternalCourseLessons(
+  db: AppDb,
+  locale: Locale,
+): Promise<Map<string, CatalogChapter[]>> {
+  const result = await db
+    .prepare(
+      `SELECT c.course_slug, c.lesson_id, c.chapter_id, c.time_seconds, ci.label
+       FROM course_lesson_chapters c
+       LEFT JOIN chapter_i18n ci
+         ON ci.chapter_id = c.chapter_id AND ci.locale = ?
+       WHERE c.course_kind = ?
+       ORDER BY c.course_slug ASC, c.lesson_id ASC, c.sort_order ASC`,
+    )
+    .bind(locale, EXTERNAL_COURSE_KIND)
+    .all<ChapterRow & { course_slug: string; lesson_id: string }>();
+
+  const byLesson = new Map<string, CatalogChapter[]>();
+  for (const chapter of result.results ?? []) {
+    const key = `${chapter.course_slug}\0${chapter.lesson_id}`;
+    const list = byLesson.get(key) ?? [];
+    list.push(mapChapterRow(chapter));
+    byLesson.set(key, list);
+  }
+  return byLesson;
 }
 
 function parseTags(tagsJson: string, routineSlug: string): TagKey[] {
@@ -130,11 +202,16 @@ function parseFeatures(
     const parsed = JSON.parse(featuresJson) as unknown;
     if (!Array.isArray(parsed)) return [];
     return parsed.filter(
-      (item): item is CatalogExternalCourse["features"][number] =>
-        typeof item === "object" &&
-        item !== null &&
-        typeof (item as { icon?: unknown }).icon === "string" &&
-        typeof (item as { label?: unknown }).label === "string",
+      (item): item is CatalogExternalCourse["features"][number] => {
+        if (typeof item !== "object" || item === null) return false;
+        const icon = (item as { icon?: unknown }).icon;
+        const label = (item as { label?: unknown }).label;
+        return (
+          typeof icon === "string" &&
+          isCourseFeatureIcon(icon) &&
+          typeof label === "string"
+        );
+      },
     );
   } catch (error) {
     console.error(
@@ -210,6 +287,7 @@ function mapExternalCourse(
     instructorSlug: row.instructor_slug,
     tagline: row.tagline ?? "",
     description: row.description ?? "",
+    curriculumHeading: row.curriculum_heading ?? "",
     curriculumTopics: parseStringArray(
       row.curriculum_topics_json,
       "curriculum_topics_json",
@@ -234,22 +312,31 @@ async function fetchLessonsForSlug(
   locale: Locale,
   courseSlug: string,
 ): Promise<CatalogExternalCourse["lessons"]> {
-  const result = await db
-    .prepare(
-      `SELECT l.lesson_id, l.allow_mirror, li.title
-       FROM external_course_lessons l
-       LEFT JOIN external_course_lesson_i18n li
-         ON li.course_slug = l.course_slug AND li.lesson_id = l.lesson_id AND li.locale = ?
-       WHERE l.course_slug = ?
-       ORDER BY l.sort_order ASC`,
-    )
-    .bind(locale, courseSlug)
-    .all<ExternalCourseLessonRow>();
+  const [result, chaptersByLesson] = await Promise.all([
+    db
+      .prepare(
+        `SELECT l.lesson_id, l.allow_mirror, li.title
+         FROM external_course_lessons l
+         LEFT JOIN external_course_lesson_i18n li
+           ON li.course_slug = l.course_slug AND li.lesson_id = l.lesson_id AND li.locale = ?
+         WHERE l.course_slug = ?
+         ORDER BY l.sort_order ASC`,
+      )
+      .bind(locale, courseSlug)
+      .all<ExternalCourseLessonRow>(),
+    fetchChaptersForCourseLessons(
+      db,
+      locale,
+      EXTERNAL_COURSE_KIND,
+      courseSlug,
+    ),
+  ]);
 
   return (result.results ?? []).map((row: ExternalCourseLessonRow) => ({
     id: row.lesson_id,
     title: row.title ?? row.lesson_id,
     allowMirror: row.allow_mirror !== 0,
+    chapters: chaptersByLesson.get(row.lesson_id) ?? [],
   }));
 }
 
@@ -263,16 +350,19 @@ async function fetchLessonsForAllExternalCourses(
   db: AppDb,
   locale: Locale,
 ): Promise<Map<string, CatalogExternalCourse["lessons"]>> {
-  const result = await db
-    .prepare(
-      `SELECT l.course_slug, l.lesson_id, l.allow_mirror, li.title
-       FROM external_course_lessons l
-       LEFT JOIN external_course_lesson_i18n li
-         ON li.course_slug = l.course_slug AND li.lesson_id = l.lesson_id AND li.locale = ?
-       ORDER BY l.course_slug ASC, l.sort_order ASC`,
-    )
-    .bind(locale)
-    .all<ExternalCourseLessonRow & { course_slug: string }>();
+  const [result, chaptersByLesson] = await Promise.all([
+    db
+      .prepare(
+        `SELECT l.course_slug, l.lesson_id, l.allow_mirror, li.title
+         FROM external_course_lessons l
+         LEFT JOIN external_course_lesson_i18n li
+           ON li.course_slug = l.course_slug AND li.lesson_id = l.lesson_id AND li.locale = ?
+         ORDER BY l.course_slug ASC, l.sort_order ASC`,
+      )
+      .bind(locale)
+      .all<ExternalCourseLessonRow & { course_slug: string }>(),
+    fetchChaptersForAllExternalCourseLessons(db, locale),
+  ]);
 
   const bySlug = new Map<string, CatalogExternalCourse["lessons"]>();
   for (const row of result.results ?? []) {
@@ -281,6 +371,8 @@ async function fetchLessonsForAllExternalCourses(
       id: row.lesson_id,
       title: row.title ?? row.lesson_id,
       allowMirror: row.allow_mirror !== 0,
+      chapters:
+        chaptersByLesson.get(`${row.course_slug}\0${row.lesson_id}`) ?? [],
     });
     bySlug.set(row.course_slug, list);
   }
@@ -305,11 +397,9 @@ async function fetchChaptersForSlug(
     .bind(locale, slug)
     .all<ChapterRow>();
 
-  return (chapters.results ?? []).map((chapter: ChapterRow) => ({
-    id: chapter.chapter_id as ChapterId,
-    time: chapter.time_seconds,
-    label: chapter.label ?? chapter.chapter_id,
-  }));
+  return (chapters.results ?? []).map((chapter: ChapterRow) =>
+    mapChapterRow(chapter),
+  );
 }
 
 /**
@@ -341,11 +431,7 @@ async function fetchChaptersForAllRoutines(
   const bySlug = new Map<string, CatalogChapter[]>();
   for (const chapter of result.results ?? []) {
     const list = bySlug.get(chapter.routine_slug) ?? [];
-    list.push({
-      id: chapter.chapter_id as ChapterId,
-      time: chapter.time_seconds,
-      label: chapter.label ?? chapter.chapter_id,
-    });
+    list.push(mapChapterRow(chapter));
     bySlug.set(chapter.routine_slug, list);
   }
   return bySlug;
@@ -535,7 +621,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                  -- instructor link (see migrations/0030).
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
-                 eci.curriculum_topics_json, eci.features_json,
+                 eci.curriculum_heading, eci.curriculum_topics_json, eci.features_json,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec
@@ -574,7 +660,7 @@ export function createD1CatalogRepository(db: AppDb): CatalogRepository {
                  -- See the matching comment in listExternalCourses above.
                  COALESCE(eii.name, NULLIF(eci.provider, ''), ec.provider) AS provider,
                  eci.title, eci.tagline, eci.description,
-                 eci.curriculum_topics_json, eci.features_json,
+                 eci.curriculum_heading, eci.curriculum_topics_json, eci.features_json,
                  si.label AS style_label,
                  li.label AS level_label
                FROM external_courses ec

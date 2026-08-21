@@ -16,7 +16,7 @@ interface CourseAccessGateProps {
   dict: Dictionary;
 }
 
-type AccessStatus = "checking" | "none" | "paid";
+type AccessStatus = "none" | "paid";
 
 /**
  * Decides which full page layout to show for a purchasable external
@@ -26,6 +26,9 @@ type AccessStatus = "checking" | "none" | "paid";
  * the check happens client-side against the lightweight
  * GET /api/v1/me/purchases/status — defaults to the preview layout while
  * checking (and for signed-out visitors) rather than flashing watch UI.
+ *
+ * After card pay, uPay returns to this page; IPN may land a second later.
+ * Poll briefly. Do not treat a return query as ownership.
  */
 export function CourseAccessGate({
   course,
@@ -38,14 +41,12 @@ export function CourseAccessGate({
   // directly below instead of set via an effect, since there's no async
   // work involved and setState synchronously inside an effect body is
   // flagged by react-hooks/set-state-in-effect.
-  const [fetchedStatus, setFetchedStatus] = useState<"checking" | "none" | "paid">(
-    "checking",
-  );
+  const [fetchedStatus, setFetchedStatus] = useState<AccessStatus>("none");
 
   useEffect(() => {
-    if (authLoading || !user) return;
+    if (authLoading || !user || fetchedStatus === "paid") return;
     let cancelled = false;
-    (async () => {
+    const check = async () => {
       try {
         const res = await fetchWithAuth(
           user,
@@ -55,35 +56,25 @@ export function CourseAccessGate({
           throw new Error(`purchase status check failed with ${res.status}`);
         }
         const data = (await res.json()) as { status: "paid" | "none" };
-        if (!cancelled) setFetchedStatus(data.status);
+        if (!cancelled && data.status === "paid") setFetchedStatus("paid");
       } catch (error) {
         console.error("[CourseAccessGate] purchase status check failed:", error);
-        if (!cancelled) setFetchedStatus("none");
       }
-    })();
+    };
+    void check();
+    const interval = setInterval(check, 2500);
+    const stop = setTimeout(() => clearInterval(interval), 20000);
     return () => {
       cancelled = true;
+      clearInterval(interval);
+      clearTimeout(stop);
     };
-  }, [user, authLoading, course.slug]);
+  }, [user, authLoading, course.slug, fetchedStatus]);
 
-  const status: AccessStatus = authLoading
-    ? "checking"
-    : !user
-      ? "none"
-      : fetchedStatus;
+  const owned = !authLoading && !!user && fetchedStatus === "paid";
 
-  if (status === "paid") {
+  if (owned) {
     return <CourseWatchPage course={course} locale={locale} dict={dict} />;
-  }
-
-  if (status === "checking") {
-    return (
-      <main className="mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
-        <p className="text-sm text-frame-silver">
-          {dict.externalCourses.checkingAccess}
-        </p>
-      </main>
-    );
   }
 
   return (
