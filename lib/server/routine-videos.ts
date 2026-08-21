@@ -17,9 +17,9 @@ export {
  * Mirrors `lib/server/course-videos.ts`'s pattern: a logged-in-and-paid-only
  * route (`/api/v1/routines/[slug]/playback-url`) mints a short-lived URL
  * for a native `<video>` element (which cannot send an Authorization
- * header). Real R2 keys prefer a presigned R2 GET; HMAC `/stream` remains
- * the fallback, and also the path for demo/mock routines whose `videoSrc`
- * is a public `https://` URL.
+ * header). Real R2 keys use HMAC `/stream` by default; presigned R2 GET
+ * only when `R2_PRESIGN_PLAYBACK=1`. Demo `https://` sources always use
+ * `/stream`.
  *
  * Routines don't have their own R2 bucket/table the way external-course
  * lessons do (`external_course_lessons.r2_key`) — `routines.video_src` is

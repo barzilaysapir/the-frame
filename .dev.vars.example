@@ -28,6 +28,11 @@ VIDEO_SIGNING_SECRET=
 R2_ACCESS_KEY_ID=
 R2_SECRET_ACCESS_KEY=
 
+# Direct R2 <video src> is a downloadable MP4. Leave unset so playback
+# uses same-origin `/stream` (hotlink-checked). Set to 1 only if you
+# explicitly want the browser to fetch R2 itself.
+# R2_PRESIGN_PLAYBACK=1
+
 # Gates the `/api/preview?token=...` link that unlocks the demo/mock catalog
 # (routines, instructors) — hidden by default everywhere, including this
 # local dev server, once migration 0027 is applied. See lib/preview.ts and

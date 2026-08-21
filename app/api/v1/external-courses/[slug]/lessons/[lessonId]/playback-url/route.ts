@@ -18,9 +18,10 @@ interface RouteParams {
 /**
  * Mints a short-lived playback URL for one course lesson — requires a
  * valid Firebase ID token AND a paid purchase of the course (issue #232).
- * Prefers a presigned R2 GET; falls back to HMAC `/stream`. The URL itself
- * (not this endpoint) is what a native <video> element loads, since it
- * can't send an Authorization header.
+ * Prefers HMAC `/stream` (hotlink-checked). Set `R2_PRESIGN_PLAYBACK=1`
+ * to mint a direct R2 GET instead. The URL itself (not this endpoint) is
+ * what a native <video> element loads, since it can't send an Authorization
+ * header.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {

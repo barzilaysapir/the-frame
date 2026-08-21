@@ -11,9 +11,9 @@ import { tryPresignR2Get } from "@/lib/server/r2-presign";
  * a short-lived URL for a native `<video>` element (which cannot send an
  * Authorization header):
  *
- * 1. Prefer a presigned R2 GET (S3 SigV4) so the browser streams from R2.
- * 2. Fall back to an HMAC-signed `/stream` proxy when R2 S3 API credentials
- *    are not configured (local/preview without `R2_ACCESS_KEY_ID`).
+ * 1. HMAC-signed same-origin `/stream` by default (so we can reject
+ *    hotlinks; a presigned R2 URL is a downloadable MP4).
+ * 2. Presigned R2 GET only when `R2_PRESIGN_PLAYBACK=1`.
  */
 
 // Long enough to cover one uninterrupted watch session without forcing a

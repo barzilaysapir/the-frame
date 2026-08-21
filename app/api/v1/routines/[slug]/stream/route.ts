@@ -7,6 +7,7 @@ import {
   applyR2VideoContentType,
   verifyRoutinePlaybackSignature,
 } from "@/lib/server/routine-videos";
+import { mediaRequestFromNext } from "@/lib/server/playback-hotlink";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,6 +46,13 @@ function isExternalUrl(src: string): boolean {
  * custom Authorization header.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
+  if (!mediaRequestFromNext(request)) {
+    return NextResponse.json(
+      { error: "Playback is only available in the player" },
+      { status: 403 },
+    );
+  }
+
   const { slug } = await params;
   const { searchParams } = request.nextUrl;
 
@@ -73,9 +81,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       rangeHeader ? { headers: { range: rangeHeader } } : undefined,
     );
     const headers = new Headers(upstream.headers);
-    // Playback URLs are per-viewer and short-lived — never let a shared
-    // cache (browser or CDN) retain the video body past this request.
-    headers.set("cache-control", "private, max-age=0");
+    headers.set("content-disposition", "inline");
+    headers.set("cache-control", "private, max-age=0, no-store");
     return new NextResponse(upstream.body, {
       status: upstream.status,
       headers,
@@ -105,9 +112,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   // and throws `DevalueError: Cannot stringify arbitrary non-POJOs`.
   copyR2HttpMetadata(headers, object.httpMetadata);
   applyR2VideoContentType(headers);
+  headers.set("content-disposition", "inline");
   headers.set("accept-ranges", "bytes");
   headers.set("etag", object.httpEtag);
-  headers.set("cache-control", "private, max-age=0");
+  headers.set("cache-control", "private, max-age=0, no-store");
 
   if (range) {
     const described = describeR2VideoRange(range, object.size, object.range);

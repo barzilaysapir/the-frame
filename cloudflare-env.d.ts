@@ -19,6 +19,8 @@ interface __BaseEnv_CloudflareEnv {
 	R2_SECRET_ACCESS_KEY: string;
 	R2_ACCOUNT_ID: string;
 	R2_BUCKET_NAME: string;
+	// Opt-in direct R2 <video src> (downloadable MP4). Unset = HMAC /stream.
+	R2_PRESIGN_PLAYBACK: string;
 	// ADMIN_EMAILS added by hand, same as the block above — see
 	// .dev.vars.example. Re-run `npm run cf-typegen` once a real value exists.
 	ADMIN_EMAILS: string;

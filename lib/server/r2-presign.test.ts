@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   awsUriEncode,
+  isR2PresignPlaybackEnabled,
   presignR2GetUrl,
   readR2PresignConfig,
   r2ObjectUrl,
@@ -30,6 +31,18 @@ describe("readR2PresignConfig", () => {
       accountId: "8541729902392a145a03f97a906af16f",
       bucket: "the-frame",
     });
+  });
+});
+
+describe("isR2PresignPlaybackEnabled", () => {
+  it("is off unless the opt-in flag is exactly 1", () => {
+    expect(isR2PresignPlaybackEnabled({})).toBe(false);
+    expect(isR2PresignPlaybackEnabled({ R2_PRESIGN_PLAYBACK: "true" })).toBe(
+      false,
+    );
+    expect(isR2PresignPlaybackEnabled({ R2_PRESIGN_PLAYBACK: "1" })).toBe(
+      true,
+    );
   });
 });
 

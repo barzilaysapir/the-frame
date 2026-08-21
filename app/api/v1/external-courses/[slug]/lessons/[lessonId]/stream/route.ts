@@ -7,6 +7,7 @@ import {
   applyR2VideoContentType,
   verifyLessonPlaybackSignature,
 } from "@/lib/server/course-videos";
+import { mediaRequestFromNext } from "@/lib/server/playback-hotlink";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,6 +42,13 @@ function copyR2HttpMetadata(
  * seek without downloading the whole file.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
+  if (!mediaRequestFromNext(request)) {
+    return NextResponse.json(
+      { error: "Playback is only available in the player" },
+      { status: 403 },
+    );
+  }
+
   const { slug, lessonId } = await params;
   const { searchParams } = request.nextUrl;
 
@@ -89,9 +97,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   // and throws `DevalueError: Cannot stringify arbitrary non-POJOs`.
   copyR2HttpMetadata(headers, object.httpMetadata);
   applyR2VideoContentType(headers);
+  headers.set("content-disposition", "inline");
   headers.set("accept-ranges", "bytes");
   headers.set("etag", object.httpEtag);
-  headers.set("cache-control", "private, max-age=0");
+  headers.set("cache-control", "private, max-age=0, no-store");
 
   if (range) {
     const described = describeR2VideoRange(range, object.size, object.range);

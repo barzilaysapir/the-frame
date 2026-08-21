@@ -13,9 +13,9 @@ interface RouteParams {
 
 /**
  * Mints a short-lived playback URL for a routine — requires a valid
- * Firebase ID token AND a paid purchase of the routine (issue #232). Real
- * R2 keys prefer a presigned GET; demo `https://` sources and missing R2
- * credentials fall back to HMAC `/stream`.
+ * Firebase ID token AND a paid purchase of the routine (issue #232).
+ * HMAC `/stream` by default; `R2_PRESIGN_PLAYBACK=1` mints a direct R2 GET.
+ * Demo `https://` sources always use `/stream`.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {

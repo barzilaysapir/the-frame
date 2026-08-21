@@ -6,8 +6,9 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
  *
  * The Worker binding (`COURSE_VIDEOS`) can only be read from Worker code —
  * a browser `<video>` cannot use it. HMAC `/stream` used to proxy every
- * byte through the Worker; that stalls on Range requests and burns
- * CPU/bandwidth. Presigned URLs let the browser talk to R2 directly.
+ * byte through the Worker. Presigned URLs let the browser talk to R2
+ * directly — they are also a downloadable MP4, so playback-url only mints
+ * them when `R2_PRESIGN_PLAYBACK=1`.
  *
  * Requires an R2 S3 API token (`R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`).
  * Account + bucket default to wrangler.jsonc (`the-frame` on this account).
@@ -32,6 +33,12 @@ export interface R2PresignEnv {
   R2_SECRET_ACCESS_KEY?: string;
   R2_ACCOUNT_ID?: string;
   R2_BUCKET_NAME?: string;
+  R2_PRESIGN_PLAYBACK?: string;
+}
+
+/** Direct R2 `<video src>` is opt-in: that URL is a downloadable MP4. */
+export function isR2PresignPlaybackEnabled(env: R2PresignEnv): boolean {
+  return env.R2_PRESIGN_PLAYBACK?.trim() === "1";
 }
 
 export function readR2PresignConfig(env: R2PresignEnv): R2PresignConfig | null {
@@ -160,6 +167,7 @@ export async function tryPresignR2Get(
 ): Promise<string | null> {
   try {
     const { env } = await getCloudflareContext({ async: true });
+    if (!isR2PresignPlaybackEnabled(env)) return null;
     const config = readR2PresignConfig(env);
     if (!config) return null;
     return await presignR2GetUrl(config, objectKey, expiresInSeconds);
