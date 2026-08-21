@@ -1,62 +1,66 @@
-import { SITE_URL, WORKER_HOSTNAME } from "@/lib/site";
-
 /**
- * Casual hotlink / "open the mp4 URL in a new tab" guard for `/stream`.
- * Not DRM: a page-level download extension can still capture the in-page
- * Range requests. Blocks curl and paste-into-a-new-tab for most browsers.
+ * Browser gate for `/stream`: a cookie minted by the authenticated
+ * `playback-url` route. `<video>` same-origin GETs send it; curl and a
+ * shared URL on another device do not.
+ *
+ * Header-based hotlink checks (Referer / Sec-Fetch) broke playback — many
+ * browsers omit those on media requests — so this cookie is the gate.
  */
-export function isTrustedPlaybackHost(host: string): boolean {
-  const hostname = host.split(":")[0]?.toLowerCase() ?? "";
-  if (
-    hostname === "localhost" ||
-    hostname === "127.0.0.1" ||
-    hostname === "::1"
-  ) {
-    return true;
+
+export const PLAYBACK_GATE_COOKIE = "tf_pb";
+
+const encoder = new TextEncoder();
+
+export async function mintPlaybackGateValue(
+  key: CryptoKey,
+  expiresAt: number,
+): Promise<string> {
+  const signatureBytes = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(`pb:${expiresAt}`),
+  );
+  const sig = Buffer.from(signatureBytes).toString("base64url");
+  return `${expiresAt}.${sig}`;
+}
+
+export async function verifyPlaybackGateValue(
+  key: CryptoKey,
+  raw: string | undefined,
+): Promise<boolean> {
+  if (!raw) return false;
+  const dot = raw.indexOf(".");
+  if (dot <= 0) return false;
+  const expiresAt = Number(raw.slice(0, dot));
+  const sig = raw.slice(dot + 1);
+  if (!Number.isFinite(expiresAt) || expiresAt < Math.floor(Date.now() / 1000)) {
+    return false;
   }
-  if (hostname === WORKER_HOSTNAME) return true;
-  if (hostname.endsWith(".barzilaysapir.workers.dev")) return true;
+  let signatureBytes: Uint8Array;
   try {
-    if (new URL(SITE_URL).hostname.toLowerCase() === hostname) return true;
+    signatureBytes = Buffer.from(sig, "base64url");
   } catch {
-    // SITE_URL is a compile-time constant and always a valid URL.
+    return false;
   }
-  return false;
+  return crypto.subtle.verify(
+    "HMAC",
+    key,
+    signatureBytes as BufferSource,
+    encoder.encode(`pb:${expiresAt}`),
+  );
 }
 
-export function isInPageMediaRequest(headers: {
-  origin?: string | null;
-  referer?: string | null;
-  secFetchSite?: string | null;
-}): boolean {
-  const site = headers.secFetchSite?.toLowerCase();
-  if (site === "same-origin") return true;
-
-  if (headers.origin) {
-    try {
-      if (isTrustedPlaybackHost(new URL(headers.origin).host)) return true;
-    } catch {
-      // ignore malformed Origin
-    }
+export function playbackGateSetCookie(
+  value: string,
+  expiresAt: number,
+  requestUrl: string,
+): string {
+  const maxAge = Math.max(0, expiresAt - Math.floor(Date.now() / 1000));
+  let secure = false;
+  try {
+    secure = new URL(requestUrl).protocol === "https:";
+  } catch {
+    secure = true;
   }
-
-  if (headers.referer) {
-    try {
-      if (isTrustedPlaybackHost(new URL(headers.referer).host)) return true;
-    } catch {
-      // ignore malformed Referer
-    }
-  }
-
-  return false;
-}
-
-export function mediaRequestFromNext(request: {
-  headers: { get(name: string): string | null };
-}): boolean {
-  return isInPageMediaRequest({
-    origin: request.headers.get("origin"),
-    referer: request.headers.get("referer"),
-    secFetchSite: request.headers.get("sec-fetch-site"),
-  });
+  return `${PLAYBACK_GATE_COOKIE}=${value}; Path=/api/v1; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure ? "; Secure" : ""}`;
 }

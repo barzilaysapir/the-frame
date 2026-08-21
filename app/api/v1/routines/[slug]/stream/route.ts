@@ -7,7 +7,11 @@ import {
   applyR2VideoContentType,
   verifyRoutinePlaybackSignature,
 } from "@/lib/server/routine-videos";
-import { mediaRequestFromNext } from "@/lib/server/playback-hotlink";
+import { getVideoSigningKey } from "@/lib/server/course-videos";
+import {
+  PLAYBACK_GATE_COOKIE,
+  verifyPlaybackGateValue,
+} from "@/lib/server/playback-hotlink";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -46,7 +50,11 @@ function isExternalUrl(src: string): boolean {
  * custom Authorization header.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
-  if (!mediaRequestFromNext(request)) {
+  const gateOk = await verifyPlaybackGateValue(
+    await getVideoSigningKey(),
+    request.cookies.get(PLAYBACK_GATE_COOKIE)?.value,
+  );
+  if (!gateOk) {
     return NextResponse.json(
       { error: "Playback is only available in the player" },
       { status: 403 },

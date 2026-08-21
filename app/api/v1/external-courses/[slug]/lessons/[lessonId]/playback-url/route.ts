@@ -5,7 +5,14 @@ import {
   requireFirebaseClaims,
 } from "@/lib/server/api/auth-context";
 import { resolveCatalog } from "@/lib/server/catalog";
-import { signLessonPlaybackUrl } from "@/lib/server/course-videos";
+import {
+  getVideoSigningKey,
+  signLessonPlaybackUrl,
+} from "@/lib/server/course-videos";
+import {
+  mintPlaybackGateValue,
+  playbackGateSetCookie,
+} from "@/lib/server/playback-hotlink";
 import { hasPaidPurchase } from "@/lib/server/users/repository";
 
 export const runtime = "nodejs";
@@ -18,10 +25,9 @@ interface RouteParams {
 /**
  * Mints a short-lived playback URL for one course lesson — requires a
  * valid Firebase ID token AND a paid purchase of the course (issue #232).
- * Prefers HMAC `/stream` (hotlink-checked). Set `R2_PRESIGN_PLAYBACK=1`
- * to mint a direct R2 GET instead. The URL itself (not this endpoint) is
- * what a native <video> element loads, since it can't send an Authorization
- * header.
+ * Prefers HMAC `/stream`. Set `R2_PRESIGN_PLAYBACK=1` to mint a direct R2
+ * GET instead. Sets a short-lived cookie so `/stream` works in the player
+ * but not as a pasted URL on another device.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
@@ -51,7 +57,16 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       lessonId,
       source.r2Key,
     );
-    return NextResponse.json({ url, expiresAt });
+    const gate = await mintPlaybackGateValue(
+      await getVideoSigningKey(),
+      expiresAt,
+    );
+    const response = NextResponse.json({ url, expiresAt });
+    response.headers.append(
+      "set-cookie",
+      playbackGateSetCookie(gate, expiresAt, request.url),
+    );
+    return response;
   } catch (error) {
     return jsonError(error);
   }

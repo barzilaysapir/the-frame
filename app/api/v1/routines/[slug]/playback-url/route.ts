@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jsonError, requireAppDb, requireFirebaseClaims } from "@/lib/server/api/auth-context";
 import { resolveCatalog } from "@/lib/server/catalog";
+import { getVideoSigningKey } from "@/lib/server/course-videos";
+import {
+  mintPlaybackGateValue,
+  playbackGateSetCookie,
+} from "@/lib/server/playback-hotlink";
 import { signRoutinePlaybackUrl } from "@/lib/server/routine-videos";
 import { hasPaidPurchase } from "@/lib/server/users/repository";
 
@@ -35,7 +40,16 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     const { url, expiresAt } = await signRoutinePlaybackUrl(slug, source.videoSrc);
-    return NextResponse.json({ url, expiresAt });
+    const gate = await mintPlaybackGateValue(
+      await getVideoSigningKey(),
+      expiresAt,
+    );
+    const response = NextResponse.json({ url, expiresAt });
+    response.headers.append(
+      "set-cookie",
+      playbackGateSetCookie(gate, expiresAt, request.url),
+    );
+    return response;
   } catch (error) {
     return jsonError(error);
   }

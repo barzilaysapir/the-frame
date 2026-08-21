@@ -11,8 +11,8 @@ import { tryPresignR2Get } from "@/lib/server/r2-presign";
  * a short-lived URL for a native `<video>` element (which cannot send an
  * Authorization header):
  *
- * 1. HMAC-signed same-origin `/stream` by default (so we can reject
- *    hotlinks; a presigned R2 URL is a downloadable MP4).
+ * 1. HMAC-signed same-origin `/stream` by default (a presigned R2 URL is a
+ *    downloadable MP4). `/stream` also requires a cookie set by this mint.
  * 2. Presigned R2 GET only when `R2_PRESIGN_PLAYBACK=1`.
  */
 
@@ -35,7 +35,7 @@ export async function getCourseVideosBucket(): Promise<R2Bucket | null> {
   }
 }
 
-async function getSigningKey(): Promise<CryptoKey> {
+export async function getVideoSigningKey(): Promise<CryptoKey> {
   const { env } = await getCloudflareContext({ async: true });
   const secret = env.VIDEO_SIGNING_SECRET;
   if (!secret) {
@@ -74,7 +74,7 @@ export async function signLessonPlaybackUrl(
     return { url: presigned, expiresAt };
   }
 
-  const key = await getSigningKey();
+  const key = await getVideoSigningKey();
   const payload = buildSignaturePayload(courseSlug, lessonId, expiresAt);
   const signatureBytes = await crypto.subtle.sign(
     "HMAC",
@@ -106,7 +106,7 @@ export async function verifyLessonPlaybackSignature(
     return false;
   }
 
-  const key = await getSigningKey();
+  const key = await getVideoSigningKey();
   const payload = buildSignaturePayload(courseSlug, lessonId, expiresAt);
   return crypto.subtle.verify(
     "HMAC",
