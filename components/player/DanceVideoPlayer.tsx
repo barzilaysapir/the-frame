@@ -120,7 +120,13 @@ export function DanceVideoPlayer({
     const video = videoRef.current;
     if (!video) return;
 
-    const onPlay = () => setIsPlaying(true);
+    const onPlay = () => {
+      setIsPlaying(true);
+      // Chapter navigation is a "where do I jump to" tool — collapse it back
+      // once playback resumes so it doesn't stack on top of the seek bar and
+      // control row and cover half the video on a short mobile frame.
+      setChaptersExpanded(false);
+    };
     const onPause = () => {
       setIsPlaying(false);
       setAreControlsVisible(true);
@@ -474,8 +480,12 @@ export function DanceVideoPlayer({
 
           {/* Current chapter, right under the time — tap to reveal the rest.
               Only this one chapter shows over the video by default,
-              YouTube-mobile style, instead of the full list at all times. */}
-          {chapters.length > 0 && activeChapter ? (
+              YouTube-mobile style, instead of the full list at all times.
+              Paused only: while playing, this row (plus the center play
+              button it would sit near) would stack on top of the seek bar
+              and control row and cover too much of a short mobile frame —
+              chapter-picking is a "paused, deciding where to go" action. */}
+          {!isPlaying && chapters.length > 0 && activeChapter ? (
             <div className="mt-2 flex flex-col items-start gap-2">
               <button
                 type="button"
