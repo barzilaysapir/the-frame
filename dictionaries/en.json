@@ -10,12 +10,12 @@
     "favorites": "Favorites",
     "about": "About",
     "login": "Log in",
-    "getAccess": "Get access",
     "account": "My account",
     "signOut": "Sign out",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "language": "Language"
+    "language": "Language",
+    "primaryNavAria": "Primary navigation"
   },
   "home": {
     "title": "frame by frame.",
@@ -43,7 +43,6 @@
   },
   "tutorials": {
     "title": "Library",
-    "subtitle": "Every tutorial includes a full count breakdown, mirrored and slowed practice modes, and a 30-day rental.",
     "filterAria": "Filter the library",
     "filterTeacher": "Teacher",
     "filterStyle": "Style",
@@ -100,9 +99,7 @@
   },
   "externalCourses": {
     "tag": "External course",
-    "comingSoonBadge": "Coming soon",
-    "comingSoonNote": "This course is in production and will be available on The Frame soon.",
-    "availableBadge": "Available now",
+    "promoLabel": "Promo video for {title}",
     "providerPrefix": "by {provider}",
     "cta": "View course",
     "linkAria": "{title} by {provider}",
@@ -112,13 +109,17 @@
     "signInCta": "Sign in with Google",
     "loadingVideo": "Loading video…",
     "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
+    "purchaseRequired": "Purchase this course to watch its lessons.",
+    "purchaseRequiredCta": "Get access",
     "pricingNote": "This course, or the course plus extra credits at a pack discount · choose at checkout",
-    "paymentBody": "One-time payment for access to this course.",
     "guarantees": [
       "Access to every lesson in this course",
       "Watch on any device",
       "7-day money-back guarantee"
-    ]
+    ],
+    "promoPlaceholder": "Coming soon",
+    "checkingAccess": "Checking your access…",
+    "youOwnThis": "You already have access to this course."
   },
   "about": {
     "metaTitle": "About",
@@ -128,6 +129,39 @@
       "body": "The Frame, by Barzilay. Created by Sapir Barzilay, a professional dancer and hip-hop teacher who also works as a video editor and web developer. Sapir combines both of her worlds, dance and digital, to build a learning platform that answers dancers' artistic needs alongside technological and technical ones.",
       "cta": "More about me at bybarzilay.com"
     }
+  },
+  "terms": {
+    "metaTitle": "Terms & Conditions",
+    "metaDescription": "The Frame by Barzilay's terms of service: delivery, liability, cancellation, and privacy.",
+    "title": "Terms & Conditions",
+    "updated": "Last updated: August 2026",
+    "intro": "These terms govern your use of The Frame by Barzilay and any combination or course you purchase on it. By completing a purchase, you agree to the terms below.",
+    "sections": {
+      "delivery": {
+        "title": "Delivery of content",
+        "body": "The Frame sells digital access only — no physical product is ever shipped. Once payment is confirmed, access to the purchased combination or course opens automatically, immediately (typically within seconds; if a payment confirmation is delayed, access is granted as soon as it's manually verified, generally within one business day). Combination access lasts 30 days from purchase; course/credit terms are shown on the item's checkout page before you pay."
+      },
+      "liability": {
+        "title": "Site and business liability",
+        "body": "The site owner is responsible for the operation of the platform and the accuracy of the catalog and pricing shown on it. Instructional content reflects each instructor's own teaching approach; The Frame is not liable for injury arising from attempting any physical movement shown in a lesson — dance at your own pace and within your own physical limits. The Frame is not liable for indirect or consequential damages arising from use of the site or its content, to the maximum extent permitted by law."
+      },
+      "cancellation": {
+        "title": "Cancelling a purchase",
+        "body": "Under Israeli consumer-protection law, digital content becomes non-cancellable once it has been accessed (opened) — this is standard for streamed video access, not specific to The Frame. If you have a genuine problem with a purchase — the wrong item, a technical fault preventing playback, or you haven't yet started watching — contact us (see the Contact page) and we will resolve it, including a refund where appropriate. Purchased credits, where offered, remain valid for the period stated at time of purchase, in line with Israeli law on stored-value vouchers."
+      },
+      "privacy": {
+        "title": "Privacy",
+        "body": "The Frame collects the account information needed to run the service — your name, email, and a record of what you've purchased — via Firebase Authentication and stores it in a Cloudflare D1 database. Payment card details are handled entirely by our payment processor and never pass through or get stored on The Frame's own systems. We do not sell your personal information to third parties. Contact us (see the Contact page) with any privacy question or data request."
+      }
+    }
+  },
+  "contact": {
+    "metaTitle": "Contact",
+    "metaDescription": "Get in touch with The Frame by Barzilay.",
+    "title": "Contact us",
+    "body": "Questions about a purchase, a lesson, or anything else? Reach out directly:",
+    "emailLabel": "Email",
+    "instagramLabel": "Instagram"
   },
   "login": {
     "metaTitle": "Log in",
@@ -161,18 +195,18 @@
     "greeting": "Hi, {name}",
     "subtitle": "Your rented combinations will appear here for the active rental period, with breakdowns, mirrored practice, and slowed practice.",
     "empty": "You haven’t rented any combinations yet.",
-    "loadFailed": "Couldn’t load your library. Please try again.",
+    "loadFailed": "Couldn’t load your content. Please try again.",
     "unavailable": "My account isn’t available yet — the site is still being built.",
     "loading": "Loading…",
     "fallbackName": "dancer",
     "nav": {
-      "library": "Library",
-      "profile": "Profile",
-      "settings": "Settings"
+      "library": "My Content",
+      "favorites": "Favorites",
+      "profile": "Profile"
     },
     "profile": {
       "title": "Profile",
-      "subtitle": "Your The Frame account details.",
+      "subtitle": "Your account details, language, and sign out.",
       "displayName": "Display name",
       "email": "Email",
       "emailHint": "Email comes from your sign-in provider and can’t be edited here.",
@@ -185,8 +219,6 @@
       "nameRequired": "Enter a display name."
     },
     "settings": {
-      "title": "Settings",
-      "subtitle": "Language, account, and sign out.",
       "languageTitle": "Language",
       "languageBody": "Choose the site interface language.",
       "sessionTitle": "Account",
@@ -199,27 +231,36 @@
   },
   "checkout": {
     "metaTitle": "Checkout",
-    "title": "Start learning",
-    "subtitle": "Choose a plan and complete payment.",
-    "backToRoutine": "Back to combination",
-    "backToCourse": "Back to course",
-    "courseSubtitle": "The course alone, or the course plus extra credits at a pack discount.",
-    "creditExplainer": "1 credit = ₪1 in your wallet. You can spend credits on classes and courses on the site. We don’t lock future prices — this offer only discounts the credits you buy now.",
     "loading": "Loading…",
-    "paymentTitle": "Payment",
     "authUnavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
     "signInPrompt": "Sign in with Google to continue to payment.",
     "otherSignIn": "More sign-in options",
     "signedInAs": "Signed in as",
     "payCta": "Continue to payment",
+    "payWithCard": "Pay with card",
+    "payWithBit": "Pay with Bit",
+    "payMethodLabel": "How would you like to pay?",
+    "bitHint": "On a phone this may open the Bit app. On a computer you'll get an SMS or a QR code. Bit has to be enabled on the uPay merchant account.",
+    "bitTooExpensive": "Bit only accepts charges up to ₪{max}. Pay with a card instead.",
+    "payBusy": "Taking you to payment…",
     "paySoon": "A payment provider will be wired next — this screen is the visual shell for now.",
+    "paymentCancelled": "Payment was cancelled — you can try again below.",
+    "termsPrefix": "I agree to the",
+    "termsLinkText": "Terms & Conditions",
+    "termsRequired": "You need to agree to the Terms & Conditions to continue.",
+    "noPaymentMethod": "Payment isn’t available yet — please contact us to complete this purchase:",
+    "bitConfirmationTitle": "Thanks — payment recorded",
+    "bitConfirmationBody": "We’ll confirm your payment and unlock access shortly. If it’s urgent, feel free to reach out directly.",
+    "payError": "Something went wrong recording your payment. Please try again.",
+    "planUnavailable": "This plan isn’t available for payment yet — choose another plan above, or contact us.",
+    "alreadyOwned": "You already have access to this.",
+    "alreadyOwnedCta": "Watch now",
     "plans": {
       "chooseLabel": "Choose a plan",
       "rental": {
         "title": "This combination",
         "description": "30 days of viewing access to this combination only",
         "priceNote": "launch price · one-time",
-        "paymentBody": "One-time payment for 30 days of viewing access to this combination.",
         "guarantees": [
           "30 days of viewing access to this combination",
           "Slowed and mirrored practice modes",
@@ -231,7 +272,6 @@
         "title": "Monthly site subscription",
         "description": "Access every combination on The Frame, renews each month",
         "priceNote": "launch price · per month",
-        "paymentBody": "Monthly subscription for every combination on the site.",
         "guarantees": [
           "Access to every combination on the site",
           "New releases included while subscribed",
@@ -243,7 +283,6 @@
         "title": "This course only",
         "description": "Pay for this course. No extra credits.",
         "priceNote": "course only",
-        "paymentBody": "One-time payment for this course.",
         "guarantees": [
           "Every lesson in this course",
           "Watch on any device",
@@ -252,12 +291,11 @@
       },
       "courseCredits": {
         "title": "Course + {count} credits",
-        "description": "This course, plus {count} credits (1 credit = ₪1). Catalog prices can change; the discount is only on this credit pack.",
-        "priceNote": "{percent}% off credits",
-        "paymentBody": "One-time payment for the course plus {count} credits at a pack discount. 1 credit = ₪1. Future class and course prices are not locked.",
+        "description": "This course, plus {count} credits (1 credit = ₪1). Catalog prices can change; the discount is on the bundle's total price.",
+        "priceNote": "{percent}% off",
         "lineCourse": "This course — ₪{coursePrice}",
         "lineCredits": "{count} credits — ₪{creditsList}",
-        "lineDiscount": "{percent}% off this credit pack",
+        "lineDiscount": "{percent}% off the whole bundle",
         "guarantees": [
           "Every lesson in this course",
           "{count} credits (1 credit = ₪1)",
@@ -295,25 +333,25 @@
     "unitHours": "hrs",
     "unitMinutes": "min",
     "unitSeconds": "sec",
-    "pricingNote": "30-day access or monthly site plan · choose at checkout",
-    "getAccessNow": "Start learning",
-    "secureNote": "Secure checkout · access starts right after payment",
-    "guarantees": [
-      "30 days of viewing access to this combination",
-      "Slowed and mirrored practice modes",
-      "Watch on any device during your access period",
-      "7-day money-back guarantee"
-    ]
+    "signInPrompt": "Sign in to watch this combination.",
+    "signInCta": "Sign in with Google",
+    "loadingVideo": "Loading video…",
+    "videoUnavailable": "Couldn't load this video. Try refreshing the page.",
+    "purchaseRequired": "Purchase this combination to watch it.",
+    "purchaseRequiredCta": "Get access"
   },
   "common": {
     "browseTutorials": "Browse the library",
     "backToLibrary": "Back to the library",
     "home": "Back to home",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "close": "Close"
   },
   "footer": {
     "rights": "All rights reserved.",
-    "socialAria": "The Frame on {platform}"
+    "socialAria": "The Frame on {platform}",
+    "terms": "Terms & Conditions",
+    "contact": "Contact"
   },
   "player": {
     "defaultTitle": "Combination preview",
@@ -335,5 +373,28 @@
     "retry": "Try again",
     "captionsOn": "Turn off captions",
     "captionsOff": "Turn on captions"
+  },
+  "admin": {
+    "purchases": {
+      "title": "Purchases",
+      "subtitle": "Confirm Bit payments and manage purchase status.",
+      "loading": "Loading…",
+      "unavailable": "Sign-in isn’t configured yet. Add your Firebase keys to .env.local.",
+      "signInPrompt": "Sign in to view this page.",
+      "notAuthorized": "You’re signed in, but this account isn’t on the admin allowlist.",
+      "empty": "No purchases yet.",
+      "markPaid": "Mark paid",
+      "markRefunded": "Mark refunded",
+      "error": "Something went wrong. Please try again.",
+      "colItem": "Item",
+      "colBuyer": "Buyer",
+      "colAmount": "Amount",
+      "colStatus": "Status",
+      "colProvider": "Provider",
+      "colCreated": "Created",
+      "colActions": "Actions",
+      "unverifiedBadge": "Unverified",
+      "unverifiedTooltip": "Confirmed automatically via uPay's callback, which has no signature or server-side verification — cross-check against the uPay dashboard before trusting this."
+    }
   }
 }

@@ -15,6 +15,7 @@ import type { CatalogExternalCourseLesson } from "@/lib/server/catalog/types";
 interface CourseLessonPlayerProps {
   courseSlug: string;
   lesson: CatalogExternalCourseLesson;
+  checkoutHref: string;
   playerLabels: Dictionary["player"];
   loginErrors: Dictionary["login"]["errors"];
   labels: {
@@ -22,6 +23,8 @@ interface CourseLessonPlayerProps {
     signInCta: string;
     loading: string;
     unavailable: string;
+    purchaseRequired: string;
+    purchaseRequiredCta: string;
   };
 }
 
@@ -35,6 +38,7 @@ interface CourseLessonPlayerProps {
 export function CourseLessonPlayer({
   courseSlug,
   lesson,
+  checkoutHref,
   playerLabels,
   loginErrors,
   labels,
@@ -42,6 +46,7 @@ export function CourseLessonPlayer({
   const { user, loading: authLoading, isConfigured } = useAuth();
   const [playbackUrl, setPlaybackUrl] = useState<string | null>(null);
   const [fetchFailed, setFetchFailed] = useState(false);
+  const [purchaseRequired, setPurchaseRequired] = useState(false);
   const [signInBusy, setSignInBusy] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
 
@@ -49,14 +54,20 @@ export function CourseLessonPlayer({
     if (!user) return;
 
     let cancelled = false;
-    setPlaybackUrl(null);
-    setFetchFailed(false);
     (async () => {
       try {
         const res = await fetchWithAuth(
           user,
           `/api/v1/external-courses/${encodeURIComponent(courseSlug)}/lessons/${encodeURIComponent(lesson.id)}/playback-url`,
         );
+        if (res.status === 403) {
+          if (!cancelled) {
+            setPurchaseRequired(true);
+            setPlaybackUrl(null);
+            setFetchFailed(false);
+          }
+          return;
+        }
         if (!res.ok) {
           throw new Error(`playback-url request failed with ${res.status}`);
         }
@@ -64,12 +75,14 @@ export function CourseLessonPlayer({
         if (!cancelled) {
           setPlaybackUrl(data.url);
           setFetchFailed(false);
+          setPurchaseRequired(false);
         }
       } catch (error) {
         console.error("[CourseLessonPlayer] failed to get playback URL:", error);
         if (!cancelled) {
           setFetchFailed(true);
           setPlaybackUrl(null);
+          setPurchaseRequired(false);
         }
       }
     })();
@@ -117,6 +130,17 @@ export function CourseLessonPlayer({
             {signInError}
           </p>
         ) : null}
+      </PlaceholderFrame>
+    );
+  }
+
+  if (purchaseRequired) {
+    return (
+      <PlaceholderFrame>
+        <p className="text-sm text-frame-silver">{labels.purchaseRequired}</p>
+        <Button href={checkoutHref} className="w-fit px-6">
+          {labels.purchaseRequiredCta}
+        </Button>
       </PlaceholderFrame>
     );
   }

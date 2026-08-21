@@ -6,8 +6,8 @@ import { isLocale } from "@/lib/i18n/config";
 import { resolveCatalog } from "@/lib/server/catalog";
 
 // Seed-catalog data changes rarely (via migrations, not user writes) — cache
-// the rendered page for 5 minutes instead of refetching D1 on every request.
-export const revalidate = 300;
+// the rendered page for 1 hour instead of refetching D1 on every request.
+export const revalidate = 3600;
 
 interface InstructorsPageProps {
   params: Promise<{ locale: string }>;

@@ -61,9 +61,14 @@ For every implementation task:
 3. Open a dedicated branch from `preview` (not `main`), e.g. `feat/12-short-slug`.
 4. Link the PR/commits to the issue (`Fixes #N` / `Refs #N`).
 5. Open PRs into `preview`. Promote to production only via `preview` → `main`.
-6. When the PR merges into `preview`: close the linked issue and move the board item to **Done**.
+6. **Do not merge any PR — into `preview` or `main` — without the repo owner explicitly approving first**, even once CI is green. Open it, report it's ready, and wait.
+7. Once a PR is merged (by the owner): close the linked issue and move the board item to **Done**.
 
 Details: `.cursor/rules/`
+
+# Claude working conventions
+
+- **Comments**: keep code comments minimal. Only add one where the *why* is genuinely non-obvious (a hidden constraint, a workaround, a subtle invariant) — not to restate what the code already says.
 
 # Cloudflare / OpenNext notes
 
@@ -76,6 +81,6 @@ Dependency install happens automatically on VM startup (`npm install`). Standard
 
 Non-obvious caveats for running in the cloud VM:
 
-- **Run the app with `npm run dev`** (Next.js dev on `http://localhost:3000`). Its `predev` hook applies the local D1 migrations first, so the catalog is served from real seeded D1 — confirm with `GET /api/v1/health` returning `"source":"d1"` (`"mock"` means D1 wasn't seeded). No manual `db:migrate:local` step is normally needed before `dev`.
+- **Run the app with `npm run dev`** (Next.js dev on `http://localhost:4127` — pinned in `package.json`'s `dev`/`start` scripts so it never collides with another local project's default port 3000). Its `predev` hook applies the local D1 migrations first, so the catalog is served from real seeded D1 — confirm with `GET /api/v1/health` returning `"source":"d1"` (`"mock"` means D1 wasn't seeded). No manual `db:migrate:local` step is normally needed before `dev`.
 - **The homepage `/` 307-redirects to a locale** (`/he` default, or `/en`) via Edge `middleware.ts`; hit `/en` or `/he` directly when testing.
-- **Firebase is intentionally NOT configured here** (no `NEXT_PUBLIC_FIREBASE_*` secrets). The public catalog — home, routines, instructors, styles, routine detail, `/api/v1/*` catalog endpoints — works fully. Sign-in-gated flows do not: the routine-page "Start learning"/get-access CTA shows a generic "Something went wrong" error when signed out + Firebase unconfigured (expected, see `components/checkout/GetAccessButton.tsx`), and `/api/v1/me*` is unusable. To view the checkout page anyway, navigate directly to `/{locale}/checkout/{slug}` — it renders plans plus a payment placeholder. To test auth/library/favorites end-to-end, add the `NEXT_PUBLIC_FIREBASE_*` secrets.
+- **Firebase is intentionally NOT configured here** (no `NEXT_PUBLIC_FIREBASE_*` secrets). The public catalog — home, routines, instructors, styles, routine/course detail, `/api/v1/*` catalog endpoints — works fully. Sign-in-gated flows do not: the checkout box embedded on `/{locale}/routine/{slug}` and `/{locale}/external-courses/{slug}` shows a generic "Something went wrong" error when signed out + Firebase unconfigured (expected, see `components/checkout/CheckoutPaymentPlaceholder.tsx`), and `/api/v1/me*` is unusable. Checkout no longer has its own page — `/{locale}/checkout/{slug}` just redirects to the item's detail page (plan picker + payment are merged in there directly, scrolled to `#checkout`). To test auth/library/favorites end-to-end, add the `NEXT_PUBLIC_FIREBASE_*` secrets.

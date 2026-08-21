@@ -118,8 +118,12 @@ function toCatalogExternalCourse(
     instructorSlug: course.instructorSlug ?? null,
     tagline: localized.tagline,
     description: localized.description,
+    curriculumTopics: localized.curriculumTopics,
+    features: localized.features,
     priceDisplay: course.priceDisplay,
     coverImage: course.coverImage,
+    promoVideo: course.promoVideo ?? null,
+    promoPoster: course.promoPoster ?? null,
     style: course.style,
     styleLabel: localizeStyle(locale, course.style),
     level: course.level,
@@ -196,5 +200,10 @@ export const mockCatalogRepository: CatalogRepository = {
     const course = getExternalCourseBySlug(courseSlug);
     const lesson = course?.lessons?.find((item) => item.id === lessonId);
     return lesson ? { r2Key: lesson.r2Key } : null;
+  },
+
+  async getRoutineVideoSource(slug) {
+    const routine = getRoutineBySlug(slug);
+    return routine ? { videoSrc: routine.videoSrc } : null;
   },
 };

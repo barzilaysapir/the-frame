@@ -10,6 +10,7 @@ import type { CatalogExternalCourseLesson } from "@/lib/server/catalog/types";
 interface CourseWatchProps {
   courseSlug: string;
   lessons: CatalogExternalCourseLesson[];
+  checkoutHref: string;
   playerLabels: Dictionary["player"];
   loginErrors: Dictionary["login"]["errors"];
   lessonsHeading: string;
@@ -18,12 +19,15 @@ interface CourseWatchProps {
     signInCta: string;
     loading: string;
     unavailable: string;
+    purchaseRequired: string;
+    purchaseRequiredCta: string;
   };
 }
 
 export function CourseWatch({
   courseSlug,
   lessons,
+  checkoutHref,
   playerLabels,
   loginErrors,
   lessonsHeading,
@@ -55,6 +59,7 @@ export function CourseWatch({
         key={selectedLesson.id}
         courseSlug={courseSlug}
         lesson={selectedLesson}
+        checkoutHref={checkoutHref}
         playerLabels={playerLabels}
         loginErrors={loginErrors}
         labels={playerChrome}

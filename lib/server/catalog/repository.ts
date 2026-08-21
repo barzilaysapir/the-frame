@@ -51,4 +51,14 @@ export interface CatalogRepository {
     courseSlug: string,
     lessonId: string,
   ): Promise<{ r2Key: string } | null>;
+  /**
+   * Server-only lookup of a routine's video source — never exposed via
+   * `CatalogRoutine` directly to a gated route. For real (D1) routines this
+   * is a private R2 object key in the shared `COURSE_VIDEOS` bucket; for
+   * demo/mock routines it's a plain external URL (see `lib/routines.ts`'s
+   * `SAMPLE_VIDEO_SRC`) that the streaming route proxies instead of reading
+   * from R2. Used by the gated streaming route to resolve what to serve
+   * after the signature + purchase check (issue #232).
+   */
+  getRoutineVideoSource(slug: string): Promise<{ videoSrc: string } | null>;
 }

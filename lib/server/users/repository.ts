@@ -2,6 +2,7 @@ import "server-only";
 import type { Locale } from "@/lib/i18n/config";
 import { isLocale } from "@/lib/i18n/config";
 import type { FirebaseIdTokenClaims } from "@/lib/server/auth/firebase-token";
+import type { CatalogItemType } from "@/lib/server/catalog/types";
 import type { AppDb } from "@/lib/server/db";
 
 export interface AppUser {
@@ -125,7 +126,8 @@ export async function updateUserProfile(
 
 export interface PaidPurchase {
   id: string;
-  routineSlug: string;
+  itemType: CatalogItemType;
+  itemSlug: string;
   provider: string;
   amountIls: number | null;
   currency: string;
@@ -135,7 +137,8 @@ export interface PaidPurchase {
 
 interface PurchaseRow {
   id: string;
-  routine_slug: string;
+  item_type: CatalogItemType;
+  item_slug: string;
   provider: string;
   amount_ils: number | null;
   currency: string;
@@ -149,7 +152,7 @@ export async function listPaidPurchases(
 ): Promise<PaidPurchase[]> {
   const { results } = await db
     .prepare(
-      `SELECT id, routine_slug, provider, amount_ils, currency, paid_at, created_at
+      `SELECT id, item_type, item_slug, provider, amount_ils, currency, paid_at, created_at
        FROM purchases
        WHERE firebase_uid = ? AND status = 'paid'
        ORDER BY COALESCE(paid_at, created_at) DESC`,
@@ -159,7 +162,8 @@ export async function listPaidPurchases(
 
   return (results ?? []).map((row) => ({
     id: row.id,
-    routineSlug: row.routine_slug,
+    itemType: row.item_type,
+    itemSlug: row.item_slug,
     provider: row.provider,
     amountIls: row.amount_ils,
     currency: row.currency,
@@ -168,13 +172,250 @@ export async function listPaidPurchases(
   }));
 }
 
+/** True if the user has a `paid` purchase row for this exact item. Used to gate playback/detail access. */
+export async function hasPaidPurchase(
+  db: AppDb,
+  firebaseUid: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
+): Promise<boolean> {
+  const row = await db
+    .prepare(
+      `SELECT 1 FROM purchases
+       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND status = 'paid'
+       LIMIT 1`,
+    )
+    .bind(firebaseUid, itemType, itemSlug)
+    .first();
+  return row !== null;
+}
+
+export interface Purchase {
+  id: string;
+  firebaseUid: string;
+  itemType: CatalogItemType;
+  itemSlug: string;
+  provider: string;
+  providerPaymentId: string | null;
+  /** Grow `processId`/`processToken` from `createPaymentProcess`, stored so the webhook can verify its callback is genuine (Grow's callback has no signature — see migration 0038). Null until `attachProviderProcess` runs, and irrelevant once `status` is `paid`. */
+  providerProcessId: string | null;
+  providerProcessToken: string | null;
+  amountIls: number | null;
+  currency: string;
+  status: "pending" | "paid" | "refunded";
+  createdAt: string;
+  paidAt: string | null;
+}
+
+interface FullPurchaseRow {
+  id: string;
+  firebase_uid: string;
+  item_type: CatalogItemType;
+  item_slug: string;
+  provider: string;
+  provider_payment_id: string | null;
+  provider_process_id: string | null;
+  provider_process_token: string | null;
+  amount_ils: number | null;
+  currency: string;
+  status: "pending" | "paid" | "refunded";
+  created_at: string;
+  paid_at: string | null;
+}
+
+function mapPurchase(row: FullPurchaseRow): Purchase {
+  return {
+    id: row.id,
+    firebaseUid: row.firebase_uid,
+    itemType: row.item_type,
+    itemSlug: row.item_slug,
+    provider: row.provider,
+    providerPaymentId: row.provider_payment_id,
+    providerProcessId: row.provider_process_id,
+    providerProcessToken: row.provider_process_token,
+    amountIls: row.amount_ils,
+    currency: row.currency,
+    status: row.status,
+    createdAt: row.created_at,
+    paidAt: row.paid_at,
+  };
+}
+
+/** The `paid` purchase row for this exact item, if any. */
+export async function findPaidPurchase(
+  db: AppDb,
+  firebaseUid: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
+): Promise<Purchase | null> {
+  const row = await db
+    .prepare(
+      `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              provider_process_id, provider_process_token,
+              amount_ils, currency, status, created_at, paid_at
+       FROM purchases
+       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND status = 'paid'
+       LIMIT 1`,
+    )
+    .bind(firebaseUid, itemType, itemSlug)
+    .first<FullPurchaseRow>();
+  return row ? mapPurchase(row) : null;
+}
+
+/** The most recent `pending` purchase for this exact item, if any — reused instead of creating a duplicate when the buyer retries checkout. */
+export async function findPendingPurchase(
+  db: AppDb,
+  firebaseUid: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
+): Promise<Purchase | null> {
+  const row = await db
+    .prepare(
+      `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              provider_process_id, provider_process_token,
+              amount_ils, currency, status, created_at, paid_at
+       FROM purchases
+       WHERE firebase_uid = ? AND item_type = ? AND item_slug = ? AND status = 'pending'
+       ORDER BY created_at DESC
+       LIMIT 1`,
+    )
+    .bind(firebaseUid, itemType, itemSlug)
+    .first<FullPurchaseRow>();
+  return row ? mapPurchase(row) : null;
+}
+
+export async function getPurchaseById(
+  db: AppDb,
+  purchaseId: string,
+): Promise<Purchase | null> {
+  const row = await db
+    .prepare(
+      `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              provider_process_id, provider_process_token,
+              amount_ils, currency, status, created_at, paid_at
+       FROM purchases WHERE id = ?`,
+    )
+    .bind(purchaseId)
+    .first<FullPurchaseRow>();
+  return row ? mapPurchase(row) : null;
+}
+
+/** Updates the gateway label on a reused pending purchase (card vs Bit). */
+export async function setPendingPurchaseProvider(
+  db: AppDb,
+  purchaseId: string,
+  provider: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE purchases SET provider = ? WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(provider, purchaseId)
+    .run();
+}
+
+/** Creates a new `pending` purchase row. The amount is always server-computed by the caller — never trust a client-supplied price. */
+export async function createPendingPurchase(
+  db: AppDb,
+  firebaseUid: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
+  amountIls: number,
+  provider: string,
+): Promise<Purchase> {
+  const id = crypto.randomUUID();
+  await db
+    .prepare(
+      `INSERT INTO purchases (id, firebase_uid, item_type, item_slug, provider, amount_ils, currency, status)
+       VALUES (?, ?, ?, ?, ?, ?, 'ILS', 'pending')`,
+    )
+    .bind(id, firebaseUid, itemType, itemSlug, provider, amountIls)
+    .run();
+
+  const purchase = await getPurchaseById(db, id);
+  if (!purchase) {
+    throw new Error("Failed to load purchase after insert");
+  }
+  return purchase;
+}
+
+/**
+ * Flips a `pending` purchase to `paid` (idempotent — a purchase already
+ * `paid` is left as-is, so a retried/duplicate webhook delivery is safe).
+ *
+ * Not called anywhere yet — Phase 1 confirms payments manually via
+ * `markPurchasePaidManually` on the admin page. Kept ready for a future
+ * automated-gateway webhook (see lib/server/payments/ history) so that
+ * work doesn't have to touch the repository layer again.
+ */
+export async function markPurchasePaid(
+  db: AppDb,
+  purchaseId: string,
+  providerPaymentId: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE purchases
+       SET status = 'paid', provider_payment_id = ?, paid_at = datetime('now')
+       WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(providerPaymentId, purchaseId)
+    .run();
+}
+
+/** Manual admin override — the only "mark as paid" path in Phase 1 (no automated gateway confirmation yet). Used after the site owner verifies a Bit payment arrived. */
+export async function markPurchasePaidManually(
+  db: AppDb,
+  purchaseId: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE purchases
+       SET status = 'paid', provider = 'manual', paid_at = datetime('now')
+       WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(purchaseId)
+    .run();
+}
+
+export async function markPurchaseRefunded(
+  db: AppDb,
+  purchaseId: string,
+): Promise<void> {
+  await db
+    .prepare(`UPDATE purchases SET status = 'refunded' WHERE id = ?`)
+    .bind(purchaseId)
+    .run();
+}
+
+/** All purchases across all users, most recent first — admin visibility page only. */
+export async function listAllPurchases(
+  db: AppDb,
+  limit = 200,
+): Promise<Purchase[]> {
+  const { results } = await db
+    .prepare(
+      `SELECT id, firebase_uid, item_type, item_slug, provider, provider_payment_id,
+              provider_process_id, provider_process_token,
+              amount_ils, currency, status, created_at, paid_at
+       FROM purchases
+       ORDER BY created_at DESC
+       LIMIT ?`,
+    )
+    .bind(limit)
+    .all<FullPurchaseRow>();
+  return (results ?? []).map(mapPurchase);
+}
+
 export interface FavoriteRow {
-  routineSlug: string;
+  itemType: CatalogItemType;
+  itemSlug: string;
   createdAt: string;
 }
 
 interface FavoriteDbRow {
-  routine_slug: string;
+  item_type: CatalogItemType;
+  item_slug: string;
   created_at: string;
 }
 
@@ -184,7 +425,7 @@ export async function listFavorites(
 ): Promise<FavoriteRow[]> {
   const { results } = await db
     .prepare(
-      `SELECT routine_slug, created_at
+      `SELECT item_type, item_slug, created_at
        FROM favorites
        WHERE firebase_uid = ?
        ORDER BY created_at DESC`,
@@ -193,7 +434,8 @@ export async function listFavorites(
     .all<FavoriteDbRow>();
 
   return (results ?? []).map((row) => ({
-    routineSlug: row.routine_slug,
+    itemType: row.item_type,
+    itemSlug: row.item_slug,
     createdAt: row.created_at,
   }));
 }
@@ -201,27 +443,29 @@ export async function listFavorites(
 export async function addFavorite(
   db: AppDb,
   firebaseUid: string,
-  routineSlug: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
 ): Promise<void> {
   await db
     .prepare(
-      `INSERT INTO favorites (firebase_uid, routine_slug)
-       VALUES (?, ?)
-       ON CONFLICT(firebase_uid, routine_slug) DO NOTHING`,
+      `INSERT INTO favorites (firebase_uid, item_type, item_slug)
+       VALUES (?, ?, ?)
+       ON CONFLICT(firebase_uid, item_type, item_slug) DO NOTHING`,
     )
-    .bind(firebaseUid, routineSlug)
+    .bind(firebaseUid, itemType, itemSlug)
     .run();
 }
 
 export async function removeFavorite(
   db: AppDb,
   firebaseUid: string,
-  routineSlug: string,
+  itemType: CatalogItemType,
+  itemSlug: string,
 ): Promise<void> {
   await db
     .prepare(
-      `DELETE FROM favorites WHERE firebase_uid = ? AND routine_slug = ?`,
+      `DELETE FROM favorites WHERE firebase_uid = ? AND item_type = ? AND item_slug = ?`,
     )
-    .bind(firebaseUid, routineSlug)
+    .bind(firebaseUid, itemType, itemSlug)
     .run();
 }
