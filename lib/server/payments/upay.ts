@@ -1,5 +1,6 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { rewriteUpayCallbackUrl } from "@/lib/payments/upay-callback-url";
 import type { UpayPaymentMethod } from "@/lib/payments/upay-method";
 
 export {
@@ -95,8 +96,8 @@ export function buildUpayFormFields(
   const fields: Record<string, string> = {
     email: config.merchantEmail,
     amount: params.amountIls.toFixed(2),
-    returnurl: params.returnUrl,
-    ipnurl: params.ipnUrl,
+    returnurl: rewriteUpayCallbackUrl(params.returnUrl),
+    ipnurl: rewriteUpayCallbackUrl(params.ipnUrl),
     paymentdetails: params.description,
     maxpayments: "1",
     livesystem: "1",

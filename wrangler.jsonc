@@ -12,9 +12,10 @@
 	"main": ".open-next/worker.js",
 	"name": "the-frame",
 	"account_id": "8541729902392a145a03f97a906af16f",
-	// No custom domain — this is a POC, kept off the real bybarzilay.com domain
-	// on purpose. Reachable only via the workers.dev URL below. To go live on
-	// the real domain again, uncomment this block and run `wrangler deploy`:
+	// No custom domain yet — reachable at
+	// https://the-frame.barzilaysapir.workers.dev
+	// (preview alias: https://preview-the-frame.barzilaysapir.workers.dev).
+	// To attach theframe.bybarzilay.com, uncomment this block and deploy:
 	// "routes": [
 	// 	{
 	// 		"pattern": "theframe.bybarzilay.com",

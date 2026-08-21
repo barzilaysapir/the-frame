@@ -1,9 +1,14 @@
+import {
+  isUnwiredPlaceholderOrigin,
+  WORKER_ORIGIN,
+} from "@/lib/site";
+
 /**
  * Public origin of the checkout request. uPay returnurl/ipnurl must be a
  * public https URL — `http://localhost:4127` is rejected as
- * `wronginputreturnurl`. Prefer the request host (preview/production),
- * and fall back to SITE_URL when the request is loopback, private LAN,
- * or plain HTTP.
+ * `wronginputreturnurl`. Prefer the request host (preview/production
+ * Worker), and fall back to the live Worker when the request is
+ * loopback, private LAN, plain HTTP, or a domain that is not attached.
  */
 export function publicOriginFromRequest(input: {
   url: string;
@@ -45,13 +50,12 @@ export function isPublicHttpsOrigin(origin: string): boolean {
   }
 }
 
-export function upayCallbackOrigin(
-  requestOrigin: string,
-  publicFallback: string,
-): string {
-  const fallback = publicFallback.replace(/\/$/, "");
-  if (isPublicHttpsOrigin(requestOrigin)) {
+export function upayCallbackOrigin(requestOrigin: string): string {
+  if (
+    isPublicHttpsOrigin(requestOrigin) &&
+    !isUnwiredPlaceholderOrigin(requestOrigin)
+  ) {
     return requestOrigin.replace(/\/$/, "");
   }
-  return fallback;
+  return WORKER_ORIGIN;
 }

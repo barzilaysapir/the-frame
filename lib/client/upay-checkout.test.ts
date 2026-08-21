@@ -11,6 +11,28 @@ describe("checkoutAfterPurchase", () => {
     ).toEqual({ type: "owned" });
   });
 
+  it("rewrites a localhost returnurl before sending the buyer to uPay", () => {
+    const form = {
+      action: "https://app.upay.co.il/x",
+      fields: {
+        amount: "1.00",
+        returnurl:
+          "http://localhost:4127/he/external-courses/vibe-on-heels?payment=success",
+      },
+    };
+    expect(checkoutAfterPurchase({ status: "pending", upayForm: form })).toEqual({
+      type: "redirect",
+      form: {
+        action: form.action,
+        fields: {
+          amount: "1.00",
+          returnurl:
+            "https://the-frame.barzilaysapir.workers.dev/he/external-courses/vibe-on-heels?payment=success",
+        },
+      },
+    });
+  });
+
   it("redirects a pending purchase that has a uPay form", () => {
     const form = { action: "https://app.upay.co.il/x", fields: { amount: "200.00" } };
     expect(checkoutAfterPurchase({ status: "pending", upayForm: form })).toEqual({

@@ -1,3 +1,5 @@
+import { rewriteUpayFormFields } from "@/lib/payments/upay-callback-url";
+
 /**
  * After POST /api/v1/me/purchases: either the buyer already owns the item,
  * we have a uPay hosted-form payload to POST, or no payment method is live.
@@ -10,7 +12,15 @@ export function checkoutAfterPurchase(data: {
   | { type: "redirect"; form: { action: string; fields: Record<string, string> } }
   | { type: "unavailable" } {
   if (data.status === "paid") return { type: "owned" };
-  if (data.upayForm) return { type: "redirect", form: data.upayForm };
+  if (data.upayForm) {
+    return {
+      type: "redirect",
+      form: {
+        action: data.upayForm.action,
+        fields: rewriteUpayFormFields(data.upayForm.fields),
+      },
+    };
+  }
   return { type: "unavailable" };
 }
 
@@ -28,7 +38,8 @@ export function submitUpayForm(
   form.method = "POST";
   form.action = action;
   form.style.display = "none";
-  for (const [name, value] of Object.entries(fields)) {
+  const safeFields = rewriteUpayFormFields(fields);
+  for (const [name, value] of Object.entries(safeFields)) {
     const input = doc.createElement("input");
     input.type = "hidden";
     input.name = name;
