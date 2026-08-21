@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { TermsDialog } from "@/components/checkout/TermsDialog";
@@ -11,7 +11,7 @@ import { Panel } from "@/components/ui/Panel";
 import { fetchWithAuth } from "@/lib/client/fetch-with-auth";
 import {
   checkoutAfterPurchase,
-  submitUpayForm,
+  launchUpayCheckout,
 } from "@/lib/client/upay-checkout";
 import { formatMessage, type Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -81,7 +81,6 @@ export function CheckoutPaymentPlaceholder({
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [returnPaid, setReturnPaid] = useState(false);
   const [phone, setPhone] = useState<string | null>(null);
-  const payTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const planSupported = planId !== "subscription";
   const owned = result?.status === "paid" || returnPaid;
@@ -121,12 +120,6 @@ export function CheckoutPaymentPlaceholder({
     };
   }, [user, returnedFromPayment, itemType, itemSlug]);
 
-  useEffect(() => {
-    return () => {
-      if (payTimeoutRef.current) clearTimeout(payTimeoutRef.current);
-    };
-  }, []);
-
   const handlePay = async (paymentMethod: UpayPaymentMethod) => {
     if (!user) return;
     if (!termsAccepted) {
@@ -162,19 +155,21 @@ export function CheckoutPaymentPlaceholder({
         }),
       });
       if (!res.ok) {
-        throw new Error(`purchase request failed with ${res.status}`);
+        let message = labels.payError;
+        try {
+          const body = (await res.json()) as { error?: unknown };
+          if (typeof body.error === "string" && body.error) message = body.error;
+        } catch {
+          /* keep payError */
+        }
+        setError(message);
+        setBusyMethod(null);
+        return;
       }
       const data = (await res.json()) as PurchaseApiResponse;
       const step = checkoutAfterPurchase(data);
       if (step.type === "redirect") {
-        // Do not setState with upayForm — that remounts a second <form>
-        // and aborts this navigation, leaving “taking you to payment”.
-        submitUpayForm(step.form.action, step.form.fields);
-        if (payTimeoutRef.current) clearTimeout(payTimeoutRef.current);
-        payTimeoutRef.current = setTimeout(() => {
-          setError(labels.payError);
-          setBusyMethod(null);
-        }, 8000);
+        launchUpayCheckout(step.form);
         return;
       }
       setResult(data);
