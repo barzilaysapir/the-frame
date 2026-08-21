@@ -76,7 +76,7 @@ export async function generateMetadata({
       }),
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
       images: [absoluteAssetUrl(DEFAULT_SHARE_IMAGE)],

@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/site";
 
 /**
- * Site-wide share image: the brand-kit mark (`app/icon.png`), already on
- * the production Worker at `/icon.png`. Used for homepage and other chrome
- * pages. Course and lesson pages override this with their own cover.
+ * Site-wide share image: full lockup (mark + wordmark) at 1200×630.
+ * Course and lesson pages override this with their own cover.
  */
-export const DEFAULT_SHARE_IMAGE = "/icon.png";
-export const DEFAULT_SHARE_IMAGE_WIDTH = 867;
-export const DEFAULT_SHARE_IMAGE_HEIGHT = 867;
+export const DEFAULT_SHARE_IMAGE = "/og/logo.jpg";
+export const DEFAULT_SHARE_IMAGE_WIDTH = 1200;
+export const DEFAULT_SHARE_IMAGE_HEIGHT = 630;
 
 /** Catalog posters in `public/routine-posters/` are authored at 960×640. */
 const POSTER_SHARE_IMAGE_WIDTH = 960;
@@ -33,7 +32,7 @@ function shareImageSizeForPath(path: string): {
   width: number;
   height: number;
 } {
-  if (path === DEFAULT_SHARE_IMAGE || path.startsWith("/icon")) {
+  if (path === DEFAULT_SHARE_IMAGE || path.startsWith("/og/")) {
     return {
       width: DEFAULT_SHARE_IMAGE_WIDTH,
       height: DEFAULT_SHARE_IMAGE_HEIGHT,
@@ -107,7 +106,6 @@ export function pageShareMetadata({
     height: imageHeight ?? size.height,
   });
   const imageUrl = absoluteAssetUrl(image);
-  const isBrandMark = image === DEFAULT_SHARE_IMAGE;
 
   return {
     title,
@@ -119,7 +117,7 @@ export function pageShareMetadata({
       images,
     },
     twitter: {
-      card: isBrandMark ? "summary" : "summary_large_image",
+      card: "summary_large_image",
       title,
       description,
       images: [imageUrl],

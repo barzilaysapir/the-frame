@@ -20,7 +20,9 @@ afterEach(() => {
 describe("absoluteAssetUrl", () => {
   it("joins a public path onto the canonical site origin", async () => {
     const { absoluteAssetUrl } = await loadShareMetadata(PRODUCTION_ORIGIN);
-    expect(absoluteAssetUrl("/icon.png")).toBe(`${PRODUCTION_ORIGIN}/icon.png`);
+    expect(absoluteAssetUrl("/og/logo.jpg")).toBe(
+      `${PRODUCTION_ORIGIN}/og/logo.jpg`,
+    );
   });
 
   it("leaves an already-absolute URL unchanged", async () => {
@@ -32,7 +34,7 @@ describe("absoluteAssetUrl", () => {
 });
 
 describe("pageShareMetadata", () => {
-  it("emits the brand mark for chrome pages", async () => {
+  it("emits the full brand lockup for chrome pages", async () => {
     const { pageShareMetadata, DEFAULT_SHARE_IMAGE } =
       await loadShareMetadata(PRODUCTION_ORIGIN);
     const metadata = pageShareMetadata({
@@ -46,17 +48,17 @@ describe("pageShareMetadata", () => {
     expect(Array.isArray(images)).toBe(true);
     expect(images).toEqual([
       {
-        url: `${PRODUCTION_ORIGIN}/icon.png`,
-        secureUrl: `${PRODUCTION_ORIGIN}/icon.png`,
+        url: `${PRODUCTION_ORIGIN}/og/logo.jpg`,
+        secureUrl: `${PRODUCTION_ORIGIN}/og/logo.jpg`,
         alt: "The Frame by Barzilay",
-        width: 867,
-        height: 867,
-        type: "image/png",
+        width: 1200,
+        height: 630,
+        type: "image/jpeg",
       },
     ]);
     expect(metadata.twitter).toMatchObject({
-      card: "summary",
-      images: [`${PRODUCTION_ORIGIN}/icon.png`],
+      card: "summary_large_image",
+      images: [`${PRODUCTION_ORIGIN}/og/logo.jpg`],
     });
   });
 
