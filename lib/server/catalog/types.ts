@@ -136,4 +136,7 @@ export interface CatalogHealthResponse {
   service: "the-frame-catalog";
   source: CatalogSource;
   now: string;
+  r2ApiConfigured: boolean;
+  r2PresignEnabled: boolean;
+  videoSigningConfigured: boolean;
 }

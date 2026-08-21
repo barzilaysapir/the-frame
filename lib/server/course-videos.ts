@@ -1,6 +1,5 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { tryPresignR2Get } from "@/lib/server/r2-presign";
 
 /**
  * Gated video delivery for real (non-mock) external-course lessons.
@@ -8,12 +7,10 @@ import { tryPresignR2Get } from "@/lib/server/r2-presign";
  * The R2 bucket stays private — nothing is served from a public object URL.
  * A logged-in-and-paid-only route
  * (`/api/v1/external-courses/[slug]/lessons/[lessonId]/playback-url`) mints
- * a short-lived URL for a native `<video>` element (which cannot send an
- * Authorization header):
- *
- * 1. Presigned R2 GET when API credentials exist (the Worker cannot proxy
- *    class-length MP4s — that is Cloudflare 1102).
- * 2. HMAC `/stream` fallback, which 302s to a presigned URL when possible.
+ * a short-lived same-origin `/stream` URL for a native `<video>` element
+ * (which cannot send an Authorization header). `/stream` 307s to a
+ * presigned R2 GET — the Worker must not copy class-length MP4 bytes
+ * (Cloudflare 1102).
  */
 
 // Long enough to cover one uninterrupted watch session without forcing a
@@ -21,19 +18,6 @@ import { tryPresignR2Get } from "@/lib/server/r2-presign";
 // indefinitely. This is access control tied to being logged in, not DRM —
 // a signed link is usable by whoever holds it until it expires.
 const PLAYBACK_URL_TTL_SECONDS = 4 * 60 * 60;
-
-export async function getCourseVideosBucket(): Promise<R2Bucket | null> {
-  try {
-    const { env } = await getCloudflareContext({ async: true });
-    return env.COURSE_VIDEOS ?? null;
-  } catch (error) {
-    console.error(
-      "Failed to resolve Cloudflare context for the COURSE_VIDEOS binding:",
-      error,
-    );
-    return null;
-  }
-}
 
 export async function getVideoSigningKey(): Promise<CryptoKey> {
   const { env } = await getCloudflareContext({ async: true });
@@ -66,14 +50,8 @@ export interface SignedLessonPlaybackUrl {
 export async function signLessonPlaybackUrl(
   courseSlug: string,
   lessonId: string,
-  r2Key: string,
 ): Promise<SignedLessonPlaybackUrl> {
   const expiresAt = Math.floor(Date.now() / 1000) + PLAYBACK_URL_TTL_SECONDS;
-  const presigned = await tryPresignR2Get(r2Key, PLAYBACK_URL_TTL_SECONDS);
-  if (presigned) {
-    return { url: presigned, expiresAt };
-  }
-
   const key = await getVideoSigningKey();
   const payload = buildSignaturePayload(courseSlug, lessonId, expiresAt);
   const signatureBytes = await crypto.subtle.sign(

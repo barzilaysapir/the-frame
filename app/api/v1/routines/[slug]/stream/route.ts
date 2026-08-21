@@ -1,21 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resolveCatalog } from "@/lib/server/catalog";
-import {
-  getRoutineVideosBucket,
-  parseRangeHeader,
-  describeR2VideoRange,
-  applyR2VideoContentType,
-  verifyRoutinePlaybackSignature,
-} from "@/lib/server/routine-videos";
 import { getVideoSigningKey } from "@/lib/server/course-videos";
 import {
   PLAYBACK_GATE_COOKIE,
   verifyPlaybackGateValue,
 } from "@/lib/server/playback-hotlink";
+import { redirectToPresignedR2 } from "@/lib/server/r2-stream-redirect";
 import {
-  remainingPlaybackTtlSeconds,
-  tryPresignR2Get,
-} from "@/lib/server/r2-presign";
+  isExternalRoutineVideoSrc,
+  verifyRoutinePlaybackSignature,
+} from "@/lib/server/routine-videos";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -24,34 +18,9 @@ interface RouteParams {
   params: Promise<{ slug: string }>;
 }
 
-function copyR2HttpMetadata(
-  headers: Headers,
-  metadata: R2HTTPMetadata | undefined,
-) {
-  if (!metadata) return;
-  if (metadata.contentType) headers.set("content-type", metadata.contentType);
-  if (metadata.contentLanguage) {
-    headers.set("content-language", metadata.contentLanguage);
-  }
-  if (metadata.contentDisposition) {
-    headers.set("content-disposition", metadata.contentDisposition);
-  }
-  if (metadata.contentEncoding) {
-    headers.set("content-encoding", metadata.contentEncoding);
-  }
-}
-
-/** Real routine video sources are private R2 keys; demo/mock ones are plain external URLs (see `lib/server/routine-videos.ts`). */
-function isExternalUrl(src: string): boolean {
-  return /^https?:\/\//i.test(src);
-}
-
-/**
- * HMAC fallback: streams one routine's video. Used when playback-url cannot
- * mint a presigned R2 GET (missing S3 API token, or a demo `https://`
- * videoSrc). Gated by a signed `exp`/`sig` query pair rather than a
- * Firebase Bearer token — a native <video src> request can't carry a
- * custom Authorization header.
+/** Same-origin `<video src>` for a routine. Cookie + HMAC gate, then 307
+ * to a presigned R2 GET for real keys. Demo `https://` sources are fetched
+ * upstream (short sample clips, not class-length R2 objects).
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const gateOk = await verifyPlaybackGateValue(
@@ -86,7 +55,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: "Routine not found" }, { status: 404 });
   }
 
-  if (isExternalUrl(source.videoSrc)) {
+  if (isExternalRoutineVideoSrc(source.videoSrc)) {
     const rangeHeader = request.headers.get("range");
     const upstream = await fetch(
       source.videoSrc,
@@ -101,56 +70,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     });
   }
 
-  const presigned = await tryPresignR2Get(
-    source.videoSrc,
-    remainingPlaybackTtlSeconds(searchParams.get("exp")),
-  );
-  if (presigned) {
-    return NextResponse.redirect(presigned, 302);
-  }
-
-  const bucket = await getRoutineVideosBucket();
-  if (!bucket) {
-    return NextResponse.json(
-      { error: "Video storage unavailable" },
-      { status: 503 },
-    );
-  }
-
-  const range = parseRangeHeader(request.headers.get("range"));
-  const object = await bucket.get(
-    source.videoSrc,
-    range ? { range } : undefined,
-  );
-  if (!object) {
-    return NextResponse.json({ error: "Video not found" }, { status: 404 });
-  }
-
-  const headers = new Headers();
-  // Do not call `object.writeHttpMetadata(headers)` in next/dev: Miniflare's
-  // R2 proxy tries to serialize the undici/Next Headers object with devalue
-  // and throws `DevalueError: Cannot stringify arbitrary non-POJOs`.
-  copyR2HttpMetadata(headers, object.httpMetadata);
-  applyR2VideoContentType(headers);
-  headers.set("content-disposition", "inline");
-  headers.set("accept-ranges", "bytes");
-  headers.set("etag", object.httpEtag);
-  headers.set("cache-control", "private, max-age=0, no-store");
-
-  if (range) {
-    const described = describeR2VideoRange(range, object.size, object.range);
-    if (!described) {
-      headers.set("content-range", `bytes */${object.size}`);
-      return new NextResponse(null, { status: 416, headers });
-    }
-    headers.set(
-      "content-range",
-      `bytes ${described.start}-${described.end}/${object.size}`,
-    );
-    headers.set("content-length", String(described.length));
-    return new NextResponse(object.body, { status: 206, headers });
-  }
-
-  headers.set("content-length", String(object.size));
-  return new NextResponse(object.body, { status: 200, headers });
+  return redirectToPresignedR2(source.videoSrc, searchParams.get("exp"));
 }
+
+export { GET as HEAD };

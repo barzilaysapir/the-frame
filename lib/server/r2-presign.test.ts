@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   awsUriEncode,
-  isR2PresignPlaybackEnabled,
+  canPresignR2Playback,
+  playbackStorageStatus,
   presignR2GetUrl,
   readR2PresignConfig,
   remainingPlaybackTtlSeconds,
@@ -35,15 +36,34 @@ describe("readR2PresignConfig", () => {
   });
 });
 
-describe("isR2PresignPlaybackEnabled", () => {
-  it("is on by default and only off when set to 0", () => {
-    expect(isR2PresignPlaybackEnabled({})).toBe(true);
-    expect(isR2PresignPlaybackEnabled({ R2_PRESIGN_PLAYBACK: "1" })).toBe(
-      true,
-    );
-    expect(isR2PresignPlaybackEnabled({ R2_PRESIGN_PLAYBACK: "0" })).toBe(
-      false,
-    );
+describe("playbackStorageStatus", () => {
+  it("reports configured flags without exposing secret values", () => {
+    expect(playbackStorageStatus({})).toEqual({
+      r2ApiConfigured: false,
+      r2PresignEnabled: true,
+      videoSigningConfigured: false,
+    });
+    expect(
+      playbackStorageStatus({
+        R2_ACCESS_KEY_ID: "id",
+        R2_SECRET_ACCESS_KEY: "secret",
+        VIDEO_SIGNING_SECRET: "sign",
+        R2_PRESIGN_PLAYBACK: "0",
+      }),
+    ).toEqual({
+      r2ApiConfigured: true,
+      r2PresignEnabled: false,
+      videoSigningConfigured: true,
+    });
+    expect(
+      canPresignR2Playback(
+        playbackStorageStatus({
+          R2_ACCESS_KEY_ID: "id",
+          R2_SECRET_ACCESS_KEY: "secret",
+        }),
+      ),
+    ).toBe(true);
+    expect(canPresignR2Playback(playbackStorageStatus({}))).toBe(false);
   });
 });
 

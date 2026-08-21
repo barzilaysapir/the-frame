@@ -3,6 +3,7 @@ import {
   jsonError,
   requireAppDb,
   requireFirebaseClaims,
+  ApiError,
 } from "@/lib/server/api/auth-context";
 import { resolveCatalog } from "@/lib/server/catalog";
 import {
@@ -13,6 +14,10 @@ import {
   mintPlaybackGateValue,
   playbackGateSetCookie,
 } from "@/lib/server/playback-hotlink";
+import {
+  canPresignR2Playback,
+  readPlaybackStorageStatus,
+} from "@/lib/server/r2-presign";
 import { hasPaidPurchase } from "@/lib/server/users/repository";
 
 export const runtime = "nodejs";
@@ -23,11 +28,9 @@ interface RouteParams {
 }
 
 /**
- * Mints a short-lived playback URL for one course lesson — requires a
- * valid Firebase ID token AND a paid purchase of the course (issue #232).
- * Prefers a presigned R2 GET when credentials exist (required to avoid
- * Worker 1102). HMAC `/stream` 302s to R2 when it can. Sets a cookie so
- * leftover `/stream` URLs still work in the player.
+ * Mints a short-lived same-origin `/stream` URL for one course lesson —
+ * requires a valid Firebase ID token AND a paid purchase (issue #232).
+ * Sets a cookie so `<video>` can GET `/stream`, which 307s to R2.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
@@ -52,11 +55,18 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { url, expiresAt } = await signLessonPlaybackUrl(
-      slug,
-      lessonId,
-      source.r2Key,
-    );
+    const playback = await readPlaybackStorageStatus();
+    if (!playback.videoSigningConfigured) {
+      throw new ApiError(503, "Video signing is not configured on this Worker");
+    }
+    if (!canPresignR2Playback(playback)) {
+      throw new ApiError(
+        503,
+        "R2 API token is not configured on this Worker",
+      );
+    }
+
+    const { url, expiresAt } = await signLessonPlaybackUrl(slug, lessonId);
     const gate = await mintPlaybackGateValue(
       await getVideoSigningKey(),
       expiresAt,

@@ -5,17 +5,17 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
  * Short-lived S3 SigV4 GET URLs for private R2 objects.
  *
  * The Worker binding (`COURSE_VIDEOS`) can only be read from Worker code —
- * a browser `<video>` cannot use it. HMAC `/stream` used to proxy every
- * byte through the Worker. Presigned URLs let the browser talk to R2
- * directly. Proxying a class-length MP4 through the Worker hits
- * Cloudflare error 1102 (resource limits), so this is the default whenever
- * R2 API credentials exist. Set `R2_PRESIGN_PLAYBACK=0` only to force
- * `/stream` (not recommended).
+ * a browser `<video>` cannot use it. Class-length MP4s must never be
+ * proxied through `/stream` (Cloudflare error 1102). The player keeps a
+ * same-origin `/stream` src; that route 307s to a presigned GET. Putting
+ * the R2 URL on `<video src>` directly is a CORS footgun when bucket CORS
+ * is missing.
  *
  * Requires an R2 S3 API token (`R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`).
  * Account + bucket default to wrangler.jsonc (`the-frame` on this account).
  * Apply `r2-cors.json` on the bucket so Range GETs from the site origin
  * are allowed: `npx wrangler r2 bucket cors set the-frame --file r2-cors.json`.
+ * Secrets are per Worker name — a PR preview is not `the-frame`.
  */
 
 export const R2_DEFAULT_ACCOUNT_ID = "8541729902392a145a03f97a906af16f";
@@ -36,11 +36,38 @@ export interface R2PresignEnv {
   R2_ACCOUNT_ID?: string;
   R2_BUCKET_NAME?: string;
   R2_PRESIGN_PLAYBACK?: string;
+  VIDEO_SIGNING_SECRET?: string;
 }
 
-/** Direct R2 `<video src>` is the default. Set `R2_PRESIGN_PLAYBACK=0` to force `/stream`. */
-export function isR2PresignPlaybackEnabled(env: R2PresignEnv): boolean {
+export interface PlaybackStorageStatus {
+  r2ApiConfigured: boolean;
+  r2PresignEnabled: boolean;
+  videoSigningConfigured: boolean;
+}
+
+function isR2PresignPlaybackEnabled(env: R2PresignEnv): boolean {
   return env.R2_PRESIGN_PLAYBACK?.trim() !== "0";
+}
+
+export function playbackStorageStatus(env: R2PresignEnv): PlaybackStorageStatus {
+  return {
+    r2ApiConfigured: readR2PresignConfig(env) !== null,
+    r2PresignEnabled: isR2PresignPlaybackEnabled(env),
+    videoSigningConfigured: Boolean(env.VIDEO_SIGNING_SECRET?.trim()),
+  };
+}
+
+export function canPresignR2Playback(status: PlaybackStorageStatus): boolean {
+  return status.r2ApiConfigured && status.r2PresignEnabled;
+}
+
+export async function readPlaybackStorageStatus(): Promise<PlaybackStorageStatus> {
+  try {
+    const { env } = await getCloudflareContext({ async: true });
+    return playbackStorageStatus(env);
+  } catch {
+    return playbackStorageStatus({});
+  }
 }
 
 export function readR2PresignConfig(env: R2PresignEnv): R2PresignConfig | null {

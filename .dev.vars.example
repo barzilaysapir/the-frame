@@ -14,12 +14,14 @@
 VIDEO_SIGNING_SECRET=
 
 # S3 API token for the `the-frame` R2 bucket (Dashboard → R2 → Manage
-# R2 API Tokens). Object Read on `the-frame` only. The Worker mints a
-# short-lived GET URL so the browser streams from R2 instead of through
-# the `/stream` proxy. Also set these as Worker secrets (and Build vars
-# if the build needs them — they are runtime-only here):
+# R2 API Tokens). Object Read on `the-frame` only. `/stream` 307s to a
+# short-lived GET so the browser streams from R2 instead of through the
+# Worker (proxying a class MP4 hits error 1102). Also set these as Worker
+# secrets — **each Worker name needs its own copy** (PR previews are not
+# `the-frame`):
 #   npx wrangler secret put R2_ACCESS_KEY_ID
 #   npx wrangler secret put R2_SECRET_ACCESS_KEY
+#   npx wrangler secret put R2_ACCESS_KEY_ID --name <preview-worker-name>
 # After the first deploy, apply CORS so Range requests from the site work:
 #   npx wrangler r2 bucket cors set the-frame --file r2-cors.json
 # Optional overrides (defaults match wrangler.jsonc):
@@ -28,8 +30,8 @@ VIDEO_SIGNING_SECRET=
 R2_ACCESS_KEY_ID=
 R2_SECRET_ACCESS_KEY=
 
-# Direct R2 <video src> is the default (required — proxying the MP4
-# through the Worker hits error 1102). Set to 0 only to force `/stream`.
+# Class playback requires the S3 token above. Set to 0 only to disable
+# presign (playback will 503 — there is no Worker-proxy fallback).
 # R2_PRESIGN_PLAYBACK=0
 
 # Gates the `/api/preview?token=...` link that unlocks the demo/mock catalog

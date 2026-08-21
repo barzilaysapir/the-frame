@@ -19,8 +19,9 @@ interface __BaseEnv_CloudflareEnv {
 	R2_SECRET_ACCESS_KEY: string;
 	R2_ACCOUNT_ID: string;
 	R2_BUCKET_NAME: string;
-	// Opt-out of direct R2 <video src>. Unset = presign (required; /stream
-	// proxying class videos hits Worker 1102). Set "0" to force /stream.
+	// Opt-out of presigned R2 playback. Unset = on (required; /stream
+	// never proxies class videos — that hits Worker 1102). Set "0" to
+	// disable class playback (503) instead of presigning.
 	R2_PRESIGN_PLAYBACK: string;
 	// ADMIN_EMAILS added by hand, same as the block above — see
 	// .dev.vars.example. Re-run `npm run cf-typegen` once a real value exists.
