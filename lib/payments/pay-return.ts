@@ -46,3 +46,9 @@ export function buildUpayBrowserReturnUrl(returnPath: string): string {
   );
   return `${WORKER_ORIGIN}${path}`;
 }
+
+/** IPN capability URL — purchase id is an unguessable UUID. */
+export function buildUpayIpnUrl(purchaseId: string): string {
+  const id = purchaseId.trim();
+  return `${WORKER_ORIGIN}/api/v1/webhooks/upay?purchaseId=${encodeURIComponent(id)}`;
+}

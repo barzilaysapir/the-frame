@@ -35,6 +35,24 @@ describe("buildUpayFormFields", () => {
     expect(form.fields.providername).toBeUndefined();
   });
 
+  it("sends production returnurl and ipnurl when provided", () => {
+    const form = buildUpayFormFields(
+      config,
+      params({
+        returnUrl:
+          "https://the-frame.barzilaysapir.workers.dev/he/external-courses/gisha-gmisha-foundations",
+        ipnUrl:
+          "https://the-frame.barzilaysapir.workers.dev/api/v1/webhooks/upay?purchaseId=x",
+      }),
+    );
+    expect(form.fields.returnurl).toBe(
+      "https://the-frame.barzilaysapir.workers.dev/he/external-courses/gisha-gmisha-foundations",
+    );
+    expect(form.fields.ipnurl).toBe(
+      "https://the-frame.barzilaysapir.workers.dev/api/v1/webhooks/upay?purchaseId=x",
+    );
+  });
+
   it("uses the dashboard merchant email", () => {
     const form = buildUpayFormFields(
       { merchantEmail: UPAY_DASHBOARD_MERCHANT_EMAIL },
@@ -58,6 +76,9 @@ describe("buildUpayFormFields", () => {
     expect(form.fields.cellphone).toBe("0501234567");
     expect(form.fields.cellphonenotify).toBe("0501234567");
     expect(form.fields.amount).toBe("200");
+    expect(form.action).toBe(
+      "https://app.upay.co.il/API6/clientsecure/json.php",
+    );
   });
 
   it("does not send buyer invoice fields on the merchant button POST", () => {

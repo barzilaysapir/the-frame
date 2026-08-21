@@ -39,6 +39,21 @@ describe("checkoutAfterPurchase", () => {
       type: "unavailable",
     });
   });
+
+  it("keeps Bit on-site instead of posting the card hosted page", () => {
+    expect(checkoutAfterPurchase({ status: "pending", bitSent: true })).toEqual({
+      type: "bit-sent",
+    });
+    expect(
+      checkoutAfterPurchase({
+        status: "pending",
+        upayForm: {
+          action: "https://app.upay.co.il/API6/clientsecure/redirectpage.php",
+          fields: { providername: "bit", amount: "200" },
+        },
+      }),
+    ).toEqual({ type: "bit-sent" });
+  });
 });
 
 describe("submitUpayForm", () => {
