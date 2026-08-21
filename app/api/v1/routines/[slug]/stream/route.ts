@@ -3,6 +3,8 @@ import { resolveCatalog } from "@/lib/server/catalog";
 import {
   getRoutineVideosBucket,
   parseRangeHeader,
+  describeR2VideoRange,
+  applyR2VideoContentType,
   verifyRoutinePlaybackSignature,
 } from "@/lib/server/routine-videos";
 
@@ -36,12 +38,11 @@ function isExternalUrl(src: string): boolean {
 }
 
 /**
- * Streams one routine's video, gated by a signed `exp`/`sig` query pair
- * (minted by `.../playback-url`) rather than a Firebase Bearer token — a
- * native <video src> request can't carry a custom Authorization header, so
- * the signature *is* the auth here. Mirrors the external-course lesson
- * stream route; see `lib/server/routine-videos.ts` for why this also has to
- * handle plain external URLs (demo/mock routines) alongside real R2 keys.
+ * HMAC fallback: streams one routine's video. Used when playback-url cannot
+ * mint a presigned R2 GET (missing S3 API token, or a demo `https://`
+ * videoSrc). Gated by a signed `exp`/`sig` query pair rather than a
+ * Firebase Bearer token — a native <video src> request can't carry a
+ * custom Authorization header.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { slug } = await params;
@@ -74,7 +75,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const headers = new Headers(upstream.headers);
     // Playback URLs are per-viewer and short-lived — never let a shared
     // cache (browser or CDN) retain the video body past this request.
-    headers.set("cache-control", "private, max-age=0, no-store");
+    headers.set("cache-control", "private, max-age=0");
     return new NextResponse(upstream.body, {
       status: upstream.status,
       headers,
@@ -103,25 +104,22 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   // R2 proxy tries to serialize the undici/Next Headers object with devalue
   // and throws `DevalueError: Cannot stringify arbitrary non-POJOs`.
   copyR2HttpMetadata(headers, object.httpMetadata);
-  if (!headers.get("content-type")) {
-    headers.set("content-type", "video/mp4");
-  }
+  applyR2VideoContentType(headers);
   headers.set("accept-ranges", "bytes");
   headers.set("etag", object.httpEtag);
-  headers.set("cache-control", "private, max-age=0, no-store");
+  headers.set("cache-control", "private, max-age=0");
 
-  if (range && object.range) {
-    const resolved = object.range;
-    const start = "offset" in resolved && resolved.offset !== undefined
-      ? resolved.offset
-      : object.size - ("suffix" in resolved ? resolved.suffix : 0);
-    const length = "length" in resolved && resolved.length !== undefined
-      ? resolved.length
-      : object.size - start;
-    const end = start + length - 1;
-
-    headers.set("content-range", `bytes ${start}-${end}/${object.size}`);
-    headers.set("content-length", String(length));
+  if (range) {
+    const described = describeR2VideoRange(range, object.size, object.range);
+    if (!described) {
+      headers.set("content-range", `bytes */${object.size}`);
+      return new NextResponse(null, { status: 416, headers });
+    }
+    headers.set(
+      "content-range",
+      `bytes ${described.start}-${described.end}/${object.size}`,
+    );
+    headers.set("content-length", String(described.length));
     return new NextResponse(object.body, { status: 206, headers });
   }
 

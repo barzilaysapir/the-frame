@@ -16,11 +16,11 @@ interface RouteParams {
 }
 
 /**
- * Mints a short-lived signed playback URL for one course lesson — requires
- * a valid Firebase ID token AND a paid purchase of the course (issue #232:
- * being signed in used to be enough, which let anyone watch any course for
- * free). The URL itself (not this endpoint) is what a native <video>
- * element loads, since it can't send an Authorization header.
+ * Mints a short-lived playback URL for one course lesson — requires a
+ * valid Firebase ID token AND a paid purchase of the course (issue #232).
+ * Prefers a presigned R2 GET; falls back to HMAC `/stream`. The URL itself
+ * (not this endpoint) is what a native <video> element loads, since it
+ * can't send an Authorization header.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
@@ -45,7 +45,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { url, expiresAt } = await signLessonPlaybackUrl(slug, lessonId);
+    const { url, expiresAt } = await signLessonPlaybackUrl(
+      slug,
+      lessonId,
+      source.r2Key,
+    );
     return NextResponse.json({ url, expiresAt });
   } catch (error) {
     return jsonError(error);

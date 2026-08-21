@@ -63,10 +63,12 @@
 			"id": "9df9b3aa6ff045478e3d171594449685"
 		}
 	],
-	// Private bucket for real (non-mock) external-course video lessons —
-	// gated behind Firebase login via a signed short-lived playback URL, see
-	// lib/server/course-videos.ts. Public access must stay disabled on this
-	// bucket; the app is the only thing that ever reads from it.
+	// Private bucket for real (non-mock) class videos. Public access must
+	// stay disabled. Playback mints a short-lived S3 GET URL
+	// (`lib/server/r2-presign.ts`) when `R2_ACCESS_KEY_ID` /
+	// `R2_SECRET_ACCESS_KEY` are set as Worker secrets; otherwise it falls
+	// back to the HMAC `/stream` proxy. Apply bucket CORS from `r2-cors.json`:
+	// `npx wrangler r2 bucket cors set the-frame --file r2-cors.json`.
 	// Objects live under the "class-videos/" prefix in the shared "the-frame"
 	// bucket (consolidated here during the Cloudflare account migration —
 	// migrations 0020/0021's r2_key seeds were updated to match, since

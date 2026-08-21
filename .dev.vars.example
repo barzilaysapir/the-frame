@@ -3,15 +3,30 @@
 # .env.local, these are never exposed to the browser — server-only.
 #
 # Copy this file to `.dev.vars` (gitignored) and fill in a real value.
-# `.dev.vars` is NOT read in production — for that, set the same name as a
-# Worker secret: `npx wrangler secret put VIDEO_SIGNING_SECRET`.
+# `.dev.vars` is NOT read in production — for that, `npx wrangler secret put`
+# the same names (`VIDEO_SIGNING_SECRET`, `R2_ACCESS_KEY_ID`, …).
 
-# Signs/verifies the short-lived playback URLs used to gate real (non-mock)
-# external-course video lessons stored in the private R2 bucket
-# `the-frame-class-videos` — see lib/server/course-videos.ts. Any long random
-# string works; generate one with:
+# Signs/verifies HMAC fallback playback URLs (`.../stream`) used when the
+# R2 S3 API token below is not set. Real (non-mock) class videos live in
+# the private R2 bucket `the-frame` — see lib/server/course-videos.ts.
+# Any long random string works; generate one with:
 #   node -e "console.log(crypto.randomUUID() + crypto.randomUUID())"
 VIDEO_SIGNING_SECRET=
+
+# S3 API token for the `the-frame` R2 bucket (Dashboard → R2 → Manage
+# R2 API Tokens). Object Read on `the-frame` only. The Worker mints a
+# short-lived GET URL so the browser streams from R2 instead of through
+# the `/stream` proxy. Also set these as Worker secrets (and Build vars
+# if the build needs them — they are runtime-only here):
+#   npx wrangler secret put R2_ACCESS_KEY_ID
+#   npx wrangler secret put R2_SECRET_ACCESS_KEY
+# After the first deploy, apply CORS so Range requests from the site work:
+#   npx wrangler r2 bucket cors set the-frame --file r2-cors.json
+# Optional overrides (defaults match wrangler.jsonc):
+# R2_ACCOUNT_ID=8541729902392a145a03f97a906af16f
+# R2_BUCKET_NAME=the-frame
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
 
 # Gates the `/api/preview?token=...` link that unlocks the demo/mock catalog
 # (routines, instructors) — hidden by default everywhere, including this
