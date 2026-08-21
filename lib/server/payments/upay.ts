@@ -1,5 +1,6 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { upaySafeInvoiceName } from "@/lib/payments/upay-invoice-name";
 import type { UpayPaymentMethod } from "@/lib/payments/upay-method";
 
 export {
@@ -104,7 +105,10 @@ export function buildUpayFormFields(
     lang: "HE",
     currency: "NIS",
   };
-  const payerName = params.payerName?.trim();
+  // `wronginputinvoicename` on Hebrew (e.g. ספיר ברזילי). Latin only.
+  const payerName = params.payerName
+    ? upaySafeInvoiceName(params.payerName)
+    : null;
   const payerEmail = params.payerEmail?.trim();
   if (payerName) {
     fields.invoicename = payerName;

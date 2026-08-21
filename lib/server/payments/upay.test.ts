@@ -74,6 +74,19 @@ describe("buildUpayFormFields", () => {
     expect(form.fields.payeremail).toBe("sapir@example.com");
     expect(form.fields.email).toBe("merchant@example.com");
   });
+
+  it("omits Hebrew invoicename so uPay does not bounce", () => {
+    const form = buildUpayFormFields(
+      config,
+      params({
+        payerName: "ספיר ברזילי",
+        payerEmail: "sapir@example.com",
+      }),
+    );
+    expect(form.fields.invoicename).toBeUndefined();
+    expect(form.fields.fullname).toBeUndefined();
+    expect(form.fields.invoiceemail).toBe("sapir@example.com");
+  });
 });
 
 describe("formatUpayAmount", () => {
