@@ -38,12 +38,11 @@ function isExternalUrl(src: string): boolean {
 }
 
 /**
- * Streams one routine's video, gated by a signed `exp`/`sig` query pair
- * (minted by `.../playback-url`) rather than a Firebase Bearer token — a
- * native <video src> request can't carry a custom Authorization header, so
- * the signature *is* the auth here. Mirrors the external-course lesson
- * stream route; see `lib/server/routine-videos.ts` for why this also has to
- * handle plain external URLs (demo/mock routines) alongside real R2 keys.
+ * HMAC fallback: streams one routine's video. Used when playback-url cannot
+ * mint a presigned R2 GET (missing S3 API token, or a demo `https://`
+ * videoSrc). Gated by a signed `exp`/`sig` query pair rather than a
+ * Firebase Bearer token — a native <video src> request can't carry a
+ * custom Authorization header.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { slug } = await params;

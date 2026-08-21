@@ -1,5 +1,6 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { tryPresignR2Get } from "@/lib/server/r2-presign";
 
 export {
   applyR2VideoContentType,
@@ -14,10 +15,11 @@ export {
  * courses which already had a signed-URL + `hasPaidPurchase` gate).
  *
  * Mirrors `lib/server/course-videos.ts`'s pattern: a logged-in-and-paid-only
- * route (`/api/v1/routines/[slug]/playback-url`) mints a short-lived
- * HMAC-signed URL pointing at the streaming route (`.../stream`), which
- * validates the signature (not a Firebase token — a native <video> element
- * can't send an Authorization header) and then serves the video.
+ * route (`/api/v1/routines/[slug]/playback-url`) mints a short-lived URL
+ * for a native `<video>` element (which cannot send an Authorization
+ * header). Real R2 keys prefer a presigned R2 GET; HMAC `/stream` remains
+ * the fallback, and also the path for demo/mock routines whose `videoSrc`
+ * is a public `https://` URL.
  *
  * Routines don't have their own R2 bucket/table the way external-course
  * lessons do (`external_course_lessons.r2_key`) — `routines.video_src` is
@@ -57,11 +59,23 @@ export interface SignedRoutinePlaybackUrl {
   expiresAt: number;
 }
 
+function isExternalUrl(src: string): boolean {
+  return /^https?:\/\//i.test(src);
+}
+
 export async function signRoutinePlaybackUrl(
   routineSlug: string,
+  videoSrc: string,
 ): Promise<SignedRoutinePlaybackUrl> {
-  const key = await getSigningKey();
   const expiresAt = Math.floor(Date.now() / 1000) + PLAYBACK_URL_TTL_SECONDS;
+  if (!isExternalUrl(videoSrc)) {
+    const presigned = await tryPresignR2Get(videoSrc, PLAYBACK_URL_TTL_SECONDS);
+    if (presigned) {
+      return { url: presigned, expiresAt };
+    }
+  }
+
+  const key = await getSigningKey();
   const payload = buildSignaturePayload(routineSlug, expiresAt);
   const signatureBytes = await crypto.subtle.sign(
     "HMAC",

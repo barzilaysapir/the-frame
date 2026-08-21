@@ -33,11 +33,12 @@ function copyR2HttpMetadata(
 }
 
 /**
- * Streams one lesson's video from the private R2 bucket, gated by a signed
- * `exp`/`sig` query pair (minted by `.../playback-url`) rather than a
- * Firebase Bearer token — a native <video src> request can't carry a custom
- * Authorization header, so the signature *is* the auth here. Honors Range
- * requests so the browser can seek without downloading the whole file.
+ * HMAC fallback: streams one lesson's video from the private R2 binding.
+ * Used when `R2_ACCESS_KEY_ID` is unset so playback-url cannot mint a
+ * presigned R2 GET. Gated by a signed `exp`/`sig` query pair (not a
+ * Firebase Bearer token — a native <video src> request can't carry a
+ * custom Authorization header). Honors Range requests so the browser can
+ * seek without downloading the whole file.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { slug, lessonId } = await params;

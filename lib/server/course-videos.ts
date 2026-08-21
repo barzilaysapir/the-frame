@@ -1,16 +1,19 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { tryPresignR2Get } from "@/lib/server/r2-presign";
 
 /**
  * Gated video delivery for real (non-mock) external-course lessons.
  *
- * The R2 bucket (`the-frame-class-videos`) stays private — nothing is ever
- * served from a public bucket URL. Instead: a logged-in-only route
+ * The R2 bucket stays private — nothing is served from a public object URL.
+ * A logged-in-and-paid-only route
  * (`/api/v1/external-courses/[slug]/lessons/[lessonId]/playback-url`) mints
- * a short-lived HMAC-signed URL pointing at the streaming route
- * (`.../stream`), which validates the signature (not a Firebase token —
- * a native <video> element can't send an Authorization header) and then
- * proxies the R2 object, honoring Range requests for seeking.
+ * a short-lived URL for a native `<video>` element (which cannot send an
+ * Authorization header):
+ *
+ * 1. Prefer a presigned R2 GET (S3 SigV4) so the browser streams from R2.
+ * 2. Fall back to an HMAC-signed `/stream` proxy when R2 S3 API credentials
+ *    are not configured (local/preview without `R2_ACCESS_KEY_ID`).
  */
 
 // Long enough to cover one uninterrupted watch session without forcing a
@@ -63,9 +66,15 @@ export interface SignedLessonPlaybackUrl {
 export async function signLessonPlaybackUrl(
   courseSlug: string,
   lessonId: string,
+  r2Key: string,
 ): Promise<SignedLessonPlaybackUrl> {
-  const key = await getSigningKey();
   const expiresAt = Math.floor(Date.now() / 1000) + PLAYBACK_URL_TTL_SECONDS;
+  const presigned = await tryPresignR2Get(r2Key, PLAYBACK_URL_TTL_SECONDS);
+  if (presigned) {
+    return { url: presigned, expiresAt };
+  }
+
+  const key = await getSigningKey();
   const payload = buildSignaturePayload(courseSlug, lessonId, expiresAt);
   const signatureBytes = await crypto.subtle.sign(
     "HMAC",

@@ -12,11 +12,10 @@ interface RouteParams {
 }
 
 /**
- * Mints a short-lived signed playback URL for a routine — requires a valid
- * Firebase ID token AND a paid purchase of the routine (issue #232: the
- * routine page used to hand `videoSrc` straight to the client, unauthenticated,
- * not even requiring sign-in). Mirrors the external-course lesson
- * playback-url route.
+ * Mints a short-lived playback URL for a routine — requires a valid
+ * Firebase ID token AND a paid purchase of the routine (issue #232). Real
+ * R2 keys prefer a presigned GET; demo `https://` sources and missing R2
+ * credentials fall back to HMAC `/stream`.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
@@ -35,7 +34,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Purchase required" }, { status: 403 });
     }
 
-    const { url, expiresAt } = await signRoutinePlaybackUrl(slug);
+    const { url, expiresAt } = await signRoutinePlaybackUrl(slug, source.videoSrc);
     return NextResponse.json({ url, expiresAt });
   } catch (error) {
     return jsonError(error);
