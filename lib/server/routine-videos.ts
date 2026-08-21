@@ -1,8 +1,12 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getCourseVideosBucket, parseRangeHeader } from "@/lib/server/course-videos";
 
-export { getCourseVideosBucket as getRoutineVideosBucket, parseRangeHeader };
+export {
+  applyR2VideoContentType,
+  describeR2VideoRange,
+  getCourseVideosBucket as getRoutineVideosBucket,
+  parseRangeHeader,
+} from "@/lib/server/course-videos";
 
 /**
  * Gated video delivery for routines (issue #232 — routine video used to be
