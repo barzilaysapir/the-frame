@@ -14,9 +14,16 @@ INSERT OR IGNORE INTO external_course_i18n (slug, locale, title, tagline, descri
   ('zzz-internal-test-payment', 'en', 'Internal test — do not purchase', 'Payment system test', '', 'Internal'),
   ('zzz-internal-test-payment', 'he', 'בדיקה פנימית — לא לרכישה', 'בדיקת מערכת תשלומים', '', 'Internal');
 
+-- Guarded on the user existing locally too: purchases.firebase_uid has an
+-- FK to users(firebase_uid), and this uid is only real in remote D1 (it
+-- signed in there) — a fresh local D1 has no users at all, so the insert
+-- would otherwise fail the predev migration step for every local dev setup.
 INSERT INTO purchases (id, firebase_uid, item_type, item_slug, provider, amount_ils, currency, status, created_at, paid_at)
 SELECT 'seed-zzz-internal-test-payment', 'nhuLzs71A9Zd7hAy8O4KgPNAhqR2', 'external_course', 'zzz-internal-test-payment', 'bit', 1, 'ILS', 'paid', datetime('now'), datetime('now')
-WHERE NOT EXISTS (
+WHERE EXISTS (
+  SELECT 1 FROM users WHERE firebase_uid = 'nhuLzs71A9Zd7hAy8O4KgPNAhqR2'
+)
+AND NOT EXISTS (
   SELECT 1 FROM purchases
   WHERE firebase_uid = 'nhuLzs71A9Zd7hAy8O4KgPNAhqR2'
     AND item_type = 'external_course'
