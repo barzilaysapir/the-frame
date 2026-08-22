@@ -120,13 +120,7 @@ export function DanceVideoPlayer({
     const video = videoRef.current;
     if (!video) return;
 
-    const onPlay = () => {
-      setIsPlaying(true);
-      // Chapter navigation is a "where do I jump to" tool — collapse it back
-      // once playback resumes so it doesn't stack on top of the seek bar and
-      // control row and cover half the video on a short mobile frame.
-      setChaptersExpanded(false);
-    };
+    const onPlay = () => setIsPlaying(true);
     const onPause = () => {
       setIsPlaying(false);
       setAreControlsVisible(true);
@@ -478,44 +472,6 @@ export function DanceVideoPlayer({
             </div>
           </div>
 
-          {/* Current chapter, right under the time — tap to reveal the rest.
-              Only this one chapter shows over the video by default,
-              YouTube-mobile style, instead of the full list at all times.
-              Paused only: while playing, this row (plus the center play
-              button it would sit near) would stack on top of the seek bar
-              and control row and cover too much of a short mobile frame —
-              chapter-picking is a "paused, deciding where to go" action. */}
-          {!isPlaying && chapters.length > 0 && activeChapter ? (
-            <div className="mt-2 flex flex-col items-start gap-2">
-              <button
-                type="button"
-                onClick={() => setChaptersExpanded((expanded) => !expanded)}
-                aria-expanded={chaptersExpanded}
-                aria-label={
-                  chaptersExpanded ? labels.hideChapters : labels.showChapters
-                }
-                className="flex max-w-full items-center gap-1 rounded-full border border-white/15 py-1 pl-2.5 pr-1.5 text-xs font-medium text-white/80 transition-colors hover:border-white/40 hover:text-white"
-              >
-                <span className="max-w-[12rem] truncate sm:max-w-xs">
-                  {activeChapter.label}
-                </span>
-                <ChevronDown
-                  className={cn(
-                    "h-3.5 w-3.5 shrink-0 transition-transform",
-                    chaptersExpanded && "rotate-180",
-                  )}
-                />
-              </button>
-
-              {chaptersExpanded ? (
-                <ChapterMarkers
-                  chapters={chapters}
-                  activeChapterId={activeChapterId}
-                  onJumpToChapter={jumpToChapter}
-                />
-              ) : null}
-            </div>
-          ) : null}
         </div>
 
         {/* Playback error overlay — last in DOM order so it stacks above
@@ -534,6 +490,43 @@ export function DanceVideoPlayer({
           </div>
         )}
       </div>
+
+      {/* Current chapter, below the video rather than overlaid on it — it
+          never has to fight the seek bar/controls for room over a short
+          mobile frame, and stays visible (small) during playback too.
+          Collapsed to just the current chapter by default; tap to reveal
+          the rest, YouTube-mobile style. */}
+      {!hasError && chapters.length > 0 && activeChapter ? (
+        <div className="border-t border-frame-border bg-frame-panel px-3 py-1.5 sm:px-4">
+          <button
+            type="button"
+            onClick={() => setChaptersExpanded((expanded) => !expanded)}
+            aria-expanded={chaptersExpanded}
+            aria-label={
+              chaptersExpanded ? labels.hideChapters : labels.showChapters
+            }
+            className="flex max-w-full items-center gap-1 py-0.5 text-xs font-medium text-frame-silver transition-colors hover:text-white"
+          >
+            <span className="max-w-[14rem] truncate sm:max-w-xs">
+              {activeChapter.label}
+            </span>
+            <ChevronDown
+              className={cn(
+                "h-3.5 w-3.5 shrink-0 transition-transform",
+                chaptersExpanded && "rotate-180",
+              )}
+            />
+          </button>
+
+          {chaptersExpanded ? (
+            <ChapterMarkers
+              chapters={chapters}
+              activeChapterId={activeChapterId}
+              onJumpToChapter={jumpToChapter}
+            />
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
